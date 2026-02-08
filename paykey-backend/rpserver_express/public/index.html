@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>PayKey RP - WebAuthn Test</title>
+</head>
+<body>
+  <h1>PayKey RP - WebAuthn Test</h1>
+
+  <div>
+    <label>Username: <input id="userName" placeholder="alice"></label>
+    <label>Display name: <input id="displayName" placeholder="Alice Doe"></label>
+    <label>User id: <input id="userId" placeholder="leave blank to generate"></label>
+    <button id="btnGenId">Generate ID</button>
+  </div>
+
+  <h2>Registration</h2>
+  <button id="btnReg">Start Register</button>
+
+  <h2>Authentication</h2>
+  <button id="btnAuth">Start Authenticate</button>
+
+  <pre id="log"></pre>
+
+  <script src="webauthn.js"></script>
+</body>
+</html>

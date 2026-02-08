@@ -1,0 +1,51 @@
+plugins {
+    id 'org.springframework.boot'
+}
+
+dependencies {
+    // === MODUL INTERNAL ===
+    implementation project(':common')
+    implementation project(':fido2-core')
+    
+
+    // === SPRING BOOT ===
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // === DATABASE ===
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
+    // H2 (in-memory) for local profile/runtime
+    // Removed from production image; use MySQL in containers.
+    // If you need H2 for local dev, add it to your IDE/runtime classpath or use a dev-only configuration.
+
+    implementation 'redis.clients:jedis:3.8.0'
+
+    // === SWAGGER ===
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+
+    // === LIBRARY YANG HILANG (FIX ERROR ANDA) ===
+    // 1. Kriptografi (BouncyCastle & EdDSA) - Wajib untuk FIDO2
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
+    implementation 'net.i2p.crypto:eddsa:0.3.0'
+
+    // 2. JWT (Untuk MdsV3Service)
+    implementation 'com.auth0:java-jwt:4.4.0'
+
+    // 3. Embedded Redis (Untuk config local/demo lama)
+    implementation 'it.ozimov:embedded-redis:0.7.2'
+
+    // === TOOLS ===
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+bootJar {
+    mainClass = 'com.paykey.server.PayKeyServerApplication'
+}

@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #191919;
+  --bg-secondary: #202020;
+  --bg-tertiary: #2d2d2d;
+  --bg-hover: #363636;
+  --text-primary: #ebebeb;
+  --text-secondary: #9b9b9b;
+  --text-tertiary: #6b6b6b;
+  --border-primary: #383838;
+  --border-secondary: #2d2d2d;
+  --success: #4ade80;
+  --success-bg: rgba(74,222,128,0.12);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251,191,36,0.12);
+  --error: #f87171;
+  --error-bg: rgba(248,113,113,0.12);
+  --accent: #2383e2;
+  --accent-bg: rgba(35, 131, 226, 0.12);
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.12);
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --critical: #ef4444; 
+  --critical-bg: rgba(239, 68, 68, 0.15);
+
+  --accent: #2383e2;
+  --accent-bg: rgba(35, 131, 226, 0.12);
+  
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.12);
+
+  --cyan: #22d3ee;
+  --cyan-bg: rgba(34, 211, 238, 0.12);
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Custom Animation Classes */
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin 1s linear infinite;
+  }
+  .animate-shake {
+    animation: shake 0.4s ease;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Keyframes */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Modal & Panel Transitions */
+.modal-overlay {
+  transition: opacity 0.2s, visibility 0.2s;
+}
+.modal-content {
+  transition: transform 0.2s;
+}
+.slide-panel {
+  transition: transform 0.3s ease;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+/* Animation Utils */
+.animate-spin-slow { animation: spin 3s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

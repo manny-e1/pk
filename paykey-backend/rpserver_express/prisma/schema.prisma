@@ -1,0 +1,283 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id             String              @id @default(uuid()) @db.VarChar(128)
+  email          String              @unique
+  fullName       String              @map("full_name")
+  passwordHash   String?             @map("password_hash")
+  role           Role                @default(USER)
+  companyName    String?             @map("company_name")
+  mobile         String?   
+  createdAt      DateTime            @default(now()) @map("created_at")
+  status         String              @default("active")
+  suspendNote    String?             @map("suspend_note") @db.Text
+  suspendReason  String?             @map("suspend_reason") @db.Text
+  keys           UserKey[]
+  authLogs       AuthLog[]
+  knownDevices   UserKnownDevice[]
+  knownLocations UserKnownLocation[]
+  transactions  Transaction[]
+
+  @@map("users")
+}
+
+model AmountLimit {
+  id          String   @id @default(uuid())
+  segment     String   // "CONSUMER", "CORPORATE"
+  currency    String   @default("MYR")
+  
+  minAmount   Float    @default(0)
+  maxAmount   Float?   // Bisa null untuk tier tertinggi (e.g. > 50000)
+  
+  weight      Int      @default(0)
+  label       String   @default("low") // low, medium, high, critical
+  stepUp      Boolean  @default(false)
+  methods     Json?    // Simpan array method ["sms_otp"] sebagai JSON
+  
+  isActive    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+
+  // HAPUS baris @@unique([segment, currency])
+  // Ganti dengan mapping table saja
+  @@map("config_amount_limits")
+}
+
+model RiskThreshold {
+  id          String   @id @default(uuid())
+  lowScore    Int      @default(30)
+  highScore   Int      @default(70)
+  updatedAt   DateTime @updatedAt
+
+  @@map("config_risk_thresholds")
+}
+
+model RiskRule {
+  id          String   @id @default(uuid())
+  ruleType    String   @unique // AMOUNT, GEO, NEW_DEVICE, DORMANT, BENEFICIARY
+  name        String   // Nama display (e.g. "Geographic Anomaly")
+  isActive    Boolean  @default(false)
+  
+  // Bobot default (jika single weight)
+  weight      Int      @default(0) 
+
+  // Config JSON yang fleksibel. 
+  // Contoh isi: { "amountThreshold": 500, "tiered": true, "tiers": [...] }
+  parameters  String?  @db.LongText 
+
+  updatedAt   DateTime @updatedAt
+
+  @@map("config_risk_rules")
+}
+
+model AuthPolicy {
+  id          String   @id @default(uuid())
+  name        String   // e.g. "consumer_web_high"
+  segment     String   // CONSUMER, CORPORATE
+  channel     String   // WEB, MOBILE
+  riskLevel   String   // LOW, MEDIUM, HIGH
+  condition   String   @db.LongText // JSON config disimpan sebagai string
+  priority    Int      @default(1)
+  isActive    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@unique([segment, channel, riskLevel]) 
+  @@map("config_auth_policies")
+}
+
+model PolicyAuditLog {
+  id          String   @id @default(uuid())
+  policyName  String
+  action      String
+  adminEmail  String
+  changes     String   @db.LongText
+  createdAt   DateTime @default(now())
+
+  @@map("policy_audit_logs")
+}
+
+
+model Transaction {
+  id              String   @id
+  timestamp       DateTime @default(now())
+  amount          Float
+  currency        String   @default("MYR")
+  
+  // --- Info Merchant ---
+  merchantName     String?  @default("Unknown Merchant")
+  merchantCategory String? 
+  merchantCountry  String?  
+
+  // --- Info Security ---
+  authMethod       String?  
+  authResult       String?  
+  ipAddress        String?
+  locationCity     String?
+  locationCountry  String?
+  
+  // --- Relasi ---
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  
+  deviceInfo      Json?    
+
+  // --- Risk Result ---
+  riskLevel       String   @default("LOW")
+  riskScore       Int?     @default(0)
+  riskReason String? @db.Text  
+
+  // --- Snapshot Rule (Optional) ---
+  appliedPolicyId String?
+  appliedLimitId  String?
+
+  // 👇👇 TAMBAHKAN BARIS INI (Ini yang menyebabkan error) 👇👇
+  riskAnalysisLogs RiskAnalysisLog[]
+
+  @@index([userId])
+  @@index([timestamp])
+  @@map("transactions")
+}
+
+model RiskAnalysisLog {
+  id              String   @id @default(uuid())
+  transactionId   String
+  transaction     Transaction @relation(fields: [transactionId], references: [id])
+  
+  ruleCode        String   // Rule mana yang kena trigger?
+  scoreContributed Int     // Berapa poin yang ditambahkan?
+  
+  createdAt       DateTime @default(now())
+
+  @@map("transaction_analysis_logs")
+}
+
+model UserKey {
+  id                      BigInt    @id @default(autoincrement())
+  aaguid                  String    @map("aaguid") @db.VarChar(36)
+  attestationType         Int?      @map("attestation_type")
+  credentialId            String    @unique @map("credential_id") @db.VarChar(256)
+  publicKey               String    @map("public_key") @db.Text
+  registeredTimestamp     DateTime? @default(now()) @map("registered_timestamp")
+  signCounter             BigInt?   @map("sign_counter")
+  signatureAlgorithm      Int?      @map("signature_algorithm")
+  userDisplayName         String?   @map("user_display_name") @db.VarChar(64)
+  userId                  String    @map("user_id") @db.VarChar(128)
+  username                String?   @db.VarChar(64)
+  deviceName              String?   @map("device_name")
+  lastActive              DateTime  @default(now()) @updatedAt @map("last_active")
+  lastStatusChange        DateTime  @default(now()) @map("last_status_change")
+  lastUsedIp              String?   @map("last_used_ip")
+  status                  KeyStatus @default(ACTIVE)
+  transports              String?
+  rpEntityId              String?   @map("rp_entity_id") @db.VarChar(255)
+  authenticated_timestamp DateTime? @db.DateTime(6)
+  cred_protect            Int?
+  rk                      Boolean?  @db.Bit(1)
+  user_icon               String?   @db.VarChar(128)
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("user_key")
+}
+
+model AuthLog {
+  id            Int      @id @default(autoincrement())
+  email         String
+  eventType     String   @map("event_type")
+  authMethod    String   @map("auth_method")
+  status        String
+  failureReason String?  @map("failure_reason")
+  ipAddress     String?  @map("ip_address")
+  userAgent     String?  @map("user_agent")
+  location      String?
+  countryCode   String?  @map("country_code")
+  device        String?
+  isVpn         Boolean  @default(false) @map("is_vpn")
+  riskScore     Int      @default(0) @map("risk_score")
+  riskTags      Json?    @map("risk_tags")
+  createdAt     DateTime @default(now()) @map("created_at")
+  user          User?    @relation(fields: [email], references: [email])
+
+  @@index([email])
+  @@map("auth_logs")
+}
+
+model UserKnownDevice {
+  userId     String   @map("user_id") @db.VarChar(128)
+  deviceHash String   @map("device_hash")
+  lastSeen   DateTime @default(now()) @map("last_seen")
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, deviceHash])
+  @@index([userId])
+  @@map("user_known_devices")
+}
+
+model UserKnownLocation {
+  userId      String   @map("user_id") @db.VarChar(128)
+  countryCode String   @map("country_code")
+  city        String
+  lastSeen    DateTime @default(now()) @map("last_seen")
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, countryCode, city])
+  @@index([userId])
+  @@map("user_known_locations")
+}
+
+model authenticator_transport {
+  id          BigInt @id @default(autoincrement())
+  transport   String @db.VarChar(255)
+  user_key_id BigInt
+
+  @@index([user_key_id], map: "FKr5ng3evn4q5h581vo2ndet463")
+}
+
+model metadata {
+  id                         BigInt  @id @default(autoincrement())
+  aaguid                     String? @db.VarChar(255)
+  biometric_status_reports   String? @db.LongText
+  content                    String  @db.Text
+  status_reports             String? @db.LongText
+  time_of_last_status_change String? @db.VarChar(255)
+}
+
+model metadata_toc {
+  id                           BigInt  @id @default(autoincrement())
+  encoded_metadata_toc_payload String  @db.LongText
+  legal_header                 String? @db.Text
+  metadata_source              String  @db.Text
+  next_update                  String  @db.VarChar(255)
+  no                           BigInt
+}
+
+model metadata_yubico {
+  id      Int    @id @default(autoincrement())
+  content String @db.LongText
+}
+
+model rp {
+  id          String  @id @db.VarChar(255)
+  description String? @db.VarChar(255)
+  icon        String? @db.VarChar(255)
+  name        String  @db.VarChar(255)
+}
+
+enum KeyStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+}

@@ -1,0 +1,55 @@
+// backend-express/server.js
+
+// [WAJIB] Fix JSON BigInt Serialization (Harus paling atas)
+BigInt.prototype.toJSON = function() {       
+  return this.toString();
+};
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const routes = require('./routes'); // Import file routes/index.js yang baru diperbaiki
+require('dotenv').config();
+const cookieParser = require('cookie-parser');
+const { initGeoDb } = require('./utils/geoIpService');
+
+const app = express();
+const PORT = 4000;
+
+// Middleware
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://192.168.1.3:3000', // <--- URL Frontend Admin (Next.js) via IP
+  'http://192.168.1.3:4000'  // <--- Kadang diperlukan untuk self-request
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
+
+app.use(cookieParser());
+app.use(bodyParser.json());
+
+// --- GUNAKAN ROUTES ---
+// Semua logika route sekarang ada di routes/index.js
+// Kita mount di root path '/'
+app.use('/', routes);
+app.use('/.well-known', express.static('.well-known'));
+
+initGeoDb().then(() => {
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
+        console.log(`Ready to process secure transactions.`);
+    });
+});

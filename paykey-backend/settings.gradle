@@ -1,0 +1,5 @@
+rootProject.name = 'paykey-backend'
+
+include 'common'
+include 'fido2-core'
+include 'paykey-server'

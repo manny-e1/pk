@@ -1,0 +1,41 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.18' apply false
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE' apply false
+    id 'java'
+}
+
+allprojects {
+    group = 'com.paykey'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+// === BAGIAN INI YANG PENTING ===
+subprojects {
+    // Plugin wajib agar Java dikenali
+    apply plugin: 'java'
+    
+    // Plugin wajib agar versi Spring Boot konsisten
+    apply plugin: 'io.spring.dependency-management'
+    
+    // [SOLUSI UTAMA] Plugin wajib agar blok 'publishing { }' di common tidak error
+    apply plugin: 'maven-publish' 
+
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.30'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+        
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
