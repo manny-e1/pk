@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Device } from '@/lib/types';
 
-const API_URL = 'http://localhost:4000/api';
+const API_URL = 'http://18.142.184.55/api/api';
 
 // [FIX] Parameter userEmail sekarang opsional (tanda tanya ?)
 export function useDevices(userEmail?: string) {
