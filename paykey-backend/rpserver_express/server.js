@@ -23,7 +23,10 @@ const allowedOrigins = [
   'http://192.168.1.3:4000',
   'http://18.142.184.55:3000',
   'http://18.142.184.55:4000',
-  'http://18.142.184.55'
+  'http://18.142.184.55',
+  'https://www.authkey.my',
+  'https://console.authkey.my',
+  'https://api.authkey.my',
 ];
 
 app.use(cors({
