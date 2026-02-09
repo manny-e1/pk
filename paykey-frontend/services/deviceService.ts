@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Device } from '@/lib/types';
 
-const API_URL = 'http://localhost:4000/api'; // Sesuaikan port backend
+const API_URL = 'http://18.142.184.55:4000/api'; // Sesuaikan port backend
 
 // Helper untuk format tanggal
 const formatDate = (dateString: string) => {
