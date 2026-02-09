@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Device } from '@/lib/types';
 
-const API_URL = 'http://18.142.184.55/api/api'; // Sesuaikan port backend
+const API_URL = 'https://api.authkey.my/api'; // Sesuaikan port backend
 
 // Helper untuk format tanggal
 const formatDate = (dateString: string) => {

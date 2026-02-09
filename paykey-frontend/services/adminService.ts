@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Sesuaikan URL dengan backend Express Anda
-const API_URL = 'http://18.142.184.55/api/api/admin';
+const API_URL = 'https://api.authkey.my/api/admin';
 
 export const adminService = {
   // --- 1. AMOUNT THRESHOLDS ---

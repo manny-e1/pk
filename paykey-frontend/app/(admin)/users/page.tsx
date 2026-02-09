@@ -56,7 +56,7 @@ export default function UsersPage() {
 
   // --- API FETCH ---
   useEffect(() => {
-    fetch('http://18.142.184.55/api/api/users')
+    fetch('https://api.authkey.my/api/users')
       .then(res => res.json())
       .then(data => {
         setUsers(data);
@@ -106,7 +106,7 @@ export default function UsersPage() {
     };
 
     try {
-        const res = await fetch(`http://18.142.184.55/api/api/users/${actionUser.id}/status`, {
+        const res = await fetch(`https://api.authkey.my/api/users/${actionUser.id}/status`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

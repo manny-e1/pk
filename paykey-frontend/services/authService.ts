@@ -3,7 +3,7 @@ import {
   startAuthentication,
 } from "@simplewebauthn/browser";
 
-const API_BASE = "http://18.142.184.55/api";
+const API_BASE = "https://api.authkey.my";
 
 // --- Helper Request (Global) ---
 async function apiRequest(
