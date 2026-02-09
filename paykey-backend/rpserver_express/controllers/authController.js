@@ -147,8 +147,20 @@ exports.checkUser = async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
+// exports.logout = (req, res) => {
+//     res.cookie('auth_token', 'none', { expires: new Date(Date.now() + 1000), httpOnly: true, path: '/' });
+//     res.clearCookie('auth_token');
+//     res.status(200).json({ success: true });
+// };
+
 exports.logout = (req, res) => {
-    res.cookie('auth_token', 'none', { expires: new Date(Date.now() + 1000), httpOnly: true, path: '/' });
-    res.clearCookie('auth_token');
-    res.status(200).json({ success: true });
+    res.clearCookie('auth_token', {
+        httpOnly: true,
+        secure: true, 
+        sameSite: 'lax',
+        domain: '.authkey.my',
+        path: '/'
+    });
+
+    res.status(200).json({ message: 'Logged out successfully' });
 };
