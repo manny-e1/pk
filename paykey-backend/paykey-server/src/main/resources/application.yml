@@ -33,8 +33,8 @@ app:
     - android:apk-key-hash-sha256:KNxFf9ASburnBecoqT/TtD1G7WxWoBTFY3RzkED2FB0
 
     # Web origins
-    - "http://localhost:3000"
-    - "http://localhost:4000"
+    - "http://18.142.184.55:3000"
+    - "http://18.142.184.55:4000"
 
 
 
