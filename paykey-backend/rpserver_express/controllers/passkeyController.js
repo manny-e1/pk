@@ -6,7 +6,7 @@ const { createRichAuthLog } = require('../utils/richLogger');
 const { evaluateAuthPolicy } = require('../utils/authPolicies/index');
 
 const RP_ID = process.env.RP_ID || 'localhost';
-const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6379' });
+const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redispass@localhost:6379' });
 (async () => { 
     try { await redisClient.connect(); } 
     catch (e) { console.error("[Redis] Error:", e.message); }
