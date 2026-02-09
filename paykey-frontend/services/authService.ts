@@ -51,7 +51,8 @@ export const authService = {
       const options = await apiRequest("/auth/start", "POST", { username: email });
 
       // Step B: Scan Jari/Wajah
-      const asseResp = await startAuthentication(options);
+      //const asseResp = await startAuthentication(options);
+      const asseResp = await startAuthentication({ optionsJSON: options });
 
       // Step C: Verifikasi ke Backend
       const payload = {
@@ -67,7 +68,7 @@ export const authService = {
         },
         sessionId: options.sessionId,
         origin: window.location.origin,
-        rpId: "localhost",
+        rpId: "console.authkey.my",
         tokenBinding: null,
       };
 
@@ -88,7 +89,8 @@ export const authService = {
   registerPasskey: async (email: string, fullName: string) => {
     try {
       const options = await apiRequest("/reg/start", "POST", { username: email, displayName: fullName });
-      const attResp = await startRegistration(options);
+      //const attResp = await startRegistration(options);
+      const attResp = await startRegistration({ optionsJSON: options });
       
       const payload = {
         serverPublicKeyCredential: {
@@ -101,7 +103,7 @@ export const authService = {
         },
         sessionId: options.sessionId,
         origin: window.location.origin,
-        rpId: "localhost",
+        rpId: "console.authkey.my",
         tokenBinding: null,
       };
       return apiRequest("/reg/complete", "POST", payload);
