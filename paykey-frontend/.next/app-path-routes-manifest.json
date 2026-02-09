@@ -1,0 +1,16 @@
+{
+  "/(admin)/amount-thresholds/page": "/amount-thresholds",
+  "/(admin)/auth-logs/page": "/auth-logs",
+  "/(admin)/auth-policies/page": "/auth-policies",
+  "/(admin)/dashboard/page": "/dashboard",
+  "/(admin)/devices/page": "/devices",
+  "/(admin)/investigation/page": "/investigation",
+  "/(admin)/risk-config/page": "/risk-config",
+  "/(admin)/users/page": "/users",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/login/page": "/login",
+  "/page": "/",
+  "/signup/page": "/signup"
+}
