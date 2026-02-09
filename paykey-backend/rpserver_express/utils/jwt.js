@@ -23,6 +23,8 @@ exports.sendTokenCookie = (res, user) => {
         // [FIX PENTING] 
         // Jangan true di localhost! Browser akan menolak cookie-nya.
         secure: isProduction, 
+
+        domain: '.authkey.my',
         
         // 'lax' paling aman untuk navigasi normal
         sameSite: 'lax' 
