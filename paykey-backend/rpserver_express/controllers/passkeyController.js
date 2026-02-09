@@ -5,7 +5,7 @@ const fidoService = require('../services/fidoService');
 const { createRichAuthLog } = require('../utils/richLogger');
 const { evaluateAuthPolicy } = require('../utils/authPolicies/index');
 
-const RP_ID = process.env.RP_ID || '18.142.184.55';
+const RP_ID = process.env.RP_ID || 'authkey.my';
 const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redispass@localhost:6379' });
 (async () => { 
     try { await redisClient.connect(); } 
