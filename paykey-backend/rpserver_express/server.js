@@ -20,7 +20,9 @@ const PORT = 4000;
 const allowedOrigins = [
   'http://localhost:3000',
   'http://192.168.1.3:3000', // <--- URL Frontend Admin (Next.js) via IP
-  'http://192.168.1.3:4000'  // <--- Kadang diperlukan untuk self-request
+  'http://192.168.1.3:4000',
+  'http://18.142.184.55:3000',
+  'http://18.142.184.55:4000',
 ];
 
 app.use(cors({
