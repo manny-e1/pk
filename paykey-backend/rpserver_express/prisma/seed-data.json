@@ -1,0 +1,167 @@
+{
+  "amountLimits": [
+    {
+      "segment": "CONSUMER",
+      "currency": "MYR",
+      "minAmount": 1,
+      "maxAmount": 5000,
+      "weight": 0,
+      "label": "low",
+      "stepUp": false,
+      "methods": [
+        "sms_otp",
+        "hardware_totp"
+      ],
+      "isActive": true
+    },
+    {
+      "segment": "CONSUMER",
+      "currency": "MYR",
+      "minAmount": 10001,
+      "maxAmount": null,
+      "weight": 71,
+      "label": "high",
+      "stepUp": true,
+      "methods": [],
+      "isActive": true
+    },
+    {
+      "segment": "CONSUMER",
+      "currency": "MYR",
+      "minAmount": 5001,
+      "maxAmount": 10000,
+      "weight": 50,
+      "label": "medium",
+      "stepUp": true,
+      "methods": [],
+      "isActive": true
+    }
+  ],
+  "riskRules": [
+    {
+      "ruleType": "DORMANT",
+      "name": "DORMANT",
+      "isActive": true,
+      "weight": 40,
+      "parameters": "{\"days\":180}"
+    },
+    {
+      "ruleType": "GEO_ANOMALY",
+      "name": "GEO_ANOMALY",
+      "isActive": true,
+      "weight": 40,
+      "parameters": "{\"level\":\"country\",\"detectVPN\":true}"
+    },
+    {
+      "ruleType": "BENEFICIARY",
+      "name": "BENEFICIARY",
+      "isActive": true,
+      "weight": 30,
+      "parameters": "{\"trustCount\":3}"
+    },
+    {
+      "ruleType": "VELOCITY_LIMIT",
+      "name": "VELOCITY_LIMIT",
+      "isActive": true,
+      "weight": 20,
+      "parameters": "{\"maxCount\":5,\"windowMinutes\":10}"
+    },
+    {
+      "ruleType": "AMOUNT",
+      "name": "AMOUNT",
+      "isActive": true,
+      "weight": 40,
+      "parameters": "{\"amountThreshold\":500}"
+    },
+    {
+      "ruleType": "NEW_DEVICE",
+      "name": "NEW_DEVICE",
+      "isActive": true,
+      "weight": 30,
+      "parameters": "{\"days\":20}"
+    }
+  ],
+  "authPolicies": [
+    {
+      "name": "consumer_mobile_medium",
+      "segment": "CONSUMER",
+      "channel": "MOBILE",
+      "riskLevel": "MEDIUM",
+      "condition": "{\"userVerification\":\"discouraged\",\"uvCache\":300,\"requireStepUp\":false,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":3,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 20,
+      "isActive": true
+    },
+    {
+      "name": "corporate_mobile_ios_low",
+      "segment": "CORPORATE",
+      "channel": "MOBILE_IOS",
+      "riskLevel": "LOW",
+      "condition": "{\"userVerification\":\"discouraged\",\"uvCache\":300,\"requireStepUp\":false,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":3,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 10,
+      "isActive": true
+    },
+    {
+      "name": "consumer_api_low",
+      "segment": "CONSUMER",
+      "channel": "API",
+      "riskLevel": "LOW",
+      "condition": "{\"userVerification\":\"discouraged\",\"uvCache\":300,\"requireStepUp\":false,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":30,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 20,
+      "isActive": true
+    },
+    {
+      "name": "consumer_web_high",
+      "segment": "CONSUMER",
+      "channel": "WEB",
+      "riskLevel": "HIGH",
+      "condition": "{\"userVerification\":\"discouraged\",\"uvCache\":300,\"requireStepUp\":true,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":3,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":160,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 20,
+      "isActive": true
+    },
+    {
+      "name": "consumer_web_low",
+      "segment": "CONSUMER",
+      "channel": "WEB",
+      "riskLevel": "LOW",
+      "condition": "{\"userVerification\":\"required\",\"uvCache\":200,\"requireStepUp\":true,\"stepUpMethods\":[],\"txnSigning\":true,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":52,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":3,\"progDelay\":true}",
+      "priority": 20,
+      "isActive": true
+    },
+    {
+      "name": "consumer_web_medium",
+      "segment": "CONSUMER",
+      "channel": "WEB",
+      "riskLevel": "MEDIUM",
+      "condition": "{\"userVerification\":\"required\",\"uvCache\":300,\"requireStepUp\":true,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":300,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 20,
+      "isActive": true
+    },
+    {
+      "name": "consumer_mobile_high",
+      "segment": "CONSUMER",
+      "channel": "MOBILE",
+      "riskLevel": "HIGH",
+      "condition": "{\"userVerification\":\"discouraged\",\"uvCache\":300,\"requireStepUp\":true,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":3,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 20,
+      "isActive": true
+    },
+    {
+      "name": "corporate_web_low",
+      "segment": "CORPORATE",
+      "channel": "WEB",
+      "riskLevel": "LOW",
+      "condition": "{\"userVerification\":\"discouraged\",\"uvCache\":300,\"requireStepUp\":false,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":3,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 10,
+      "isActive": true
+    },
+    {
+      "name": "consumer_mobile_low",
+      "segment": "CONSUMER",
+      "channel": "MOBILE",
+      "riskLevel": "LOW",
+      "condition": "{\"userVerification\":\"required\",\"uvCache\":300,\"requireStepUp\":false,\"stepUpMethods\":[],\"txnSigning\":false,\"knownDevice\":false,\"minDeviceAge\":0,\"maxAttempts\":3,\"lockoutDuration\":300,\"lockoutAction\":\"soft_lock\",\"totalTimeout\":180,\"fido2Timeout\":120,\"stepUpTimeout\":60,\"baseDelay\":0,\"progDelay\":false}",
+      "priority": 20,
+      "isActive": true
+    }
+  ]
+}
