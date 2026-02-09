@@ -29,11 +29,16 @@ async function main() {
         const authPolicies = cleanData(rawAuthPolicies);
         console.log(`📦 Ditemukan ${authPolicies.length} Auth Policies`);
 
+        const raWrp = await prisma.rp.findMany();
+        const rp = cleanData(raWrp);
+        console.log(`📦 Ditemukan ${rp.length} RP Entries`);
+
         // 4. Susun Data
         const seedData = {
             amountLimits,
             riskRules,
-            authPolicies
+            authPolicies,
+            rp
         };
 
         const outputPath = path.join(__dirname, 'seed-data.json');

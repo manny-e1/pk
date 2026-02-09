@@ -163,5 +163,17 @@
       "priority": 20,
       "isActive": true
     }
+  ],
+  "rp": [
+    {
+      "description": "Server PayKey Utama",
+      "icon": null,
+      "name": "PayKey Server"
+    },
+    {
+      "description": "example1",
+      "icon": null,
+      "name": "example1"
+    }
   ]
 }
