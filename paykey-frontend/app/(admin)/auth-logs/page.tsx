@@ -630,7 +630,7 @@ export default function AuthLogsPage() {
                 <DetailRow label="IP Address" value={selectedEvent.location.ip} valueClass="font-mono text-[12px]" />
                 <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
                   <span className="text-[13px] text-[var(--text-tertiary)]">Location</span>
-                  <span className="text-[13px] text-[var(--text-primary)] text-right"><span className="mr-1.5">{selectedEvent.location.flag}</span>{selectedEvent.location.city}, {selectedEvent.location.country}</span>
+                  <span className="text-[13px] text-[var(--text-primary)] text-right"><span className="mr-1.5">{countryCodeToEmoji(selectedEvent.location.country)}</span>{selectedEvent.location.city}, {selectedEvent.location.country}</span>
                 </div>
                 <DetailRow label="ASN / ISP" value={`${selectedEvent.location.asn} - ${selectedEvent.location.isp}`} />
                 <DetailRow label="Coordinates" value={selectedEvent.location.lat ? `${selectedEvent.location.lat}, ${selectedEvent.location.long}` : '—'} valueClass="font-mono text-[11px]" />
