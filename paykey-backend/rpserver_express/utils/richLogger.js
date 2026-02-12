@@ -7,10 +7,11 @@ const generateEventID = () => `evt__${customAlphabet('0123456789ABCDEF', 10)()}`
 
 async function createRichAuthLog(req, user, context) {
     try {
-        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        if (ip.includes(',')) {
+        let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+        if (typeof ip === 'string' && ip.includes(',')) {
             ip = ip.split(',')[0].trim();
         }
+
         const userAgentString = req.headers['user-agent'] || '';
 
         // 1. Parse User Agent
