@@ -21,7 +21,7 @@ function getEventDescription(status) {
 
 exports.initiateTransaction = async (req, res) => {
     try {
-        const { email, amount, currency, location, merchantName, device_telemetry, beneficiaryAccount } = req.body;
+        const { email, amount, currency, location, merchantName, telemetry, beneficiaryAccount } = req.body;
 
         console.log("-------------------------------------------------");
         console.log("INCOMING PAYLOAD:", JSON.stringify(req.body, null, 2)); 
@@ -45,16 +45,16 @@ exports.initiateTransaction = async (req, res) => {
 
         // 3. GEOIP & TELEMETRY
         const netInfo = getNetworkInfo(ip); 
-        const telemetry = device_telemetry || {};
+        const telemetryData = telemetry || {};
         
         // Lokasi
         const ipLocationString = (netInfo.city !== 'Unknown City') ? `${netInfo.city}, ${netInfo.country}` : null;
-        const finalLocationString = telemetry.device_address || ipLocationString || location || "Unknown, UN";
+        const finalLocationString = telemetryData.device_address || ipLocationString || location || "Unknown, UN";
         const countryCode = finalLocationString.split(',')[1]?.trim() || netInfo.country || "UN";
 
         // [BARU] Deteksi Channel untuk Auth Policy (MOBILE / WEB / API)
         let detectedChannel = 'WEB'; // Default
-        const deviceModel = (telemetry.device_model || '').toLowerCase();
+        const deviceModel = (telemetryData.device_model || '').toLowerCase();
         if (req.headers['x-client-type'] === 'API') {
             detectedChannel = 'API';
         } else if (deviceModel.includes('android') || deviceModel.includes('ios') || deviceModel.includes('iphone')) {

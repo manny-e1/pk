@@ -79,9 +79,11 @@ async function createRichAuthLog(req, user, context) {
                 raw_header: rawIpHeader // Header mentah untuk debug
             },
             device_info: {
-                browser: uaResult.browser.name,
-                os: `${uaResult.os.name} ${uaResult.os.version}`,
-                type: uaResult.device.type || 'mobile'
+                browser: telemetry.browser_name || uaResult.browser.name || 'App',
+                os: telemetry.os_name 
+                    ? `${telemetry.os_name} ${telemetry.os_version}` 
+                    : `${uaResult.os.name} ${uaResult.os.version}`,
+                type: telemetry.device_type || uaResult.device.type || 'mobile' || 'desktop',
             },
             timestamp: new Date().toISOString()
         };

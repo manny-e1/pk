@@ -71,6 +71,7 @@ export const authService = {
         origin: window.location.origin,
         rpId: "console.authkey.my",
         tokenBinding: null,
+        telemetry: telemetry || null,
       };
 
       // Backend akan set Cookie 'auth_token' jika ini sukses
@@ -106,6 +107,7 @@ export const authService = {
         origin: window.location.origin,
         rpId: "console.authkey.my",
         tokenBinding: null,
+        telemetry: telemetry || null,
       };
       return apiRequest("/reg/complete", "POST", payload);
     } catch (error) {

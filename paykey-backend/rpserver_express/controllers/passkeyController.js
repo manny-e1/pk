@@ -46,9 +46,9 @@ const parseClientData = (body) => {
 // ==========================================
 exports.registerStart = async (req, res) => {
     try {
-        const { username, fullName, mobile, telemetry } = req.body;
+        const { username, fullName, displayName, mobile, telemetry } = req.body;
         let user = await prisma.user.findUnique({ where: { email: username } });
-        if (!user) user = await prisma.user.create({ data: { email: username, fullName: fullName, mobile: mobile || null }, });
+        if (!user) user = await prisma.user.create({ data: { email: username, fullName: fullName || displayName || username, mobile: mobile || null }, });
 
         const result = await fidoService.initiateChallenge('REGISTRATION', user, RP_ID);
         if (result.status === 200) {
@@ -62,6 +62,8 @@ exports.registerStart = async (req, res) => {
 
 exports.registerComplete = async (req, res) => {
     try {
+        console.log("RegComplete Payload:", req.body);
+
         const credential = normalizeCredential(req.body);
         const clientData = parseClientData(req.body);
         const challenge = clientData.challenge;
@@ -87,13 +89,13 @@ exports.registerComplete = async (req, res) => {
             
             const user = await prisma.user.findUnique({ where: { id: context.userId } });
 
-            const deviceName = context.telemetry && context.telemetry.device_model ? context.telemetry.device_model : 'Unnamed Device';
+            const deviceName = req.body.telemetry.device_model || req.body.telemetry.device_type || 'Unnamed Device';
 
             const existingKey = await prisma.userKey.findUnique({ where: { credentialId: credential.id } });
                 if (existingKey) {
                     await prisma.userKey.update({
                         where: { credentialId: credential.id },
-                        data: { deviceName: deviceName, deviceTelemetry: context.telemetry}
+                        data: { deviceName: deviceName, deviceTelemetry: req.body.telemetry}
                     });   
                 }
 
@@ -103,7 +105,7 @@ exports.registerComplete = async (req, res) => {
                 status: 'SUCCESS',
                 authMethod: 'FIDO2_PASSKEY',
                 data: { 
-                telemetry: context.telemetry || null,
+                telemetry: req.body.telemetry,
                 tags: [{ label: context.telemetry && context.telemetry.device_type === 'mobile' ? 'Platform' : 'Hardware Key', class: 'success' }] 
             }
             });
@@ -190,7 +192,7 @@ exports.loginComplete = async (req, res) => {
                     tags: [
                         { label: `Device ${deviceStatus}`, class: 'error' }
                     ],
-                    telemetry: context.telemetry || null
+                    telemetry: context.telemetry || req.body.telemetry || null
 
                 }
             });
@@ -207,7 +209,7 @@ exports.loginComplete = async (req, res) => {
             status: 'SUCCESS',
             authMethod: 'FIDO2_PASSKEY',
             data: { 
-                telemetry: context.telemetry || null,
+                telemetry: context.telemetry || req.body.telemetry || null,
                 tags: [{ label: req.headers['x-client-type'] === 'MOBILE' ? 'Platform' : 'Hardware Key', class: 'success' }] 
             }
         });
@@ -421,7 +423,9 @@ exports.transactionStepUpComplete = async (req, res) => {
                 data: { 
                     tags: [
                         { label: `Device ${deviceStatus}`, class: 'error' }
-                    ]
+                    ],
+                    telemetry: context.telemetry || req.body.telemetry || null
+
                 }
             });
             return res.status(403).json({ 
