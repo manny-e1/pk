@@ -1,15 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/authService';
+import { deviceService ,DeviceTelemetry} from '@/services/systemDevice';
 
 export default function SignupPage() {
   const router = useRouter();
 
   // --- STATE ---
   const [selectedMethod, setSelectedMethod] = useState<'password' | 'passkey'>('password');
+
+  const [cachedTelemetry, setCachedTelemetry] = useState<DeviceTelemetry | null>(null);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -18,6 +21,21 @@ export default function SignupPage() {
     password: '',
     confirmPassword: ''
   });
+
+  useEffect(() => {
+    const initTelemetry = async () => {
+        try {
+            const data = await deviceService.getDeviceTelemetry();
+            
+            setCachedTelemetry(data);
+            console.log("✅ Telemetry ready:", data);
+        } catch (e) {
+            console.warn("⚠️ Silent telemetry check failed/denied:", e);
+        }
+    };
+
+    initTelemetry();
+  }, []);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -93,13 +111,16 @@ export default function SignupPage() {
         setModalState('loading');
         setModalOpen(true);
 
+        const telemetry = cachedTelemetry || await deviceService.getDeviceTelemetry();
+
         try {
             await authService.registerPassword(
                 formData.fullName, 
                 formData.email, 
                 formData.password,
                 "Personal", 
-                formData.mobile
+                formData.mobile,
+                telemetry
             );
 
             setModalState('success');
@@ -120,7 +141,8 @@ export default function SignupPage() {
   const startPasskeyProcess = async () => {
     setModalState('loading');
     try {
-        await authService.registerPasskey(formData.email, formData.fullName);
+        const telemetry = cachedTelemetry || await deviceService.getDeviceTelemetry();
+        await authService.registerPasskey(formData.email, formData.fullName, formData.mobile, telemetry);
         setModalState('success');
         localStorage.setItem('paykey_last_user_email', formData.email);
     } catch (error: any) {

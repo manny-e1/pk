@@ -1,10 +1,11 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/services/authService';
+import { deviceService ,DeviceTelemetry} from '@/services/systemDevice';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,8 @@ export default function LoginPage() {
   // --- STATE ---
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [cachedTelemetry, setCachedTelemetry] = useState<DeviceTelemetry | null>(null);
 
   // Status Verifikasi User (Untuk mengubah tampilan Email -> Widget)
   const [verifiedUser, setVerifiedUser] = useState<{
@@ -30,6 +33,22 @@ export default function LoginPage() {
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   // --- LOGIC ---
+
+  useEffect(() => {
+      const initTelemetry = async () => {
+          try {
+              const data = await deviceService.getDeviceTelemetry();
+              
+              setCachedTelemetry(data);
+              console.log("✅ Telemetry ready:", data);
+          } catch (e) {
+              console.warn("⚠️ Silent telemetry check failed/denied:", e);
+          }
+      };
+  
+      initTelemetry();
+    }, []);
+  
 
   const handleError = (msg: string) => {
     setIsLoading(false);
@@ -95,9 +114,11 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       // Jika email belum diverifikasi (user langsung isi pass & enter), gunakan email dari input
+      const telemetry = cachedTelemetry || await deviceService.getDeviceTelemetry();
+
       const loginEmail = verifiedUser ? verifiedUser.email : email;
 
-      await authService.loginPassword(loginEmail, password);
+      await authService.loginPassword(loginEmail, password, telemetry);
       localStorage.setItem('paykey_last_user_email', loginEmail);
       router.push('/dashboard');
     } catch (err: any) {
@@ -112,7 +133,8 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
-      await authService.loginPasskey(verifiedUser.email);
+      const telemetry = cachedTelemetry || await deviceService.getDeviceTelemetry();
+      await authService.loginPasskey(verifiedUser.email, telemetry);
       localStorage.setItem('paykey_last_user_email', verifiedUser.email);
       router.push('/dashboard');
     } catch (err: any) {

@@ -1,6 +1,9 @@
 const prisma = require('../config/db'); 
 const { getNetworkInfo } = require('./geoIpService');
 const UAParser = require('ua-parser-js');
+const { customAlphabet } = require('nanoid');
+
+const generateEventID = () => `evt__${customAlphabet('0123456789ABCDEF', 10)()}`;
 
 async function createRichAuthLog(req, user, context) {
     try {
@@ -54,6 +57,7 @@ async function createRichAuthLog(req, user, context) {
         // 4. Simpan ke Database
         await prisma.authLog.create({
             data: {
+                id: generateEventID(),
                 email: user.email,
                 eventType: context.eventType || 'AUTH_EVENT',
                 authMethod: context.authMethod || 'UNKNOWN',

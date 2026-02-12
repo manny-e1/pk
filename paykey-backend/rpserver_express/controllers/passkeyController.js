@@ -46,13 +46,13 @@ const parseClientData = (body) => {
 // ==========================================
 exports.registerStart = async (req, res) => {
     try {
-        const { username } = req.body;
+        const { username, fullName, mobile, telemetry } = req.body;
         let user = await prisma.user.findUnique({ where: { email: username } });
-        if (!user) user = await prisma.user.create({ data: { email: username, fullName: username } });
+        if (!user) user = await prisma.user.create({ data: { email: username, fullName: fullName, mobile: mobile || null }, });
 
         const result = await fidoService.initiateChallenge('REGISTRATION', user, RP_ID);
         if (result.status === 200) {
-            await saveContext(result.data.challenge, result.data.sessionId, { purpose: 'REG', userId: user.id });
+            await saveContext(result.data.challenge, result.data.sessionId, { purpose: 'REG', userId: user.id, telemetry });
         }
         res.status(result.status).json(result.data);
     } catch (err) {
@@ -86,15 +86,25 @@ exports.registerComplete = async (req, res) => {
             await redisClient.del(`ctx:${challenge}`);
             
             const user = await prisma.user.findUnique({ where: { id: context.userId } });
-            
+
+            const deviceName = context.telemetry && context.telemetry.device_model ? context.telemetry.device_model : 'Unnamed Device';
+
+            const existingKey = await prisma.userKey.findUnique({ where: { credentialId: credential.id } });
+                if (existingKey) {
+                    await prisma.userKey.update({
+                        where: { credentialId: credential.id },
+                        data: { deviceName: deviceName, deviceTelemetry: context.telemetry}
+                    });   
+                }
+
             // Log Sukses menggunakan Rich Logger
             await createRichAuthLog(req, user, { 
                 eventType: 'Passkey Registered', 
                 status: 'SUCCESS',
                 authMethod: 'FIDO2_PASSKEY',
                 data: { 
-                telemetry: req.body.device_telemetry,
-                tags: [{ label: req.headers['x-client-type'] === 'MOBILE' ? 'Platform' : 'Hardware Key', class: 'success' }] 
+                telemetry: context.telemetry || null,
+                tags: [{ label: context.telemetry && context.telemetry.device_type === 'mobile' ? 'Platform' : 'Hardware Key', class: 'success' }] 
             }
             });
         }
@@ -112,12 +122,19 @@ exports.registerComplete = async (req, res) => {
 // ==========================================
 exports.loginStart = async (req, res) => {
     try {
-        const { username } = req.body;
-        const user = await prisma.user.findUnique({ where: { email: username } });
+        const { username ,telemetry} = req.body;
+        console.log("LoginStart Telemetry:", telemetry);
+
+        const user = await prisma.user.findUnique({ where: { email: username} });
+
+        if (user.status === 'suspended') {
+            return res.status(403).json({ error: 'Account Suspended' });
+        }
+
         const result = await fidoService.initiateChallenge('AUTH', user || { id: null }, RP_ID);
         
         if (result.status === 200) {
-            await saveContext(result.data.challenge, result.data.sessionId, { purpose: 'LOGIN', userId: user?.id });
+            await saveContext(result.data.challenge, result.data.sessionId, { purpose: 'LOGIN', userId: user?.id, telemetry },);
         }
         res.status(result.status).json(result.data);
     } catch (err) {
@@ -127,6 +144,8 @@ exports.loginStart = async (req, res) => {
 
 exports.loginComplete = async (req, res) => {
     try {
+        console.log("LoginComplete Payload:", req.body);
+
         const credential = normalizeCredential(req.body);
         const clientData = parseClientData(req.body);
         const challenge = clientData.challenge;
@@ -156,8 +175,29 @@ exports.loginComplete = async (req, res) => {
             where: { credentialId: credential.id }, 
             include: { user: true } 
         });
+
         
-        if (!userKey || !userKey.user) return res.status(401).json({ error: "Kunci tidak terdaftar" });
+        if (!userKey || !userKey.user) return res.status(401).json({ error: "Key not registered" });
+
+        const deviceStatus = (userKey.status || '').toLowerCase();
+        
+        if (deviceStatus === 'suspended' || deviceStatus === 'revoked') {
+            createRichAuthLog(req, userKey.user, {
+                eventType: `Device ${deviceStatus}`,
+                status: 'BLOCKED',
+                authMethod: 'FIDO2_PASSKEY',
+                data: { 
+                    tags: [
+                        { label: `Device ${deviceStatus}`, class: 'error' }
+                    ],
+                    telemetry: context.telemetry || null
+
+                }
+            });
+            return res.status(403).json({ 
+                error: `This device has been ${deviceStatus}. Please contact support.`
+            });
+        }
 
         await redisClient.del(`ctx:${challenge}`);
         sendTokenCookie(res, userKey.user);
@@ -167,7 +207,7 @@ exports.loginComplete = async (req, res) => {
             status: 'SUCCESS',
             authMethod: 'FIDO2_PASSKEY',
             data: { 
-                telemetry: req.body.device_telemetry,
+                telemetry: context.telemetry || null,
                 tags: [{ label: req.headers['x-client-type'] === 'MOBILE' ? 'Platform' : 'Hardware Key', class: 'success' }] 
             }
         });
@@ -360,8 +400,33 @@ exports.transactionStepUpComplete = async (req, res) => {
         };
 
         const result = await fidoService.verifyResponse('AUTH', javaPayload);
-        // Note: Jika Anda menggunakan proxyToJava, ganti baris di atas dengan:
-        // const result = await proxyToJava('/api/paykey/auth/verify', javaPayload);
+        
+        if (result.status !== 200) return res.status(401).json({ error: "Biometrik salah" });
+
+        const userKey = await prisma.userKey.findUnique({ 
+            where: { credentialId: credential.id }, 
+            include: { user: true } 
+        });
+
+        if (!userKey || !userKey.user) return res.status(401).json({ error: "Key not registered" });
+
+        const deviceStatus = (userKey.status || '').toLowerCase();
+        
+        if (deviceStatus === 'suspended' || deviceStatus === 'revoked') {
+            createRichAuthLog(req, userKey.user, {
+                eventType: `Device ${deviceStatus}`,
+                status: 'BLOCKED',
+                authMethod: 'FIDO2_PASSKEY',
+                data: { 
+                    tags: [
+                        { label: `Device ${deviceStatus}`, class: 'error' }
+                    ]
+                }
+            });
+            return res.status(403).json({ 
+                error: `This device has been ${deviceStatus}. Please contact support.`
+            });
+        }
 
         // ============================================================
         // DEFINISI HELPER UPDATE LOG (DI DALAM FUNGSI UTAMA)

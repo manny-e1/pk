@@ -7,60 +7,65 @@ const safeJsonParse = (str) => {
     catch (e) { return []; }
 };
 
-// Helper: Geo Location Sederhana
-async function getGeoInfo(ip) {
-    if (!ip) return 'Unknown';
-    if (ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.')) {
-        return 'Localhost, Private Network';
-    }
-    try {
-        // Timeout pendek agar tidak bikin loading lama
-        const res = await axios.get(`http://ip-api.com/json/${ip}?fields=city,country`, { timeout: 800 });
-        if (res.data && res.data.city) {
-            return `${res.data.city}, ${res.data.country}`;
-        }
-    } catch (e) {
-        // Ignore error
-    }
-    return 'Unknown Location';
-}
-
-/// 1. GET ALL DEVICES (GLOBAL ADMIN VIEW)
 exports.getUserDevices = async (req, res) => {
     const { email } = req.query;
 
     try {
-        // [FIX] Jika ada email, filter by email. Jika tidak, ambil SEMUA (Global).
+        // 1. Filter User Key berdasarkan Email (jika ada)
         const whereClause = email ? { user: { email: email } } : {};
 
         const devices = await prisma.userKey.findMany({
             where: whereClause,
-            include: { user: true }, // [FIX] Include data User (Table User) agar kita tahu siapa pemiliknya
+            include: { user: true },
             orderBy: { lastActive: 'desc' }
         });
 
         const formatted = await Promise.all(devices.map(async (d) => {
-            const location = await getGeoInfo(d.lastUsedIp);
-
-            // Filter log statistik
-            const deviceNameFilter = d.deviceName ? { device: d.deviceName } : {};
-            // Jika memfilter spesifik user, tambahkan filter email
+            
+            // 2. Siapkan Filter untuk AuthLog (Match by Email & Device Name)
+            const logFilter = {};
+            
+            // Filter by Email User pemilik device
             if (d.user && d.user.email) {
-                deviceNameFilter.email = d.user.email;
+                logFilter.email = d.user.email;
             }
 
-            const logStats = await prisma.authLog.aggregate({
-                _count: { id: true },
-                where: deviceNameFilter
-            });
+            // Filter by Device Name (Pastikan device name ada)
+            if (d.deviceName) {
+                // Kita gunakan exact match. 
+                // Jika ingin lebih loose (misal nama browser berubah versi), bisa pakai 'contains'
+                logFilter.device = d.deviceName; 
+            }
 
-            const successCount = await prisma.authLog.count({
-                where: { ...deviceNameFilter, status: 'SUCCESS' }
-            });
+            // 3. AMBIL STATISTIK (Count Total & Success)
+            // Kita jalankan parallel agar cepat
+            const [totalLogs, successCount, recentLogs] = await Promise.all([
+                // A. Hitung Total Log Device ini
+                prisma.authLog.count({ where: logFilter }),
+                
+                // B. Hitung Success Log Device ini
+                prisma.authLog.count({ where: { ...logFilter, status: 'SUCCESS' } }),
 
-            const totalLogs = logStats._count.id;
+                // C. [BARU] Ambil 3 Aktivitas Terakhir untuk Device ini
+                prisma.authLog.findMany({
+                    where: logFilter,
+                    orderBy: { createdAt: 'desc' },
+                    take: 3, // Ambil 3 saja
+                    select: {
+                        id: true,
+                        eventType: true,
+                        status: true,
+                        ipAddress: true,
+                        location: true,
+                        createdAt: true
+                    }
+                })
+            ]);
+
+            // 4. Hitung Success Rate
             const successRate = totalLogs > 0 ? Math.round((successCount / totalLogs) * 100) + '%' : '100%'; 
             
+            // 5. Logika Sign Counter (Approvals)
             let approvals = 0;
             const isJustActive = (new Date() - new Date(d.lastActive)) < 60000;
 
@@ -68,21 +73,48 @@ exports.getUserDevices = async (req, res) => {
                 approvals = d.signCounter.toString();
             } else {
                 approvals = successCount;
-                if (approvals === 0 && isJustActive) approvals = 1;
+                if (approvals == 0 && isJustActive) approvals = 1;
                 approvals = approvals.toString();
             }
 
+            // 6. [BARU] Tentukan Last IP
+            // Prioritas: IP dari Log terakhir > IP dari tabel UserKey > Unknown
+            const lastIpFromLog = recentLogs.length > 0 ? recentLogs[0].ipAddress : null;
+            const finalLastIp = lastIpFromLog || d.lastUsedIp || 'Unknown IP';
+
+            // 7. [BARU] Format Recent Activity
+            const formattedRecent = recentLogs.map(log => ({
+                event: log.eventType,
+                status: log.status,
+                ip: log.ipAddress,
+                location: log.location,
+                time: log.createdAt // Frontend bisa format tanggalnya
+            }));
+
+            // 8. Return Data Lengkap
             return {
                 ...d,
                 id: d.id.toString(),
                 credentialId: d.credentialId,
                 signCounter: approvals,
                 transports: safeJsonParse(d.transports),
-                location: location,
+                
+                // Location & Telemetry
+                location: d.deviceTelemetry?.device_address || d.deviceTelemetry?.timezone || 'Unknown Location',
+                osName: d.deviceTelemetry?.os_name || 'Unknown OS',
+                deviceModel: d.deviceTelemetry?.device_model || 'Unknown Model',
+                osVersion: d.deviceTelemetry?.os_version || 'Unknown Version',
+                
+                // Statistik
                 successRate: successRate,
-                // [FIX] Pastikan info pemilik device diambil dari relasi User
+                
+                // Owner Info
                 ownerName: d.user ? d.user.fullName : (d.userDisplayName || 'Unknown User'),
-                ownerEmail: d.user ? d.user.email : (d.username || 'No Email')
+                ownerEmail: d.user ? d.user.email : (d.username || 'No Email'),
+
+                // [BARU] Data Tambahan
+                lastIp: finalLastIp,
+                recentActivity: formattedRecent
             };
         }));
 

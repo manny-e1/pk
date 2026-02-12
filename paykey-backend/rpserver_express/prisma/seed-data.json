@@ -166,11 +166,19 @@
   ],
   "rp": [
     {
-      "description": "Server PayKey Utama",
+      "id": "console.authkey.my",
+      "description": "console PayKey",
       "icon": null,
       "name": "PayKey Server"
     },
     {
+      "id": "api.authkey.my",
+      "description": "Server PayKey",
+      "icon": null,
+      "name": "PayKey Server"
+    },
+    {
+      "id": "localhost",
       "description": "example1",
       "icon": null,
       "name": "example1"

@@ -24,7 +24,7 @@ exports.sendTokenCookie = (res, user) => {
         // Jangan true di localhost! Browser akan menolak cookie-nya.
         secure: isProduction, 
 
-        domain: '.authkey.my',
+        domain: isProduction ? '.authkey.my' : 'localhost',
         
         // 'lax' paling aman untuk navigasi normal
         sameSite: 'lax' 

@@ -2,13 +2,14 @@ const bcrypt = require('bcrypt');
 const prisma = require('../config/db');
 const { sendTokenCookie } = require('../utils/jwt');
 const { createRichAuthLog } = require('../utils/richLogger'); 
+const {ge0tNetworkInfo} = require('../utils/geoIpService');
 
 // ==================================================================
 // CONTROLLERS
 // ==================================================================
 
 exports.registerPassword = async (req, res) => {
-    const { fullName, email, password, companyName, mobile, role, device_telemetry } = req.body;
+    const { fullName, email, password, companyName, mobile, role, telemetry } = req.body;
     
     try {
         // 1. Hash Password
@@ -19,11 +20,17 @@ exports.registerPassword = async (req, res) => {
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
             await createRichAuthLog(req, { email, id: 'unknown' }, {
-                eventType: 'REGISTRATION_FAILED',
-                status: 'FAILED',
-                authMethod: 'PASSWORD',
-                message: 'Email already exists'
-            });
+            eventType: 'Registration Failed',
+            status: 'FAILED',
+            authMethod: 'PASSWORD',
+            data: {
+                tags: [
+                    { label: 'Registration Failed', class: 'error' }
+                ],
+                reason: 'Email already registered', 
+                errorCode: 'REG_002'
+            }
+        });
             return res.status(400).json({ error: 'Email already registered' });
         }
 
@@ -35,13 +42,16 @@ exports.registerPassword = async (req, res) => {
             }
         });
 
-        // 3. Log Success (Modular)
-        await createRichAuthLog(req, newUser, {
-            eventType: 'REGISTRATION_SUCCESS',
+        await createRichAuthLog(req, { email, id: 'unknown' }, {
+            eventType: 'Registration Success',
             status: 'SUCCESS',
             authMethod: 'PASSWORD',
-            message: 'User registered via Password',
-            data: { telemetry: device_telemetry } // Sertakan telemetry di metadata log
+            data: {
+                tags: [
+                    { label: 'Registration Success', class: 'success' }
+                ],
+                telemetry: telemetry || null
+            }
         });
         
         // 4. Send Token
@@ -50,19 +60,26 @@ exports.registerPassword = async (req, res) => {
 
     } catch (err) {
         console.error("[Register] Error:", err);
-        // 5. Log Failed
+        
         await createRichAuthLog(req, { email, id: 'unknown' }, {
-            eventType: 'REGISTRATION_FAILED',
+            eventType: 'Registration Failed',
             status: 'FAILED',
             authMethod: 'PASSWORD',
-            message: err.message
+            data: {
+                tags: [
+                    { label: 'Registration Failed', class: 'error' }
+                ],
+                reason: err.message, 
+                errorCode: 'REG_001',
+                telemetry: telemetry || null
+            }
         });
         res.status(500).json({ error: 'Registration failed' });
     }
 };
 
 exports.loginPassword = async (req, res) => {
-    const { email, password, device_telemetry } = req.body;
+    const { email, password, telemetry } = req.body;
     
     try {
         const user = await prisma.user.findUnique({ where: { email } });
@@ -70,10 +87,15 @@ exports.loginPassword = async (req, res) => {
         // Cek User Existence
         if (!user || !user.passwordHash) {
             await createRichAuthLog(req, { email, id: 'unknown' }, {
-                eventType: 'LOGIN_FAILED',
+                eventType: 'Login Failed',
                 status: 'FAILED',
                 authMethod: 'PASSWORD',
-                message: 'User Not Found or No Password set'
+                data: {
+                    tags: [
+                        { label: 'User Not Found or No Password set', class: 'error' }
+                    ],
+                    telemetry: telemetry || null
+                }
             });
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -82,10 +104,15 @@ exports.loginPassword = async (req, res) => {
         // [OPSIONAL] Hapus blok ini jika User biasa boleh login password
         if (user.role !== 'ADMIN') {
             await createRichAuthLog(req, user, {
-                eventType: 'LOGIN_BLOCKED',
+                eventType: 'Login Blocked - Role Mismatch',
                 status: 'BLOCKED',
                 authMethod: 'PASSWORD',
-                message: 'Role Mismatch (Admin Only)'
+                data: {
+                    tags: [
+                        { label: 'Role Mismatch (Admin Only)', class: 'error' }
+                    ],
+                    telemetry: telemetry || null
+                }
             });
             return res.status(403).json({ error: 'Access Denied', message: 'Admins only.' });
         }
@@ -93,10 +120,16 @@ exports.loginPassword = async (req, res) => {
         // Cek Status Akun
         if (user.status === 'suspended') {
             await createRichAuthLog(req, user, {
-                eventType: 'LOGIN_BLOCKED',
+                eventType: 'Login Blocked - Account Suspended',
                 status: 'BLOCKED',
                 authMethod: 'PASSWORD',
-                message: 'Account Suspended'
+                data: {
+                    tags: [
+                        { label: 'Account Suspended', class: 'error' }
+                    ],
+                    telemetry: telemetry || null
+                }
+
             });
             return res.status(403).json({ error: 'Account Suspended' });
         }
@@ -105,21 +138,31 @@ exports.loginPassword = async (req, res) => {
         const match = await bcrypt.compare(password, user.passwordHash);
         if (!match) {
             await createRichAuthLog(req, user, {
-                eventType: 'LOGIN_FAILED',
+                eventType: 'Login Failed - Wrong Password',
                 status: 'FAILED',
                 authMethod: 'PASSWORD',
-                message: 'Wrong Password'
+                data: {
+                    tags: [
+                        { label: 'Wrong Password', class: 'error' }
+                    ],
+                    telemetry: telemetry || null
+                }
             });
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
         // Log Success (Modular)
         await createRichAuthLog(req, user, {
-            eventType: 'LOGIN_SUCCESS',
+            eventType: 'Login Success',
             status: 'SUCCESS',
             authMethod: 'PASSWORD',
             message: 'Password Login Approved',
-            data: { telemetry: device_telemetry }
+            data: {
+                tags: [
+                    { label: 'Login Success', class: 'success' }
+                ],
+                telemetry: telemetry || null
+            }
         });
         
         sendTokenCookie(res, user);

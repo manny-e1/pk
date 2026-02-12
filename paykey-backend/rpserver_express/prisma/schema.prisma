@@ -177,6 +177,7 @@ model UserKey {
   userId                  String    @map("user_id") @db.VarChar(128)
   username                String?   @db.VarChar(64)
   deviceName              String?   @map("device_name")
+  deviceTelemetry         Json?     @map("device_telemetry")
   lastActive              DateTime  @default(now()) @updatedAt @map("last_active")
   lastStatusChange        DateTime  @default(now()) @map("last_status_change")
   lastUsedIp              String?   @map("last_used_ip")
@@ -194,7 +195,7 @@ model UserKey {
 }
 
 model AuthLog {
-  id            Int      @id @default(autoincrement())
+  id            String   @id
   email         String
   eventType     String   @map("event_type")
   authMethod    String   @map("auth_method")

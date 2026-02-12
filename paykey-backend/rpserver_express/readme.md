@@ -37,3 +37,19 @@ rpserver_express/
 ├── .env                        # Password DB & Secret Keys
 ├── server.js                   # Entry Point (Menjalankan Server Express)
 └── package.json                # Daftar Library (Dependencies)
+
+
+
+
+#database migration 
+
+# delete all db
+npx prisma migrate reset
+
+# migrate model DB
+npx prisma migrate dev --name change_id_to_string
+
+# seeder
+
+npx prisma db seed
+

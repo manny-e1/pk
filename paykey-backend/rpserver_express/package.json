@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node server.js"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@maxmind/geoip2-node": "^6.3.4",

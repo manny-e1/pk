@@ -49,6 +49,14 @@ async function main() {
       });
   }
 
+  if (seedData.rp && seedData.rp.length > 0) {
+      console.log(`   - Seeding ${seedData.rp.length} RP Entries...`);
+      await prisma.rp.createMany({
+        data: seedData.rp,
+        skipDuplicates: true,
+      });
+  }
+
   console.log('✅ Seeding completed.');
 }
 

@@ -1,8 +1,14 @@
+import { ReactNode } from "react";
 
 
 export type DeviceStatus = 'active' | 'suspended' | 'revoked';
 
 export interface Device {
+  recentActivity: any;
+  lastIp: ReactNode;
+  osVersion: ReactNode;
+  osName: ReactNode;
+  deviceModel: ReactNode;
   id: string;              // Credential ID (API key)
   dbId: string;            // Database Internal ID
   name: string;            // Device Name

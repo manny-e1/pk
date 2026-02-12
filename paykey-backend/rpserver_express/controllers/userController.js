@@ -13,17 +13,17 @@ exports.getAllUsers = async (req, res) => {
             // Logic initials
             initials: user.fullName ? user.fullName.match(/\b\w/g || []).shift() + (user.fullName.split(' ').length > 1 ? user.fullName.split(' ').pop()[0] : '') : 'U',
             email: user.email,
-            mobile: "+62 812 3456 7890", 
+            mobile: user.mobile || 'N/A', 
             
             // PENTING: Ambil status asli dari DB
             status: user.status || 'active', 
 
             joined: new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            lastActive: 'Now',
+            lastActive: user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never',
             devices: user.keys.map(key => ({
                 id: key.id.toString(),
                 name: key.deviceName || 'Unknown Device',
-                model: 'FIDO2 Token',
+                model: key.credentialId,
                 type: (key.deviceName && key.deviceName.toLowerCase().includes('phone')) ? 'mobile' : 'desktop',
                 status: key.status ? key.status.toLowerCase() : 'active',
                 lastUsed: new Date(key.lastActive).toLocaleDateString()

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@simplewebauthn/browser": "^13.2.2",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.26.2",
@@ -20,12 +20,14 @@
     "react": "19.2.3",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.3",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "ua-parser-js": "^2.0.9"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19",
+    "@types/ua-parser-js": "^0.7.39",
     "autoprefixer": "^10.4.17",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",

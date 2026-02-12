@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Device } from '@/lib/types';
 
-const API_URL = 'https://api.authkey.my/api'; // Sesuaikan port backend
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
 
 // Helper untuk format tanggal
 const formatDate = (dateString: string) => {
@@ -22,7 +22,7 @@ const parseDeviceType = (name: string): string => {
 export const deviceService = {
   // 1. GET ALL DEVICES
   getAll: async (userEmail: string): Promise<Device[]> => {
-    const { data } = await axios.get(`${API_URL}/devices?email=${userEmail}`);
+    const { data } = await axios.get(`${API_URL}/api/devices?email=${userEmail}`);
     
     // MAPPING DATA BACKEND -> FRONTEND
     // Backend mengirim field: deviceName, credentialId, status, lastActive, dll.
@@ -49,17 +49,17 @@ export const deviceService = {
 
   // 2. SUSPEND / REACTIVATE
   toggleStatus: async (credentialId: string, newStatus: 'ACTIVE' | 'SUSPENDED') => {
-    return await axios.put(`${API_URL}/devices/${credentialId}/status`, { status: newStatus });
+    return await axios.put(`${API_URL}/api/devices/${credentialId}/status`, { status: newStatus });
   },
 
   // 3. REVOKE (HAPUS/BLOCK PERMANEN)
   revoke: async (credentialId: string, reason: string) => {
     // Revoke biasanya sama dengan status REVOKED di backend
-    return await axios.put(`${API_URL}/devices/${credentialId}/status`, { status: 'REVOKED' });
+    return await axios.put(`${API_URL}/api/devices/${credentialId}/status`, { status: 'REVOKED' });
   },
   
   // 4. RENAME
   rename: async (credentialId: string, newName: string) => {
-    return await axios.put(`${API_URL}/devices/${credentialId}/rename`, { newName });
+    return await axios.put(`${API_URL}/api/devices/${credentialId}/rename`, { newName });
   }
 };

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Device } from '@/lib/types';
 
-const API_URL = 'https://api.authkey.my/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
 
 // [FIX] Parameter userEmail sekarang opsional (tanda tanya ?)
 export function useDevices(userEmail?: string) {
@@ -16,7 +16,7 @@ export function useDevices(userEmail?: string) {
       setLoading(true);
       // [FIX] Jika userEmail ada, pakai query ?email=... jika tidak, kosongkan (Get All)
       const query = userEmail ? `?email=${userEmail}` : '';
-      const res = await axios.get(`${API_URL}/devices${query}`);
+      const res = await axios.get(`${API_URL}/api/devices${query}`);
       
       const mappedData: Device[] = res.data.map((d: any) => ({
         id: d.credentialId,
@@ -24,6 +24,9 @@ export function useDevices(userEmail?: string) {
         name: d.deviceName || 'Unknown Device',
         type: (d.deviceName || '').toLowerCase().includes('mobile') ? 'mobile' : 'desktop',
         model: d.deviceName || 'Unknown Model',
+        deviceModel: d.deviceModel || 'Unknown Model',
+        osName: d.osName || 'Unknown OS',
+        osVersion: d.osVersion || 'Unknown Version',
         
         // [FIX] Gunakan data owner yang dikirim backend
         user: d.ownerName || d.userDisplayName || 'Unknown',
@@ -38,9 +41,11 @@ export function useDevices(userEmail?: string) {
         registered: new Date(d.registeredTimestamp).toLocaleDateString(),
         credential: d.credentialId,
         approvals: parseInt(d.signCounter) || 0,
-        ip: d.lastUsedIp || '-',
+        ip: d.lastIp || '-',
         location: d.location || 'Unknown',
-        rate: d.successRate || '-'
+        rate: d.successRate || '-',
+        recentActivity: d.recentActivity || '-',
+        
       }));
 
       setDevices(mappedData);
@@ -56,12 +61,12 @@ export function useDevices(userEmail?: string) {
   }, [fetchDevices]);
 
   const toggleStatus = async (id: string, status: 'ACTIVE' | 'SUSPENDED' | 'REVOKED') => {
-    await axios.put(`${API_URL}/devices/${id}/status`, { status });
+    await axios.put(`${API_URL}/api/devices/${id}/status`, { status });
     await fetchDevices();
   };
 
   const renameDevice = async (id: string, newName: string) => {
-    await axios.put(`${API_URL}/devices/${id}/rename`, { newName });
+    await axios.put(`${API_URL}/api/devices/${id}/rename`, { newName });
     await fetchDevices();
   };
 

@@ -2,8 +2,9 @@ import {
   startRegistration,
   startAuthentication,
 } from "@simplewebauthn/browser";
+import { DeviceTelemetry } from "./systemDevice";
 
-const API_BASE = "https://api.authkey.my";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
 
 // --- Helper Request (Global) ---
 async function apiRequest(
@@ -23,7 +24,7 @@ async function apiRequest(
   
   if (body) config.body = JSON.stringify(body);
 
-  const res = await fetch(`${API_BASE}${endpoint}`, config);
+  const res = await fetch(`${API_URL}${endpoint}`, config);
   const data = await res.json();
 
   if (!res.ok) {
@@ -40,15 +41,15 @@ export const authService = {
   },
 
   // [LOGIN] Password
-  loginPassword: async (email: string, password: string) => {
-    return apiRequest("/auth/login", "POST", { email, password });
+  loginPassword: async (email: string, password: string, telemetry?: DeviceTelemetry) => {
+    return apiRequest("/auth/login", "POST", { email, password, telemetry });
   },
 
   // [LOGIN] Passkey
-  loginPasskey: async (email: string) => {
+  loginPasskey: async (email: string, telemetry?: DeviceTelemetry) => {
     try {
       // Step A: Minta Challenge
-      const options = await apiRequest("/auth/start", "POST", { username: email });
+      const options = await apiRequest("/auth/start", "POST", { username: email, telemetry });
 
       // Step B: Scan Jari/Wajah
       //const asseResp = await startAuthentication(options);
@@ -81,14 +82,14 @@ export const authService = {
   },
 
   // [REGISTER] Password
-  registerPassword: async (fullName: string, email: string, password: string, companyName?: string, mobile?: string) => {
+  registerPassword: async (fullName: string, email: string, password: string, companyName?: string, mobile?: string, telemetry?: DeviceTelemetry) => {
     return apiRequest("/reg/password", "POST", { fullName, email, password, companyName, mobile, role: "ADMIN" });
   },
 
   // [REGISTER] Passkey
-  registerPasskey: async (email: string, fullName: string) => {
+  registerPasskey: async (email: string, fullName: string, mobile?: string, telemetry?: DeviceTelemetry) => {
     try {
-      const options = await apiRequest("/reg/start", "POST", { username: email, displayName: fullName });
+      const options = await apiRequest("/reg/start", "POST", { username: email, fullName: fullName, mobile ,telemetry });
       //const attResp = await startRegistration(options);
       const attResp = await startRegistration({ optionsJSON: options });
       

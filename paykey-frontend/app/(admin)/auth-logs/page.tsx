@@ -9,7 +9,12 @@ interface RiskTag {
   class: string;
 }
 
-// --- 1. DEFINISI TIPE (Updated & Robust) ---
+interface ReasonCode {
+  rule: string;
+  score: number;
+  desc?: string;
+}
+
 interface AuthEvent {
   id: string;
   type: string;
@@ -19,18 +24,36 @@ interface AuthEvent {
   userId: string;
   paymentId?: string;
   isNewDevice: boolean;
-  device: { type: string; os: string };
-  location: { country: string; ip: string; flag: string };
+
+  // Data Struktural untuk UI Detail
+  device: {
+    type: string;
+    os: string;
+    model: string;
+    browser?: string;
+  };
+  location: {
+    country: string;
+    ip: string;
+    city?: string;
+    flag: string;
+    asn?: string;
+    isp?: string;
+    lat?: number;
+    long?: number;
+  };
   risk: {
+    score: number;
+    level: string;
     amount?: string;
     amountClass?: string;
-    network?: string;
+    network?: string; // 'vpn' | 'tor' | 'proxy' | null
+    tags: RiskTag[];
+    reasons: ReasonCode[];
     beneficiary?: string;
-    tags: RiskTag[]; // Pasti Array of Strings
   };
 }
 
-// --- 2. KOMPONEN UI INTERNAL (StatsCard, SlideOver, DataTable) ---
 
 const StatsCard = ({ label, value, change, trend, icon }: any) => (
   <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-lg)] p-4 flex flex-col justify-between h-[110px]">
@@ -47,11 +70,18 @@ const StatsCard = ({ label, value, change, trend, icon }: any) => (
   </div>
 );
 
+const DetailRow = ({ label, value, className = "", valueClass = "" }: any) => (
+  <div className={`flex justify-between py-2.5 border-b border-[var(--border-secondary)] last:border-0 ${className}`}>
+    <span className="text-[13px] text-[var(--text-tertiary)]">{label}</span>
+    <span className={`text-[13px] text-[var(--text-primary)] text-right max-w-[250px] break-words ${valueClass}`}>{value}</span>
+  </div>
+);
+
 const SlideOver = ({ isOpen, onClose, title, children, footer }: any) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
+      <div className="absolute inset-0 bg-black/50 ransition-opacity" onClick={onClose}></div>
       <div className="relative w-[400px] bg-[var(--bg-secondary)] border-l border-[var(--border-secondary)] h-full shadow-2xl flex flex-col animate-[slideInRight_0.3s]">
         <div className="p-6 border-b border-[var(--border-secondary)] flex justify-between items-center shrink-0">
           <h3 className="text-[16px] font-semibold text-[var(--text-primary)]">{title}</h3>
@@ -258,90 +288,82 @@ export default function AuthLogsPage() {
 
       const mappedData: AuthEvent[] = rawLogs.map((log: any) => {
 
-        // --- 1. ROBUST TAG PARSING (FIXED) ---
-        let parsedTags: RiskTag[] = [];
-        let rawMeta = log.riskTags;
+        // --- EXTRACTION LOGIC ---
+        let richData: any = {};
+        let tagsArray: RiskTag[] = [];
 
-        try {
-          if (typeof rawMeta === 'string') {
-            try { rawMeta = JSON.parse(rawMeta); } catch { rawMeta = {}; }
-          }
-
-          // Logic Deteksi Format Baru vs Lama
-          let sourceTags: any[] = [];
-          if (Array.isArray(rawMeta)) {
-             sourceTags = rawMeta;
-          } else if (typeof rawMeta === 'object' && rawMeta !== null) {
-             // Ambil array tags dari dalam object richMetadata
-             sourceTags = Array.isArray(rawMeta.tags) ? rawMeta.tags : [];
-          }
-
-          parsedTags = sourceTags.map((t: any) => {
-            if (typeof t === 'object' && t !== null && t.label) {
-              return { label: t.label, class: t.class || 'default' };
-            }
-            const str = String(t);
-            let cls = 'default';
-            const s = str.toLowerCase();
-            if (s.includes('high') || s.includes('critical')) cls = 'high';
-            else if (s.includes('new') || s.includes('geo') || s.includes('vpn')) cls = 'medium';
-            
-            return { label: str, class: cls };
-          });
-        } catch (e) {
-          parsedTags = [];
+        // Parse riskTags field (bisa string, bisa object)
+        if (typeof log.riskTags === 'string') {
+          try { richData = JSON.parse(log.riskTags); } catch { richData = {}; }
+        } else if (typeof log.riskTags === 'object' && log.riskTags !== null) {
+          richData = log.riskTags;
         }
 
-        // --- 2. STATUS MAPPING ---
+        // 1. Ambil Tags Array
+        if (Array.isArray(richData.tags)) {
+          tagsArray = richData.tags;
+        } else if (Array.isArray(richData)) {
+          // Fallback jika format lama (array strings/obj langsung)
+          tagsArray = richData.map((t: any) => typeof t === 'string' ? { label: t, class: 'default' } : t);
+        }
+
+        // 2. Ambil Telemetry & Network
+        const telemetry = richData.telemetry || {};
+        const network = richData.network || {};
+        const deviceInfo = richData.device_info || {};
+
+        // 3. Status Mapping
         const statusRaw = log.status?.toUpperCase() || 'UNKNOWN';
         let statusLabel = 'Success';
         if (statusRaw === 'BLOCKED' || statusRaw === 'FAILED' || statusRaw === 'REJECTED') statusLabel = 'Blocked';
         else if (statusRaw.includes('CHALLENGE') || statusRaw === 'TIMEOUT') statusLabel = 'Challenged';
 
-        // --- 3. AMOUNT EXTRACTION ---
-        let amountVal = undefined;
-        // Cari tag yang mengandung mata uang
-        const amountTag = parsedTags.find(t => t.label.includes('MYR') || t.label.includes('IDR') || t.label.includes('$'));
-        if (amountTag) amountVal = amountTag.label;
-
-        // --- 4. DATA EXTRACTION (Support New Rich Metadata) ---
-        // Jika rawMeta adalah object (format baru), kita bisa ambil paymentId dari sana
-        const metaPaymentId = (typeof rawMeta === 'object' && rawMeta !== null && !Array.isArray(rawMeta)) 
-                              ? rawMeta.paymentId 
-                              : null;
-
+        // 4. Construct Event Object
         return {
           id: log.id.toString(),
           type: log.eventType || 'unknown',
           timestamp: log.createdAt,
           result: statusRaw,
           resultLabel: statusLabel,
-          userId: log.email,
-          // Prioritaskan ID dari metadata baru, fallback ke property lama jika ada
-          paymentId: metaPaymentId || (log.riskTags?.paymentId) || null,
-
-          isNewDevice: parsedTags.some(t => t.label.toLowerCase().includes('new') || t.label.toLowerCase().includes('device')),
+          userId: log.email || log.userName || 'Unknown',
+          paymentId: richData.paymentId || null,
+          isNewDevice: tagsArray.some(t => t.label.toLowerCase().includes('new device')),
 
           device: {
-            type: log.device || (log.userAgent?.toLowerCase().includes('mobile') ? 'Mobile Phone' : 'Desktop'),
-            os: log.userAgent || 'Unknown'
+            type: deviceInfo.type || (log.userAgent?.toLowerCase().includes('mobile') ? 'Mobile' : 'Desktop'),
+            os: deviceInfo.os || log.userAgent || 'Unknown',
+            model: telemetry.device_model || log.device || 'Unknown Device',
+            browser: log.userAgent?.split('/')[0] || 'Unknown Browser'
           },
+
           location: {
-            country: log.countryCode || 'Unknown',
-            ip: log.ipAddress || '0.0.0.0',
-            flag: log.countryCode === 'MY' ? '🇲🇾' : log.countryCode === 'ID' ? '🇮🇩' : log.countryCode === 'GB' || log.countryCode === 'UK' ? '🇬🇧' : '🌐'
+            country: network.country || log.countryCode || 'Unknown',
+            city: richData.location?.split(',')[0] || log.location?.split(',')[0] || 'Unknown',
+            ip: network.ip || log.ipAddress || '0.0.0.0',
+            flag: (network.country || log.countryCode) === 'MY' ? '🇲🇾' : (network.country || log.countryCode) === 'ID' ? '🇮🇩' : (network.country || log.countryCode) === 'UK' || (network.country || log.countryCode) === 'GB' ? '🇬🇧' : '🌐',
+            asn: network.asn || 'AS-UNKNOWN',
+            isp: network.isp || 'Unknown ISP',
+            lat: telemetry.gps_latitude,
+            long: telemetry.gps_longitude
           },
+
           risk: {
-            amount: amountVal,
-            amountClass: log.riskScore > 70 ? 'high' : 'low',
-            network: log.isVpn ? 'vpn' : undefined,
-            tags: parsedTags
+            score: richData.riskScore || log.riskScore || 0,
+            level: richData.riskLevel || 'UNKNOWN',
+            amount: richData.amount ? `${richData.currency || '$'}${richData.amount}` : undefined,
+            amountClass: (richData.amount > 1000) ? 'high' : 'low',
+            network: telemetry.is_vpn_active ? 'vpn' : richData.isVpn ? 'vpn' : undefined,
+            tags: tagsArray,
+            reasons: richData.reasonCodes || [],
+            beneficiary: richData.beneficiaryAccount
           }
         };
       });
 
       setLogs(mappedData);
       calculateStats(mappedData);
+
+      console.log('Fetched Logs:', mappedData);
 
     } catch (err) {
       console.error('Failed to load logs', err);
@@ -502,13 +524,14 @@ export default function AuthLogsPage() {
                         {(e.type.includes('Approval') || e.type.includes('Requested')) && <><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></>}
                         {e.type.includes('Approved') && <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></>}
                         {(e.type.includes('Denied') || e.type.includes('Blocked')) && <><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></>}
+                        {(e.type.includes('Device') || e.type.includes('Revoked')) && <><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></>}
                       </svg>
                       {formatType(e.type)}
                     </span>
                   </td>
                   <td className="p-3"><div className="flex flex-col gap-0.5"><span className="text-[13px] text-[var(--text-primary)]">{new Date(e.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{new Date(e.timestamp).toLocaleTimeString('en-US', { hour12: false })} UTC</span></div></td>
                   <td className="p-3"><div className="flex flex-col gap-0.5"><span className="text-[12px] font-mono text-[var(--text-secondary)]">{e.userId}</span><span className="text-[11px] font-mono text-[var(--text-tertiary)]">{e.paymentId || '—'}</span></div></td>
-                  <td className="p-3"><div className="flex items-center gap-2"><div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-secondary)]">{e.device.type.toLowerCase().includes('mobile') || e.device.type.toLowerCase().includes('phone') ? <><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></> : <><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></>}</svg></div><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.device.type}</span><div className="flex items-center gap-1.5"><span className="text-[11px] text-[var(--text-tertiary)] max-w-[120px] truncate">{e.device.os}</span>{e.isNewDevice && <span className="text-[9px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">New</span>}</div></div></div></td>
+                  <td className="p-3"><div className="flex items-center gap-2"><div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-secondary)]">{e.device.type.toLowerCase().includes('mobile') || e.device.type.toLowerCase().includes('phone') ? <><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></> : <><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></>}</svg></div><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.device.model}</span><div className="flex items-center gap-1.5"><span className="text-[11px] text-[var(--text-tertiary)] max-w-[120px] truncate">{e.device.os}</span>{e.isNewDevice && <span className="text-[9px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">New</span>}</div></div></div></td>
                   <td className="p-3"><div className="flex items-center gap-2"><span className="text-base">{e.location.flag}</span><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.location.country}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{e.location.ip}</span></div></div>{e.risk.network && <div className={`mt-1 inline-block text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${e.risk.network === 'vpn' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--info-bg)] text-[var(--info)]'}`}>{e.risk.network}</div>}</td>
 
                   {/* RISK CONTEXT RENDER */}
@@ -542,63 +565,121 @@ export default function AuthLogsPage() {
           }
         </div>
 
-        {/* SLIDEOVER (DINAMIS DENGAN UI SAMA) */}
-        <SlideOver isOpen={!!selectedEvent} onClose={() => setSelectedEvent(null)} title="Event Details" footer={<div className="flex gap-2 w-full justify-end"><button className="btn btn-secondary flex-1 justify-center py-2 border rounded border-[var(--border-primary)] text-[13px] hover:bg-[var(--bg-tertiary)]">View User</button><button className="btn btn-secondary flex-1 justify-center py-2 border rounded border-[var(--border-primary)] text-[13px] hover:bg-[var(--bg-tertiary)]">View Device</button><button onClick={() => {
-          const targetId = selectedEvent?.paymentId || selectedEvent?.id;
-
-          if (targetId) {
-            router.push(`/investigation?id=${targetId}`);
-          } else {
-            alert("No Transaction ID found for this event.");
+        <SlideOver
+          isOpen={!!selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+          title="Event Details"
+          footer={
+            <div className="flex gap-2 w-full">
+              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">View User</button>
+              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">View Device</button>
+              <button onClick={() => { if (selectedEvent?.paymentId) router.push(`/investigation?id=${selectedEvent.paymentId}`); else alert('No ID'); }} className="flex-1 py-2 bg-[var(--accent)] text-white rounded-[6px] text-[13px] hover:bg-[var(--accent-hover)] transition-all font-medium shadow-sm">Investigate</button>
+            </div>
           }
-        }} className="btn btn-primary flex-1 justify-center py-2 bg-[var(--accent)] text-white rounded text-[13px] hover:bg-[var(--accent-hover)]">Investigate</button></div>}>
+        >
           {selectedEvent && (
             <div className="space-y-6">
-              <div className="pb-4 border-b border-[var(--border-secondary)]">
-                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg> Authentication Event</div>
-                <div className="space-y-3">
-                  <div className="flex justify-between border-b border-[var(--border-secondary)] pb-2"><span className="text-[13px] text-[var(--text-tertiary)]">Event Type</span><span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[20px] text-[11px] font-medium bg-[var(--bg-tertiary)] text-[var(--text-primary)]`}>{formatType(selectedEvent.type)}</span></div>
-                  <div className="flex justify-between border-b border-[var(--border-secondary)] pb-2"><span className="text-[13px] text-[var(--text-tertiary)]">Event ID</span><span className="text-[12px] font-mono text-[var(--text-secondary)]">{selectedEvent.id}</span></div>
-                  <div className="flex justify-between border-b border-[var(--border-secondary)] pb-2"><span className="text-[13px] text-[var(--text-tertiary)]">Timestamp</span><span className="text-[12px] font-mono text-[var(--text-secondary)]">{selectedEvent.timestamp}</span></div>
-                  <div className="flex justify-between border-b border-[var(--border-secondary)] pb-2"><span className="text-[13px] text-[var(--text-tertiary)]">Result</span><span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-[var(--radius-sm)] text-[12px] font-medium capitalize ${selectedEvent.resultLabel === 'Success' ? 'bg-[var(--success-bg)] text-[var(--success)]' : selectedEvent.resultLabel === 'Blocked' ? 'bg-[var(--error-bg)] text-[var(--error)]' : 'bg-[var(--warning-bg)] text-[var(--warning)]'}`}>{selectedEvent.resultLabel}</span></div>
+
+              {/* Section 1: Authentication Event */}
+              <div className="pb-2">
+                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg> Authentication Event
+                </div>
+                <div className="flex justify-between py-2 border-b border-[var(--border-secondary)]">
+                  <span className="text-[13px] text-[var(--text-tertiary)]">Event Type</span>
+                  <span className={`px-2 py-0.5 rounded-[20px] text-[11px] font-medium ${selectedEvent.type.includes('Approved') ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`}>{formatType(selectedEvent.type)}</span>
+                </div>
+                <DetailRow label="Event ID" value={selectedEvent.id} valueClass="font-mono text-[12px]" />
+                <DetailRow label="Timestamp" value={new Date(selectedEvent.timestamp).toISOString()} valueClass="font-mono text-[12px]" />
+                <DetailRow label="User ID" value={selectedEvent.userId} valueClass="font-mono text-[12px]" />
+                <DetailRow label="Payment ID" value={selectedEvent.paymentId || '—'} valueClass="font-mono text-[12px]" />
+                <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
+                  <span className="text-[13px] text-[var(--text-tertiary)]">Result</span>
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] text-[12px] font-medium ${selectedEvent.resultLabel === 'Success' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`}>{selectedEvent.resultLabel}</span>
                 </div>
               </div>
 
-              <div className="pb-4 border-b border-[var(--border-secondary)]">
-                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-3"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg> Device & Environment</div>
-                <div className="space-y-3">
-                  <div className="flex justify-between border-b border-[var(--border-secondary)] pb-2"><span className="text-[13px] text-[var(--text-tertiary)]">Device Type</span><span className="text-[13px] text-[var(--text-primary)]">{selectedEvent.device.type}</span></div>
-                  <div className="flex justify-between border-b border-[var(--border-secondary)] pb-2"><span className="text-[13px] text-[var(--text-tertiary)]">Device Model</span><span className="text-[13px] text-[var(--text-primary)]">{selectedEvent.device.os}</span></div>
-                  {selectedEvent.isNewDevice && <div className="flex justify-between border-b border-[var(--border-secondary)] pb-2"><span className="text-[13px] text-[var(--text-tertiary)]">Flag</span><span className="text-[11px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold">NEW DEVICE</span></div>}
+              {/* Section 2: Device & Environment */}
+              <div className="pb-2">
+                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg> Device & Environment
                 </div>
-              </div>
-
-              {/* NEW: RISK ANALYSIS SECTION */}
-              {selectedEvent.risk.tags.length > 0 && (
-                <div className="pb-4 border-b border-[var(--border-secondary)]">
-                  <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-3">Risk Analysis</div>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedEvent.risk.tags.map((tag, i) => (
-                      <span key={i} className={`px-2 py-1 rounded text-[12px] font-medium ${getRiskTagStyle(tag)}`}>
-                        {tag.label.replace(/_/g, ' ')}
-                      </span>
-                    ))}
+                <DetailRow label="Device Type" value={selectedEvent.device.type} />
+                <DetailRow label="Device Model" value={selectedEvent.device.model} />
+                <DetailRow label="OS & Version" value={selectedEvent.device.os} />
+                <DetailRow label="Browser / User Agent" value={selectedEvent.device.browser} />
+                {selectedEvent.isNewDevice && (
+                  <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
+                    <span className="text-[13px] text-[var(--text-tertiary)]">Flag</span>
+                    <span className="text-[10px] bg-[var(--purple-bg)] text-[var(--purple)] px-2 py-0.5 rounded font-bold uppercase">NEW DEVICE</span>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
+              {/* Section 3: Network & Location */}
+              <div className="pb-2">
+                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg> Network & Location
+                </div>
+                <DetailRow label="IP Address" value={selectedEvent.location.ip} valueClass="font-mono text-[12px]" />
+                <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
+                  <span className="text-[13px] text-[var(--text-tertiary)]">Location</span>
+                  <span className="text-[13px] text-[var(--text-primary)] text-right"><span className="mr-1.5">{selectedEvent.location.flag}</span>{selectedEvent.location.city}, {selectedEvent.location.country}</span>
+                </div>
+                <DetailRow label="ASN / ISP" value={`${selectedEvent.location.asn} - ${selectedEvent.location.isp}`} />
+                <DetailRow label="Coordinates" value={selectedEvent.location.lat ? `${selectedEvent.location.lat}, ${selectedEvent.location.long}` : '—'} valueClass="font-mono text-[11px]" />
+                <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
+                  <span className="text-[13px] text-[var(--text-tertiary)]">Network Signals</span>
+                  <span className={`text-[12px] font-medium ${selectedEvent.risk.network ? 'text-[var(--warning)]' : 'text-[var(--success)]'}`}>
+                    {selectedEvent.risk.network ? selectedEvent.risk.network.toUpperCase() + ' DETECTED' : 'Clean (No VPN/Proxy)'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Section 4: Risk Context */}
+              <div className="pb-2">
+                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg> Risk Context
+                </div>
+                {selectedEvent.risk.amount && <DetailRow label="Transaction Amount" value={selectedEvent.risk.amount} valueClass="font-mono font-medium" />}
+                <DetailRow label="Beneficiary" value={selectedEvent.risk.beneficiary || '—'} valueClass="font-mono text-[12px]" />
+                <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
+                  <span className="text-[13px] text-[var(--text-tertiary)]">Risk Score</span>
+                  <span className={`text-[13px] font-bold ${selectedEvent.risk.score > 60 ? 'text-[var(--error)]' : 'text-[var(--success)]'}`}>
+                    {selectedEvent.risk.score} / 100 ({selectedEvent.risk.level})
+                  </span>
+                </div>
+                {selectedEvent.risk.reasons.length > 0 && (
+                  <div className="mt-3 bg-[var(--bg-tertiary)] rounded-[8px] p-3 border border-[var(--border-primary)]">
+                    <span className="block text-[11px] text-[var(--text-tertiary)] mb-2 uppercase font-semibold">Reason Codes</span>
+                    <ul className="space-y-2">
+                      {selectedEvent.risk.reasons.map((r, i) => (
+                        <li key={i} className="flex justify-between items-start text-[12px]">
+                          <span className="text-[var(--text-secondary)]">{r.rule} {r.desc && <span className="text-[var(--text-tertiary)]">- {r.desc}</span>}</span>
+                          <span className="font-mono text-[var(--error)]">+{r.score}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* Section 5: Timeline */}
               <div>
-                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-4"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> Event Timeline</div>
-                <div className="border-l-2 border-[var(--border-primary)] ml-2 pl-6 space-y-4 relative">
-                  {generateTimeline(selectedEvent).map((item, index) => (
-                    <div key={index} className="relative">
-                      <div className={`absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-[var(--bg-secondary)] ${item.dotColor}`}></div>
-                      <div className="text-[13px] text-[var(--text-primary)]">{item.label}</div>
-                      <div className="text-[11px] text-[var(--text-tertiary)] font-mono mt-0.5">{item.time}</div>
+                <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-4">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> Event Timeline
+                </div>
+                <div className="relative border-l-2 border-[var(--border-primary)] ml-2 pl-6 space-y-5 pb-2">
+                  {generateTimeline(selectedEvent).map((t, i) => (
+                    <div key={i} className="relative">
+                      <div className={`absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-[var(--bg-secondary)] ${t.dotColor === 'success' ? 'bg-[var(--success)]' : t.dotColor === 'error' ? 'bg-[var(--error)]' : t.dotColor === 'warning' ? 'bg-[var(--warning)]' : 'bg-[var(--bg-tertiary)]'}`}></div>
+                      <div className="text-[13px] text-[var(--text-primary)]">{t.label}</div>
+                      <div className="text-[11px] text-[var(--text-tertiary)] font-mono mt-0.5">{t.time}</div>
                     </div>
                   ))}
                 </div>
               </div>
+
             </div>
           )}
         </SlideOver>
