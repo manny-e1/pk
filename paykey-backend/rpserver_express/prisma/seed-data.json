@@ -165,6 +165,12 @@
     }
   ],
   "rp": [
+     {
+      "id": "authkey.my",
+      "description": "console PayKey",
+      "icon": null,
+      "name": "PayKey Server"
+    },
     {
       "id": "console.authkey.my",
       "description": "console PayKey",
