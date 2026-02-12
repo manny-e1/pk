@@ -41,9 +41,20 @@ async function initGeoDb() {
  * @returns {object} 
  */
 function getNetworkInfo(ip) {
+    // 1. [PERBAIKAN UTAMA] Sanitasi IP
+    // Jika IP berisi koma (misal: "180.x.x.x, 10.x.x.x"), ambil yang pertama saja.
+    if (ip && typeof ip === 'string' && ip.includes(',')) {
+        ip = ip.split(',')[0].trim();
+    }
+
+    // 2. Bersihkan prefix IPv6 ::ffff: jika ada
+    if (ip && typeof ip === 'string') {
+        ip = ip.replace(/^::ffff:/, '');
+    }
+
     // Default Response (Fallback)
     const result = {
-        ip: ip,
+        ip: ip || '0.0.0.0',
         city: 'Unknown City',
         country: 'UN',
         countryName: 'Unknown Country',
@@ -55,8 +66,8 @@ function getNetworkInfo(ip) {
 
     if (!ip) return result;
 
-
-    if (ip === '::1' || ip === '127.0.0.1' || ip.includes('192.168.') || ip.startsWith('10.')) {
+    // 3. Cek Localhost / Private Network
+    if (ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.16.')) {
         result.isLocal = true;
         result.city = 'Local Network';
         result.countryName = 'Localhost';
@@ -64,34 +75,45 @@ function getNetworkInfo(ip) {
         return result;
     }
 
-    const cleanIp = ip.replace('::ffff:', '');
-    result.ip = cleanIp;
-
     try {
+        // 4. Lookup City
         if (cityReader) {
-            const resp = cityReader.city(cleanIp);
-            
-            if (resp.city && resp.city.names) {
-                result.city = resp.city.names.en || 'Unknown City';
-            }
-            
-            if (resp.country) {
-                result.country = resp.country.isoCode || 'UN'; 
-                result.countryName = resp.country.names ? resp.country.names.en : 'Unknown Country';
+            // Library maxmind melempar error jika IP formatnya salah, jadi kita bungkus try-catch
+            try {
+                const resp = cityReader.city(ip);
+                
+                if (resp.city && resp.city.names) {
+                    result.city = resp.city.names.en || 'Unknown City';
+                }
+                
+                if (resp.country) {
+                    result.country = resp.country.isoCode || 'UN'; 
+                    result.countryName = resp.country.names ? resp.country.names.en : 'Unknown Country';
+                }
+            } catch (innerErr) {
+                // Jangan log error jika IP-nya memang private/bogon yang lolos filter
+                if (!innerErr.message.includes('The address')) {
+                     console.warn(`   ⚠️ City lookup warning for ${ip}: ${innerErr.message}`);
+                }
             }
         }
 
+        // 5. Lookup ASN
         if (asnReader) {
-            const resp = asnReader.asn(cleanIp);
-            if (resp) {
-                result.asn = resp.autonomousSystemNumber ? `AS${resp.autonomousSystemNumber}` : 'AS-UNKNOWN';
-                result.isp = resp.autonomousSystemOrganization || 'Unknown ISP';
-                result.org = resp.autonomousSystemOrganization || 'Unknown Org';
+            try {
+                const resp = asnReader.asn(ip);
+                if (resp) {
+                    result.asn = resp.autonomousSystemNumber ? `AS${resp.autonomousSystemNumber}` : 'AS-UNKNOWN';
+                    result.isp = resp.autonomousSystemOrganization || 'Unknown ISP';
+                    result.org = resp.autonomousSystemOrganization || 'Unknown Org';
+                }
+            } catch (innerErr) {
+                // Ignore specific parsing errors
             }
         }
 
     } catch (error) {
-        console.error(`   ❌ GeoIP lookup failed for IP ${cleanIp}:`, error.message);
+        console.error(`   ❌ GeoIP critical failure for IP ${ip}:`, error.message);
     }
 
     return result;
