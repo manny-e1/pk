@@ -3,32 +3,45 @@ const { getNetworkInfo } = require('./geoIpService');
 const UAParser = require('ua-parser-js');
 const { customAlphabet } = require('nanoid');
 
-const generateEventID = () => `evt__${customAlphabet('0123456789ABCDEF', 10)()}`;
-
+// --- HELPER VALIDASI IP ---
 const isIPv4 = (ip) => /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ip);
+// Regex IPv6 (Support standar, compressed, dan ::1)
+const isIPv6 = (ip) => /^(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}$|^[A-F0-9]*:[A-F0-9:]+$/i.test(ip);
+
+const generateEventID = () => `evt__${customAlphabet('0123456789ABCDEF', 10)()}`;
 
 async function createRichAuthLog(req, user, context) {
     try {
+        const rawIpHeader = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
         
-        let rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
-        let ip = '';
+        let detectedIPv4 = null;
+        let detectedIPv6 = null;
+        let finalIp = ''; // IP Utama yang akan disimpan & dipakai GeoIP
 
-        // [LOGIKA BARU: CARI IPv4 DULU]
-        if (typeof rawIp === 'string') {
-            const ipList = rawIp.split(',').map(s => s.trim());
+        // 1. EKTRAKSI DUAL STACK (IPv6 PRIORITAS UTAMA)
+        if (typeof rawIpHeader === 'string') {
+            const ipList = rawIpHeader.split(',').map(s => s.trim());
             
-            // 1. Coba cari IPv4 di dalam list
-            const ipv4 = ipList.find(i => isIPv4(i));
+            // Cari IPv6 (Identitas Paling Unik & Akurat)
+            let rawIPv6 = ipList.find(ip => isIPv6(ip));
+            if (rawIPv6) {
+                // Bersihkan prefix ::ffff: (jika ada format hybrid)
+                detectedIPv6 = rawIPv6.replace(/^::ffff:/, '');
+            }
+
+            // Cari IPv4 (Sebagai cadangan/metadata)
+            detectedIPv4 = ipList.find(ip => isIPv4(ip));
             
-            // 2. Jika ada IPv4, pakai itu. Jika tidak ada, pakai IP pertama (walaupun IPv6)
-            ip = ipv4 || ipList[0];
+            // [LOGIKA UTAMA] Prioritaskan IPv6 -> Jika tidak ada, baru IPv4 -> Fallback ke array pertama
+            finalIp = detectedIPv6 || detectedIPv4 || ipList[0];
+
         } else {
-            ip = rawIp;
+            finalIp = rawIpHeader;
         }
 
         const userAgentString = req.headers['user-agent'] || '';
 
-        // 1. Parse User Agent
+        // 2. Parse User Agent
         const parser = new UAParser(userAgentString);
         const uaResult = parser.getResult();
         const telemetry = context.data?.telemetry || {};
@@ -37,15 +50,15 @@ async function createRichAuthLog(req, user, context) {
                             `${uaResult.device.vendor || ''} ${uaResult.device.model || ''}`.trim() || 
                             'Desktop/Unknown';
 
-        // 2. Parse Network & Location
-        const netInfo = getNetworkInfo(ip);
+        // 3. Parse Network & Location (Menggunakan IPv6 Prioritas)
+        // Library MaxMind GeoIP2 sangat menyukai IPv6 karena databasenya lebih presisi
+        const netInfo = getNetworkInfo(finalIp);
         
-        // Prioritas lokasi: dari Controller (sudah hitung telemetry) -> GeoIP
         const locationStr = context.data?.location || 
                             (netInfo.city !== 'Unknown City' ? `${netInfo.city}, ${netInfo.country}` : 'Unknown Location');
 
         let finalCountryCode = netInfo.country || 'UN';
-        if (locationStr.includes(',')) {
+        if (locationStr && locationStr.includes(',')) {
             const parts = locationStr.split(',');
             const extractedCountry = parts[parts.length - 1].trim();
             if (extractedCountry.length === 2) {
@@ -53,16 +66,17 @@ async function createRichAuthLog(req, user, context) {
             }
         }
 
-        // 3. [FIX] DEFINISIKAN RICH METADATA SEBELUM DISIMPAN
-        // Ini menggabungkan data dari Controller (tags, telemetry, amount) 
-        // dengan data Network/Device yang baru diparse.
+        // 4. SIMPAN KEDUA IP DI METADATA (Untuk Audit Forensik)
         const richMetadata = {
-            ...context.data, // <--- PENTING: Membawa { telemetry: { gps... } } dari controller
+            ...context.data, 
             network: {
-                ip: ip,
+                ip: finalIp,           // IP Utama (IPv6 jika ada)
+                ipv6: detectedIPv6,    // Rekam eksplisit IPv6
+                ipv4: detectedIPv4,    // Rekam eksplisit IPv4
                 isp: netInfo.isp,
                 asn: netInfo.asn,
-                country: finalCountryCode
+                country: finalCountryCode,
+                raw_header: rawIpHeader // Header mentah untuk debug
             },
             device_info: {
                 browser: uaResult.browser.name,
@@ -72,7 +86,7 @@ async function createRichAuthLog(req, user, context) {
             timestamp: new Date().toISOString()
         };
 
-        // 4. Simpan ke Database
+        // 5. Simpan ke Database
         await prisma.authLog.create({
             data: {
                 id: generateEventID(),
@@ -81,7 +95,8 @@ async function createRichAuthLog(req, user, context) {
                 authMethod: context.authMethod || 'UNKNOWN',
                 status: context.status || 'INFO',
                 
-                ipAddress: ip,
+                // Di sini akan tersimpan IPv6 (misal: 2404:c0:...)
+                ipAddress: finalIp, 
                 userAgent: userAgentString,
                 
                 location: locationStr, 
@@ -91,18 +106,12 @@ async function createRichAuthLog(req, user, context) {
                 isVpn: telemetry.is_vpn_active || false,
                 riskScore: context.data?.riskScore || 0,
                 
-                // [FIX] Sekarang variabel ini sudah ada isinya
                 riskTags: richMetadata, 
             }
         });
 
-        console.log(`[RichLog] ${context.eventType} logged for ${user.email} | Loc: ${locationStr} (${finalCountryCode})`);
-        if (richMetadata.tags && richMetadata.tags.length > 0) {
-            const tagLabels = richMetadata.tags
-                .map(t => t.label)
-                .join(', ');
-            console.log(`          > Risk Tags: [ ${tagLabels} ]`);
-        }
+        console.log(`[RichLog] ${context.eventType} | User: ${user.email}`);
+        console.log(`          > IP Used: ${finalIp} (v6 Priority)`);
 
     } catch (error) {
         console.error("[RichLog] Failed to create log:", error.message);
