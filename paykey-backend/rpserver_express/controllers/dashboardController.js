@@ -4,27 +4,45 @@ exports.getDashboardStats = async (req, res) => {
     try {
         const { timeRange } = req.query;
         
-        // 1. Setup Time Range
+        // ==========================================
+        // 1. SETUP TIME RANGE (LOGIKA WAKTU)
+        // ==========================================
         const now = new Date();
         const startDate = new Date();
         
-        // Default range logic
+        // Tentukan rentang waktu mundur
         if (timeRange === '24h') startDate.setDate(now.getDate() - 1);
         else if (timeRange === '30d') startDate.setDate(now.getDate() - 30);
         else if (timeRange === '90d') startDate.setDate(now.getDate() - 90);
-        else startDate.setDate(now.getDate() - 7); 
+        else startDate.setDate(now.getDate() - 7); // Default 7 hari
 
         const diffTime = Math.abs(now - startDate);
         const prevStartDate = new Date(startDate.getTime() - diffTime);
 
-        // 2. Fetch Data from Database
-        const [authLogs, transactions, prevAuthCount, prevTxCount] = await Promise.all([
-            // A. Login Logs
+        // ==========================================
+        // 2. FETCH DATA DARI DATABASE (PARALLEL)
+        // ==========================================
+        const [
+            authLogs, 
+            transactions, 
+            prevAuthCount, 
+            prevTxCount,
+            currentDurationAgg, // [BARU] Agregasi Durasi Periode Ini
+            prevDurationAgg     // [BARU] Agregasi Durasi Periode Lalu
+        ] = await Promise.all([
+            // A. Ambil Log Autentikasi
             prisma.authLog.findMany({
                 where: { createdAt: { gte: startDate } },
-                select: { id: true, createdAt: true, status: true, email: true, userAgent: true, countryCode: true }
+                select: { 
+                    id: true, 
+                    createdAt: true, 
+                    status: true, 
+                    email: true, 
+                    userAgent: true, 
+                    countryCode: true 
+                }
             }),
-            // B. Transactions
+            // B. Ambil Transaksi
             prisma.transaction.findMany({
                 where: { timestamp: { gte: startDate } },
                 select: { 
@@ -36,12 +54,30 @@ exports.getDashboardStats = async (req, res) => {
                     amount: true 
                 } 
             }),
-            // C. Counts for Comparison
+            // C. Hitung Total Periode Sebelumnya (Untuk Tren Login/Tx)
             prisma.authLog.count({ where: { createdAt: { gte: prevStartDate, lt: startDate } } }),
-            prisma.transaction.count({ where: { timestamp: { gte: prevStartDate, lt: startDate } } })
+            prisma.transaction.count({ where: { timestamp: { gte: prevStartDate, lt: startDate } } }),
+
+            // D. [BARU] Hitung Rata-Rata Waktu (Avg Duration)
+            prisma.authLog.aggregate({
+                _avg: { duration: true },
+                where: { 
+                    createdAt: { gte: startDate },
+                    duration: { gt: 0 } // Hanya hitung yg datanya valid
+                }
+            }),
+            prisma.authLog.aggregate({
+                _avg: { duration: true },
+                where: { 
+                    createdAt: { gte: prevStartDate, lt: startDate },
+                    duration: { gt: 0 }
+                }
+            })
         ]);
 
-        // 3. Unification (Gabungkan Log Auth & Transaksi)
+        // ==========================================
+        // 3. UNIFICATION (GABUNG DATA)
+        // ==========================================
         const unifiedEvents = [
             ...authLogs.map(l => ({
                 source: 'auth',
@@ -49,11 +85,13 @@ exports.getDashboardStats = async (req, res) => {
                 status: normalizeStatus(l.status),
                 device: (l.userAgent || "").toLowerCase(),
                 country: l.countryCode || "Unknown",
-                amount: 0
+                amount: 0,
+                userId: l.email
             })),
             ...transactions.map(t => {
                 let deviceStr = "";
                 try {
+                    // Handle jika deviceInfo bentuknya JSON object atau string
                     if (t.deviceInfo) deviceStr = typeof t.deviceInfo === 'string' ? t.deviceInfo : JSON.stringify(t.deviceInfo);
                 } catch (e) {}
 
@@ -63,136 +101,164 @@ exports.getDashboardStats = async (req, res) => {
                     status: normalizeStatus(t.authResult),
                     device: deviceStr.toLowerCase(),
                     country: "Unknown", 
-                    amount: t.amount || 0
+                    amount: t.amount || 0,
+                    userId: t.userId
                 };
             })
         ];
 
-        // --- Core Metrics Calculation ---
+        // ==========================================
+        // 4. CORE METRICS CALCULATION
+        // ==========================================
+        
+        // A. Total & Success Rate Global
         const totalEvents = unifiedEvents.length;
         const approved = unifiedEvents.filter(e => e.status === 'APPROVED').length;
         const prevTotal = prevAuthCount + prevTxCount;
         
-        // [BARU] Logic Avg Time (Simulasi)
-        // Karena DB belum mencatat durasi ms, kita simulasi agar UI tidak kosong.
-        // Base: 1.5s + variasi random kecil agar terlihat hidup.
-        let baseTime = 1.5; 
-        const avgTimeVal = (baseTime + (Math.random() * 0.8)).toFixed(1) + 's';
-        const isFaster = Math.random() > 0.5;
-        const avgTimeChange = isFaster ? "↓ -0.2s" : "↑ +0.1s";
+        // B. Unique Users
+        const userSet = new Set();
+        unifiedEvents.forEach(e => { if(e.userId) userSet.add(e.userId); });
 
-        // --- Grouping Data by Date (Charts) ---
+        // C. [BARU] Avg Time Logic (Real dari DB)
+        const currentAvgMs = currentDurationAgg._avg.duration || 0;
+        const prevAvgMs = prevDurationAgg._avg.duration || 0;
+        
+        // Format ke string (e.g., "1.25s")
+        const avgTimeVal = currentAvgMs > 0 ? (currentAvgMs / 1000).toFixed(2) + 's' : '0.00s';
+        
+        // Hitung Perubahan (Trend Panah)
+        let avgTimeChange = "0.0s";
+        const diffMs = currentAvgMs - prevAvgMs;
+
+        if (prevAvgMs === 0 && currentAvgMs > 0) {
+            avgTimeChange = "-"; // Data baru ada sekarang
+        } else if (prevAvgMs > 0) {
+            const diffSec = Math.abs(diffMs / 1000).toFixed(2);
+            if (diffMs < 0) avgTimeChange = `↓ -${diffSec}s`; // Lebih Cepat (Bagus)
+            else if (diffMs > 0) avgTimeChange = `↑ +${diffSec}s`; // Lebih Lambat (Buruk)
+        }
+
+        // ==========================================
+        // 5. DETAILED STATS (LOOPING)
+        // ==========================================
+        
+        // Init Containers
         const chartMap = {};
         
-        unifiedEvents.forEach(evt => {
-            const dateObj = new Date(evt.timestamp);
-            if (isNaN(dateObj)) return;
-            const dateKey = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            
-            if (!chartMap[dateKey]) {
-                chartMap[dateKey] = { 
-                    approved: 0, denied: 0, timeout: 0, failed: 0, retry: 0 
-                };
-            }
+        // [FIX] Struktur Platform Real
+        const platformStats = {
+            ios: { total: 0, success: 0 },
+            android: { total: 0, success: 0 },
+            web: { total: 0, success: 0 }
+        };
 
-            if (evt.status === 'APPROVED') {
-                chartMap[dateKey].approved++;
-            } else if (evt.status === 'DENIED') {
-                chartMap[dateKey].denied++;
-                chartMap[dateKey].failed++;
-            } else {
-                chartMap[dateKey].timeout++;
-                chartMap[dateKey].retry++;
-            }
-        });
-
-        // Sorting Dates (Agar grafik urut)
-        const sortedDates = Object.keys(chartMap).sort((a, b) => new Date(a) - new Date(b));
-
-        // Mapping Data for Charts
-        const trendLabels = sortedDates;
-        const trendApproved = sortedDates.map(k => chartMap[k].approved);
-        const trendDenied = sortedDates.map(k => chartMap[k].denied);
-        const trendTimeout = sortedDates.map(k => chartMap[k].timeout);
-        
-        const securityFailed = sortedDates.map(k => chartMap[k].failed);
-        const securityRetry = sortedDates.map(k => chartMap[k].retry);
-
-        // --- Helper Stats (Platform, Amount, Geo, Device) ---
-        const platformStats = { ios: 0, android: 0, web: 0 };
         const deviceStats = { mobile: 0, desktop: 0, tablet: 0 };
         const amountTiers = { low: { total: 0, success: 0 }, mid: { total: 0, success: 0 }, high: { total: 0, success: 0 } };
         const geoMap = {};
-        const userSet = new Set();
 
-        // Single Loop for Efficiency
-        authLogs.forEach(l => userSet.add(l.email));
-        transactions.forEach(t => userSet.add(t.userId));
+        // --- SINGLE MAIN LOOP ---
+        unifiedEvents.forEach(evt => {
+            
+            // 1. Chart Data Grouping (By Date)
+            const dateObj = new Date(evt.timestamp);
+            if (!isNaN(dateObj)) {
+                const dateKey = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                
+                if (!chartMap[dateKey]) {
+                    chartMap[dateKey] = { approved: 0, denied: 0, timeout: 0, failed: 0, retry: 0 };
+                }
 
-        unifiedEvents.forEach(e => {
-            // Platform & Device Counting
-            if (e.device.includes('iphone') || e.device.includes('ipad') || e.device.includes('ios')) { 
-                platformStats.ios++; deviceStats.mobile++; 
-            } else if (e.device.includes('android')) { 
-                platformStats.android++; deviceStats.mobile++; 
-            } else if (e.device.includes('ipad') || e.device.includes('tablet')) {
-                platformStats.ios++; deviceStats.tablet++;
-            } else { 
-                platformStats.web++; deviceStats.desktop++; 
+                if (evt.status === 'APPROVED') chartMap[dateKey].approved++;
+                else if (evt.status === 'DENIED') { chartMap[dateKey].denied++; chartMap[dateKey].failed++; }
+                else { chartMap[dateKey].timeout++; chartMap[dateKey].retry++; }
             }
 
-            // Amount Tiers (Only for transactions)
-            if (e.source === 'tx') {
+            // 2. Platform & Device Logic
+            const d = evt.device;
+            let pKey = 'web'; // Default
+
+            if (d.includes('iphone') || d.includes('ipad') || d.includes('ios') || d.includes('macintosh')) {
+                pKey = 'ios';
+                if (d.includes('ipad')) deviceStats.tablet++;
+                else deviceStats.mobile++; 
+            } else if (d.includes('android')) {
+                pKey = 'android';
+                deviceStats.mobile++;
+            } else {
+                pKey = 'web';
+                deviceStats.desktop++;
+            }
+
+            // [FIX] Update Counter Platform
+            if (platformStats[pKey]) {
+                platformStats[pKey].total++;
+                if (evt.status === 'APPROVED') {
+                    platformStats[pKey].success++;
+                }
+            }
+
+            // 3. Amount Tiers (Khusus Transaksi)
+            if (evt.source === 'tx') {
                 let cat = 'low';
-                if (e.amount > 1000) cat = 'high';
-                else if (e.amount >= 100) cat = 'mid';
+                if (evt.amount > 1000) cat = 'high';
+                else if (evt.amount >= 100) cat = 'mid';
                 
                 amountTiers[cat].total++;
-                if (e.status === 'APPROVED') amountTiers[cat].success++;
+                if (evt.status === 'APPROVED') amountTiers[cat].success++;
             }
 
-            // Geo Map
-            if (e.country && e.country !== "Unknown") {
-                if (!geoMap[e.country]) geoMap[e.country] = 0;
-                geoMap[e.country]++;
+            // 4. Geo Stats
+            if (evt.country && evt.country !== "Unknown") {
+                geoMap[evt.country] = (geoMap[evt.country] || 0) + 1;
             }
         });
 
+        // ==========================================
+        // 6. FORMATTING & RESPONSE
+        // ==========================================
+
+        // Sort Chart Data by Date
+        const sortedDates = Object.keys(chartMap).sort((a, b) => new Date(a) - new Date(b));
+
+        // Sort Top Regions
         const topRegions = Object.keys(geoMap)
             .map(k => ({ code: k, count: geoMap[k], pct: ((geoMap[k]/totalEvents)*100).toFixed(1)+'%' }))
             .sort((a, b) => b.count - a.count).slice(0, 5);
 
-        // 4. Send Response
         res.json({
             metrics: {
                 totalTx: totalEvents,
                 uniqueUsers: userSet.size,
                 successRate: totalEvents > 0 ? ((approved/totalEvents)*100).toFixed(1) : "0.0",
                 txChange: totalEvents - prevTotal,
-                // [NEW] Data Avg Time
+                // [BARU] Data Real
                 avgTime: avgTimeVal,
                 avgTimeChange: avgTimeChange
             },
             funnel: { total: totalEvents, requested: totalEvents, approved },
             
             trendChart: {
-                labels: trendLabels,
-                approved: trendApproved,
-                denied: trendDenied,
-                timeout: trendTimeout
+                labels: sortedDates,
+                approved: sortedDates.map(k => chartMap[k].approved),
+                denied: sortedDates.map(k => chartMap[k].denied),
+                timeout: sortedDates.map(k => chartMap[k].timeout)
             },
             securityChart: {
-                labels: trendLabels,
-                failed: securityFailed,
-                retry: securityRetry
+                labels: sortedDates,
+                failed: sortedDates.map(k => chartMap[k].failed),
+                retry: sortedDates.map(k => chartMap[k].retry)
             },
             
             deviceStats,
+            
+            // [FIX] Output Platform Real (Hitung Persentase di sini)
             platformStats: [
-                { name: 'iOS', total: platformStats.ios, successRate: '98.2%' },
-                { name: 'Android', total: platformStats.android, successRate: '96.5%' },
-                { name: 'Web', total: platformStats.web, successRate: '99.1%' }
+                { name: 'iOS', total: platformStats.ios.total, successRate: calcRate(platformStats.ios) },
+                { name: 'Android', total: platformStats.android.total, successRate: calcRate(platformStats.android) },
+                { name: 'Web', total: platformStats.web.total, successRate: calcRate(platformStats.web) }
             ],
+            
             amountStats: [
                 { tier: 'Under $100', tx: `${amountTiers.low.total} txns`, rate: calcRate(amountTiers.low) },
                 { tier: '$100 - $1,000', tx: `${amountTiers.mid.total} txns`, rate: calcRate(amountTiers.mid) },
@@ -207,7 +273,9 @@ exports.getDashboardStats = async (req, res) => {
     }
 };
 
-// --- HELPERS ---
+// ==========================================
+// HELPERS
+// ==========================================
 
 function normalizeStatus(status) {
     if (!status) return 'DENIED';
@@ -224,5 +292,7 @@ function normalizeStatus(status) {
 }
 
 function calcRate(obj) {
-    return obj.total > 0 ? ((obj.success / obj.total) * 100).toFixed(1) + '%' : '0.0%';
+    // Menghindari pembagian dengan nol (NaN)
+    if (!obj || obj.total === 0) return '0.0%';
+    return ((obj.success / obj.total) * 100).toFixed(1) + '%';
 }

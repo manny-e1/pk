@@ -369,6 +369,7 @@ exports.transactionStepUpComplete = async (req, res) => {
     try {
         // Pastikan nama fungsi helper sesuai dengan yang ada di file Anda (normalizeCredential vs normalizeCredentialInput)
         // Di sini saya gunakan normalizeCredential sesuai snippet file Anda.
+        const startTime = Date.now();
         const credential = normalizeCredential(req.body); 
         const clientData = parseClientData(req.body);
         
@@ -457,12 +458,15 @@ exports.transactionStepUpComplete = async (req, res) => {
                     );
                     const mergedTags = [...oldTags, ...newTagsFiltered];
 
+                    const duration = Date.now() - startTime;
+
                     // 4. Update Log
                     await prisma.authLog.update({
                         where: { id: targetLog.id },
                         data: {
                             status: finalStatus,       
-                            eventType: finalEvent,     
+                            eventType: finalEvent,   
+                            duration: finalStatus === 'SUCCESS' ? duration : null,  
                             riskTags: {                
                                 ...oldData,            
                                 tags: mergedTags,      

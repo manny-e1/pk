@@ -94,6 +94,7 @@ async function createRichAuthLog(req, user, context) {
                 eventType: context.eventType || 'AUTH_EVENT',
                 authMethod: context.authMethod || 'UNKNOWN',
                 status: context.status || 'INFO',
+                duration: context.duration || 0,
                 
                 // Di sini akan tersimpan IPv6 (misal: 2404:c0:...)
                 ipAddress: finalIp, 

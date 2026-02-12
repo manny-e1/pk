@@ -209,6 +209,7 @@ model AuthLog {
   isVpn         Boolean  @default(false) @map("is_vpn")
   riskScore     Int      @default(0) @map("risk_score")
   riskTags      Json?    @map("risk_tags")
+  duration      Int?     @default(0)
   createdAt     DateTime @default(now()) @map("created_at")
   user          User?    @relation(fields: [email], references: [email])
 

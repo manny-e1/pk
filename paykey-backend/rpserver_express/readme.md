@@ -53,3 +53,6 @@ npx prisma migrate dev --name change_id_to_string
 
 npx prisma db seed
 
+# pus update field database
+npx prisma db push
+
