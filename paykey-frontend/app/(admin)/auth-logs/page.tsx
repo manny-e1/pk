@@ -208,6 +208,12 @@ const getRiskTagStyle = (tag: RiskTag) => {
   return 'bg-gray-500/15 text-gray-500';
 };
 
+const countryCodeToEmoji = (code: string) => {
+    if (!code || code === 'Unknown') return '🌐';
+    const offset = 127397;
+    return code.toUpperCase().split('').map(char => String.fromCodePoint(char.charCodeAt(0) + offset)).join('');
+};
+
 
 // Timeline Generator (Visual Dinamis)
 const generateTimeline = (e: AuthEvent) => {
@@ -532,7 +538,7 @@ export default function AuthLogsPage() {
                   <td className="p-3"><div className="flex flex-col gap-0.5"><span className="text-[13px] text-[var(--text-primary)]">{new Date(e.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{new Date(e.timestamp).toLocaleTimeString('en-US', { hour12: false })} UTC</span></div></td>
                   <td className="p-3"><div className="flex flex-col gap-0.5"><span className="text-[12px] font-mono text-[var(--text-secondary)]">{e.userId}</span><span className="text-[11px] font-mono text-[var(--text-tertiary)]">{e.paymentId || '—'}</span></div></td>
                   <td className="p-3"><div className="flex items-center gap-2"><div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-secondary)]">{e.device.type.toLowerCase().includes('mobile') || e.device.type.toLowerCase().includes('phone') ? <><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></> : <><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></>}</svg></div><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.device.model}</span><div className="flex items-center gap-1.5"><span className="text-[11px] text-[var(--text-tertiary)] max-w-[120px] truncate">{e.device.os}</span>{e.isNewDevice && <span className="text-[9px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">New</span>}</div></div></div></td>
-                  <td className="p-3"><div className="flex items-center gap-2"><span className="text-base">{e.location.flag}</span><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.location.country}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{e.location.ip}</span></div></div>{e.risk.network && <div className={`mt-1 inline-block text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${e.risk.network === 'vpn' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--info-bg)] text-[var(--info)]'}`}>{e.risk.network}</div>}</td>
+                  <td className="p-3"><div className="flex items-center gap-2"><span className="text-base">{countryCodeToEmoji(e.location.country)}</span><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.location.country}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{e.location.ip}</span></div></div>{e.risk.network && <div className={`mt-1 inline-block text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${e.risk.network === 'vpn' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--info-bg)] text-[var(--info)]'}`}>{e.risk.network}</div>}</td>
 
                   {/* RISK CONTEXT RENDER */}
                   <td className="p-3">
