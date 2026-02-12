@@ -5,11 +5,25 @@ const { customAlphabet } = require('nanoid');
 
 const generateEventID = () => `evt__${customAlphabet('0123456789ABCDEF', 10)()}`;
 
+const isIPv4 = (ip) => /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ip);
+
 async function createRichAuthLog(req, user, context) {
     try {
-        let ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
-        if (typeof ip === 'string' && ip.includes(',')) {
-            ip = ip.split(',')[0].trim();
+        
+        let rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+        let ip = '';
+
+        // [LOGIKA BARU: CARI IPv4 DULU]
+        if (typeof rawIp === 'string') {
+            const ipList = rawIp.split(',').map(s => s.trim());
+            
+            // 1. Coba cari IPv4 di dalam list
+            const ipv4 = ipList.find(i => isIPv4(i));
+            
+            // 2. Jika ada IPv4, pakai itu. Jika tidak ada, pakai IP pertama (walaupun IPv6)
+            ip = ipv4 || ipList[0];
+        } else {
+            ip = rawIp;
         }
 
         const userAgentString = req.headers['user-agent'] || '';
