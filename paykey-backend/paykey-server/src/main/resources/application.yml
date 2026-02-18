@@ -40,6 +40,10 @@ app:
     - "https://api.authkey.my"
     - "https://console.authkey.my"
 
+paykey:
+  security:
+    aes-secret: "PayKeySuperSecretMasterKey2026"
+
 
 
 

@@ -283,3 +283,61 @@ enum KeyStatus {
   SUSPENDED
   REVOKED
 }
+
+model AuthCustomKey {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id") @db.VarChar(128)
+  deviceId    String   @map("device_id") @db.VarChar(255)
+  publicKey   String   @map("public_key") @db.Text // Format PEM
+  algo        String   @default("RSA") // RSA atau EC
+  type        String   // "PIN" atau "BIO_LEGACY"
+  status      String   @default("ACTIVE") // ACTIVE, BLOCKED
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([deviceId])
+  @@map("auth_custom_keys")
+}
+
+model AuthTotpCredential {
+  id           String   @id @default(uuid())
+  userId       String?  @map("user_id") @db.VarChar(128) // Nullable jika hardware token belum di-assign
+  serialNumber String?  @unique @map("serial_number") @db.VarChar(100) // Wajib untuk Hardware Token
+  secretKey    String   @map("secret_key") @db.Text // Encrypted Seed
+  type         String   // "SOFT" atau "HARDWARE"
+  timeStep     Int      @default(30) @map("time_step")
+  digits       Int      @default(6)
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now()) @map("created_at")
+  lastUsedT    BigInt?  @map("last_used_t") // Untuk mencegah replay attack dalam window yang sama
+
+  user         User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("auth_totp_credentials")
+}
+
+model AuthEmailOtp {
+  id        String   @id @default(uuid())
+  email     String   @index
+  otpCode   String   @map("otp_code")
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("auth_email_otp")
+}
+
+model ApiClient {
+  id          String   @id @default(uuid())
+  name        String   // e.g., "PayKey Android App", "Web Portal"
+  apiKey      String   @unique @map("api_key") // Client ID (Public)
+  apiSecret   String   @map("api_secret")      // Client Secret (Private - Tanam di SDK/Backend Web)
+  type        String   // "MOBILE", "WEB", "SERVER"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@map("api_clients")
+}

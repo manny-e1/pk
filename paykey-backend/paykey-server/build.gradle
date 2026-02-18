@@ -19,6 +19,8 @@ dependencies {
     // === DATABASE ===
     implementation 'mysql:mysql-connector-java:8.0.33'
 
+    implementation 'commons-codec:commons-codec:1.15'
+
     // H2 (in-memory) for local profile/runtime
     // Removed from production image; use MySQL in containers.
     // If you need H2 for local dev, add it to your IDE/runtime classpath or use a dev-only configuration.
