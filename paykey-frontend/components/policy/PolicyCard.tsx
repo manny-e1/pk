@@ -92,7 +92,7 @@ export function PolicyCard({ risk, data, onEdit, isCorporate }: PolicyCardProps)
       <div className="px-4 py-3 bg-[var(--bg-tertiary)]/30 border-t border-[var(--border-primary)] flex justify-end mt-auto">
         <button 
           onClick={onEdit} 
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--bg-primary)] border border-[var(--border-primary)] rounded-[6px] text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-secondary)] transition-all shadow-sm"
+          className="flex items-center  gap-1.5 px-3 py-1.5 bg-[var(--bg-primary)] border border-[var(--border-primary)] rounded-[6px] text-[11px] font-medium text-[var(--text-primary)] hover:text-[var(--text-primary)] hover:border-[var(--text-primary)] transition-all shadow-sm"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5 opacity-80">
             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>

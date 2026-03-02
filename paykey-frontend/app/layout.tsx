@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { IdleTimerWrapper } from '@/components/IdleTimerWrapper';
 
 export const metadata: Metadata = {
   title: 'Secure Paykey - FIDO2 Authentication',
@@ -13,8 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/* Font dimuat langsung di globals.css via Google Fonts untuk akurasi layout */}
+      <IdleTimerWrapper>
       <body>{children}</body>
+      </IdleTimerWrapper>
     </html>
   );
 }

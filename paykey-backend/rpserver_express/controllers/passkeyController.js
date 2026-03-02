@@ -4,6 +4,7 @@ const { sendTokenCookie } = require('../utils/jwt');
 const fidoService = require('../services/fidoService');
 const { createRichAuthLog } = require('../utils/richLogger');
 const { evaluateAuthPolicy } = require('../utils/authPolicies/index');
+const { generateUserId } = require('../utils/idGenerator');
 
 const RP_ID = process.env.RP_ID || 'authkey.my';
 const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redispass@localhost:6379' });
@@ -11,6 +12,7 @@ const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redis
     try { await redisClient.connect(); } 
     catch (e) { console.error("[Redis] Error:", e.message); }
 })();
+
 
 // ==========================================
 // [PENTING] HELPER FUNCTIONS (JANGAN DIHAPUS)
@@ -47,15 +49,41 @@ const parseClientData = (body) => {
 exports.registerStart = async (req, res) => {
     try {
         const { username, fullName, displayName, mobile, telemetry } = req.body;
-        let user = await prisma.user.findUnique({ where: { email: username } });
-        if (!user) user = await prisma.user.create({ data: { email: username, fullName: fullName || displayName || username, mobile: mobile || null }, });
+        if (!username) {
+            return res.status(400).json({ error: 'Email is required' });
+        }
+
+        const normalizedEmail = username.toLowerCase().trim();
+
+        let user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+        
+        if (user) {
+            return res.status(400).json({ 
+                error: 'Email already registered. Please login instead.' 
+            });
+        }
+
+        user = await prisma.user.create({ 
+            data: { 
+                id: generateUserId(),
+                email: normalizedEmail,
+                fullName: fullName || displayName || normalizedEmail, 
+                mobile: mobile || null 
+            }, 
+        });
 
         const result = await fidoService.initiateChallenge('REGISTRATION', user, RP_ID);
         if (result.status === 200) {
-            await saveContext(result.data.challenge, result.data.sessionId, { purpose: 'REG', userId: user.id, telemetry });
+            await saveContext(result.data.challenge, result.data.sessionId, { 
+                purpose: 'REG', 
+                userId: user.id, 
+                telemetry 
+            });
         }
         res.status(result.status).json(result.data);
+
     } catch (err) {
+        console.error("[Passkey Register Start] Error:", err);
         res.status(500).json({ error: err.message });
     }
 };

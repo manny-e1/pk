@@ -3,12 +3,12 @@ const prisma = require('../../config/db');
 const { sendTokenCookie } = require('../../utils/jwt');
 const { createRichAuthLog } = require('../../utils/richLogger');
 const javaClient = require('../../services/JavaAuthClient');
-// IMPORT MODULAR ENGINE
+// IMPORT ENGINE
 const PolicyEngine = require('../../utils/authPolicies'); 
 
 // 1. REGISTER (User Baru)
 exports.registerUser = async (req, res) => {
-    const { email, password, fullName, mobile, companyName } = req.body;
+    const { email, password, fullName, mobile, companyName, cifNumber } = req.body;
     
     try {
         const existing = await prisma.user.findUnique({ where: { email } });
@@ -16,21 +16,26 @@ exports.registerUser = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         
+        // Buat User dengan Balance Default
         const user = await prisma.user.create({
             data: {
                 email,
                 passwordHash: hashedPassword,
                 fullName,
                 mobile,
+                cifNumber,
                 companyName,
                 role: 'USER',
-                balance: 0
+                balance: 0,
+                status: 'active'
             }
         });
 
         sendTokenCookie(res, user);
         
-        // Response menyuruh user setup PIN/Biometric
+        // Log Activity
+        await createRichAuthLog(req, user, { eventType: 'REGISTER_SUCCESS', status: 'SUCCESS' });
+
         res.json({ 
             status: 'success', 
             userId: user.id, 
@@ -43,12 +48,13 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-// 2. LOGIN (Step 1: Password -> Policy Engine)
+// 2. LOGIN STEP 1 (Password -> Policy Check)
 exports.loginStep1 = async (req, res) => {
     const { email, password, deviceId } = req.body;
     const channel = req.apiClient ? req.apiClient.type : 'WEB'; 
 
     try {
+        // A. Validasi Password
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user || !user.passwordHash) {
             return res.status(401).json({ error: 'Invalid credentials' });
@@ -60,18 +66,19 @@ exports.loginStep1 = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // --- MENGGUNAKAN MODULAR POLICY ENGINE ---
+        // B. INTEGRASI POLICY ENGINE
+        // Tentukan segment user
         const segment = (user.companyName || user.role === 'ADMIN') ? 'CORPORATE' : 'CONSUMER';
         
-        // Panggil Engine
+        // Evaluasi Policy (Risk score login biasanya statis rendah, kecuali ada anomali IP)
         const decision = await PolicyEngine.evaluate({
             segment: segment,
             channel: channel,
             action: 'LOGIN',
-            riskScore: 10 // TODO: Integrasikan Risk Engine Calculator di sini
+            riskScore: 10 // Bisa di-hook ke RiskEngine jika ingin deteksi login anomali
         });
 
-        // --- EKSEKUSI KEPUTUSAN ---
+        // C. Eksekusi Keputusan
         if (decision.status === 'ALLOW') {
             sendTokenCookie(res, user);
             await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS' });
@@ -95,7 +102,7 @@ exports.loginStep1 = async (req, res) => {
     }
 };
 
-// 3. MFA VERIFY (Bridge ke Java)
+// 3. MFA VERIFY (Jembatan ke Java Server)
 exports.verifyMfa = async (req, res) => {
     const { userId, authType, challenge, signature, otp, deviceId } = req.body;
 

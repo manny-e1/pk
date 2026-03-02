@@ -79,6 +79,7 @@ exports.upsertPolicy = async (req, res) => {
     // 2. Jika tidak ada, fallback ke adminEmail kiriman frontend
     // 3. Jika tidak ada juga, catat sebagai 'System'
     const actorEmail = req.user?.email || adminEmail || 'System';
+    const action = req.body.action || 'LOGIN';
 
     if (!segment || !channel || !riskLevel) {
         return res.status(400).json({ error: "Missing required fields" });
@@ -94,14 +95,14 @@ exports.upsertPolicy = async (req, res) => {
     try {
         // 1. Ambil data lama untuk diffing
         const oldPolicy = await prisma.authPolicy.findUnique({
-            where: { segment_channel_riskLevel: { segment: seg, channel: chan, riskLevel: risk } }
+            where: { policy_idx: { segment: seg, channel: chan, riskLevel: risk,action: action } }
         });
 
         const actionType = oldPolicy ? 'Updated' : 'Created';
         
         // 2. Simpan Policy
         const policy = await prisma.authPolicy.upsert({
-            where: { segment_channel_riskLevel: { segment: seg, channel: chan, riskLevel: risk } },
+            where: { policy_idx: { segment: seg, channel: chan, riskLevel: risk,action: action } },
             update: { condition, name: policyName, isActive: true, updatedAt: new Date() },
             create: { 
                 segment: seg, channel: chan, riskLevel: risk, condition, 
@@ -110,7 +111,7 @@ exports.upsertPolicy = async (req, res) => {
         });
 
         // 3. Generate Pesan Log Detail
-        // Format: "Updated Consumer High Risk policy: Max Attempts changed from 3 to 2"
+        // Format: "Updated consumer High Risk policy: Max Attempts changed from 3 to 2"
         const diffDetails = generateDiff(oldPolicy ? oldPolicy.condition : null, condition);
         const logAction = `${actionType} ${readableName} policy: ${diffDetails}`;
 
@@ -204,27 +205,137 @@ exports.deleteAmountLimit = async (req, res) => {
 // 3. RISK RULES (Safeguarded)
 // ==========================================
 // --- 1. GET ALL RISK RULES ---
+// exports.getRiskRules = async (req, res) => {
+//     try {
+//         // Ambil data dari DB, urutkan berdasarkan isActive dan bobot risiko
+//         // Catatan: Di DB kolomnya adalah 'weight' dan 'name'
+//         const rules = await prisma.$queryRaw`
+//             SELECT * FROM config_risk_rules 
+//             ORDER BY isActive DESC, weight DESC
+//         `;
+
+//         // Format data agar sesuai dengan yang diharapkan Frontend
+//         const formattedRules = rules.map(r => ({
+//             id: r.id,
+//             ruleType: r.ruleType,
+//             ruleName: r.name,       // Mapping DB 'name' -> API 'ruleName'
+//             riskScore: r.weight,    // Mapping DB 'weight' -> API 'riskScore'
+//             isActive: Boolean(r.isActive),
+//             // Parse JSON parameters (karena MySQL kadang mengembalikannya sebagai string)
+//             parameters: typeof r.parameters === 'string' ? JSON.parse(r.parameters) : r.parameters
+//         }));
+
+//         console.log(formattedRules);
+
+//         res.json(formattedRules);
+//     } catch (e) {
+//         console.error("[Config] Get Rules Error:", e);
+//         res.status(500).json({ error: "Failed to fetch risk rules" });
+//     }
+// };
+
+// // --- 2. BATCH UPDATE RULES (SAVE) ---
+// exports.batchUpdateRiskRules = async (req, res) => {
+//     try {
+//         const { rules } = req.body;
+        
+//         if (!Array.isArray(rules) || rules.length === 0) {
+//             return res.status(400).json({ error: "Invalid payload: rules array required" });
+//         }
+
+//         console.log(`[Config] Updating ${rules.length} rules...`);
+
+//         // Gunakan Transaction untuk update massal yang aman
+//         await prisma.$transaction(
+//             rules.map(rule => {
+//                 // Pastikan parameters di-stringify kembali ke JSON String untuk DB
+//                 const paramString = typeof rule.parameters === 'object' 
+//                     ? JSON.stringify(rule.parameters) 
+//                     : rule.parameters;
+
+//                 // Update ke kolom DB yang benar ('weight', 'name')
+//                 // Kita gunakan executeRaw karena ruleType unik
+//                 return prisma.$executeRaw`
+//                     UPDATE config_risk_rules 
+//                     SET 
+//                         isActive = ${rule.isActive ? 1 : 0},
+//                         weight = ${parseInt(rule.riskScore)}, 
+//                         parameters = ${paramString},
+//                         updatedAt = NOW()
+//                     WHERE ruleType = ${rule.ruleType}
+//                 `;
+//             })
+//         );
+
+//         res.json({ success: true, message: "Risk configuration updated successfully" });
+
+//     } catch (e) {
+//         console.error("[Config] Batch Update Error:", e);
+//         res.status(500).json({ error: "Failed to update configuration" });
+//     }
+// };
+
+// // --- 3. GET GLOBAL THRESHOLDS ---
+// exports.getRiskConfig = async (req, res) => {
+//     try {
+//         const config = await prisma.$queryRaw`SELECT * FROM config_risk_thresholds LIMIT 1`;
+//         if (config.length > 0) {
+//             res.json(config[0]);
+//         } else {
+//             // Default jika belum ada data
+//             res.json({ lowScore: 30, highScore: 70 });
+//         }
+//     } catch (e) {
+//         res.status(500).json({ error: e.message });
+//     }
+// };
+
+// // --- 4. UPDATE GLOBAL THRESHOLDS ---
+// exports.updateRiskConfig = async (req, res) => {
+//     try {
+//         const { lowScore, highScore } = req.body;
+        
+//         // Upsert logic (Update if exists, Insert if not)
+//         await prisma.$executeRaw`
+//             INSERT INTO config_risk_thresholds (id, lowScore, highScore, updatedAt)
+//             VALUES ('default', ${lowScore}, ${highScore}, NOW())
+//             ON DUPLICATE KEY UPDATE
+//             lowScore = VALUES(lowScore),
+//             highScore = VALUES(highScore),
+//             updatedAt = NOW()
+//         `;
+
+//         res.json({ success: true });
+//     } catch (e) {
+//         res.status(500).json({ error: e.message });
+//     }
+// };
+
+// ==========================================
+// 3. RISK RULES (No Path Params - Like Auth Policies)
+// ==========================================
+
+// --- 1. GET ALL RISK RULES (Semua Segment) ---
 exports.getRiskRules = async (req, res) => {
     try {
-        // Ambil data dari DB, urutkan berdasarkan isActive dan bobot risiko
-        // Catatan: Di DB kolomnya adalah 'weight' dan 'name'
-        const rules = await prisma.$queryRaw`
-            SELECT * FROM config_risk_rules 
-            ORDER BY isActive DESC, weight DESC
-        `;
+        // Ambil SEMUA rule tanpa memfilter segment
+        const rules = await prisma.riskRule.findMany({
+            orderBy: [
+                { segment: 'asc' },
+                { isActive: 'desc' },
+                { weight: 'desc' }
+            ]
+        });
 
-        // Format data agar sesuai dengan yang diharapkan Frontend
         const formattedRules = rules.map(r => ({
             id: r.id,
-            ruleType: r.ruleType,
-            ruleName: r.name,       // Mapping DB 'name' -> API 'ruleName'
-            riskScore: r.weight,    // Mapping DB 'weight' -> API 'riskScore'
+            segment: r.segment, // PENTING: Kirim segment ke frontend agar bisa difilter
+            ruleType: r.ruleCode || r.ruleType, 
+            ruleName: r.name,       
+            riskScore: r.weight,    
             isActive: Boolean(r.isActive),
-            // Parse JSON parameters (karena MySQL kadang mengembalikannya sebagai string)
             parameters: typeof r.parameters === 'string' ? JSON.parse(r.parameters) : r.parameters
         }));
-
-        console.log(formattedRules);
 
         res.json(formattedRules);
     } catch (e) {
@@ -236,36 +347,33 @@ exports.getRiskRules = async (req, res) => {
 // --- 2. BATCH UPDATE RULES (SAVE) ---
 exports.batchUpdateRiskRules = async (req, res) => {
     try {
-        const { rules } = req.body;
+        const rulesPayload = Array.isArray(req.body) ? req.body : req.body.rules;
         
-        if (!Array.isArray(rules) || rules.length === 0) {
+        if (!Array.isArray(rulesPayload) || rulesPayload.length === 0) {
             return res.status(400).json({ error: "Invalid payload: rules array required" });
         }
 
-        console.log(`[Config] Updating ${rules.length} rules...`);
+        const upsertPromises = rulesPayload.map(rule => {
+            const seg = (rule.segment || 'consumer').toUpperCase(); // Ambil dari BODY
+            const paramString = typeof rule.parameters === 'object' ? JSON.stringify(rule.parameters) : rule.parameters;
+            const code = rule.ruleType || rule.ruleCode; 
 
-        // Gunakan Transaction untuk update massal yang aman
-        await prisma.$transaction(
-            rules.map(rule => {
-                // Pastikan parameters di-stringify kembali ke JSON String untuk DB
-                const paramString = typeof rule.parameters === 'object' 
-                    ? JSON.stringify(rule.parameters) 
-                    : rule.parameters;
+            return prisma.riskRule.upsert({
+                where: { segment_ruleCode: { segment: seg, ruleCode: code } },
+                update: {
+                    name: rule.ruleName || code,
+                    isActive: Boolean(rule.isActive),
+                    weight: parseInt(rule.riskScore) || 0,
+                    parameters: paramString
+                },
+                create: {
+                    segment: seg, ruleCode: code, ruleType: code, name: rule.ruleName || code,
+                    isActive: Boolean(rule.isActive), weight: parseInt(rule.riskScore) || 0, parameters: paramString
+                }
+            });
+        });
 
-                // Update ke kolom DB yang benar ('weight', 'name')
-                // Kita gunakan executeRaw karena ruleType unik
-                return prisma.$executeRaw`
-                    UPDATE config_risk_rules 
-                    SET 
-                        isActive = ${rule.isActive ? 1 : 0},
-                        weight = ${parseInt(rule.riskScore)}, 
-                        parameters = ${paramString},
-                        updatedAt = NOW()
-                    WHERE ruleType = ${rule.ruleType}
-                `;
-            })
-        );
-
+        await Promise.all(upsertPromises);
         res.json({ success: true, message: "Risk configuration updated successfully" });
 
     } catch (e) {
@@ -274,16 +382,12 @@ exports.batchUpdateRiskRules = async (req, res) => {
     }
 };
 
-// --- 3. GET GLOBAL THRESHOLDS ---
+// --- 3. GET ALL GLOBAL THRESHOLDS ---
 exports.getRiskConfig = async (req, res) => {
     try {
-        const config = await prisma.$queryRaw`SELECT * FROM config_risk_thresholds LIMIT 1`;
-        if (config.length > 0) {
-            res.json(config[0]);
-        } else {
-            // Default jika belum ada data
-            res.json({ lowScore: 30, highScore: 70 });
-        }
+        // Ambil SEMUA threshold untuk semua segment
+        const configs = await prisma.riskThreshold.findMany();
+        res.json(configs || []);
     } catch (e) {
         res.status(500).json({ error: e.message });
     }
@@ -292,17 +396,14 @@ exports.getRiskConfig = async (req, res) => {
 // --- 4. UPDATE GLOBAL THRESHOLDS ---
 exports.updateRiskConfig = async (req, res) => {
     try {
-        const { lowScore, highScore } = req.body;
+        const { segment, lowScore, highScore } = req.body;
+        const seg = (segment || 'consumer').toUpperCase(); // Ambil dari BODY
         
-        // Upsert logic (Update if exists, Insert if not)
-        await prisma.$executeRaw`
-            INSERT INTO config_risk_thresholds (id, lowScore, highScore, updatedAt)
-            VALUES ('default', ${lowScore}, ${highScore}, NOW())
-            ON DUPLICATE KEY UPDATE
-            lowScore = VALUES(lowScore),
-            highScore = VALUES(highScore),
-            updatedAt = NOW()
-        `;
+        await prisma.riskThreshold.upsert({
+            where: { segment: seg },
+            update: { lowScore: parseInt(lowScore), highScore: parseInt(highScore) },
+            create: { segment: seg, lowScore: parseInt(lowScore), highScore: parseInt(highScore) }
+        });
 
         res.json({ success: true });
     } catch (e) {

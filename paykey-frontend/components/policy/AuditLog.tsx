@@ -12,6 +12,7 @@ export function AuditLog({ refreshKey }: { refreshKey?: number }) {
       try {
         const data = await adminService.getPolicyAuditLogs();
         setLogs(data || []);
+        console.log("Fetched logs:", data);
       } catch (error) {
         console.error("Failed to fetch logs");
       } finally {

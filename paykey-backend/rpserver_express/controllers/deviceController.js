@@ -98,6 +98,8 @@ exports.getUserDevices = async (req, res) => {
                 credentialId: d.credentialId,
                 signCounter: approvals,
                 transports: safeJsonParse(d.transports),
+                userId: d.user.id ? d.user.id.toString() : 'Unknown',
+                email: d.user.email ? d.user.email : 'Unknown',
                 
                 // Location & Telemetry
                 location: d.deviceTelemetry?.device_address || d.deviceTelemetry?.timezone || 'Unknown Location',

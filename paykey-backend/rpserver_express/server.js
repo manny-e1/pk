@@ -1,6 +1,3 @@
-// backend-express/server.js
-
-// [WAJIB] Fix JSON BigInt Serialization (Harus paling atas)
 BigInt.prototype.toJSON = function() {       
   return this.toString();
 };
@@ -8,7 +5,7 @@ BigInt.prototype.toJSON = function() {
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const routes = require('./routes'); // Import file routes/index.js yang baru diperbaiki
+const routes = require('./routes');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const { initGeoDb } = require('./utils/geoIpService');
@@ -16,7 +13,6 @@ const { initGeoDb } = require('./utils/geoIpService');
 const app = express();
 const PORT = 4000;
 
-// Middleware
 const allowedOrigins = [
   'http://localhost:3000',
   'http://192.168.1.3:3000', // <--- URL Frontend Admin (Next.js) via IP
@@ -31,7 +27,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) === -1) {
@@ -45,13 +40,12 @@ app.use(cors({
 
 
 app.use(cookieParser());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '100mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-// --- GUNAKAN ROUTES ---
-// Semua logika route sekarang ada di routes/index.js
-// Kita mount di root path '/'
-app.use('/', routes);
 app.use('/.well-known', express.static('.well-known'));
+
+app.use('/', routes);
 
 initGeoDb().then(() => {
     app.listen(PORT, '0.0.0.0', () => {

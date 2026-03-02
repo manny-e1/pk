@@ -1,0 +1,5241 @@
+(globalThis.TURBOPACK || (globalThis.TURBOPACK = [])).push([typeof document === "object" ? document.currentScript : undefined,
+"[project]/services/systemDevice.ts [app-client] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "deviceService",
+    ()=>deviceService
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$ua$2d$parser$2d$js$2f$src$2f$main$2f$ua$2d$parser$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/ua-parser-js/src/main/ua-parser.mjs [app-client] (ecmascript)");
+;
+const deviceService = {
+    async getDeviceTelemetry () {
+        if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+        ;
+        const nav = navigator;
+        const parser = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$ua$2d$parser$2d$js$2f$src$2f$main$2f$ua$2d$parser$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["UAParser"]();
+        const uaResult = parser.getResult();
+        let preciseModel = '';
+        let preciseOSVersion = '';
+        if (nav.userAgentData && typeof nav.userAgentData.getHighEntropyValues === 'function') {
+            try {
+                const hints = await nav.userAgentData.getHighEntropyValues([
+                    'model',
+                    'platformVersion'
+                ]);
+                if (hints.model) preciseModel = hints.model;
+                if (hints.platformVersion) preciseOSVersion = hints.platformVersion;
+            } catch (e) {}
+        }
+        // 2. GPU RENDERER
+        let gpuRenderer = 'Unknown GPU';
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                if (debugInfo) {
+                    gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                }
+            }
+        } catch (e) {}
+        // 3. NETWORK TYPE
+        let netType = 'UNKNOWN';
+        if (nav.connection) {
+            const type = nav.connection.type || 'unknown';
+            const speed = nav.connection.effectiveType || '';
+            netType = type !== 'unknown' ? type.toUpperCase() : speed.toUpperCase();
+        }
+        // 4. GEOLOCATION
+        let lat = null;
+        let lng = null;
+        let acc = null;
+        try {
+            // const pos = await this.getCurrentPosition();
+            // lat = pos.coords.latitude;
+            // lng = pos.coords.longitude;
+            // acc = pos.coords.accuracy;
+            lat = null;
+            lng = null;
+            acc = null;
+        } catch (e) {}
+        return {
+            device_type: uaResult.device.type || (this.isDesktop() ? 'desktop' : 'mobile'),
+            device_vendor: uaResult.device.vendor || 'Generic',
+            device_model: preciseModel || uaResult.device.model || 'Unknown Model',
+            os_name: uaResult.os.name || 'Unknown OS',
+            os_version: preciseOSVersion || uaResult.os.version || '',
+            browser_name: uaResult.browser.name || 'Unknown Browser',
+            browser_version: uaResult.browser.version || '',
+            screen_resolution: `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio}x)`,
+            gpu_renderer: gpuRenderer,
+            network_type: netType,
+            gps_latitude: lat,
+            gps_longitude: lng,
+            gps_accuracy: acc,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            language: navigator.language
+        };
+    },
+    // getCurrentPosition(): Promise<GeolocationPosition> {
+    //   return new Promise((resolve, reject) => {
+    //     if (!navigator.geolocation) return reject();
+    //     navigator.geolocation.getCurrentPosition(resolve, reject, { 
+    //         enableHighAccuracy: true, timeout: 4000, maximumAge: 0 
+    //     });
+    //   });
+    // },
+    isDesktop () {
+        const userAgent = navigator.userAgent.toLowerCase();
+        return !/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    },
+    getEmptyTelemetry () {
+        return {
+            device_type: 'server',
+            device_vendor: '',
+            device_model: '',
+            os_name: '',
+            os_version: '',
+            browser_name: '',
+            browser_version: '',
+            screen_resolution: '',
+            gpu_renderer: '',
+            network_type: '',
+            gps_latitude: null,
+            gps_longitude: null,
+            gps_accuracy: null,
+            timezone: '',
+            language: ''
+        };
+    }
+};
+if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
+    __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
+}
+}),
+"[project]/app/login/page.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>LoginPage
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$authService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/authService.ts [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$systemDevice$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/systemDevice.ts [app-client] (ecmascript)");
+;
+var _s = __turbopack_context__.k.signature();
+'use client';
+;
+;
+;
+;
+;
+function LoginPage() {
+    _s();
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    // --- STATE ---
+    const [email, setEmail] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    const [password, setPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    const [cachedTelemetry, setCachedTelemetry] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    // Status Verifikasi User (Untuk mengubah tampilan Email -> Widget)
+    const [verifiedUser, setVerifiedUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    // UI States
+    const [showPassword, setShowPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [isChecking, setIsChecking] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false); // Loading saat cek email
+    const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false); // Loading saat submit login
+    const [errorMessage, setErrorMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    // Ref untuk pindah fokus
+    const passwordInputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    // --- LOGIC ---
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "LoginPage.useEffect": ()=>{
+            const initTelemetry = {
+                "LoginPage.useEffect.initTelemetry": async ()=>{
+                    try {
+                        const data = await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$systemDevice$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deviceService"].getDeviceTelemetry();
+                        setCachedTelemetry(data);
+                        console.log("✅ Telemetry ready:", data);
+                    } catch (e) {
+                        console.warn("⚠️ Silent telemetry check failed/denied:", e);
+                    }
+                }
+            }["LoginPage.useEffect.initTelemetry"];
+            initTelemetry();
+        }
+    }["LoginPage.useEffect"], []);
+    const handleError = (msg)=>{
+        setIsLoading(false);
+        setIsChecking(false);
+        setErrorMessage(msg);
+        setTimeout(()=>setErrorMessage(''), 4000);
+    };
+    // 1. OTOMATIS CHECK EMAIL (2-Step Login Flow)
+    const handleCheckEmail = async ()=>{
+        if (!email || isChecking || verifiedUser) return;
+        setIsChecking(true);
+        setErrorMessage('');
+        try {
+            const res = await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$authService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["authService"].checkUser(email);
+            await new Promise((r)=>setTimeout(r, 600)); // Smooth loading
+            if (!res.exists) {
+                handleError("Account not found. Please check your email.");
+                return;
+            }
+            if (res.isBlocked) {
+                handleError(res.message || "Access denied. Administrators only.");
+                return;
+            }
+            // Simpan data user & Lanjut ke Step 2 (Password/Passkey)
+            setVerifiedUser({
+                name: res.name || 'Administrator',
+                email: email,
+                hasPasskey: res.hasPasskey
+            });
+            // Fokus otomatis ke password setelah transisi UI
+            setTimeout(()=>passwordInputRef.current?.focus(), 100);
+        } catch (err) {
+            handleError(err.message || 'Connection failed');
+        } finally{
+            setIsChecking(false);
+        }
+    };
+    // Handle tombol Enter di email
+    const handleEmailKeyDown = (e)=>{
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleCheckEmail();
+        }
+    };
+    // 2. LOGIN PASSWORD
+    const handleLogin = async (e)=>{
+        e.preventDefault();
+        if (!password) return handleError("Password required");
+        setIsLoading(true);
+        try {
+            const telemetry = cachedTelemetry || await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$systemDevice$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deviceService"].getDeviceTelemetry();
+            const loginEmail = verifiedUser ? verifiedUser.email : email;
+            await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$authService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["authService"].loginPassword(loginEmail, password, telemetry);
+            localStorage.setItem('paykey_last_user_email', loginEmail);
+            router.push('/dashboard');
+        } catch (err) {
+            handleError('Invalid credentials');
+        }
+    };
+    // 3. LOGIN PASSKEY
+    const handlePasskeyLogin = async ()=>{
+        if (!verifiedUser?.hasPasskey || isLoading) return;
+        setIsLoading(true);
+        try {
+            const telemetry = cachedTelemetry || await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$systemDevice$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deviceService"].getDeviceTelemetry();
+            await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$authService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["authService"].loginPasskey(verifiedUser.email, telemetry);
+            localStorage.setItem('paykey_last_user_email', verifiedUser.email);
+            router.push('/dashboard');
+        } catch (err) {
+            let msg = err.message || "Passkey login failed";
+            if (msg.includes("not allowed") || msg.includes("cancelled")) msg = "Login cancelled";
+            handleError(msg);
+        }
+    };
+    const handleSwitchAccount = ()=>{
+        setVerifiedUser(null);
+        setEmail('');
+        setPassword('');
+        setErrorMessage('');
+    };
+    // --- RENDER ---
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "min-h-screen flex items-center justify-center p-5 bg-[var(--bg-primary)] font-sans text-[14px]",
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "w-full max-w-[400px]",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-xl)] p-10 shadow-[0_4px_24px_rgba(0,0,0,0.3)]",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "text-center mb-8",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "inline-flex items-center gap-3 mb-6",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "w-10 h-10 rounded-[var(--radius-md)] flex items-center justify-center bg-gradient-to-br from-[var(--accent)] to-[#60a5fa]",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                            viewBox: "0 0 24 24",
+                                            fill: "none",
+                                            stroke: "currentColor",
+                                            strokeWidth: "2.5",
+                                            className: "w-[22px] h-[22px] text-white",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
+                                                    x: "3",
+                                                    y: "11",
+                                                    width: "18",
+                                                    height: "11",
+                                                    rx: "2",
+                                                    ry: "2"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/login/page.tsx",
+                                                    lineNumber: 159,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                                    d: "M7 11V7a5 5 0 0 1 10 0v4"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/login/page.tsx",
+                                                    lineNumber: 160,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/app/login/page.tsx",
+                                            lineNumber: 158,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 157,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "font-semibold text-lg text-[var(--text-primary)]",
+                                        children: "Secure Paykey"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 163,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-[10px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded-[10px]",
+                                        children: "FIDO2"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 164,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 156,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                className: "text-xl font-semibold mb-2 text-[var(--text-primary)]",
+                                children: verifiedUser ? `Welcome Back, ${verifiedUser.name.split(' ')[0]}` : 'Admin Login'
+                            }, void 0, false, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 166,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                className: "text-sm text-[var(--text-tertiary)]",
+                                children: verifiedUser ? 'Enter your password or use your Passkey' : 'Enter your email to continue'
+                            }, void 0, false, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 169,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/login/page.tsx",
+                        lineNumber: 155,
+                        columnNumber: 11
+                    }, this),
+                    errorMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "mb-4 p-3 rounded-[var(--radius-md)] bg-[var(--error-muted)] border border-[var(--error)] text-[var(--error)] text-xs text-center font-medium animate-pulse",
+                        children: errorMessage
+                    }, void 0, false, {
+                        fileName: "[project]/app/login/page.tsx",
+                        lineNumber: 176,
+                        columnNumber: 13
+                    }, this),
+                    !verifiedUser ? // ==========================================
+                    // STEP 1: INPUT EMAIL SAJA
+                    // ==========================================
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "animate-scale-in",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "mb-6",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                        className: "block text-[13px] font-medium text-[var(--text-secondary)] mb-2",
+                                        children: "Email Address"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 189,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "relative",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                            type: "email",
+                                            className: "w-full p-3 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] focus:ring-[3px] focus:ring-[rgba(35,131,226,0.15)] transition-all placeholder-[var(--text-tertiary)]",
+                                            placeholder: "name@company.com",
+                                            value: email,
+                                            onChange: (e)=>setEmail(e.target.value),
+                                            onKeyDown: handleEmailKeyDown,
+                                            disabled: isChecking,
+                                            autoFocus: true
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/login/page.tsx",
+                                            lineNumber: 191,
+                                            columnNumber: 19
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 190,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 188,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                type: "button",
+                                onClick: handleCheckEmail,
+                                disabled: isChecking || !email,
+                                className: "w-full flex items-center justify-center gap-2 p-3 rounded-[var(--radius-md)] bg-[var(--accent)] text-white text-sm font-medium hover:bg-[var(--accent-hover)] active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed",
+                                children: isChecking ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                            className: "animate-spin w-[18px] h-[18px]",
+                                            viewBox: "0 0 24 24",
+                                            fill: "none",
+                                            stroke: "currentColor",
+                                            strokeWidth: "2",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
+                                                cx: "12",
+                                                cy: "12",
+                                                r: "10",
+                                                strokeDasharray: "32",
+                                                strokeDashoffset: "12"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/login/page.tsx",
+                                                lineNumber: 213,
+                                                columnNumber: 23
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/login/page.tsx",
+                                            lineNumber: 212,
+                                            columnNumber: 21
+                                        }, this),
+                                        "Checking..."
+                                    ]
+                                }, void 0, true) : 'Continue'
+                            }, void 0, false, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 204,
+                                columnNumber: 15
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/login/page.tsx",
+                        lineNumber: 187,
+                        columnNumber: 13
+                    }, this) : // ==========================================
+                    // STEP 2: PASSWORD & PASSKEY
+                    // ==========================================
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "animate-scale-in",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex items-center gap-3 p-3.5 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] mb-6",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0 bg-gradient-to-br from-[var(--accent)] to-[var(--purple)]",
+                                        children: verifiedUser.name.substring(0, 2).toUpperCase()
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 231,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex-1 min-w-0",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "text-sm font-medium text-[var(--text-primary)] truncate",
+                                                children: verifiedUser.email
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/login/page.tsx",
+                                                lineNumber: 235,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "text-xs text-[var(--text-tertiary)]",
+                                                children: "Administrator"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/login/page.tsx",
+                                                lineNumber: 236,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 234,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "w-5 h-5 bg-[var(--accent)] rounded-full flex items-center justify-center shrink-0 cursor-pointer hover:bg-[var(--accent-hover)] transition-colors",
+                                        onClick: handleSwitchAccount,
+                                        title: "Change account",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                            viewBox: "0 0 24 24",
+                                            fill: "none",
+                                            stroke: "currentColor",
+                                            strokeWidth: "3",
+                                            className: "w-3 h-3 text-white",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
+                                                points: "20 6 9 17 4 12"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/login/page.tsx",
+                                                lineNumber: 240,
+                                                columnNumber: 21
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/login/page.tsx",
+                                            lineNumber: 239,
+                                            columnNumber: 19
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 238,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 230,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
+                                onSubmit: handleLogin,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "mb-5",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                                className: "block text-[13px] font-medium text-[var(--text-secondary)] mb-2",
+                                                children: "Password"
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/login/page.tsx",
+                                                lineNumber: 248,
+                                                columnNumber: 19
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "relative",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                                        ref: passwordInputRef,
+                                                        type: showPassword ? "text" : "password",
+                                                        className: "w-full p-3 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent)] focus:ring-[3px] focus:ring-[rgba(35,131,226,0.15)] transition-all placeholder-[var(--text-tertiary)]",
+                                                        placeholder: "Enter your password",
+                                                        value: password,
+                                                        onChange: (e)=>setPassword(e.target.value),
+                                                        required: true
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/login/page.tsx",
+                                                        lineNumber: 250,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                        type: "button",
+                                                        onClick: ()=>setShowPassword(!showPassword),
+                                                        className: "absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] p-1",
+                                                        children: showPassword ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                                            viewBox: "0 0 24 24",
+                                                            fill: "none",
+                                                            stroke: "currentColor",
+                                                            strokeWidth: "2",
+                                                            className: "w-[18px] h-[18px]",
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                                                    d: "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/app/login/page.tsx",
+                                                                    lineNumber: 266,
+                                                                    columnNumber: 27
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
+                                                                    cx: "12",
+                                                                    cy: "12",
+                                                                    r: "3"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/app/login/page.tsx",
+                                                                    lineNumber: 266,
+                                                                    columnNumber: 84
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/app/login/page.tsx",
+                                                            lineNumber: 265,
+                                                            columnNumber: 25
+                                                        }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                                            viewBox: "0 0 24 24",
+                                                            fill: "none",
+                                                            stroke: "currentColor",
+                                                            strokeWidth: "2",
+                                                            className: "w-[18px] h-[18px]",
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                                                    d: "M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/app/login/page.tsx",
+                                                                    lineNumber: 270,
+                                                                    columnNumber: 27
+                                                                }, this),
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
+                                                                    x1: "1",
+                                                                    y1: "1",
+                                                                    x2: "23",
+                                                                    y2: "23"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/app/login/page.tsx",
+                                                                    lineNumber: 270,
+                                                                    columnNumber: 220
+                                                                }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/app/login/page.tsx",
+                                                            lineNumber: 269,
+                                                            columnNumber: 25
+                                                        }, this)
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/login/page.tsx",
+                                                        lineNumber: 259,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/login/page.tsx",
+                                                lineNumber: 249,
+                                                columnNumber: 19
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 247,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        type: "submit",
+                                        disabled: isLoading,
+                                        className: "w-full flex items-center justify-center gap-2 p-3 rounded-[var(--radius-md)] bg-[var(--accent)] text-white text-sm font-medium hover:bg-[var(--accent-hover)] active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed",
+                                        children: isLoading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                                    className: "animate-spin w-[18px] h-[18px]",
+                                                    viewBox: "0 0 24 24",
+                                                    fill: "none",
+                                                    stroke: "currentColor",
+                                                    strokeWidth: "2",
+                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
+                                                        cx: "12",
+                                                        cy: "12",
+                                                        r: "10",
+                                                        strokeDasharray: "32",
+                                                        strokeDashoffset: "12"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/login/page.tsx",
+                                                        lineNumber: 285,
+                                                        columnNumber: 25
+                                                    }, this)
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/login/page.tsx",
+                                                    lineNumber: 284,
+                                                    columnNumber: 23
+                                                }, this),
+                                                "Signing in..."
+                                            ]
+                                        }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                                    viewBox: "0 0 24 24",
+                                                    fill: "none",
+                                                    stroke: "currentColor",
+                                                    strokeWidth: "2",
+                                                    className: "w-[18px] h-[18px]",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                                            d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/app/login/page.tsx",
+                                                            lineNumber: 292,
+                                                            columnNumber: 25
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
+                                                            points: "10 17 15 12 10 7"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/app/login/page.tsx",
+                                                            lineNumber: 292,
+                                                            columnNumber: 79
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
+                                                            x1: "15",
+                                                            y1: "12",
+                                                            x2: "3",
+                                                            y2: "12"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/app/login/page.tsx",
+                                                            lineNumber: 292,
+                                                            columnNumber: 117
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/app/login/page.tsx",
+                                                    lineNumber: 291,
+                                                    columnNumber: 23
+                                                }, this),
+                                                "Log in"
+                                            ]
+                                        }, void 0, true)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 277,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 246,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                href: "#",
+                                className: "block text-center text-[13px] text-[var(--text-tertiary)] mt-4 hover:text-[var(--accent)] transition-colors",
+                                children: "Forgot password?"
+                            }, void 0, false, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 300,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "flex items-center gap-4 my-6",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex-1 h-px bg-[var(--border-primary)]"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 306,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-xs text-[var(--text-tertiary)]",
+                                        children: "or"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 307,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex-1 h-px bg-[var(--border-primary)]"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 308,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 305,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: handlePasskeyLogin,
+                                disabled: !verifiedUser?.hasPasskey || isLoading,
+                                className: `w-full flex items-center justify-center gap-2.5 p-3 border border-[var(--border-primary)] rounded-[var(--radius-md)] text-sm font-medium transition-all
+                  ${verifiedUser?.hasPasskey ? 'bg-[var(--bg-tertiary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] hover:border-[var(--text-tertiary)] cursor-pointer' : 'bg-transparent text-[var(--text-tertiary)] opacity-50 cursor-not-allowed'}`,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                        viewBox: "0 0 24 24",
+                                        fill: "none",
+                                        stroke: "currentColor",
+                                        strokeWidth: "2",
+                                        className: `w-5 h-5 ${verifiedUser?.hasPasskey ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}`,
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                            d: "M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/login/page.tsx",
+                                            lineNumber: 322,
+                                            columnNumber: 19
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/login/page.tsx",
+                                        lineNumber: 321,
+                                        columnNumber: 17
+                                    }, this),
+                                    "Sign in with Passkey"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 312,
+                                columnNumber: 15
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                type: "button",
+                                onClick: handleSwitchAccount,
+                                className: "block w-full text-center text-[13px] text-[var(--text-tertiary)] mt-6 hover:text-[var(--accent)] transition-colors",
+                                children: "Log in as someone else"
+                            }, void 0, false, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 327,
+                                columnNumber: 15
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/login/page.tsx",
+                        lineNumber: 228,
+                        columnNumber: 13
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                        className: "text-center text-xs text-[var(--text-tertiary)] mt-6 leading-5",
+                        children: [
+                            "Protected by FIDO2 authentication",
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 338,
+                                columnNumber: 46
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "/signup",
+                                className: "text-[var(--text-secondary)] hover:text-[var(--accent)] no-underline",
+                                children: "Create an account"
+                            }, void 0, false, {
+                                fileName: "[project]/app/login/page.tsx",
+                                lineNumber: 339,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/app/login/page.tsx",
+                        lineNumber: 337,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/app/login/page.tsx",
+                lineNumber: 152,
+                columnNumber: 9
+            }, this)
+        }, void 0, false, {
+            fileName: "[project]/app/login/page.tsx",
+            lineNumber: 149,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/app/login/page.tsx",
+        lineNumber: 148,
+        columnNumber: 5
+    }, this);
+}
+_s(LoginPage, "SbqOoXlmrD1t2GKxvMnKr3gPYBQ=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+    ];
+});
+_c = LoginPage;
+var _c;
+__turbopack_context__.k.register(_c, "LoginPage");
+if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
+    __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
+}
+}),
+"[project]/node_modules/next/dist/shared/lib/router/utils/querystring.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+0 && (module.exports = {
+    assign: null,
+    searchParamsToUrlQuery: null,
+    urlQueryToSearchParams: null
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: all[name]
+    });
+}
+_export(exports, {
+    assign: function() {
+        return assign;
+    },
+    searchParamsToUrlQuery: function() {
+        return searchParamsToUrlQuery;
+    },
+    urlQueryToSearchParams: function() {
+        return urlQueryToSearchParams;
+    }
+});
+function searchParamsToUrlQuery(searchParams) {
+    const query = {};
+    for (const [key, value] of searchParams.entries()){
+        const existing = query[key];
+        if (typeof existing === 'undefined') {
+            query[key] = value;
+        } else if (Array.isArray(existing)) {
+            existing.push(value);
+        } else {
+            query[key] = [
+                existing,
+                value
+            ];
+        }
+    }
+    return query;
+}
+function stringifyUrlQueryParam(param) {
+    if (typeof param === 'string') {
+        return param;
+    }
+    if (typeof param === 'number' && !isNaN(param) || typeof param === 'boolean') {
+        return String(param);
+    } else {
+        return '';
+    }
+}
+function urlQueryToSearchParams(query) {
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)){
+        if (Array.isArray(value)) {
+            for (const item of value){
+                searchParams.append(key, stringifyUrlQueryParam(item));
+            }
+        } else {
+            searchParams.set(key, stringifyUrlQueryParam(value));
+        }
+    }
+    return searchParams;
+}
+function assign(target, ...searchParamsList) {
+    for (const searchParams of searchParamsList){
+        for (const key of searchParams.keys()){
+            target.delete(key);
+        }
+        for (const [key, value] of searchParams.entries()){
+            target.append(key, value);
+        }
+    }
+    return target;
+} //# sourceMappingURL=querystring.js.map
+}),
+"[project]/node_modules/next/dist/shared/lib/router/utils/format-url.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"use strict";
+
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
+// Format function modified from nodejs
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+0 && (module.exports = {
+    formatUrl: null,
+    formatWithValidation: null,
+    urlObjectKeys: null
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: all[name]
+    });
+}
+_export(exports, {
+    formatUrl: function() {
+        return formatUrl;
+    },
+    formatWithValidation: function() {
+        return formatWithValidation;
+    },
+    urlObjectKeys: function() {
+        return urlObjectKeys;
+    }
+});
+const _interop_require_wildcard = __turbopack_context__.r("[project]/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs [app-client] (ecmascript)");
+const _querystring = /*#__PURE__*/ _interop_require_wildcard._(__turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/router/utils/querystring.js [app-client] (ecmascript)"));
+const slashedProtocols = /https?|ftp|gopher|file/;
+function formatUrl(urlObj) {
+    let { auth, hostname } = urlObj;
+    let protocol = urlObj.protocol || '';
+    let pathname = urlObj.pathname || '';
+    let hash = urlObj.hash || '';
+    let query = urlObj.query || '';
+    let host = false;
+    auth = auth ? encodeURIComponent(auth).replace(/%3A/i, ':') + '@' : '';
+    if (urlObj.host) {
+        host = auth + urlObj.host;
+    } else if (hostname) {
+        host = auth + (~hostname.indexOf(':') ? `[${hostname}]` : hostname);
+        if (urlObj.port) {
+            host += ':' + urlObj.port;
+        }
+    }
+    if (query && typeof query === 'object') {
+        query = String(_querystring.urlQueryToSearchParams(query));
+    }
+    let search = urlObj.search || query && `?${query}` || '';
+    if (protocol && !protocol.endsWith(':')) protocol += ':';
+    if (urlObj.slashes || (!protocol || slashedProtocols.test(protocol)) && host !== false) {
+        host = '//' + (host || '');
+        if (pathname && pathname[0] !== '/') pathname = '/' + pathname;
+    } else if (!host) {
+        host = '';
+    }
+    if (hash && hash[0] !== '#') hash = '#' + hash;
+    if (search && search[0] !== '?') search = '?' + search;
+    pathname = pathname.replace(/[?#]/g, encodeURIComponent);
+    search = search.replace('#', '%23');
+    return `${protocol}${host}${pathname}${search}${hash}`;
+}
+const urlObjectKeys = [
+    'auth',
+    'hash',
+    'host',
+    'hostname',
+    'href',
+    'path',
+    'pathname',
+    'port',
+    'protocol',
+    'query',
+    'search',
+    'slashes'
+];
+function formatWithValidation(url) {
+    if ("TURBOPACK compile-time truthy", 1) {
+        if (url !== null && typeof url === 'object') {
+            Object.keys(url).forEach((key)=>{
+                if (!urlObjectKeys.includes(key)) {
+                    console.warn(`Unknown key passed via urlObject into url.format: ${key}`);
+                }
+            });
+        }
+    }
+    return formatUrl(url);
+} //# sourceMappingURL=format-url.js.map
+}),
+"[project]/node_modules/next/dist/client/use-merged-ref.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "useMergedRef", {
+    enumerable: true,
+    get: function() {
+        return useMergedRef;
+    }
+});
+const _react = __turbopack_context__.r("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+function useMergedRef(refA, refB) {
+    const cleanupA = (0, _react.useRef)(null);
+    const cleanupB = (0, _react.useRef)(null);
+    // NOTE: In theory, we could skip the wrapping if only one of the refs is non-null.
+    // (this happens often if the user doesn't pass a ref to Link/Form/Image)
+    // But this can cause us to leak a cleanup-ref into user code (previously via `<Link legacyBehavior>`),
+    // and the user might pass that ref into ref-merging library that doesn't support cleanup refs
+    // (because it hasn't been updated for React 19)
+    // which can then cause things to blow up, because a cleanup-returning ref gets called with `null`.
+    // So in practice, it's safer to be defensive and always wrap the ref, even on React 19.
+    return (0, _react.useCallback)((current)=>{
+        if (current === null) {
+            const cleanupFnA = cleanupA.current;
+            if (cleanupFnA) {
+                cleanupA.current = null;
+                cleanupFnA();
+            }
+            const cleanupFnB = cleanupB.current;
+            if (cleanupFnB) {
+                cleanupB.current = null;
+                cleanupFnB();
+            }
+        } else {
+            if (refA) {
+                cleanupA.current = applyRef(refA, current);
+            }
+            if (refB) {
+                cleanupB.current = applyRef(refB, current);
+            }
+        }
+    }, [
+        refA,
+        refB
+    ]);
+}
+function applyRef(refA, current) {
+    if (typeof refA === 'function') {
+        const cleanup = refA(current);
+        if (typeof cleanup === 'function') {
+            return cleanup;
+        } else {
+            return ()=>refA(null);
+        }
+    } else {
+        refA.current = current;
+        return ()=>{
+            refA.current = null;
+        };
+    }
+}
+if ((typeof exports.default === 'function' || typeof exports.default === 'object' && exports.default !== null) && typeof exports.default.__esModule === 'undefined') {
+    Object.defineProperty(exports.default, '__esModule', {
+        value: true
+    });
+    Object.assign(exports.default, exports);
+    module.exports = exports.default;
+} //# sourceMappingURL=use-merged-ref.js.map
+}),
+"[project]/node_modules/next/dist/shared/lib/utils.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"use strict";
+
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+0 && (module.exports = {
+    DecodeError: null,
+    MiddlewareNotFoundError: null,
+    MissingStaticPage: null,
+    NormalizeError: null,
+    PageNotFoundError: null,
+    SP: null,
+    ST: null,
+    WEB_VITALS: null,
+    execOnce: null,
+    getDisplayName: null,
+    getLocationOrigin: null,
+    getURL: null,
+    isAbsoluteUrl: null,
+    isResSent: null,
+    loadGetInitialProps: null,
+    normalizeRepeatedSlashes: null,
+    stringifyError: null
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: all[name]
+    });
+}
+_export(exports, {
+    DecodeError: function() {
+        return DecodeError;
+    },
+    MiddlewareNotFoundError: function() {
+        return MiddlewareNotFoundError;
+    },
+    MissingStaticPage: function() {
+        return MissingStaticPage;
+    },
+    NormalizeError: function() {
+        return NormalizeError;
+    },
+    PageNotFoundError: function() {
+        return PageNotFoundError;
+    },
+    SP: function() {
+        return SP;
+    },
+    ST: function() {
+        return ST;
+    },
+    WEB_VITALS: function() {
+        return WEB_VITALS;
+    },
+    execOnce: function() {
+        return execOnce;
+    },
+    getDisplayName: function() {
+        return getDisplayName;
+    },
+    getLocationOrigin: function() {
+        return getLocationOrigin;
+    },
+    getURL: function() {
+        return getURL;
+    },
+    isAbsoluteUrl: function() {
+        return isAbsoluteUrl;
+    },
+    isResSent: function() {
+        return isResSent;
+    },
+    loadGetInitialProps: function() {
+        return loadGetInitialProps;
+    },
+    normalizeRepeatedSlashes: function() {
+        return normalizeRepeatedSlashes;
+    },
+    stringifyError: function() {
+        return stringifyError;
+    }
+});
+const WEB_VITALS = [
+    'CLS',
+    'FCP',
+    'FID',
+    'INP',
+    'LCP',
+    'TTFB'
+];
+function execOnce(fn) {
+    let used = false;
+    let result;
+    return (...args)=>{
+        if (!used) {
+            used = true;
+            result = fn(...args);
+        }
+        return result;
+    };
+}
+// Scheme: https://tools.ietf.org/html/rfc3986#section-3.1
+// Absolute URL: https://tools.ietf.org/html/rfc3986#section-4.3
+const ABSOLUTE_URL_REGEX = /^[a-zA-Z][a-zA-Z\d+\-.]*?:/;
+const isAbsoluteUrl = (url)=>ABSOLUTE_URL_REGEX.test(url);
+function getLocationOrigin() {
+    const { protocol, hostname, port } = window.location;
+    return `${protocol}//${hostname}${port ? ':' + port : ''}`;
+}
+function getURL() {
+    const { href } = window.location;
+    const origin = getLocationOrigin();
+    return href.substring(origin.length);
+}
+function getDisplayName(Component) {
+    return typeof Component === 'string' ? Component : Component.displayName || Component.name || 'Unknown';
+}
+function isResSent(res) {
+    return res.finished || res.headersSent;
+}
+function normalizeRepeatedSlashes(url) {
+    const urlParts = url.split('?');
+    const urlNoQuery = urlParts[0];
+    return urlNoQuery // first we replace any non-encoded backslashes with forward
+    // then normalize repeated forward slashes
+    .replace(/\\/g, '/').replace(/\/\/+/g, '/') + (urlParts[1] ? `?${urlParts.slice(1).join('?')}` : '');
+}
+async function loadGetInitialProps(App, ctx) {
+    if ("TURBOPACK compile-time truthy", 1) {
+        if (App.prototype?.getInitialProps) {
+            const message = `"${getDisplayName(App)}.getInitialProps()" is defined as an instance method - visit https://nextjs.org/docs/messages/get-initial-props-as-an-instance-method for more information.`;
+            throw Object.defineProperty(new Error(message), "__NEXT_ERROR_CODE", {
+                value: "E394",
+                enumerable: false,
+                configurable: true
+            });
+        }
+    }
+    // when called from _app `ctx` is nested in `ctx`
+    const res = ctx.res || ctx.ctx && ctx.ctx.res;
+    if (!App.getInitialProps) {
+        if (ctx.ctx && ctx.Component) {
+            // @ts-ignore pageProps default
+            return {
+                pageProps: await loadGetInitialProps(ctx.Component, ctx.ctx)
+            };
+        }
+        return {};
+    }
+    const props = await App.getInitialProps(ctx);
+    if (res && isResSent(res)) {
+        return props;
+    }
+    if (!props) {
+        const message = `"${getDisplayName(App)}.getInitialProps()" should resolve to an object. But found "${props}" instead.`;
+        throw Object.defineProperty(new Error(message), "__NEXT_ERROR_CODE", {
+            value: "E394",
+            enumerable: false,
+            configurable: true
+        });
+    }
+    if ("TURBOPACK compile-time truthy", 1) {
+        if (Object.keys(props).length === 0 && !ctx.ctx) {
+            console.warn(`${getDisplayName(App)} returned an empty object from \`getInitialProps\`. This de-optimizes and prevents automatic static optimization. https://nextjs.org/docs/messages/empty-object-getInitialProps`);
+        }
+    }
+    return props;
+}
+const SP = typeof performance !== 'undefined';
+const ST = SP && [
+    'mark',
+    'measure',
+    'getEntriesByName'
+].every((method)=>typeof performance[method] === 'function');
+class DecodeError extends Error {
+}
+class NormalizeError extends Error {
+}
+class PageNotFoundError extends Error {
+    constructor(page){
+        super();
+        this.code = 'ENOENT';
+        this.name = 'PageNotFoundError';
+        this.message = `Cannot find module for page: ${page}`;
+    }
+}
+class MissingStaticPage extends Error {
+    constructor(page, message){
+        super();
+        this.message = `Failed to load static file for page: ${page} ${message}`;
+    }
+}
+class MiddlewareNotFoundError extends Error {
+    constructor(){
+        super();
+        this.code = 'ENOENT';
+        this.message = `Cannot find the middleware module`;
+    }
+}
+function stringifyError(error) {
+    return JSON.stringify({
+        message: error.message,
+        stack: error.stack
+    });
+} //# sourceMappingURL=utils.js.map
+}),
+"[project]/node_modules/next/dist/shared/lib/router/utils/is-local-url.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "isLocalURL", {
+    enumerable: true,
+    get: function() {
+        return isLocalURL;
+    }
+});
+const _utils = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/utils.js [app-client] (ecmascript)");
+const _hasbasepath = __turbopack_context__.r("[project]/node_modules/next/dist/client/has-base-path.js [app-client] (ecmascript)");
+function isLocalURL(url) {
+    // prevent a hydration mismatch on href for url with anchor refs
+    if (!(0, _utils.isAbsoluteUrl)(url)) return true;
+    try {
+        // absolute urls can be local if they are on the same origin
+        const locationOrigin = (0, _utils.getLocationOrigin)();
+        const resolved = new URL(url, locationOrigin);
+        return resolved.origin === locationOrigin && (0, _hasbasepath.hasBasePath)(resolved.pathname);
+    } catch (_) {
+        return false;
+    }
+} //# sourceMappingURL=is-local-url.js.map
+}),
+"[project]/node_modules/next/dist/shared/lib/utils/error-once.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"use strict";
+
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+Object.defineProperty(exports, "errorOnce", {
+    enumerable: true,
+    get: function() {
+        return errorOnce;
+    }
+});
+let errorOnce = (_)=>{};
+if ("TURBOPACK compile-time truthy", 1) {
+    const errors = new Set();
+    errorOnce = (msg)=>{
+        if (!errors.has(msg)) {
+            console.error(msg);
+        }
+        errors.add(msg);
+    };
+} //# sourceMappingURL=error-once.js.map
+}),
+"[project]/node_modules/next/dist/client/app-dir/link.js [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"use strict";
+
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
+'use client';
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+0 && (module.exports = {
+    default: null,
+    useLinkStatus: null
+});
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: all[name]
+    });
+}
+_export(exports, {
+    /**
+ * A React component that extends the HTML `<a>` element to provide
+ * [prefetching](https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#2-prefetching)
+ * and client-side navigation. This is the primary way to navigate between routes in Next.js.
+ *
+ * @remarks
+ * - Prefetching is only enabled in production.
+ *
+ * @see https://nextjs.org/docs/app/api-reference/components/link
+ */ default: function() {
+        return LinkComponent;
+    },
+    useLinkStatus: function() {
+        return useLinkStatus;
+    }
+});
+const _interop_require_wildcard = __turbopack_context__.r("[project]/node_modules/@swc/helpers/cjs/_interop_require_wildcard.cjs [app-client] (ecmascript)");
+const _jsxruntime = __turbopack_context__.r("[project]/node_modules/next/dist/compiled/react/jsx-runtime.js [app-client] (ecmascript)");
+const _react = /*#__PURE__*/ _interop_require_wildcard._(__turbopack_context__.r("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)"));
+const _formaturl = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/router/utils/format-url.js [app-client] (ecmascript)");
+const _approutercontextsharedruntime = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/app-router-context.shared-runtime.js [app-client] (ecmascript)");
+const _usemergedref = __turbopack_context__.r("[project]/node_modules/next/dist/client/use-merged-ref.js [app-client] (ecmascript)");
+const _utils = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/utils.js [app-client] (ecmascript)");
+const _addbasepath = __turbopack_context__.r("[project]/node_modules/next/dist/client/add-base-path.js [app-client] (ecmascript)");
+const _warnonce = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/utils/warn-once.js [app-client] (ecmascript)");
+const _links = __turbopack_context__.r("[project]/node_modules/next/dist/client/components/links.js [app-client] (ecmascript)");
+const _islocalurl = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/router/utils/is-local-url.js [app-client] (ecmascript)");
+const _types = __turbopack_context__.r("[project]/node_modules/next/dist/client/components/segment-cache/types.js [app-client] (ecmascript)");
+const _erroronce = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/utils/error-once.js [app-client] (ecmascript)");
+function isModifiedEvent(event) {
+    const eventTarget = event.currentTarget;
+    const target = eventTarget.getAttribute('target');
+    return target && target !== '_self' || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || // triggers resource download
+    event.nativeEvent && event.nativeEvent.which === 2;
+}
+function linkClicked(e, href, as, linkInstanceRef, replace, scroll, onNavigate) {
+    if (typeof window !== 'undefined') {
+        const { nodeName } = e.currentTarget;
+        // anchors inside an svg have a lowercase nodeName
+        const isAnchorNodeName = nodeName.toUpperCase() === 'A';
+        if (isAnchorNodeName && isModifiedEvent(e) || e.currentTarget.hasAttribute('download')) {
+            // ignore click for browser’s default behavior
+            return;
+        }
+        if (!(0, _islocalurl.isLocalURL)(href)) {
+            if (replace) {
+                // browser default behavior does not replace the history state
+                // so we need to do it manually
+                e.preventDefault();
+                location.replace(href);
+            }
+            // ignore click for browser’s default behavior
+            return;
+        }
+        e.preventDefault();
+        if (onNavigate) {
+            let isDefaultPrevented = false;
+            onNavigate({
+                preventDefault: ()=>{
+                    isDefaultPrevented = true;
+                }
+            });
+            if (isDefaultPrevented) {
+                return;
+            }
+        }
+        const { dispatchNavigateAction } = __turbopack_context__.r("[project]/node_modules/next/dist/client/components/app-router-instance.js [app-client] (ecmascript)");
+        _react.default.startTransition(()=>{
+            dispatchNavigateAction(as || href, replace ? 'replace' : 'push', scroll ?? true, linkInstanceRef.current);
+        });
+    }
+}
+function formatStringOrUrl(urlObjOrString) {
+    if (typeof urlObjOrString === 'string') {
+        return urlObjOrString;
+    }
+    return (0, _formaturl.formatUrl)(urlObjOrString);
+}
+function LinkComponent(props) {
+    const [linkStatus, setOptimisticLinkStatus] = (0, _react.useOptimistic)(_links.IDLE_LINK_STATUS);
+    let children;
+    const linkInstanceRef = (0, _react.useRef)(null);
+    const { href: hrefProp, as: asProp, children: childrenProp, prefetch: prefetchProp = null, passHref, replace, shallow, scroll, onClick, onMouseEnter: onMouseEnterProp, onTouchStart: onTouchStartProp, legacyBehavior = false, onNavigate, ref: forwardedRef, unstable_dynamicOnHover, ...restProps } = props;
+    children = childrenProp;
+    if (legacyBehavior && (typeof children === 'string' || typeof children === 'number')) {
+        children = /*#__PURE__*/ (0, _jsxruntime.jsx)("a", {
+            children: children
+        });
+    }
+    const router = _react.default.useContext(_approutercontextsharedruntime.AppRouterContext);
+    const prefetchEnabled = prefetchProp !== false;
+    const fetchStrategy = prefetchProp !== false ? getFetchStrategyFromPrefetchProp(prefetchProp) : _types.FetchStrategy.PPR;
+    if ("TURBOPACK compile-time truthy", 1) {
+        function createPropError(args) {
+            return Object.defineProperty(new Error(`Failed prop type: The prop \`${args.key}\` expects a ${args.expected} in \`<Link>\`, but got \`${args.actual}\` instead.` + (typeof window !== 'undefined' ? "\nOpen your browser's console to view the Component stack trace." : '')), "__NEXT_ERROR_CODE", {
+                value: "E319",
+                enumerable: false,
+                configurable: true
+            });
+        }
+        // TypeScript trick for type-guarding:
+        const requiredPropsGuard = {
+            href: true
+        };
+        const requiredProps = Object.keys(requiredPropsGuard);
+        requiredProps.forEach((key)=>{
+            if (key === 'href') {
+                if (props[key] == null || typeof props[key] !== 'string' && typeof props[key] !== 'object') {
+                    throw createPropError({
+                        key,
+                        expected: '`string` or `object`',
+                        actual: props[key] === null ? 'null' : typeof props[key]
+                    });
+                }
+            } else {
+                // TypeScript trick for type-guarding:
+                const _ = key;
+            }
+        });
+        // TypeScript trick for type-guarding:
+        const optionalPropsGuard = {
+            as: true,
+            replace: true,
+            scroll: true,
+            shallow: true,
+            passHref: true,
+            prefetch: true,
+            unstable_dynamicOnHover: true,
+            onClick: true,
+            onMouseEnter: true,
+            onTouchStart: true,
+            legacyBehavior: true,
+            onNavigate: true
+        };
+        const optionalProps = Object.keys(optionalPropsGuard);
+        optionalProps.forEach((key)=>{
+            const valType = typeof props[key];
+            if (key === 'as') {
+                if (props[key] && valType !== 'string' && valType !== 'object') {
+                    throw createPropError({
+                        key,
+                        expected: '`string` or `object`',
+                        actual: valType
+                    });
+                }
+            } else if (key === 'onClick' || key === 'onMouseEnter' || key === 'onTouchStart' || key === 'onNavigate') {
+                if (props[key] && valType !== 'function') {
+                    throw createPropError({
+                        key,
+                        expected: '`function`',
+                        actual: valType
+                    });
+                }
+            } else if (key === 'replace' || key === 'scroll' || key === 'shallow' || key === 'passHref' || key === 'legacyBehavior' || key === 'unstable_dynamicOnHover') {
+                if (props[key] != null && valType !== 'boolean') {
+                    throw createPropError({
+                        key,
+                        expected: '`boolean`',
+                        actual: valType
+                    });
+                }
+            } else if (key === 'prefetch') {
+                if (props[key] != null && valType !== 'boolean' && props[key] !== 'auto') {
+                    throw createPropError({
+                        key,
+                        expected: '`boolean | "auto"`',
+                        actual: valType
+                    });
+                }
+            } else {
+                // TypeScript trick for type-guarding:
+                const _ = key;
+            }
+        });
+    }
+    if ("TURBOPACK compile-time truthy", 1) {
+        if (props.locale) {
+            (0, _warnonce.warnOnce)('The `locale` prop is not supported in `next/link` while using the `app` router. Read more about app router internalization: https://nextjs.org/docs/app/building-your-application/routing/internationalization');
+        }
+        if (!asProp) {
+            let href;
+            if (typeof hrefProp === 'string') {
+                href = hrefProp;
+            } else if (typeof hrefProp === 'object' && typeof hrefProp.pathname === 'string') {
+                href = hrefProp.pathname;
+            }
+            if (href) {
+                const hasDynamicSegment = href.split('/').some((segment)=>segment.startsWith('[') && segment.endsWith(']'));
+                if (hasDynamicSegment) {
+                    throw Object.defineProperty(new Error(`Dynamic href \`${href}\` found in <Link> while using the \`/app\` router, this is not supported. Read more: https://nextjs.org/docs/messages/app-dir-dynamic-href`), "__NEXT_ERROR_CODE", {
+                        value: "E267",
+                        enumerable: false,
+                        configurable: true
+                    });
+                }
+            }
+        }
+    }
+    const { href, as } = _react.default.useMemo({
+        "LinkComponent.useMemo": ()=>{
+            const resolvedHref = formatStringOrUrl(hrefProp);
+            return {
+                href: resolvedHref,
+                as: asProp ? formatStringOrUrl(asProp) : resolvedHref
+            };
+        }
+    }["LinkComponent.useMemo"], [
+        hrefProp,
+        asProp
+    ]);
+    // This will return the first child, if multiple are provided it will throw an error
+    let child;
+    if (legacyBehavior) {
+        if (children?.$$typeof === Symbol.for('react.lazy')) {
+            throw Object.defineProperty(new Error(`\`<Link legacyBehavior>\` received a direct child that is either a Server Component, or JSX that was loaded with React.lazy(). This is not supported. Either remove legacyBehavior, or make the direct child a Client Component that renders the Link's \`<a>\` tag.`), "__NEXT_ERROR_CODE", {
+                value: "E863",
+                enumerable: false,
+                configurable: true
+            });
+        }
+        if ("TURBOPACK compile-time truthy", 1) {
+            if (onClick) {
+                console.warn(`"onClick" was passed to <Link> with \`href\` of \`${hrefProp}\` but "legacyBehavior" was set. The legacy behavior requires onClick be set on the child of next/link`);
+            }
+            if (onMouseEnterProp) {
+                console.warn(`"onMouseEnter" was passed to <Link> with \`href\` of \`${hrefProp}\` but "legacyBehavior" was set. The legacy behavior requires onMouseEnter be set on the child of next/link`);
+            }
+            try {
+                child = _react.default.Children.only(children);
+            } catch (err) {
+                if (!children) {
+                    throw Object.defineProperty(new Error(`No children were passed to <Link> with \`href\` of \`${hrefProp}\` but one child is required https://nextjs.org/docs/messages/link-no-children`), "__NEXT_ERROR_CODE", {
+                        value: "E320",
+                        enumerable: false,
+                        configurable: true
+                    });
+                }
+                throw Object.defineProperty(new Error(`Multiple children were passed to <Link> with \`href\` of \`${hrefProp}\` but only one child is supported https://nextjs.org/docs/messages/link-multiple-children` + (typeof window !== 'undefined' ? " \nOpen your browser's console to view the Component stack trace." : '')), "__NEXT_ERROR_CODE", {
+                    value: "E266",
+                    enumerable: false,
+                    configurable: true
+                });
+            }
+        } else //TURBOPACK unreachable
+        ;
+    } else {
+        if ("TURBOPACK compile-time truthy", 1) {
+            if (children?.type === 'a') {
+                throw Object.defineProperty(new Error('Invalid <Link> with <a> child. Please remove <a> or use <Link legacyBehavior>.\nLearn more: https://nextjs.org/docs/messages/invalid-new-link-with-extra-anchor'), "__NEXT_ERROR_CODE", {
+                    value: "E209",
+                    enumerable: false,
+                    configurable: true
+                });
+            }
+        }
+    }
+    const childRef = legacyBehavior ? child && typeof child === 'object' && child.ref : forwardedRef;
+    // Use a callback ref to attach an IntersectionObserver to the anchor tag on
+    // mount. In the future we will also use this to keep track of all the
+    // currently mounted <Link> instances, e.g. so we can re-prefetch them after
+    // a revalidation or refresh.
+    const observeLinkVisibilityOnMount = _react.default.useCallback({
+        "LinkComponent.useCallback[observeLinkVisibilityOnMount]": (element)=>{
+            if (router !== null) {
+                linkInstanceRef.current = (0, _links.mountLinkInstance)(element, href, router, fetchStrategy, prefetchEnabled, setOptimisticLinkStatus);
+            }
+            return ({
+                "LinkComponent.useCallback[observeLinkVisibilityOnMount]": ()=>{
+                    if (linkInstanceRef.current) {
+                        (0, _links.unmountLinkForCurrentNavigation)(linkInstanceRef.current);
+                        linkInstanceRef.current = null;
+                    }
+                    (0, _links.unmountPrefetchableInstance)(element);
+                }
+            })["LinkComponent.useCallback[observeLinkVisibilityOnMount]"];
+        }
+    }["LinkComponent.useCallback[observeLinkVisibilityOnMount]"], [
+        prefetchEnabled,
+        href,
+        router,
+        fetchStrategy,
+        setOptimisticLinkStatus
+    ]);
+    const mergedRef = (0, _usemergedref.useMergedRef)(observeLinkVisibilityOnMount, childRef);
+    const childProps = {
+        ref: mergedRef,
+        onClick (e) {
+            if ("TURBOPACK compile-time truthy", 1) {
+                if (!e) {
+                    throw Object.defineProperty(new Error(`Component rendered inside next/link has to pass click event to "onClick" prop.`), "__NEXT_ERROR_CODE", {
+                        value: "E312",
+                        enumerable: false,
+                        configurable: true
+                    });
+                }
+            }
+            if (!legacyBehavior && typeof onClick === 'function') {
+                onClick(e);
+            }
+            if (legacyBehavior && child.props && typeof child.props.onClick === 'function') {
+                child.props.onClick(e);
+            }
+            if (!router) {
+                return;
+            }
+            if (e.defaultPrevented) {
+                return;
+            }
+            linkClicked(e, href, as, linkInstanceRef, replace, scroll, onNavigate);
+        },
+        onMouseEnter (e) {
+            if (!legacyBehavior && typeof onMouseEnterProp === 'function') {
+                onMouseEnterProp(e);
+            }
+            if (legacyBehavior && child.props && typeof child.props.onMouseEnter === 'function') {
+                child.props.onMouseEnter(e);
+            }
+            if (!router) {
+                return;
+            }
+            if ("TURBOPACK compile-time truthy", 1) {
+                return;
+            }
+            //TURBOPACK unreachable
+            ;
+            const upgradeToDynamicPrefetch = undefined;
+        },
+        onTouchStart: ("TURBOPACK compile-time falsy", 0) ? "TURBOPACK unreachable" : function onTouchStart(e) {
+            if (!legacyBehavior && typeof onTouchStartProp === 'function') {
+                onTouchStartProp(e);
+            }
+            if (legacyBehavior && child.props && typeof child.props.onTouchStart === 'function') {
+                child.props.onTouchStart(e);
+            }
+            if (!router) {
+                return;
+            }
+            if (!prefetchEnabled) {
+                return;
+            }
+            const upgradeToDynamicPrefetch = unstable_dynamicOnHover === true;
+            (0, _links.onNavigationIntent)(e.currentTarget, upgradeToDynamicPrefetch);
+        }
+    };
+    // If the url is absolute, we can bypass the logic to prepend the basePath.
+    if ((0, _utils.isAbsoluteUrl)(as)) {
+        childProps.href = as;
+    } else if (!legacyBehavior || passHref || child.type === 'a' && !('href' in child.props)) {
+        childProps.href = (0, _addbasepath.addBasePath)(as);
+    }
+    let link;
+    if (legacyBehavior) {
+        if ("TURBOPACK compile-time truthy", 1) {
+            (0, _erroronce.errorOnce)('`legacyBehavior` is deprecated and will be removed in a future ' + 'release. A codemod is available to upgrade your components:\n\n' + 'npx @next/codemod@latest new-link .\n\n' + 'Learn more: https://nextjs.org/docs/app/building-your-application/upgrading/codemods#remove-a-tags-from-link-components');
+        }
+        link = /*#__PURE__*/ _react.default.cloneElement(child, childProps);
+    } else {
+        link = /*#__PURE__*/ (0, _jsxruntime.jsx)("a", {
+            ...restProps,
+            ...childProps,
+            children: children
+        });
+    }
+    return /*#__PURE__*/ (0, _jsxruntime.jsx)(LinkStatusContext.Provider, {
+        value: linkStatus,
+        children: link
+    });
+}
+const LinkStatusContext = /*#__PURE__*/ (0, _react.createContext)(_links.IDLE_LINK_STATUS);
+const useLinkStatus = ()=>{
+    return (0, _react.useContext)(LinkStatusContext);
+};
+function getFetchStrategyFromPrefetchProp(prefetchProp) {
+    if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+    ;
+    else {
+        return prefetchProp === null || prefetchProp === 'auto' ? _types.FetchStrategy.PPR : // (although invalid values should've been filtered out by prop validation in dev)
+        _types.FetchStrategy.Full;
+    }
+}
+if ((typeof exports.default === 'function' || typeof exports.default === 'object' && exports.default !== null) && typeof exports.default.__esModule === 'undefined') {
+    Object.defineProperty(exports.default, '__esModule', {
+        value: true
+    });
+    Object.assign(exports.default, exports);
+    module.exports = exports.default;
+} //# sourceMappingURL=link.js.map
+}),
+"[project]/node_modules/ua-parser-js/src/main/ua-parser.mjs [app-client] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "UAParser",
+    ()=>UAParser
+]);
+// Generated ESM version of ua-parser-js
+// DO NOT EDIT THIS FILE!
+// Source: /src/main/ua-parser.js
+/////////////////////////////////////////////////////////////////////////////////
+/* UAParser.js v2.0.9
+   Copyright © 2012-2026 Faisal Salman <f@faisalman.com>
+   AGPLv3 License */ /*
+   Detect Browser, Engine, OS, CPU, and Device type/model from User-Agent data.
+   Supports browser & node.js environment. 
+   Demo   : https://uaparser.dev
+   Source : https://github.com/faisalman/ua-parser-js */ /////////////////////////////////////////////////////////////////////////////////
+/* jshint esversion: 6 */ /* globals window */ //////////////
+// Constants
+/////////////
+var LIBVERSION = '2.0.9', UA_MAX_LENGTH = 500, USER_AGENT = 'user-agent', EMPTY = '', UNKNOWN = '?', TYPEOF = {
+    FUNCTION: 'function',
+    OBJECT: 'object',
+    STRING: 'string',
+    UNDEFINED: 'undefined'
+}, // properties
+BROWSER = 'browser', CPU = 'cpu', DEVICE = 'device', ENGINE = 'engine', OS = 'os', RESULT = 'result', NAME = 'name', TYPE = 'type', VENDOR = 'vendor', VERSION = 'version', ARCHITECTURE = 'architecture', MAJOR = 'major', MODEL = 'model', // device types
+CONSOLE = 'console', MOBILE = 'mobile', TABLET = 'tablet', SMARTTV = 'smarttv', WEARABLE = 'wearable', XR = 'xr', EMBEDDED = 'embedded', // browser types
+FETCHER = 'fetcher', INAPP = 'inapp', // client hints
+BRANDS = 'brands', FORMFACTORS = 'formFactors', FULLVERLIST = 'fullVersionList', PLATFORM = 'platform', PLATFORMVER = 'platformVersion', BITNESS = 'bitness', CH = 'sec-ch-ua', CH_FULL_VER_LIST = CH + '-full-version-list', CH_ARCH = CH + '-arch', CH_BITNESS = CH + '-' + BITNESS, CH_FORM_FACTORS = CH + '-form-factors', CH_MOBILE = CH + '-' + MOBILE, CH_MODEL = CH + '-' + MODEL, CH_PLATFORM = CH + '-' + PLATFORM, CH_PLATFORM_VER = CH_PLATFORM + '-version', CH_ALL_VALUES = [
+    BRANDS,
+    FULLVERLIST,
+    MOBILE,
+    MODEL,
+    PLATFORM,
+    PLATFORMVER,
+    ARCHITECTURE,
+    FORMFACTORS,
+    BITNESS
+], // device vendors
+AMAZON = 'Amazon', APPLE = 'Apple', ASUS = 'ASUS', BLACKBERRY = 'BlackBerry', GOOGLE = 'Google', HUAWEI = 'Huawei', LENOVO = 'Lenovo', HONOR = 'Honor', LG = 'LG', MICROSOFT = 'Microsoft', MOTOROLA = 'Motorola', NVIDIA = 'Nvidia', ONEPLUS = 'OnePlus', OPPO = 'OPPO', SAMSUNG = 'Samsung', SHARP = 'Sharp', SONY = 'Sony', XIAOMI = 'Xiaomi', ZEBRA = 'Zebra', // browsers
+CHROME = 'Chrome', CHROMIUM = 'Chromium', CHROMECAST = 'Chromecast', EDGE = 'Edge', FIREFOX = 'Firefox', OPERA = 'Opera', FACEBOOK = 'Facebook', SOGOU = 'Sogou', PREFIX_MOBILE = 'Mobile ', SUFFIX_BROWSER = ' Browser', // os
+WINDOWS = 'Windows';
+var isWindow = typeof window !== TYPEOF.UNDEFINED, NAVIGATOR = isWindow && window.navigator ? window.navigator : undefined, NAVIGATOR_UADATA = NAVIGATOR && NAVIGATOR.userAgentData ? NAVIGATOR.userAgentData : undefined;
+///////////
+// Helper
+//////////
+var extend = function(defaultRgx, extensions) {
+    var mergedRgx = {};
+    var extraRgx = extensions;
+    if (!isExtensions(extensions)) {
+        extraRgx = {};
+        for(var i in extensions){
+            for(var j in extensions[i]){
+                extraRgx[j] = extensions[i][j].concat(extraRgx[j] ? extraRgx[j] : []);
+            }
+        }
+    }
+    for(var k in defaultRgx){
+        mergedRgx[k] = extraRgx[k] && extraRgx[k].length % 2 === 0 ? extraRgx[k].concat(defaultRgx[k]) : defaultRgx[k];
+    }
+    return mergedRgx;
+}, enumerize = function(arr) {
+    var enums = {};
+    for(var i = 0; i < arr.length; i++){
+        enums[arr[i].toUpperCase()] = arr[i];
+    }
+    return enums;
+}, has = function(str1, str2) {
+    if (typeof str1 === TYPEOF.OBJECT && str1.length > 0) {
+        for(var i in str1){
+            if (lowerize(str2) == lowerize(str1[i])) return true;
+        }
+        return false;
+    }
+    return isString(str1) ? lowerize(str2) == lowerize(str1) : false;
+}, isExtensions = function(obj, deep) {
+    for(var prop in obj){
+        return /^(browser|cpu|device|engine|os)$/.test(prop) || (deep ? isExtensions(obj[prop]) : false);
+    }
+}, isString = function(val) {
+    return typeof val === TYPEOF.STRING;
+}, itemListToArray = function(header) {
+    if (!header) return undefined;
+    var arr = [];
+    var tokens = strip(/\\?\"/g, header).split(',');
+    for(var i = 0; i < tokens.length; i++){
+        if (tokens[i].indexOf(';') > -1) {
+            var token = trim(tokens[i]).split(';v=');
+            arr[i] = {
+                brand: token[0],
+                version: token[1]
+            };
+        } else {
+            arr[i] = trim(tokens[i]);
+        }
+    }
+    return arr;
+}, lowerize = function(str) {
+    return isString(str) ? str.toLowerCase() : str;
+}, majorize = function(version) {
+    return isString(version) ? strip(/[^\d\.]/g, version).split('.')[0] : undefined;
+}, setProps = function(arr) {
+    for(var i in arr){
+        if (!arr.hasOwnProperty(i)) continue;
+        var propName = arr[i];
+        if (typeof propName == TYPEOF.OBJECT && propName.length == 2) {
+            this[propName[0]] = propName[1];
+        } else {
+            this[propName] = undefined;
+        }
+    }
+    return this;
+}, strip = function(pattern, str) {
+    return isString(str) ? str.replace(pattern, EMPTY) : str;
+}, stripQuotes = function(str) {
+    return strip(/\\?\"/g, str);
+}, trim = function(str, len) {
+    str = strip(/^\s\s*/, String(str));
+    return typeof len === TYPEOF.UNDEFINED ? str : str.substring(0, len);
+};
+///////////////
+// Map helper
+//////////////
+var rgxMapper = function(ua, arrays) {
+    if (!ua || !arrays) return;
+    var i = 0, j, k, p, q, matches, match;
+    // loop through all regexes maps
+    while(i < arrays.length && !matches){
+        var regex = arrays[i], props = arrays[i + 1]; // odd sequence (1,3,5,..)
+        j = k = 0;
+        // try matching uastring with regexes
+        while(j < regex.length && !matches){
+            if (!regex[j]) {
+                break;
+            }
+            matches = regex[j++].exec(ua);
+            if (!!matches) {
+                for(p = 0; p < props.length; p++){
+                    match = matches[++k];
+                    q = props[p];
+                    // check if given property is actually array
+                    if (typeof q === TYPEOF.OBJECT && q.length > 0) {
+                        if (q.length === 2) {
+                            if (typeof q[1] == TYPEOF.FUNCTION) {
+                                // assign modified match
+                                this[q[0]] = q[1].call(this, match);
+                            } else {
+                                // assign given value, ignore regex match
+                                this[q[0]] = q[1];
+                            }
+                        } else if (q.length >= 3) {
+                            // Check whether q[1] FUNCTION or REGEX
+                            if (typeof q[1] === TYPEOF.FUNCTION && !(q[1].exec && q[1].test)) {
+                                if (q.length > 3) {
+                                    this[q[0]] = match ? q[1].apply(this, q.slice(2)) : undefined;
+                                } else {
+                                    // call function (usually string mapper)
+                                    this[q[0]] = match ? q[1].call(this, match, q[2]) : undefined;
+                                }
+                            } else {
+                                if (q.length == 3) {
+                                    // sanitize match using given regex
+                                    this[q[0]] = match ? match.replace(q[1], q[2]) : undefined;
+                                } else if (q.length == 4) {
+                                    this[q[0]] = match ? q[3].call(this, match.replace(q[1], q[2])) : undefined;
+                                } else if (q.length > 4) {
+                                    this[q[0]] = match ? q[3].apply(this, [
+                                        match.replace(q[1], q[2])
+                                    ].concat(q.slice(4))) : undefined;
+                                }
+                            }
+                        }
+                    } else {
+                        this[q] = match ? match : undefined;
+                    }
+                }
+            }
+        }
+        i += 2;
+    }
+}, strMapper = function(str, map) {
+    for(var i in map){
+        // check if current value is array
+        if (typeof map[i] === TYPEOF.OBJECT && map[i].length > 0) {
+            for(var j = 0; j < map[i].length; j++){
+                if (has(map[i][j], str)) {
+                    return i === UNKNOWN ? undefined : i;
+                }
+            }
+        } else if (has(map[i], str)) {
+            return i === UNKNOWN ? undefined : i;
+        }
+    }
+    return map.hasOwnProperty('*') ? map['*'] : str;
+};
+///////////////
+// String map
+//////////////
+var windowsVersionMap = {
+    'ME': '4.90',
+    'NT 3.51': '3.51',
+    'NT 4.0': '4.0',
+    '2000': [
+        '5.0',
+        '5.01'
+    ],
+    'XP': [
+        '5.1',
+        '5.2'
+    ],
+    'Vista': '6.0',
+    '7': '6.1',
+    '8': '6.2',
+    '8.1': '6.3',
+    '10': [
+        '6.4',
+        '10.0'
+    ],
+    'NT': ''
+}, formFactorsMap = {
+    'embedded': 'Automotive',
+    'mobile': 'Mobile',
+    'tablet': [
+        'Tablet',
+        'EInk'
+    ],
+    'smarttv': 'TV',
+    'wearable': 'Watch',
+    'xr': [
+        'VR',
+        'XR'
+    ],
+    '?': [
+        'Desktop',
+        'Unknown'
+    ],
+    '*': undefined
+}, browserHintsMap = {
+    'Chrome': 'Google Chrome',
+    'Edge': 'Microsoft Edge',
+    'Edge WebView2': 'Microsoft Edge WebView2',
+    'Chrome WebView': 'Android WebView',
+    'Chrome Headless': 'HeadlessChrome',
+    'Huawei Browser': 'HuaweiBrowser',
+    'MIUI Browser': 'Miui Browser',
+    'Opera Mobi': 'OperaMobile',
+    'Yandex': 'YaBrowser'
+};
+//////////////
+// Regex map
+/////////////
+var defaultRegexes = {
+    browser: [
+        [
+            // Most common regardless engine
+            /\b(?:crmo|crios)\/([\w\.]+)/i // Chrome for Android/iOS
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                PREFIX_MOBILE + 'Chrome'
+            ]
+        ],
+        [
+            /webview.+edge\/([\w\.]+)/i // Microsoft Edge
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                EDGE + ' WebView'
+            ]
+        ],
+        [
+            /edg(?:e|ios|a)?\/([\w\.]+)/i
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Edge'
+            ]
+        ],
+        [
+            // Presto based
+            /(opera mini)\/([-\w\.]+)/i,
+            /(opera [mobiletab]{3,6})\b.+version\/([-\w\.]+)/i,
+            /(opera)(?:.+version\/|[\/ ]+)([\w\.]+)/i // Opera
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /opios[\/ ]+([\w\.]+)/i // Opera mini on iphone >= 8.0
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                OPERA + ' Mini'
+            ]
+        ],
+        [
+            /\bop(?:rg)?x\/([\w\.]+)/i // Opera GX
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                OPERA + ' GX'
+            ]
+        ],
+        [
+            /\bopr\/([\w\.]+)/i // Opera Webkit
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                OPERA
+            ]
+        ],
+        [
+            // Mixed
+            /\bb[ai]*d(?:uhd|[ub]*[aekoprswx]{5,6})[\/ ]?([\w\.]+)/i // Baidu
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Baidu'
+            ]
+        ],
+        [
+            /\b(?:mxbrowser|mxios|myie2)\/?([-\w\.]*)\b/i // Maxthon
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Maxthon'
+            ]
+        ],
+        [
+            /(kindle)\/([\w\.]+)/i,
+            /(lunascape|maxthon|netfront|jasmine|blazer|sleipnir)[\/ ]?([\w\.]*)/i,
+            // Lunascape/Maxthon/Netfront/Jasmine/Blazer/Sleipnir
+            // Trident based
+            /(avant|iemobile|slim(?:browser|boat|jet))[\/ ]?([\d\.]*)/i,
+            /(?:ms|\()(ie) ([\w\.]+)/i,
+            // Blink/Webkit/KHTML based                                         // Flock/RockMelt/Midori/Epiphany/Silk/Skyfire/Bolt/Iron/Iridium/PhantomJS/Bowser/QupZilla/Falkon/LG Browser/Otter/qutebrowser/Dooble/Palemoon/HiBrowser
+            /(atlas|flock|rockmelt|midori|epiphany|silk|skyfire|bolt|iron|vivaldi|iridium|phantomjs|bowser|qupzilla|falkon|rekonq|puffin|whale(?!.+naver)|qqbrowserlite|duckduckgo|klar|helio|(?=comodo_)?dragon|otter|dooble|(?:hi|lg |ovi|qute)browser|palemoon)\/v?([-\w\.]+)/i,
+            // Atlas/Rekonq/Puffin/Whale/QQBrowserLite/QQ//Vivaldi/DuckDuckGo/Klar/Helio/Dragon
+            /(brave)(?: chrome)?\/([\d\.]+)/i,
+            /(aloha|heytap|ovi|115|surf|qwant)browser\/([\d\.]+)/i,
+            /(qwant)(?:ios|mobile)\/([\d\.]+)/i,
+            /(ecosia|weibo)(?:__| \w+@)([\d\.]+)/i // Ecosia/Weibo
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /quark(?:pc)?\/([-\w\.]+)/i // Quark
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Quark'
+            ]
+        ],
+        [
+            /\bddg\/([\w\.]+)/i // DuckDuckGo
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'DuckDuckGo'
+            ]
+        ],
+        [
+            /(?:\buc? ?browser|(?:juc.+)ucweb)[\/ ]?([\w\.]+)/i // UCBrowser
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'UCBrowser'
+            ]
+        ],
+        [
+            /microm.+\bqbcore\/([\w\.]+)/i,
+            /\bqbcore\/([\w\.]+).+microm/i,
+            /micromessenger\/([\w\.]+)/i // WeChat
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'WeChat'
+            ]
+        ],
+        [
+            /konqueror\/([\w\.]+)/i // Konqueror
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Konqueror'
+            ]
+        ],
+        [
+            /trident.+rv[: ]([\w\.]{1,9})\b.+like gecko/i // IE11
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'IE'
+            ]
+        ],
+        [
+            /ya(?:search)?browser\/([\w\.]+)/i // Yandex
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Yandex'
+            ]
+        ],
+        [
+            /slbrowser\/([\w\.]+)/i // Smart Lenovo Browser
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Smart ' + LENOVO + SUFFIX_BROWSER
+            ]
+        ],
+        [
+            /(av(?:ast|g|ira))\/([\w\.]+)/i // Avast/AVG/Avira Secure Browser
+        ],
+        [
+            [
+                NAME,
+                /(.+)/,
+                '$1 Secure' + SUFFIX_BROWSER
+            ],
+            VERSION
+        ],
+        [
+            /norton\/([\w\.]+)/i // Norton Private Browser
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Norton Private' + SUFFIX_BROWSER
+            ]
+        ],
+        [
+            /\bfocus\/([\w\.]+)/i // Firefox Focus
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                FIREFOX + ' Focus'
+            ]
+        ],
+        [
+            / mms\/([\w\.]+)$/i // Opera Neon
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                OPERA + ' Neon'
+            ]
+        ],
+        [
+            / opt\/([\w\.]+)$/i // Opera Touch
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                OPERA + ' Touch'
+            ]
+        ],
+        [
+            /coc_coc\w+\/([\w\.]+)/i // Coc Coc Browser
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Coc Coc'
+            ]
+        ],
+        [
+            /dolfin\/([\w\.]+)/i // Dolphin
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Dolphin'
+            ]
+        ],
+        [
+            /coast\/([\w\.]+)/i // Opera Coast
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                OPERA + ' Coast'
+            ]
+        ],
+        [
+            /miuibrowser\/([\w\.]+)/i // MIUI Browser
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'MIUI' + SUFFIX_BROWSER
+            ]
+        ],
+        [
+            /fxios\/([\w\.-]+)/i // Firefox for iOS
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                PREFIX_MOBILE + FIREFOX
+            ]
+        ],
+        [
+            /\bqihoobrowser\/?([\w\.]*)/i // 360
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                '360'
+            ]
+        ],
+        [
+            /\b(qq)\/([\w\.]+)/i // QQ
+        ],
+        [
+            [
+                NAME,
+                /(.+)/,
+                '$1Browser'
+            ],
+            VERSION
+        ],
+        [
+            /(oculus|sailfish|huawei|vivo|pico)browser\/([\w\.]+)/i
+        ],
+        [
+            [
+                NAME,
+                /(.+)/,
+                '$1' + SUFFIX_BROWSER
+            ],
+            VERSION
+        ],
+        [
+            /samsungbrowser\/([\w\.]+)/i // Samsung Internet
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                SAMSUNG + ' Internet'
+            ]
+        ],
+        [
+            /metasr[\/ ]?([\d\.]+)/i // Sogou Explorer
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                SOGOU + ' Explorer'
+            ]
+        ],
+        [
+            /(sogou)mo\w+\/([\d\.]+)/i // Sogou Mobile
+        ],
+        [
+            [
+                NAME,
+                SOGOU + ' Mobile'
+            ],
+            VERSION
+        ],
+        [
+            /(electron)\/([\w\.]+) safari/i,
+            /(tesla)(?: qtcarbrowser|\/(20\d\d\.[-\w\.]+))/i,
+            /m?(qqbrowser|2345(?=browser|chrome|explorer))\w*[\/ ]?v?([\w\.]+)/i // QQ/2345
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /(lbbrowser|luakit|rekonq|steam(?= (clie|tenf|gameo)))/i // LieBao Browser/Luakit/Rekonq/Steam
+        ],
+        [
+            NAME
+        ],
+        [
+            /ome\/([\w\.]+).+(iron(?= saf)|360(?=[es]e$))/i // Iron / 360
+        ],
+        [
+            VERSION,
+            NAME
+        ],
+        [
+            // WebView
+            /((?:fban\/fbios|fb_iab\/fb4a)(?!.+fbav)|;fbav\/([\w\.]+);)/i // Facebook App for iOS & Android
+        ],
+        [
+            [
+                NAME,
+                FACEBOOK
+            ],
+            VERSION,
+            [
+                TYPE,
+                INAPP
+            ]
+        ],
+        [
+            /(kakao(?:talk|story))[\/ ]([\w\.]+)/i,
+            /(naver)\(.*?(\d+\.[\w\.]+).*\)/i,
+            /(daum)apps[\/ ]([\w\.]+)/i,
+            /safari (line)\/([\w\.]+)/i,
+            /\b(line)\/([\w\.]+)\/iab/i,
+            /(alipay)client\/([\w\.]+)/i,
+            /(twitter)(?:and| f.+e\/([\w\.]+))/i,
+            /(bing)(?:web|sapphire)\/([\w\.]+)/i,
+            /(instagram|snapchat|klarna)[\/ ]([-\w\.]+)/i // Instagram/Snapchat/Klarna
+        ],
+        [
+            NAME,
+            VERSION,
+            [
+                TYPE,
+                INAPP
+            ]
+        ],
+        [
+            /\bgsa\/([\w\.]+) .*safari\//i // Google Search Appliance on iOS
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'GSA'
+            ],
+            [
+                TYPE,
+                INAPP
+            ]
+        ],
+        [
+            /(?:musical_ly|trill)(?:.+app_?version\/|_)([\w\.]+)/i // TikTok
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'TikTok'
+            ],
+            [
+                TYPE,
+                INAPP
+            ]
+        ],
+        [
+            /\[(linkedin)app\]/i // LinkedIn App for iOS & Android
+        ],
+        [
+            NAME,
+            [
+                TYPE,
+                INAPP
+            ]
+        ],
+        [
+            /(zalo(?:app)?)[\/\sa-z]*([\w\.-]+)/i // Zalo 
+        ],
+        [
+            [
+                NAME,
+                /(.+)/,
+                'Zalo'
+            ],
+            VERSION,
+            [
+                TYPE,
+                INAPP
+            ]
+        ],
+        [
+            /(chromium)[\/ ]([-\w\.]+)/i // Chromium
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /ome-(lighthouse)$/i // Chrome Lighthouse
+        ],
+        [
+            NAME,
+            [
+                TYPE,
+                FETCHER
+            ]
+        ],
+        [
+            /headlesschrome(?:\/([\w\.]+)| )/i // Chrome Headless
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                CHROME + ' Headless'
+            ]
+        ],
+        [
+            /wv\).+chrome\/([\w\.]+).+edgw\//i // Edge WebView2
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                EDGE + ' WebView2'
+            ]
+        ],
+        [
+            / wv\).+(chrome)\/([\w\.]+)/i // Chrome WebView
+        ],
+        [
+            [
+                NAME,
+                CHROME + ' WebView'
+            ],
+            VERSION
+        ],
+        [
+            /droid.+ version\/([\w\.]+)\b.+(?:mobile safari|safari)/i // Android Browser
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Android' + SUFFIX_BROWSER
+            ]
+        ],
+        [
+            /chrome\/([\w\.]+) mobile/i // Chrome Mobile
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                PREFIX_MOBILE + 'Chrome'
+            ]
+        ],
+        [
+            /(chrome|omniweb|arora|[tizenoka]{5} ?browser)\/v?([\w\.]+)/i // Chrome/OmniWeb/Arora/Tizen/Nokia
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /version\/([\w\.\,]+) .*mobile(?:\/\w+ | ?)safari/i // Safari Mobile
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                PREFIX_MOBILE + 'Safari'
+            ]
+        ],
+        [
+            /iphone .*mobile(?:\/\w+ | ?)safari/i
+        ],
+        [
+            [
+                NAME,
+                PREFIX_MOBILE + 'Safari'
+            ]
+        ],
+        [
+            /version\/([\w\.\,]+) .*(safari)/i // Safari
+        ],
+        [
+            VERSION,
+            NAME
+        ],
+        [
+            /webkit.+?(mobile ?safari|safari)(\/[\w\.]+)/i // Safari < 3.0
+        ],
+        [
+            NAME,
+            [
+                VERSION,
+                '1'
+            ]
+        ],
+        [
+            /(webkit|khtml)\/([\w\.]+)/i
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            // Gecko based
+            /(?:mobile|tablet);.*(firefox)\/([\w\.-]+)/i // Firefox Mobile
+        ],
+        [
+            [
+                NAME,
+                PREFIX_MOBILE + FIREFOX
+            ],
+            VERSION
+        ],
+        [
+            /(navigator|netscape\d?)\/([-\w\.]+)/i // Netscape
+        ],
+        [
+            [
+                NAME,
+                'Netscape'
+            ],
+            VERSION
+        ],
+        [
+            /(wolvic|librewolf)\/([\w\.]+)/i // Wolvic/LibreWolf
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /mobile vr; rv:([\w\.]+)\).+firefox/i // Firefox Reality
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                FIREFOX + ' Reality'
+            ]
+        ],
+        [
+            /ekiohf.+(flow)\/([\w\.]+)/i,
+            /(swiftfox)/i,
+            /(icedragon|iceweasel|camino|chimera|fennec|maemo browser|minimo|conkeror)[\/ ]?([\w\.\+]+)/i,
+            // IceDragon/Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror
+            /(seamonkey|k-meleon|icecat|iceape|firebird|phoenix|basilisk|waterfox)\/([-\w\.]+)$/i,
+            // Firefox/SeaMonkey/K-Meleon/IceCat/IceApe/Firebird/Phoenix
+            /(firefox)\/([\w\.]+)/i,
+            /(mozilla)\/([\w\.]+(?= .+rv\:.+gecko\/\d+)|[0-4][\w\.]+(?!.+compatible))/i,
+            // Other
+            /(amaya|dillo|doris|icab|ladybird|lynx|mosaic|netsurf|obigo|polaris|w3m|(?:go|ice|up)[\. ]?browser)[-\/ ]?v?([\w\.]+)/i,
+            // Polaris/Lynx/Dillo/iCab/Doris/Amaya/w3m/NetSurf/Obigo/Mosaic/Go/ICE/UP.Browser/Ladybird
+            /\b(links) \(([\w\.]+)/i // Links
+        ],
+        [
+            NAME,
+            [
+                VERSION,
+                /_/g,
+                '.'
+            ]
+        ],
+        [
+            /(cobalt)\/([\w\.]+)/i // Cobalt
+        ],
+        [
+            NAME,
+            [
+                VERSION,
+                /[^\d\.]+./,
+                EMPTY
+            ]
+        ]
+    ],
+    cpu: [
+        [
+            /\b((amd|x|x86[-_]?|wow|win)64)\b/i // AMD64 (x64)
+        ],
+        [
+            [
+                ARCHITECTURE,
+                'amd64'
+            ]
+        ],
+        [
+            /(ia32(?=;))/i,
+            /\b((i[346]|x)86)(pc)?\b/i // IA32 (x86)
+        ],
+        [
+            [
+                ARCHITECTURE,
+                'ia32'
+            ]
+        ],
+        [
+            /\b(aarch64|arm(v?[89]e?l?|_?64))\b/i // ARM64
+        ],
+        [
+            [
+                ARCHITECTURE,
+                'arm64'
+            ]
+        ],
+        [
+            /\b(arm(v[67])?ht?n?[fl]p?)\b/i // ARMHF
+        ],
+        [
+            [
+                ARCHITECTURE,
+                'armhf'
+            ]
+        ],
+        [
+            // PocketPC mistakenly identified as PowerPC
+            /( (ce|mobile); ppc;|\/[\w\.]+arm\b)/i
+        ],
+        [
+            [
+                ARCHITECTURE,
+                'arm'
+            ]
+        ],
+        [
+            / sun4\w[;\)]/i // SPARC
+        ],
+        [
+            [
+                ARCHITECTURE,
+                'sparc'
+            ]
+        ],
+        [
+            // IA64, 68K, ARM/64, AVR/32, IRIX/64, MIPS/64, SPARC/64, PA-RISC
+            /\b(avr32|ia64(?=;)|68k(?=\))|\barm(?=v([1-7]|[5-7]1)l?|;|eabi)|(irix|mips|sparc)(64)?\b|pa-risc)/i,
+            /((ppc|powerpc)(64)?)( mac|;|\))/i,
+            /(?:osf1|[freopnt]{3,4}bsd) (alpha)/i // Alpha
+        ],
+        [
+            [
+                ARCHITECTURE,
+                /ower/,
+                EMPTY,
+                lowerize
+            ]
+        ],
+        [
+            /mc680.0/i
+        ],
+        [
+            [
+                ARCHITECTURE,
+                '68k'
+            ]
+        ],
+        [
+            /winnt.+\[axp/i
+        ],
+        [
+            [
+                ARCHITECTURE,
+                'alpha'
+            ]
+        ]
+    ],
+    device: [
+        [
+            //////////////////////////
+            // MOBILES & TABLETS
+            /////////////////////////
+            // Samsung
+            /\b(sch-i[89]0\d|shw-m380s|sm-[ptx]\w{2,4}|gt-[pn]\d{2,4}|sgh-t8[56]9|nexus 10)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SAMSUNG
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /\b((?:s[cgp]h|gt|sm)-(?![lr])\w+|sc[g-]?[\d]+a?|galaxy nexus)/i,
+            /samsung[- ]((?!sm-[lr]|browser)[-\w]+)/i,
+            /sec-(sgh\w+)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SAMSUNG
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Apple
+            /(?:\/|\()(ip(?:hone|od)[\w, ]*)[\/\);]/i // iPod/iPhone
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                APPLE
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /\b(?:ios|apple\w+)\/.+[\(\/](ipad)/i,
+            /\b(ipad)[\d,]*[;\] ].+(mac |i(pad)?)os/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                APPLE
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(macintosh);/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                APPLE
+            ]
+        ],
+        [
+            // Sharp
+            /\b(sh-?[altvz]?\d\d[a-ekm]?)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SHARP
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Honor
+            /\b((?:brt|eln|hey2?|gdi|jdn)-a?[lnw]09|(?:ag[rm]3?|jdn2|kob2)-a?[lw]0[09]hn)(?: bui|\)|;)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                HONOR
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /honor([-\w ]+)[;\)]/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                HONOR
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Huawei
+            /\b((?:ag[rs][2356]?k?|bah[234]?|bg[2o]|bt[kv]|cmr|cpn|db[ry]2?|jdn2|got|kob2?k?|mon|pce|scm|sht?|[tw]gr|vrd)-[ad]?[lw][0125][09]b?|605hw|bg2-u03|(?:gem|fdr|m2|ple|t1)-[7a]0[1-4][lu]|t1-a2[13][lw]|mediapad[\w\. ]*(?= bui|\)))\b(?!.+d\/s)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                HUAWEI
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(?:huawei) ?([-\w ]+)[;\)]/i,
+            /\b(nexus 6p|\w{2,4}e?-[atu]?[ln][\dx][\dc][adnt]?)\b(?!.+d\/s)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                HUAWEI
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Xiaomi
+            /oid[^\)]+; (2[\dbc]{4}(182|283|rp\w{2})[cgl]|m2105k81a?c)(?: bui|\))/i,
+            /\b(?:xiao)?((?:red)?mi[-_ ]?pad[\w- ]*)(?: bui|\))/i // Mi Pad tablets
+        ],
+        [
+            [
+                MODEL,
+                /_/g,
+                ' '
+            ],
+            [
+                VENDOR,
+                XIAOMI
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /\b; (\w+) build\/hm\1/i,
+            /\b(hm[-_ ]?note?[_ ]?(?:\d\w)?) bui/i,
+            // Xiaomi Redmi / POCO / Black Shark / Qin
+            /oid[^\)]+; (redmi[\-_ ]?(?:note|k)?[\w_ ]+|m?[12]\d[01]\d\w{3,6}|poco[\w ]+|(shark )?\w{3}-[ah]0|qin ?[1-3](s\+|ultra| pro)?)( bui|; wv|\))/i,
+            // Xiaomi Mi
+            /\b(mi[-_ ]?(?:a\d|one|one[_ ]plus|note|max|cc)?[_ ]?(?:\d{0,2}\w?)[_ ]?(?:plus|se|lite|pro)?( 5g|lte)?)(?: bui|\))/i,
+            / ([\w ]+) miui\/v?\d/i
+        ],
+        [
+            [
+                MODEL,
+                /_/g,
+                ' '
+            ],
+            [
+                VENDOR,
+                XIAOMI
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // OnePlus
+            /droid.+; (cph2[3-6]\d[13579]|((gm|hd)19|(ac|be|in|kb)20|(d[en]|eb|le|mt)21|ne22)[0-2]\d|p[g-l]\w[1m]10)\b/i,
+            /(?:one)?(?:plus)? (a\d0\d\d)(?: b|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                ONEPLUS
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // OPPO
+            /; (\w+) bui.+ oppo/i,
+            /\b(cph[12]\d{3}|p(?:af|c[al]|d\w|e[ar])[mt]\d0|x9007|a101op)\b/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                OPPO
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /\b(opd2(\d{3}a?))(?: bui|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                strMapper,
+                {
+                    'OnePlus': [
+                        '203',
+                        '304',
+                        '403',
+                        '404',
+                        '413',
+                        '415'
+                    ],
+                    '*': OPPO
+                }
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            // BLU
+            /(vivo (5r?|6|8l?|go|one|s|x[il]?[2-4]?)[\w\+ ]*)(?: bui|\))/i // Vivo series
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'BLU'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Vivo
+            /; vivo (\w+)(?: bui|\))/i,
+            /\b(v[12]\d{3}\w?[at])(?: bui|;)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Vivo'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Realme
+            /\b(rmx[1-3]\d{3})(?: bui|;|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Realme'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Lenovo
+            /(ideatab[-\w ]+|602lv|d-42a|a101lv|a2109a|a3500-hv|s[56]000|pb-6505[my]|tb-?x?\d{3,4}(?:f[cu]|xu|[av])|yt\d?-[jx]?\d+[lfmx])( bui|;|\)|\/)/i,
+            /lenovo ?(b[68]0[08]0-?[hf]?|tab(?:[\w- ]+?)|tb[\w-]{6,7})( bui|;|\)|\/)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                LENOVO
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /lenovo[-_ ]?([-\w ]+?)(?: bui|\)|\/)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                LENOVO
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Motorola
+            /\b(milestone|droid(?:[2-4x]| (?:bionic|x2|pro|razr))?:?( 4g)?)\b[\w ]+build\//i,
+            /\bmot(?:orola)?[- ]([\w\s]+)(\)| bui)/i,
+            /((?:moto(?! 360)[-\w\(\) ]+|xt\d{3,4}[cgkosw\+]?[-\d]*|nexus 6)(?= bui|\)))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                MOTOROLA
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /\b(mz60\d|xoom[2 ]{0,2}) build\//i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                MOTOROLA
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            // LG
+            /\b(?:lg)?([vl]k\-?\d{3}) bui| 3\.[-\w; ]{10}lg?-([06cv9]{3,4})/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                LG
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(lm(?:-?f100[nv]?|-[\w\.]+)(?= bui|\))|nexus [45])/i,
+            /\blg[-e;\/ ]+(?!.*(?:browser|netcast|android tv|watch|webos))(\w+)/i,
+            /\blg-?([\d\w]+) bui/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                LG
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Nokia
+            /(nokia) (t[12][01])/i
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(?:maemo|nokia).*(n900|lumia \d+|rm-\d+)/i,
+            /nokia[-_ ]?(([-\w\. ]*?))( bui|\)|;|\/)/i
+        ],
+        [
+            [
+                MODEL,
+                /_/g,
+                ' '
+            ],
+            [
+                TYPE,
+                MOBILE
+            ],
+            [
+                VENDOR,
+                'Nokia'
+            ]
+        ],
+        [
+            // Google
+            /(pixel (c|tablet))\b/i // Google Pixel C/Tablet
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                GOOGLE
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            // Google Pixel
+            /droid.+;(?: google)? (g(01[13]a|020[aem]|025[jn]|1b60|1f8f|2ybb|4s1m|576d|5nz6|8hhn|8vou|a02099|c15s|d1yq|e2ae|ec77|gh2x|kv4x|p4bc|pj41|r83y|tt9q|ur25|wvk6)|pixel[\d ]*a?( pro)?( xl)?( fold)?( \(5g\))?)( bui|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                GOOGLE
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /(google) (pixelbook( go)?)/i
+        ],
+        [
+            VENDOR,
+            MODEL
+        ],
+        [
+            // Sony
+            /droid.+; (a?\d[0-2]{2}so|[c-g]\d{4}|so[-gl]\w+|xq-\w\w\d\d)(?= bui|\).+chrome\/(?![1-6]{0,1}\d\.))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SONY
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /sony tablet [ps]/i,
+            /\b(?:sony)?sgp\w+(?: bui|\))/i
+        ],
+        [
+            [
+                MODEL,
+                'Xperia Tablet'
+            ],
+            [
+                VENDOR,
+                SONY
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            // Amazon
+            /(alexa)webm/i,
+            /(kf[a-z]{2}wi|aeo(?!bc)\w\w)( bui|\))/i,
+            /(kf[a-z]+)( bui|\)).+silk\//i // Kindle Fire HD
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                AMAZON
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /((?:sd|kf)[0349hijorstuw]+)( bui|\)).+silk\//i // Fire Phone
+        ],
+        [
+            [
+                MODEL,
+                /(.+)/g,
+                'Fire Phone $1'
+            ],
+            [
+                VENDOR,
+                AMAZON
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // BlackBerry
+            /(playbook);[-\w\),; ]+(rim)/i // BlackBerry PlayBook
+        ],
+        [
+            MODEL,
+            VENDOR,
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /\b((?:bb[a-f]|st[hv])100-\d)/i,
+            /(?:blackberry|\(bb10;) (\w+)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                BLACKBERRY
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Asus
+            /(?:\b|asus_)(transfo[prime ]{4,10} \w+|eeepc|slider \w+|nexus 7|padfone|p00[cj])/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                ASUS
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            / (z[bes]6[027][012][km][ls]|zenfone \d\w?)\b/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                ASUS
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // HTC
+            /(nexus 9)/i // HTC Nexus 9
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'HTC'
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(htc)[-;_ ]{1,2}([\w ]+(?=\)| bui)|\w+)/i,
+            // ZTE
+            /(zte)[- ]([\w ]+?)(?: bui|\/|\))/i,
+            /(alcatel|geeksphone|nexian|panasonic(?!(?:;|\.))|sony(?!-bra))[-_ ]?([-\w]*)/i // Alcatel/GeeksPhone/Nexian/Panasonic/Sony
+        ],
+        [
+            VENDOR,
+            [
+                MODEL,
+                /_/g,
+                ' '
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // TCL
+            /tcl (xess p17aa)/i,
+            /droid [\w\.]+; ((?:8[14]9[16]|9(?:0(?:48|60|8[01])|1(?:3[27]|66)|2(?:6[69]|9[56])|466))[gqswx])(_\w(\w|\w\w))?(\)| bui)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'TCL'
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /droid [\w\.]+; (418(?:7d|8v)|5087z|5102l|61(?:02[dh]|25[adfh]|27[ai]|56[dh]|59k|65[ah])|a509dl|t(?:43(?:0w|1[adepqu])|50(?:6d|7[adju])|6(?:09dl|10k|12b|71[efho]|76[hjk])|7(?:66[ahju]|67[hw]|7[045][bh]|71[hk]|73o|76[ho]|79w|81[hks]?|82h|90[bhsy]|99b)|810[hs]))(_\w(\w|\w\w))?(\)| bui)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'TCL'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // itel
+            /(itel) ((\w+))/i
+        ],
+        [
+            [
+                VENDOR,
+                lowerize
+            ],
+            MODEL,
+            [
+                TYPE,
+                strMapper,
+                {
+                    'tablet': [
+                        'p10001l',
+                        'w7001'
+                    ],
+                    '*': 'mobile'
+                }
+            ]
+        ],
+        [
+            // Acer
+            /droid.+; ([ab][1-7]-?[0178a]\d\d?)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Acer'
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            // Meizu
+            /droid.+; (m[1-5] note) bui/i,
+            /\bmz-([-\w]{2,})/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Meizu'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Ulefone
+            /; ((?:power )?armor(?:[\w ]{0,8}))(?: bui|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Ulefone'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Energizer
+            /; (energy ?\w+)(?: bui|\))/i,
+            /; energizer ([\w ]+)(?: bui|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Energizer'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Cat
+            /; cat (b35);/i,
+            /; (b15q?|s22 flip|s48c|s62 pro)(?: bui|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Cat'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Smartfren
+            /((?:new )?andromax[\w- ]+)(?: bui|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Smartfren'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Nothing
+            /droid.+; (a(in)?(0(15|59|6[35])|142)p?)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Nothing'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // Archos
+            /; (x67 5g|tikeasy \w+|ac[1789]\d\w+)( b|\))/i,
+            /archos ?(5|gamepad2?|([\w ]*[t1789]|hello) ?\d+[\w ]*)( b|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Archos'
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /archos ([\w ]+)( b|\))/i,
+            /; (ac[3-6]\d\w{2,8})( b|\))/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Archos'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // HMD
+            /; (n159v)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'HMD'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            // MIXED
+            /(imo) (tab \w+)/i,
+            /(infinix|tecno) (x1101b?|p904|dp(7c|8d|10a)( pro)?|p70[1-3]a?|p904|t1101)/i // Infinix XPad / Tecno
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(blackberry|benq|palm(?=\-)|sonyericsson|acer|asus(?! zenw)|dell|jolla|meizu|motorola|polytron|tecno|micromax|advan)[-_ ]?([-\w]*)/i,
+            // BlackBerry/BenQ/Palm/Sony-Ericsson/Acer/Asus/Dell/Meizu/Motorola/Polytron/Tecno/Micromax/Advan
+            // BLU/HMD/IMO/Infinix/Lava/OnePlus/TCL/Wiko
+            /; (blu|hmd|imo|infinix|lava|oneplus|tcl|wiko)[_ ]([\w\+ ]+?)(?: bui|\)|; r)/i,
+            /(hp) ([\w ]+\w)/i,
+            /(microsoft); (lumia[\w ]+)/i,
+            /(oppo) ?([\w ]+) bui/i,
+            /(hisense) ([ehv][\w ]+)\)/i,
+            /droid[^;]+; (philips)[_ ]([sv-x][\d]{3,4}[xz]?)/i // Philips
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /(kobo)\s(ereader|touch)/i,
+            /(hp).+(touchpad(?!.+tablet)|tablet)/i,
+            /(kindle)\/([\w\.]+)/i // Kindle
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(surface duo)/i // Surface Duo
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                MICROSOFT
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /droid [\d\.]+; (fp\du?)(?: b|\))/i // Fairphone
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Fairphone'
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /((?:tegranote|shield t(?!.+d tv))[\w- ]*?)(?: b|\))/i // Nvidia Tablets
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                NVIDIA
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(sprint) (\w+)/i // Sprint Phones
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /(kin\.[onetw]{3})/i // Microsoft Kin
+        ],
+        [
+            [
+                MODEL,
+                /\./g,
+                ' '
+            ],
+            [
+                VENDOR,
+                MICROSOFT
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /droid.+; ([c6]+|et5[16]|mc[239][23]x?|vc8[03]x?)\)/i // Zebra
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                ZEBRA
+            ],
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /droid.+; (ec30|ps20|tc[2-8]\d[kx])\)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                ZEBRA
+            ],
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            ///////////////////
+            // SMARTTVS
+            ///////////////////
+            /(philips)[\w ]+tv/i,
+            /smart-tv.+(samsung)/i // Samsung
+        ],
+        [
+            VENDOR,
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /hbbtv.+maple;(\d+)/i
+        ],
+        [
+            [
+                MODEL,
+                /^/,
+                'SmartTV'
+            ],
+            [
+                VENDOR,
+                SAMSUNG
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /(vizio)(?: |.+model\/)(\w+-\w+)/i,
+            /tcast.+(lg)e?. ([-\w]+)/i // LG SmartTV
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /(nux; netcast.+smarttv|lg (netcast\.tv-201\d|android tv))/i
+        ],
+        [
+            [
+                VENDOR,
+                LG
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /(apple) ?tv/i // Apple TV
+        ],
+        [
+            VENDOR,
+            [
+                MODEL,
+                APPLE + ' TV'
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /crkey.*devicetype\/chromecast/i // Google Chromecast Third Generation
+        ],
+        [
+            [
+                MODEL,
+                CHROMECAST + ' Third Generation'
+            ],
+            [
+                VENDOR,
+                GOOGLE
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /crkey.*devicetype\/([^/]*)/i // Google Chromecast with specific device type
+        ],
+        [
+            [
+                MODEL,
+                /^/,
+                'Chromecast '
+            ],
+            [
+                VENDOR,
+                GOOGLE
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /fuchsia.*crkey/i // Google Chromecast Nest Hub
+        ],
+        [
+            [
+                MODEL,
+                CHROMECAST + ' Nest Hub'
+            ],
+            [
+                VENDOR,
+                GOOGLE
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /crkey/i // Google Chromecast, Linux-based or unknown
+        ],
+        [
+            [
+                MODEL,
+                CHROMECAST
+            ],
+            [
+                VENDOR,
+                GOOGLE
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /(portaltv)/i // Facebook Portal TV
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                FACEBOOK
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /droid.+aft(\w+)( bui|\))/i // Fire TV
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                AMAZON
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /(shield \w+ tv)/i // Nvidia Shield TV
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                NVIDIA
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /\(dtv[\);].+(aquos)/i,
+            /(aquos-tv[\w ]+)\)/i // Sharp
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SHARP
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /(bravia[\w ]+)( bui|\))/i // Sony
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SONY
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /(mi(tv|box)-?\w+) bui/i // Xiaomi
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                XIAOMI
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /Hbbtv.*(technisat) (.*);/i // TechniSAT
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /\b(roku)[\dx]*[\)\/]((?:dvp-)?[\d\.]*)/i,
+            /hbbtv\/\d+\.\d+\.\d+ +\([\w\+ ]*; *([\w\d][^;]*);([^;]*)/i // HbbTV devices
+        ],
+        [
+            [
+                VENDOR,
+                /.+\/(\w+)/,
+                '$1',
+                strMapper,
+                {
+                    'LG': 'lge'
+                }
+            ],
+            [
+                MODEL,
+                trim
+            ],
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            ///////////////////
+            // CONSOLES
+            ///////////////////
+            /(playstation \w+)/i // Playstation
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SONY
+            ],
+            [
+                TYPE,
+                CONSOLE
+            ]
+        ],
+        [
+            /\b(xbox(?: one)?(?!; xbox))[\); ]/i // Microsoft Xbox
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                MICROSOFT
+            ],
+            [
+                TYPE,
+                CONSOLE
+            ]
+        ],
+        [
+            /(ouya)/i,
+            /(nintendo) (\w+)/i,
+            /(retroid) (pocket ([^\)]+))/i,
+            /(valve).+(steam deck)/i,
+            /droid.+; ((shield|rgcube|gr0006))( bui|\))/i // Nvidia Portable/Anbernic/Logitech
+        ],
+        [
+            [
+                VENDOR,
+                strMapper,
+                {
+                    'Nvidia': 'Shield',
+                    'Anbernic': 'RGCUBE',
+                    'Logitech': 'GR0006'
+                }
+            ],
+            MODEL,
+            [
+                TYPE,
+                CONSOLE
+            ]
+        ],
+        [
+            ///////////////////
+            // WEARABLES
+            ///////////////////
+            /\b(sm-[lr]\d\d[0156][fnuw]?s?|gear live)\b/i // Samsung Galaxy Watch
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SAMSUNG
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /((pebble))app/i,
+            /(asus|google|lg|oppo|xiaomi) ((pixel |zen)?watch[\w ]*)( bui|\))/i // Asus ZenWatch / LG Watch / Pixel Watch / Xiaomi Watch
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /(ow(?:19|20)?we?[1-3]{1,3})/i // Oppo Watch
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                OPPO
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /(watch)(?: ?os[,\/]|\d,\d\/)[\d\.]+/i // Apple Watch
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                APPLE
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /(opwwe\d{3})/i // OnePlus Watch
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                ONEPLUS
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /(moto 360)/i // Motorola 360
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                MOTOROLA
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /(smartwatch 3)/i // Sony SmartWatch
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                SONY
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /(g watch r)/i // LG G Watch R
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                LG
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            /droid.+; (wt63?0{2,3})\)/i
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                ZEBRA
+            ],
+            [
+                TYPE,
+                WEARABLE
+            ]
+        ],
+        [
+            ///////////////////
+            // XR
+            ///////////////////
+            /droid.+; (glass) \d/i // Google Glass
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                GOOGLE
+            ],
+            [
+                TYPE,
+                XR
+            ]
+        ],
+        [
+            /(pico) ([\w ]+) os\d/i // Pico
+        ],
+        [
+            VENDOR,
+            MODEL,
+            [
+                TYPE,
+                XR
+            ]
+        ],
+        [
+            /(quest( \d| pro)?s?).+vr/i // Meta Quest
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                FACEBOOK
+            ],
+            [
+                TYPE,
+                XR
+            ]
+        ],
+        [
+            /mobile vr; rv.+firefox/i // Unidentifiable VR device using Firefox Reality / Wolvic
+        ],
+        [
+            [
+                TYPE,
+                XR
+            ]
+        ],
+        [
+            ///////////////////
+            // EMBEDDED
+            ///////////////////
+            /(tesla)(?: qtcarbrowser|\/[-\w\.]+)/i // Tesla
+        ],
+        [
+            VENDOR,
+            [
+                TYPE,
+                EMBEDDED
+            ]
+        ],
+        [
+            /(aeobc)\b/i // Echo Dot
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                AMAZON
+            ],
+            [
+                TYPE,
+                EMBEDDED
+            ]
+        ],
+        [
+            /(homepod).+mac os/i // Apple HomePod
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                APPLE
+            ],
+            [
+                TYPE,
+                EMBEDDED
+            ]
+        ],
+        [
+            /windows iot/i // Unidentifiable embedded device using Windows IoT
+        ],
+        [
+            [
+                TYPE,
+                EMBEDDED
+            ]
+        ],
+        [
+            ////////////////////
+            // MIXED (GENERIC)
+            ///////////////////
+            /droid.+; ([\w- ]+) (4k|android|smart|google)[- ]?tv/i // Unidentifiable SmartTV
+        ],
+        [
+            MODEL,
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /\b((4k|android|smart|opera)[- ]?tv|tv; rv:|large screen[\w ]+safari)\b/i
+        ],
+        [
+            [
+                TYPE,
+                SMARTTV
+            ]
+        ],
+        [
+            /droid .+?; ([^;]+?)(?: bui|; wv\)|\) applew|; hmsc).+?(mobile|vr|\d) safari/i
+        ],
+        [
+            MODEL,
+            [
+                TYPE,
+                strMapper,
+                {
+                    'mobile': 'Mobile',
+                    'xr': 'VR',
+                    '*': TABLET
+                }
+            ]
+        ],
+        [
+            /\b((tablet|tab)[;\/]|focus\/\d(?!.+mobile))/i // Unidentifiable Tablet
+        ],
+        [
+            [
+                TYPE,
+                TABLET
+            ]
+        ],
+        [
+            /(phone|mobile(?:[;\/]| [ \w\/\.]*safari)|pda(?=.+windows ce))/i // Unidentifiable Mobile
+        ],
+        [
+            [
+                TYPE,
+                MOBILE
+            ]
+        ],
+        [
+            /droid .+?; ([\w\. -]+)( bui|\))/i // Generic Android Device
+        ],
+        [
+            MODEL,
+            [
+                VENDOR,
+                'Generic'
+            ]
+        ]
+    ],
+    engine: [
+        [
+            /windows.+ edge\/([\w\.]+)/i // EdgeHTML
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                EDGE + 'HTML'
+            ]
+        ],
+        [
+            /(arkweb)\/([\w\.]+)/i // ArkWeb
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /webkit\/537\.36.+chrome\/(?!27)([\w\.]+)/i // Blink
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Blink'
+            ]
+        ],
+        [
+            /(presto)\/([\w\.]+)/i,
+            /(webkit|trident|netfront|netsurf|amaya|lynx|w3m|goanna|servo)\/([\w\.]+)/i,
+            /ekioh(flow)\/([\w\.]+)/i,
+            /(khtml|tasman|links|dillo)[\/ ]\(?([\w\.]+)/i,
+            /(icab)[\/ ]([23]\.[\d\.]+)/i,
+            /\b(libweb)/i // LibWeb
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /ladybird\//i
+        ],
+        [
+            [
+                NAME,
+                'LibWeb'
+            ]
+        ],
+        [
+            /rv\:([\w\.]{1,9})\b.+(gecko)/i // Gecko
+        ],
+        [
+            VERSION,
+            NAME
+        ]
+    ],
+    os: [
+        [
+            // Windows
+            /(windows nt) (6\.[23]); arm/i // Windows RT
+        ],
+        [
+            [
+                NAME,
+                /N/,
+                'R'
+            ],
+            [
+                VERSION,
+                strMapper,
+                windowsVersionMap
+            ]
+        ],
+        [
+            /(windows (?:phone|mobile|iot))(?: os)?[\/ ]?([\d\.]*( se)?)/i,
+            // Windows NT/3.1/95/98/ME/2000/XP/Vista/7/8/8.1/10/11
+            /(windows)[\/ ](1[01]|2000|3\.1|7|8(\.1)?|9[58]|me|server 20\d\d( r2)?|vista|xp)/i
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /windows nt ?([\d\.\)]*)(?!.+xbox)/i,
+            /\bwin(?=3| ?9|n)(?:nt| 9x )?([\d\.;]*)/i
+        ],
+        [
+            [
+                VERSION,
+                /(;|\))/g,
+                '',
+                strMapper,
+                windowsVersionMap
+            ],
+            [
+                NAME,
+                WINDOWS
+            ]
+        ],
+        [
+            /(windows ce)\/?([\d\.]*)/i // Windows CE
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            // iOS/macOS
+            /[adehimnop]{4,7}\b(?:.*os ([\w]+) like mac|; opera)/i,
+            /(?:ios;fbsv|ios(?=.+ip(?:ad|hone)|.+apple ?tv)|ip(?:ad|hone)(?: |.+i(?:pad)?)os|apple ?tv.+ios)[\/ ]([\w\.]+)/i,
+            /\btvos ?([\w\.]+)/i,
+            /cfnetwork\/.+darwin/i
+        ],
+        [
+            [
+                VERSION,
+                /_/g,
+                '.'
+            ],
+            [
+                NAME,
+                'iOS'
+            ]
+        ],
+        [
+            /(mac os x) ?([\w\. ]*)/i,
+            /(macintosh|mac_powerpc\b)(?!.+(haiku|morphos))/i // Mac OS
+        ],
+        [
+            [
+                NAME,
+                'macOS'
+            ],
+            [
+                VERSION,
+                /_/g,
+                '.'
+            ]
+        ],
+        [
+            // Google Chromecast
+            /android ([\d\.]+).*crkey/i // Google Chromecast, Android-based
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                CHROMECAST + ' Android'
+            ]
+        ],
+        [
+            /fuchsia.*crkey\/([\d\.]+)/i // Google Chromecast, Fuchsia-based
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                CHROMECAST + ' Fuchsia'
+            ]
+        ],
+        [
+            /crkey\/([\d\.]+).*devicetype\/smartspeaker/i // Google Chromecast, Linux-based Smart Speaker
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                CHROMECAST + ' SmartSpeaker'
+            ]
+        ],
+        [
+            /linux.*crkey\/([\d\.]+)/i // Google Chromecast, Legacy Linux-based
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                CHROMECAST + ' Linux'
+            ]
+        ],
+        [
+            /crkey\/([\d\.]+)/i // Google Chromecast, unknown
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                CHROMECAST
+            ]
+        ],
+        [
+            // Mobile OSes
+            /droid ([\w\.]+)\b.+(android[- ]x86)/i // Android-x86
+        ],
+        [
+            VERSION,
+            NAME
+        ],
+        [
+            /(ubuntu) ([\w\.]+) like android/i // Ubuntu Touch
+        ],
+        [
+            [
+                NAME,
+                /(.+)/,
+                '$1 Touch'
+            ],
+            VERSION
+        ],
+        [
+            /(harmonyos)[\/ ]?([\d\.]*)/i,
+            // Android/Blackberry/WebOS/QNX/Bada/RIM/KaiOS/Maemo/MeeGo/S40/Sailfish OS/OpenHarmony/Tizen
+            /(android|bada|blackberry|kaios|maemo|meego|openharmony|qnx|rim tablet os|sailfish|series40|symbian|tizen)\w*[-\/\.; ]?([\d\.]*)/i
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /\(bb(10);/i // BlackBerry 10
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                BLACKBERRY
+            ]
+        ],
+        [
+            /(?:symbian ?os|symbos|s60(?=;)|series ?60)[-\/ ]?([\w\.]*)/i // Symbian
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Symbian'
+            ]
+        ],
+        [
+            /mozilla\/[\d\.]+ \((?:mobile[;\w ]*|tablet|tv|[^\)]*(?:viera|lg(?:l25|-d300)|alcatel ?o.+|y300-f1)); rv:([\w\.]+)\).+gecko\//i // Firefox OS
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                FIREFOX + ' OS'
+            ]
+        ],
+        [
+            /\b(?:hp)?wos(?:browser)?\/([\w\.]+)/i,
+            /webos(?:[ \/]?|\.tv-20(?=2[2-9]))(\d[\d\.]*)/i
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'webOS'
+            ]
+        ],
+        [
+            /web0s;.+?(?:chr[o0]me|safari)\/(\d+)/i
+        ],
+        [
+            [
+                VERSION,
+                strMapper,
+                {
+                    '25': '120',
+                    '24': '108',
+                    '23': '94',
+                    '22': '87',
+                    '6': '79',
+                    '5': '68',
+                    '4': '53',
+                    '3': '38',
+                    '2': '538',
+                    '1': '537',
+                    '*': 'TV'
+                }
+            ],
+            [
+                NAME,
+                'webOS'
+            ]
+        ],
+        [
+            /watch(?: ?os[,\/ ]|\d,\d\/)([\d\.]+)/i // watchOS
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'watchOS'
+            ]
+        ],
+        [
+            // Google ChromeOS
+            /cros [\w]+(?:\)| ([\w\.]+)\b)/i // Chromium OS
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Chrome OS'
+            ]
+        ],
+        [
+            // Smart TVs
+            /kepler ([\w\.]+); (aft|aeo)/i // Vega OS
+        ],
+        [
+            VERSION,
+            [
+                NAME,
+                'Vega OS'
+            ]
+        ],
+        [
+            /(netrange)mmh/i,
+            /(nettv)\/(\d+\.[\w\.]+)/i,
+            // Console
+            /(nintendo|playstation) (\w+)/i,
+            /(xbox); +xbox ([^\);]+)/i,
+            /(pico) .+os([\w\.]+)/i,
+            // Other
+            /\b(joli|palm)\b ?(?:os)?\/?([\w\.]*)/i,
+            /linux.+(mint)[\/\(\) ]?([\w\.]*)/i,
+            /(mageia|vectorlinux|fuchsia|arcaos|arch(?= ?linux))[;l ]([\d\.]*)/i,
+            /([kxln]?ubuntu|debian|suse|opensuse|gentoo|slackware|fedora|mandriva|centos|pclinuxos|red ?hat|zenwalk|linpus|raspbian|plan 9|minix|risc os|contiki|deepin|manjaro|elementary os|sabayon|linspire|knoppix)(?: gnu[\/ ]linux)?(?: enterprise)?(?:[- ]linux)?(?:-gnu)?[-\/ ]?(?!chrom|package)([-\w\.]*)/i,
+            // Ubuntu/Debian/SUSE/Gentoo/Slackware/Fedora/Mandriva/CentOS/PCLinuxOS/RedHat/Zenwalk/Linpus/Raspbian/Plan9/Minix/RISCOS/Contiki/Deepin/Manjaro/elementary/Sabayon/Linspire/Knoppix
+            /((?:open)?solaris)[-\/ ]?([\w\.]*)/i,
+            /\b(aix)[; ]([1-9\.]{0,4})/i,
+            /(hurd|linux|morphos)(?: (?:arm|x86|ppc)\w*| ?)([\w\.]*)/i,
+            /(gnu) ?([\w\.]*)/i,
+            /\b([-frentopcghs]{0,5}bsd|dragonfly)[\/ ]?(?!amd|[ix346]{1,2}86)([\w\.]*)/i,
+            /(haiku) ?(r\d)?/i // Haiku
+        ],
+        [
+            NAME,
+            VERSION
+        ],
+        [
+            /(sunos) ?([\d\.]*)/i // Solaris
+        ],
+        [
+            [
+                NAME,
+                'Solaris'
+            ],
+            VERSION
+        ],
+        [
+            /\b(beos|os\/2|amigaos|openvms|hp-ux|serenityos)/i,
+            /(unix) ?([\w\.]*)/i // UNIX
+        ],
+        [
+            NAME,
+            VERSION
+        ]
+    ]
+};
+/////////////////
+// Factories
+////////////////
+var defaultProps = function() {
+    var props = {
+        init: {},
+        isIgnore: {},
+        isIgnoreRgx: {},
+        toString: {}
+    };
+    setProps.call(props.init, [
+        [
+            BROWSER,
+            [
+                NAME,
+                VERSION,
+                MAJOR,
+                TYPE
+            ]
+        ],
+        [
+            CPU,
+            [
+                ARCHITECTURE
+            ]
+        ],
+        [
+            DEVICE,
+            [
+                TYPE,
+                MODEL,
+                VENDOR
+            ]
+        ],
+        [
+            ENGINE,
+            [
+                NAME,
+                VERSION
+            ]
+        ],
+        [
+            OS,
+            [
+                NAME,
+                VERSION
+            ]
+        ]
+    ]);
+    setProps.call(props.isIgnore, [
+        [
+            BROWSER,
+            [
+                VERSION,
+                MAJOR
+            ]
+        ],
+        [
+            ENGINE,
+            [
+                VERSION
+            ]
+        ],
+        [
+            OS,
+            [
+                VERSION
+            ]
+        ]
+    ]);
+    setProps.call(props.isIgnoreRgx, [
+        [
+            BROWSER,
+            / ?browser$/i
+        ],
+        [
+            OS,
+            / ?os$/i
+        ]
+    ]);
+    setProps.call(props.toString, [
+        [
+            BROWSER,
+            [
+                NAME,
+                VERSION
+            ]
+        ],
+        [
+            CPU,
+            [
+                ARCHITECTURE
+            ]
+        ],
+        [
+            DEVICE,
+            [
+                VENDOR,
+                MODEL
+            ]
+        ],
+        [
+            ENGINE,
+            [
+                NAME,
+                VERSION
+            ]
+        ],
+        [
+            OS,
+            [
+                NAME,
+                VERSION
+            ]
+        ]
+    ]);
+    return props;
+}();
+var createIData = function(item, itemType) {
+    var init_props = defaultProps.init[itemType], is_ignoreProps = defaultProps.isIgnore[itemType] || 0, is_ignoreRgx = defaultProps.isIgnoreRgx[itemType] || 0, toString_props = defaultProps.toString[itemType] || 0;
+    function IData() {
+        setProps.call(this, init_props);
+    }
+    IData.prototype.getItem = function() {
+        return item;
+    };
+    IData.prototype.withClientHints = function() {
+        // nodejs / non-client-hints browsers
+        if (!NAVIGATOR_UADATA) {
+            return item.parseCH().get();
+        }
+        // browsers based on chromium 85+
+        return NAVIGATOR_UADATA.getHighEntropyValues(CH_ALL_VALUES).then(function(res) {
+            return item.setCH(new UACHData(res, false)).parseCH().get();
+        });
+    };
+    IData.prototype.withFeatureCheck = function() {
+        return item.detectFeature().get();
+    };
+    if (itemType != RESULT) {
+        IData.prototype.is = function(strToCheck) {
+            var is = false;
+            for(var i in this){
+                if (this.hasOwnProperty(i) && !has(is_ignoreProps, i) && lowerize(is_ignoreRgx ? strip(is_ignoreRgx, this[i]) : this[i]) == lowerize(is_ignoreRgx ? strip(is_ignoreRgx, strToCheck) : strToCheck)) {
+                    is = true;
+                    if (strToCheck != TYPEOF.UNDEFINED) break;
+                } else if (strToCheck == TYPEOF.UNDEFINED && is) {
+                    is = !is;
+                    break;
+                }
+            }
+            return is;
+        };
+        IData.prototype.toString = function() {
+            var str = EMPTY;
+            for(var i in toString_props){
+                if (typeof this[toString_props[i]] !== TYPEOF.UNDEFINED) {
+                    str += (str ? ' ' : EMPTY) + this[toString_props[i]];
+                }
+            }
+            return str || TYPEOF.UNDEFINED;
+        };
+    }
+    IData.prototype.then = function(cb) {
+        var that = this;
+        var IDataResolve = function() {
+            for(var prop in that){
+                if (that.hasOwnProperty(prop)) {
+                    this[prop] = that[prop];
+                }
+            }
+        };
+        IDataResolve.prototype = {
+            is: IData.prototype.is,
+            toString: IData.prototype.toString,
+            withClientHints: IData.prototype.withClientHints,
+            withFeatureCheck: IData.prototype.withFeatureCheck
+        };
+        var resolveData = new IDataResolve();
+        cb(resolveData);
+        return resolveData;
+    };
+    return new IData();
+};
+/////////////////
+// Constructor
+////////////////
+function UACHData(uach, isHttpUACH) {
+    uach = uach || {};
+    setProps.call(this, CH_ALL_VALUES);
+    if (isHttpUACH) {
+        setProps.call(this, [
+            [
+                BRANDS,
+                itemListToArray(uach[CH])
+            ],
+            [
+                FULLVERLIST,
+                itemListToArray(uach[CH_FULL_VER_LIST])
+            ],
+            [
+                MOBILE,
+                /\?1/.test(uach[CH_MOBILE])
+            ],
+            [
+                MODEL,
+                stripQuotes(uach[CH_MODEL])
+            ],
+            [
+                PLATFORM,
+                stripQuotes(uach[CH_PLATFORM])
+            ],
+            [
+                PLATFORMVER,
+                stripQuotes(uach[CH_PLATFORM_VER])
+            ],
+            [
+                ARCHITECTURE,
+                stripQuotes(uach[CH_ARCH])
+            ],
+            [
+                FORMFACTORS,
+                itemListToArray(uach[CH_FORM_FACTORS])
+            ],
+            [
+                BITNESS,
+                stripQuotes(uach[CH_BITNESS])
+            ]
+        ]);
+    } else {
+        for(var prop in uach){
+            if (this.hasOwnProperty(prop) && typeof uach[prop] !== TYPEOF.UNDEFINED) this[prop] = uach[prop];
+        }
+    }
+}
+function UAItem(itemType, ua, rgxMap, uaCH) {
+    setProps.call(this, [
+        [
+            'itemType',
+            itemType
+        ],
+        [
+            'ua',
+            ua
+        ],
+        [
+            'uaCH',
+            uaCH
+        ],
+        [
+            'rgxMap',
+            rgxMap
+        ],
+        [
+            'data',
+            createIData(this, itemType)
+        ]
+    ]);
+    return this;
+}
+UAItem.prototype.get = function(prop) {
+    if (!prop) return this.data;
+    return this.data.hasOwnProperty(prop) ? this.data[prop] : undefined;
+};
+UAItem.prototype.set = function(prop, val) {
+    this.data[prop] = val;
+    return this;
+};
+UAItem.prototype.setCH = function(ch) {
+    this.uaCH = ch;
+    return this;
+};
+UAItem.prototype.detectFeature = function() {
+    if (NAVIGATOR && NAVIGATOR.userAgent == this.ua) {
+        switch(this.itemType){
+            case BROWSER:
+                // Brave-specific detection
+                if (NAVIGATOR.brave && typeof NAVIGATOR.brave.isBrave == TYPEOF.FUNCTION) {
+                    this.set(NAME, 'Brave');
+                }
+                break;
+            case DEVICE:
+                // Chrome-specific detection: check for 'mobile' value of navigator.userAgentData
+                if (!this.get(TYPE) && NAVIGATOR_UADATA && NAVIGATOR_UADATA[MOBILE]) {
+                    this.set(TYPE, MOBILE);
+                }
+                // iPadOS-specific detection: identified as Mac, but has some iOS-only properties
+                if (this.get(MODEL) == 'Macintosh' && NAVIGATOR && typeof NAVIGATOR.standalone !== TYPEOF.UNDEFINED && NAVIGATOR.maxTouchPoints && NAVIGATOR.maxTouchPoints > 2) {
+                    this.set(MODEL, 'iPad').set(TYPE, TABLET);
+                }
+                break;
+            case OS:
+                // Chrome-specific detection: check for 'platform' value of navigator.userAgentData
+                if (!this.get(NAME) && NAVIGATOR_UADATA && NAVIGATOR_UADATA[PLATFORM]) {
+                    this.set(NAME, NAVIGATOR_UADATA[PLATFORM]);
+                }
+                break;
+            case RESULT:
+                var data = this.data;
+                var detect = function(itemType) {
+                    return data[itemType].getItem().detectFeature().get();
+                };
+                this.set(BROWSER, detect(BROWSER)).set(CPU, detect(CPU)).set(DEVICE, detect(DEVICE)).set(ENGINE, detect(ENGINE)).set(OS, detect(OS));
+        }
+    }
+    return this;
+};
+UAItem.prototype.parseUA = function() {
+    if (this.itemType != RESULT) {
+        rgxMapper.call(this.data, this.ua, this.rgxMap);
+    }
+    switch(this.itemType){
+        case BROWSER:
+            this.set(MAJOR, majorize(this.get(VERSION)));
+            break;
+        case OS:
+            if (this.get(NAME) == 'iOS' && this.get(VERSION) == '18.6') {
+                // Based on the assumption that iOS version is tightly coupled with Safari version
+                var realVersion = /\) Version\/([\d\.]+)/.exec(this.ua); // Get Safari version
+                if (realVersion && parseInt(realVersion[1].substring(0, 2), 10) >= 26) {
+                    this.set(VERSION, realVersion[1]); // Set as iOS version
+                }
+            }
+            break;
+    }
+    return this;
+};
+UAItem.prototype.parseCH = function() {
+    var uaCH = this.uaCH, rgxMap = this.rgxMap;
+    switch(this.itemType){
+        case BROWSER:
+        case ENGINE:
+            var brands = uaCH[FULLVERLIST] || uaCH[BRANDS], prevName;
+            if (brands) {
+                for(var i = 0; i < brands.length; i++){
+                    var brandName = brands[i].brand || brands[i], brandVersion = brands[i].version;
+                    if (this.itemType == BROWSER && !/not.a.brand/i.test(brandName) && (!prevName || /Chrom/.test(prevName) && brandName != CHROMIUM || prevName == EDGE && /WebView2/.test(brandName))) {
+                        brandName = strMapper(brandName, browserHintsMap);
+                        prevName = this.get(NAME);
+                        if (!(prevName && !/Chrom/.test(prevName) && /Chrom/.test(brandName))) {
+                            this.set(NAME, brandName).set(VERSION, brandVersion).set(MAJOR, majorize(brandVersion));
+                        }
+                        prevName = brandName;
+                    }
+                    if (this.itemType == ENGINE && brandName == CHROMIUM) {
+                        this.set(VERSION, brandVersion);
+                    }
+                }
+            }
+            break;
+        case CPU:
+            var archName = uaCH[ARCHITECTURE];
+            if (archName) {
+                if (archName && uaCH[BITNESS] == '64') archName += '64';
+                rgxMapper.call(this.data, archName + ';', rgxMap);
+            }
+            break;
+        case DEVICE:
+            if (uaCH[MOBILE]) {
+                this.set(TYPE, MOBILE);
+            }
+            if (uaCH[MODEL]) {
+                this.set(MODEL, uaCH[MODEL]);
+                if (!this.get(TYPE) || !this.get(VENDOR)) {
+                    var reParse = {};
+                    rgxMapper.call(reParse, 'droid 9; ' + uaCH[MODEL] + ')', rgxMap);
+                    if (!this.get(TYPE) && !!reParse.type) {
+                        this.set(TYPE, reParse.type);
+                    }
+                    if (!this.get(VENDOR) && !!reParse.vendor) {
+                        this.set(VENDOR, reParse.vendor);
+                    }
+                }
+            }
+            if (uaCH[FORMFACTORS]) {
+                var ff;
+                if (typeof uaCH[FORMFACTORS] !== 'string') {
+                    var idx = 0;
+                    while(!ff && idx < uaCH[FORMFACTORS].length){
+                        ff = strMapper(uaCH[FORMFACTORS][idx++], formFactorsMap);
+                    }
+                } else {
+                    ff = strMapper(uaCH[FORMFACTORS], formFactorsMap);
+                }
+                this.set(TYPE, ff);
+            }
+            break;
+        case OS:
+            var osName = uaCH[PLATFORM];
+            if (osName) {
+                var osVersion = uaCH[PLATFORMVER];
+                if (osName == WINDOWS) osVersion = parseInt(majorize(osVersion), 10) >= 13 ? '11' : '10';
+                this.set(NAME, osName).set(VERSION, osVersion);
+            }
+            // Xbox-Specific Detection
+            if (this.get(NAME) == WINDOWS && uaCH[MODEL] == 'Xbox') {
+                this.set(NAME, 'Xbox').set(VERSION, undefined);
+            }
+            break;
+        case RESULT:
+            var data = this.data;
+            var parse = function(itemType) {
+                return data[itemType].getItem().setCH(uaCH).parseCH().get();
+            };
+            this.set(BROWSER, parse(BROWSER)).set(CPU, parse(CPU)).set(DEVICE, parse(DEVICE)).set(ENGINE, parse(ENGINE)).set(OS, parse(OS));
+    }
+    return this;
+};
+function UAParser(ua, extensions, headers) {
+    if (typeof ua === TYPEOF.OBJECT) {
+        if (isExtensions(ua, true)) {
+            if (typeof extensions === TYPEOF.OBJECT) {
+                headers = extensions; // case UAParser(extensions, headers)           
+            }
+            extensions = ua; // case UAParser(extensions)
+        } else {
+            headers = ua; // case UAParser(headers)
+            extensions = undefined;
+        }
+        ua = undefined;
+    } else if (typeof ua === TYPEOF.STRING && !isExtensions(extensions, true)) {
+        headers = extensions; // case UAParser(ua, headers)
+        extensions = undefined;
+    }
+    if (headers) {
+        if (typeof headers.append === TYPEOF.FUNCTION) {
+            // Convert Headers object into a plain object
+            var kv = {};
+            headers.forEach(function(v, k) {
+                kv[String(k).toLowerCase()] = v;
+            });
+            headers = kv;
+        } else {
+            // Normalize headers field name into lowercase
+            var normalized = {};
+            for(var header in headers){
+                if (headers.hasOwnProperty(header)) {
+                    normalized[String(header).toLowerCase()] = headers[header];
+                }
+            }
+            headers = normalized;
+        }
+    }
+    if (!(this instanceof UAParser)) {
+        return new UAParser(ua, extensions, headers).getResult();
+    }
+    var userAgent = typeof ua === TYPEOF.STRING ? ua : headers && headers[USER_AGENT] ? headers[USER_AGENT] : NAVIGATOR && NAVIGATOR.userAgent ? NAVIGATOR.userAgent : EMPTY, httpUACH = new UACHData(headers, true), regexMap = extensions ? extend(defaultRegexes, extensions) : defaultRegexes, createItemFunc = function(itemType) {
+        if (itemType == RESULT) {
+            return function() {
+                return new UAItem(itemType, userAgent, regexMap, httpUACH).set('ua', userAgent).set(BROWSER, this.getBrowser()).set(CPU, this.getCPU()).set(DEVICE, this.getDevice()).set(ENGINE, this.getEngine()).set(OS, this.getOS()).get();
+            };
+        } else {
+            return function() {
+                return new UAItem(itemType, userAgent, regexMap[itemType], httpUACH).parseUA().get();
+            };
+        }
+    };
+    // public methods
+    setProps.call(this, [
+        [
+            'getBrowser',
+            createItemFunc(BROWSER)
+        ],
+        [
+            'getCPU',
+            createItemFunc(CPU)
+        ],
+        [
+            'getDevice',
+            createItemFunc(DEVICE)
+        ],
+        [
+            'getEngine',
+            createItemFunc(ENGINE)
+        ],
+        [
+            'getOS',
+            createItemFunc(OS)
+        ],
+        [
+            'getResult',
+            createItemFunc(RESULT)
+        ],
+        [
+            'getUA',
+            function() {
+                return userAgent;
+            }
+        ],
+        [
+            'setUA',
+            function(ua) {
+                if (isString(ua)) userAgent = trim(ua, UA_MAX_LENGTH);
+                return this;
+            }
+        ]
+    ]).setUA(userAgent);
+    return this;
+}
+UAParser.VERSION = LIBVERSION;
+UAParser.BROWSER = enumerize([
+    NAME,
+    VERSION,
+    MAJOR,
+    TYPE
+]);
+UAParser.CPU = enumerize([
+    ARCHITECTURE
+]);
+UAParser.DEVICE = enumerize([
+    MODEL,
+    VENDOR,
+    TYPE,
+    CONSOLE,
+    MOBILE,
+    SMARTTV,
+    TABLET,
+    WEARABLE,
+    EMBEDDED
+]);
+UAParser.ENGINE = UAParser.OS = enumerize([
+    NAME,
+    VERSION
+]);
+;
+}),
+]);
+
+//# sourceMappingURL=_8d243756._.js.map

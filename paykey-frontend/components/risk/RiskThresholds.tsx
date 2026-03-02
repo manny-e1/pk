@@ -9,7 +9,7 @@ interface RiskThresholdsProps {
 }
 
 export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange }: RiskThresholdsProps) {
-  // ... (Icons tetap sama) ...
+
   const Icons = {
     check: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>,
     clock: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,

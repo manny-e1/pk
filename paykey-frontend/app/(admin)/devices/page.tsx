@@ -745,7 +745,7 @@ export default function DevicesPage() {
                                     <div className="flex items-center gap-2">
                                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--purple)] flex items-center justify-center text-[10px] font-semibold text-white">{d.initials}</div>
                                         <div>
-                                            <div className="text-[13px]">{d.user}</div>
+                                            <div className="text-[13px]">{d.email}</div>
                                             <div className="text-[11px] text-[var(--text-tertiary)] font-mono">{d.userId}</div>
                                         </div>
                                     </div>
@@ -842,7 +842,7 @@ export default function DevicesPage() {
                             <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--purple)] flex items-center justify-center text-xs font-semibold text-white">{currentDevice.initials}</div>
                                 <div>
-                                    <div className="text-sm">{currentDevice.user}</div>
+                                    <div className="text-sm">{currentDevice.email}</div>
                                     <div className="text-xs text-[var(--text-tertiary)] font-mono">{currentDevice.userId}</div>
                                 </div>
                             </div>

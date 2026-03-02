@@ -51,10 +51,11 @@ export default function AuthPoliciesPage() {
 
   const handleSavePolicy = async (updatedData: any) => {
     if (!editingRisk) return;
-    let currentUserEmail = "";
-    if (typeof window !== 'undefined') {
-        try { currentUserEmail = JSON.parse(localStorage.getItem('user') || '{}').email || ""; } catch(e){}
-    }
+    const currentUserEmail = localStorage.getItem('paykey_last_user_email');
+    
+    console.log("Saving policy with data:", {
+      segment, channel, riskLevel: editingRisk, condition: updatedData, adminEmail: currentUserEmail
+    });
 
     try {
       const cleanData = { ...updatedData }; delete cleanData.id;

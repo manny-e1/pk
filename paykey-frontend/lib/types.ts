@@ -27,7 +27,8 @@ export interface Device {
   location?: string;
   rate?: string;
   revokedOn?: string;
-  reason?: string;
+  reason?: string;         // User Display Name (Nama Lengkap)
+  email: string;           // User ID murni (Contoh: USR_X7B92M1K4R)
 }
 
 export interface AuthEvent {

@@ -3,20 +3,21 @@ const prisma = require('../config/db');
 const { sendTokenCookie } = require('../utils/jwt');
 const { createRichAuthLog } = require('../utils/richLogger'); 
 const {ge0tNetworkInfo} = require('../utils/geoIpService');
+const { generateUserId } = require('../utils/idGenerator');
 
 // ==================================================================
 // CONTROLLERS
 // ==================================================================
 
 exports.registerPassword = async (req, res) => {
-    const { fullName, email, password, companyName, mobile, role, telemetry } = req.body;
+    let { fullName, email, password, companyName, mobile, role, telemetry } = req.body;
     
     try {
-        // 1. Hash Password
+        if (!email) return res.status(400).json({ error: 'Email is required' });
+        email = email.toLowerCase().trim();
+
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        // 2. Create User
-        // Cek duplikasi manual agar bisa log error spesifik (opsional, prisma throw error juga bisa)
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
             await createRichAuthLog(req, { email, id: 'unknown' }, {
@@ -36,6 +37,7 @@ exports.registerPassword = async (req, res) => {
 
         const newUser = await prisma.user.create({
             data: { 
+                id: generateUserId(),
                 email, fullName, passwordHash: hashedPassword,
                 companyName: companyName || null, mobile: mobile || null,
                 role: role === 'ADMIN' ? 'ADMIN' : 'USER'
@@ -191,11 +193,12 @@ exports.checkUser = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
+    const isProduction = process.env.NODE_ENV === 'production';
     res.clearCookie('auth_token', {
         httpOnly: true,
-        secure: true, 
+        secure: isProduction,
+        domain: isProduction ? '.authkey.my' : 'localhost',
         sameSite: 'lax',
-        domain: '.authkey.my',
         path: '/'
     });
 

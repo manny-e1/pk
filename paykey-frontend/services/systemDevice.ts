@@ -1,6 +1,5 @@
 import { UAParser } from 'ua-parser-js';
 
-// --- TYPE DEFINITIONS UNTUK API BROWSER MODERN ---
 interface NetworkInformation extends EventTarget {
   readonly type?: 'bluetooth' | 'cellular' | 'ethernet' | 'none' | 'wifi' | 'wimax' | 'other' | 'unknown';
   readonly effectiveType?: '2g' | '3g' | '4g' | 'slow-2g';
@@ -42,7 +41,7 @@ export interface DeviceTelemetry {
   language: string;
 }
 
-export const deviceService = { // Pastikan export ini sesuai nama file import di page.tsx
+export const deviceService = { 
   
   async getDeviceTelemetry(): Promise<DeviceTelemetry> {
     if (typeof window === 'undefined') {
@@ -51,11 +50,9 @@ export const deviceService = { // Pastikan export ini sesuai nama file import di
 
     const nav = navigator as NavigatorWithExtras;
     
-    // [FIX] Cara instansiasi yang benar setelah import { UAParser }
     const parser = new UAParser(); 
     const uaResult = parser.getResult();
 
-    // 1. DETEKSI MODEL TINGKAT LANJUT
     let preciseModel = '';
     let preciseOSVersion = '';
     
@@ -94,10 +91,14 @@ export const deviceService = { // Pastikan export ini sesuai nama file import di
     let acc: number | null = null;
 
     try {
-        const pos = await this.getCurrentPosition();
-        lat = pos.coords.latitude;
-        lng = pos.coords.longitude;
-        acc = pos.coords.accuracy;
+        // const pos = await this.getCurrentPosition();
+        // lat = pos.coords.latitude;
+        // lng = pos.coords.longitude;
+        // acc = pos.coords.accuracy;
+        lat = null;
+        lng = null;
+        acc = null;
+
     } catch (e) {}
 
     return {
@@ -119,14 +120,14 @@ export const deviceService = { // Pastikan export ini sesuai nama file import di
     };
   },
 
-  getCurrentPosition(): Promise<GeolocationPosition> {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) return reject();
-      navigator.geolocation.getCurrentPosition(resolve, reject, { 
-          enableHighAccuracy: true, timeout: 4000, maximumAge: 0 
-      });
-    });
-  },
+  // getCurrentPosition(): Promise<GeolocationPosition> {
+  //   return new Promise((resolve, reject) => {
+  //     if (!navigator.geolocation) return reject();
+  //     navigator.geolocation.getCurrentPosition(resolve, reject, { 
+  //         enableHighAccuracy: true, timeout: 4000, maximumAge: 0 
+  //     });
+  //   });
+  // },
 
   isDesktop(): boolean {
       const userAgent = navigator.userAgent.toLowerCase();

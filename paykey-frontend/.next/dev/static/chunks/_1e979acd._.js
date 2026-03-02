@@ -1110,94 +1110,189 @@ __turbopack_context__.s([
     "adminService",
     ()=>adminService
 ]);
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/axios/lib/axios.js [app-client] (ecmascript)");
+// import axios from 'axios';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
+// export const adminService = {
+//   // --- 1. AMOUNT THRESHOLDS ---
+//     getAmountLimits: async () => {
+//         const res = await axios.get(`${API_URL}/api/admin/limits`);
+//         return res.data;
+//     },
+//     updateAmountLimit: async (id: string, data: any) => {
+//         const res = await axios.put(`${API_URL}/api/admin/limits/${id}`, data);
+//         return res.data;
+//     },
+//     createAmountLimit: async (data: any) => {
+//         const res = await axios.post(`${API_URL}/api/admin/limits`, data);
+//         return res.data;
+//     },
+//     deleteAmountLimit: async (id: string) => {
+//         const res = await axios.delete(`${API_URL}/api/admin/limits/${id}`);
+//         return res.data;
+//     },
+//     getRiskRules: async () => {
+//         const res = await axios.get(`${API_URL}/api/admin/risk-rules`);
+//         return res.data;
+//     },
+//     // [POST] Simpan Rules (Batch Update) - INI YANG BARU
+//     saveRiskConfigBatch: async (rules: any[]) => {
+//         const res = await axios.post(`${API_URL}/api/admin/risk-rules/batch-update`, { rules });
+//         return res.data;
+//     },
+//     // [GET] Thresholds
+//     getRiskConfig: async () => {
+//         const res = await axios.get(`${API_URL}/api/admin/risk-config`);
+//         return res.data;
+//     },
+//     // [PUT] Update Thresholds
+//     updateRiskConfig: async (data: any) => {
+//         const res = await axios.put(`${API_URL}/api/admin/risk-config`, data);
+//         return res.data;
+//     },
+//     // --- 3. AUTH POLICIES ---
+//     getPolicies: async () => {
+//         const res = await axios.get(`${API_URL}/api/admin/policies`);
+//         return res.data;
+//     },
+//     upsertPolicy: async (payload: any) => {
+//         const res = await axios.post(`${API_URL}/api/admin/policies`, payload);
+//         return res.data;
+//     },
+//     getPolicyAuditLogs: async () => {
+//         const res = await axios.get(`${API_URL}/api/admin/policies/audit`);
+//         return res.data;
+//     },
+//     // --- 4. INVESTIGATION & LOGS ---
+//     getTransactions: async () => {
+//         const res = await axios.get(`${API_URL}/api/admin/transactions`);
+//         return res.data;
+//     },
+//     getTransactionDetail: async (id: string) => {
+//         const res = await axios.get(`${API_URL}/api/admin/transactions/${id}`);
+//         return res.data;
+//     }
+//     ,
+//     getAuthLogs: async () => {
+//         const res = await axios.get(`${API_URL}/api/admin/logs`);
+//         return res.data;
+//     },
+//     getDashboardStats: async (range: string) => {
+//     const res = await axios.get(`${API_URL}/api/admin/dashboard`, { 
+//         params: { timeRange: range } 
+//     });
+//     return res.data;
+//     },
+//     // 1. Fetch Evidence (Cepat)    
+//     async getTransactionEvidence(id: string) {
+//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/evidence`);
+//         if (!res.ok) throw new Error('Failed to load evidence');
+//         return res.json();
+//     },
+//     // 2. Fetch Analysis (Lambat)
+//     async getInvestigationReport(id: string) {
+//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/investigate`);
+//         if (!res.ok) throw new Error('Failed to load analysis');
+//         return res.json();
+//     }
+// };
+var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/apiClient.ts [app-client] (ecmascript)");
 ;
-const API_URL = ("TURBOPACK compile-time value", "http://localhost:4000") || 'https://api.authkey.my';
 const adminService = {
     // --- 1. AMOUNT THRESHOLDS ---
     getAmountLimits: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/limits`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/limits`);
         return res.data;
     },
     updateAmountLimit: async (id, data)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].put(`${API_URL}/api/admin/limits/${id}`, data);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].put(`/api/admin/limits/${id}`, data);
         return res.data;
     },
     createAmountLimit: async (data)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post(`${API_URL}/api/admin/limits`, data);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post(`/api/admin/limits`, data);
         return res.data;
     },
     deleteAmountLimit: async (id)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].delete(`${API_URL}/api/admin/limits/${id}`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].delete(`/api/admin/limits/${id}`);
         return res.data;
     },
+    // --- 2. RISK CONFIG & RULES ---
+    // getRiskRules: async () => {
+    //     const res = await apiClient.get(`/api/admin/risk-rules`);
+    //     return res.data;
+    // },
+    // saveRiskConfigBatch: async (rules: any[]) => {
+    //     const res = await apiClient.post(`/api/admin/risk-rules/batch-update`, { rules });
+    //     return res.data;
+    // },
+    // getRiskConfig: async () => {
+    //     const res = await apiClient.get(`/api/admin/risk-config`);
+    //     return res.data;
+    // },
+    // updateRiskConfig: async (data: any) => {
+    //     const res = await apiClient.put(`/api/admin/risk-config`, data);
+    //     return res.data;
+    // },
     getRiskRules: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/risk-rules`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/risk-rules`);
         return res.data;
     },
-    // [POST] Simpan Rules (Batch Update) - INI YANG BARU
-    saveRiskConfigBatch: async (rules)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post(`${API_URL}/api/admin/risk-rules/batch-update`, {
-            rules
+    getRiskConfig: async ()=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/risk-config`);
+        return res.data;
+    },
+    saveRiskConfigBatch: async (rulesPayload)=>{
+        // Cukup kirimkan object { rules: rulesPayload } langsung sebagai parameter kedua
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-rules', {
+            rules: rulesPayload
         });
         return res.data;
     },
-    // [GET] Thresholds
-    getRiskConfig: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/risk-config`);
-        return res.data;
-    },
-    // [PUT] Update Thresholds
-    updateRiskConfig: async (data)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].put(`${API_URL}/api/admin/risk-config`, data);
+    updateRiskConfig: async (payload)=>{
+        // Cukup kirimkan variable payload langsung sebagai parameter kedua
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-config', payload);
         return res.data;
     },
     // --- 3. AUTH POLICIES ---
     getPolicies: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/policies`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies`);
         return res.data;
     },
     upsertPolicy: async (payload)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].post(`${API_URL}/api/admin/policies`, payload);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post(`/api/admin/policies`, payload);
         return res.data;
     },
     getPolicyAuditLogs: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/policies/audit`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies/audit`);
         return res.data;
     },
     // --- 4. INVESTIGATION & LOGS ---
     getTransactions: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/transactions`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions`);
         return res.data;
     },
     getTransactionDetail: async (id)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/transactions/${id}`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions/${id}`);
         return res.data;
     },
     getAuthLogs: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/logs`);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/logs`);
         return res.data;
     },
     getDashboardStats: async (range)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].get(`${API_URL}/api/admin/dashboard`, {
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/dashboard`, {
             params: {
                 timeRange: range
             }
         });
         return res.data;
     },
-    // 1. Fetch Evidence (Cepat)    
-    async getTransactionEvidence (id) {
-        const res = await fetch(`${API_URL}/api/admin/transactions/${id}/evidence`);
-        if (!res.ok) throw new Error('Failed to load evidence');
-        return res.json();
+    getTransactionEvidence: async (id)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions/${id}/evidence`);
+        return res.data;
     },
-    // 2. Fetch Analysis (Lambat)
-    async getInvestigationReport (id) {
-        const res = await fetch(`${API_URL}/api/admin/transactions/${id}/investigate`);
-        if (!res.ok) throw new Error('Failed to load analysis');
-        return res.json();
+    getInvestigationReport: async (id)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions/${id}/investigate`);
+        return res.data;
     }
 };
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
