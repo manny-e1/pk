@@ -14,9 +14,6 @@ const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redis
 })();
 
 
-// ==========================================
-// [PENTING] HELPER FUNCTIONS (JANGAN DIHAPUS)
-// ==========================================
 
 const saveContext = async (challenge, sessionId, context) => {
     await redisClient.set(`ctx:${challenge}`, JSON.stringify({ sessionId, ...context }), { EX: 300 });
@@ -27,12 +24,10 @@ const getContext = async (challenge) => {
     return data ? JSON.parse(data) : null;
 };
 
-// Fungsi untuk menstandarkan input dari Android/Web
 const normalizeCredential = (body) => {
     return body.serverPublicKeyCredential || body;
 };
 
-// Fungsi untuk mengambil data challenge dan origin dari signature user
 const parseClientData = (body) => {
     try {
         const cred = normalizeCredential(body);
@@ -43,9 +38,6 @@ const parseClientData = (body) => {
     }
 };
 
-// ==========================================
-// 1. FLOW REGISTER
-// ==========================================
 exports.registerStart = async (req, res) => {
     try {
         const { username, fullName, displayName, mobile, telemetry } = req.body;
@@ -105,14 +97,13 @@ exports.registerComplete = async (req, res) => {
             },
             sessionId: context.sessionId, 
             rpId: RP_ID, 
-            origin: clientData.origin, // Gunakan origin dinamis dari Android
+            origin: clientData.origin,
             tokenBinding: null
         };
 
         const result = await fidoService.verifyResponse('REGISTRATION', javaPayload);
 
         if (result.status === 200) {
-            // Hapus sesi di Redis setelah sukses
             await redisClient.del(`ctx:${challenge}`);
             
             const user = await prisma.user.findUnique({ where: { id: context.userId } });
@@ -127,7 +118,6 @@ exports.registerComplete = async (req, res) => {
                     });   
                 }
 
-            // Log Sukses menggunakan Rich Logger
             await createRichAuthLog(req, user, { 
                 eventType: 'Passkey Registered', 
                 status: 'SUCCESS',
@@ -147,9 +137,6 @@ exports.registerComplete = async (req, res) => {
     }
 };
 
-// ==========================================
-// 2. FLOW LOGIN (Authentication)
-// ==========================================
 exports.loginStart = async (req, res) => {
     try {
         const { username ,telemetry} = req.body;
@@ -183,7 +170,6 @@ exports.loginComplete = async (req, res) => {
         const context = await getContext(challenge);
         if (!context || context.purpose !== 'LOGIN') return res.status(400).json({ error: "Sesi login tidak valid" });
 
-        // Susun payload untuk Java Server agar mendukung Origin Mobile
         const javaPayload = {
             serverPublicKeyCredential: {
                 id: credential.id,
@@ -200,7 +186,6 @@ exports.loginComplete = async (req, res) => {
         const result = await fidoService.verifyResponse('AUTH', javaPayload);
         if (result.status !== 200) return res.status(401).json({ error: "Biometrik salah" });
 
-        // Cari User berdasarkan Credential ID
         const userKey = await prisma.userKey.findUnique({ 
             where: { credentialId: credential.id }, 
             include: { user: true } 
@@ -249,9 +234,6 @@ exports.loginComplete = async (req, res) => {
     }
 };
 
-// ==========================================
-// 3. FLOW TRANSACTION (Step-Up)
-// ==========================================
 exports.transactionStepUpStart = async (req, res) => {
     try {
         const { username, transactionId } = req.body;
@@ -271,139 +253,30 @@ exports.transactionStepUpStart = async (req, res) => {
     }
 };
 
-// exports.transactionStepUpComplete = async (req, res) => {
-//     try {
-//         const credential = normalizeCredential(req.body);
-//         const clientData = parseClientData(req.body);
         
-//         // 1. CEK TIMEOUT / SESI (Redis)
-//         // Jika user tidak scan jari dalam 5 menit (sesuai set di saveContext), data ini akan null.
-//         const context = await getContext(clientData.challenge);
         
-//         if (!context || context.purpose !== 'TX_STEPUP') {
-//             // [HANDLING TIMEOUT]
-//             // Sesi Redis sudah mati. Android akan menerima 408 (Request Timeout) atau 400.
-//             return res.status(408).json({ 
-//                 error: "Sesi transaksi telah berakhir (Timeout). Silakan ulangi transaksi.",
-//                 code: "TRANSACTION_TIMEOUT"
-//             });
-//         }
 
-//         // 2. Verifikasi ke Java Server
-//         const javaPayload = {
-//             serverPublicKeyCredential: {
-//                 id: credential.id,
-//                 type: credential.type,
-//                 response: credential.response,
-//                 extensions: credential.extensions || {}
-//             },
-//             sessionId: context.sessionId,
-//             rpId: RP_ID,
-//             origin: clientData.origin,
-//             tokenBinding: null
-//         };
 
-//         const result = await fidoService.verifyResponse('AUTH', javaPayload);
         
-//         // Ambil data transaksi lama untuk menjaga history
-//         const existingTx = await prisma.transaction.findUnique({ 
-//             where: { id: context.transactionId } 
-//         });
 
-//         if (!existingTx) {
-//             return res.status(404).json({ error: "Transaksi tidak ditemukan di database" });
-//         }
 
-//         // [SOLUSI OVERWRITE] Parsing History Lama
-//         let riskHistory = [];
-//         try {
-//             // Jika riskReason sebelumnya adalah JSON Array string, kita parse.
-//             // Jika string biasa, kita jadikan item pertama array.
-//             if (existingTx.riskReason) {
-//                 if (existingTx.riskReason.startsWith('[')) {
-//                     riskHistory = JSON.parse(existingTx.riskReason);
-//                 } else {
-//                     riskHistory.push({ event: 'INITIATION', note: existingTx.riskReason });
-//                 }
-//             }
-//         } catch (e) {
-//             // Fallback jika parsing gagal
-//             riskHistory.push({ event: 'LEGACY_DATA', note: existingTx.riskReason });
-//         }
 
-//         // ===============================================
-//         // SKENARIO 1: BIOMETRIK GAGAL
-//         // ===============================================
-//         if (result.status !== 200) {
-//             // Tambahkan event Gagal ke Timeline
-//             riskHistory.push({
-//                 event: 'AUTH_FAILED',
-//                 verifiedBy: 'FIDO2_BIOMETRIC',
-//                 status: 'FAILED',
-//                 timestamp: new Date().toISOString(),
-//                 reason: "Biometric Mismatch"
-//             });
 
-//             await prisma.transaction.update({
-//                 where: { id: context.transactionId },
-//                 data: { 
-//                     authResult: 'FAILED', 
-//                     riskReason: JSON.stringify(riskHistory) // Simpan History Lengkap
-//                 }
-//             });
 
-//             const user = await prisma.user.findUnique({ where: { id: context.userId } });
-//             await createRichAuthLog(req, user, { 
-//                 eventType: 'PAYMENT_FAILED', status: 'FAILED', message: `Biometric Failed: ${context.transactionId}` 
-//             });
 
-//             await redisClient.del(`ctx:${clientData.challenge}`);
-//             return res.status(401).json({ error: "Verifikasi Biometrik Gagal" });
-//         }
 
-//         // ===============================================
-//         // SKENARIO 2: BIOMETRIK SUKSES
-//         // ===============================================
         
-//         // Tambahkan event Sukses ke Timeline
-//         riskHistory.push({
-//             event: 'AUTH_SUCCESS',
-//             verifiedBy: 'FIDO2_BIOMETRIC',
-//             status: 'APPROVED',
-//             timestamp: new Date().toISOString()
-//         });
 
-//         await prisma.transaction.update({
-//             where: { id: context.transactionId },
-//             data: { 
-//                 authResult: 'SUCCESS', 
-//                 riskReason: JSON.stringify(riskHistory) // Simpan History Lengkap (Inisiasi + Approval)
-//             }
-//         });
 
-//         const user = await prisma.user.findUnique({ where: { id: context.userId } });
-//         await createRichAuthLog(req, user, { 
-//             eventType: 'PAYMENT_VERIFIED', status: 'SUCCESS', message: `TX ID: ${context.transactionId}` 
-//         });
 
-//         await redisClient.del(`ctx:${clientData.challenge}`);
-//         res.json({ status: 'SUCCESS', message: 'Pembayaran disetujui' });
 
-//     } catch (err) {
-//         console.error("StepUp Error:", err);
-//         res.status(500).json({ error: err.message });
-//     }
-// };
 
 exports.transactionStepUpComplete = async (req, res) => {
     try {
-        // Pastikan nama fungsi helper sesuai dengan yang ada di file Anda (normalizeCredential vs normalizeCredentialInput)
-        // Di sini saya gunakan normalizeCredential sesuai snippet file Anda.
         const startTime = Date.now();
         const credential = normalizeCredential(req.body); 
         const clientData = parseClientData(req.body);
         
-        // 1. Ambil Context dari Redis
         const context = await getContext(clientData.challenge);
         
         if (!context || context.purpose !== 'TX_STEPUP') {
@@ -416,7 +289,6 @@ exports.transactionStepUpComplete = async (req, res) => {
         const user = await prisma.user.findUnique({ where: { id: context.userId } });
         if (!user) return res.status(401).json({ error: "User tidak ditemukan" });
 
-        // 2. Verifikasi ke Java Server
         const javaPayload = {
             serverPublicKeyCredential: {
                 id: credential.id,
@@ -461,27 +333,20 @@ exports.transactionStepUpComplete = async (req, res) => {
             });
         }
 
-        // ============================================================
-        // DEFINISI HELPER UPDATE LOG (DI DALAM FUNGSI UTAMA)
-        // ============================================================
         const updateExistingLog = async (finalStatus, finalEvent, extraTags) => {
             try {
-                // 1. Ambil 20 Log terakhir milik user ini
                 const recentLogs = await prisma.authLog.findMany({
                     where: { email: user.email },
                     orderBy: { createdAt: 'desc' }, 
                     take: 20
                 });
 
-                // 2. Cari berdasarkan 'paymentId' (sesuai data transactionController Anda)
                 const targetLog = recentLogs.find(log => {
                     const data = log.riskTags || {};
-                    // Cek kedua kemungkinan key agar aman
                     return data.paymentId === context.transactionId || data.transactionId === context.transactionId; 
                 });
 
                 if (targetLog) {
-                    // 3. Gabungkan Tags
                     const oldData = targetLog.riskTags || {};
                     const oldTags = oldData.tags || [];
                     
@@ -492,7 +357,6 @@ exports.transactionStepUpComplete = async (req, res) => {
 
                     const duration = Date.now() - startTime;
 
-                    // 4. Update Log
                     await prisma.authLog.update({
                         where: { id: targetLog.id },
                         data: {
@@ -515,11 +379,7 @@ exports.transactionStepUpComplete = async (req, res) => {
             }
         };
 
-        // ============================================================
-        // LOGIKA UTAMA (AWAIT ADA DI SINI, DI DALAM FUNGSI ASYNC)
-        // ============================================================
 
-        // Ambil Data Transaksi
         const existingTx = await prisma.transaction.findUnique({ where: { id: context.transactionId } });
         
         let riskHistory = [];
@@ -529,7 +389,6 @@ exports.transactionStepUpComplete = async (req, res) => {
             }
         } catch (e) {}
 
-        // SKENARIO 1: GAGAL
         if (result.status !== 200) {
             riskHistory.push({ event: 'AUTH_FAILED', timestamp: new Date().toISOString() });
             
@@ -546,7 +405,6 @@ exports.transactionStepUpComplete = async (req, res) => {
             return res.status(401).json({ error: "Verifikasi Biometrik Gagal" });
         }
 
-        // SKENARIO 2: SUKSES
         riskHistory.push({ event: 'AUTH_SUCCESS', timestamp: new Date().toISOString() });
 
         await prisma.transaction.update({
@@ -554,7 +412,6 @@ exports.transactionStepUpComplete = async (req, res) => {
             data: { authResult: 'SUCCESS', riskReason: JSON.stringify(riskHistory) }
         });
 
-        // Update Log jadi SUKSES
         await updateExistingLog('SUCCESS', 'Payment Approved', [
             { label: 'Payment Approved', class: 'success' },
             { label: 'Biometric Verified', class: 'success' }

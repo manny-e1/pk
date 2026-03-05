@@ -3,7 +3,7 @@ const { RateLimiterMemory } = require('rate-limiter-flexible');
 const otpRequestLimiter = new RateLimiterMemory({
     points: 3, 
     duration: 5 * 60, 
-    blockDuration: 60 * 10 // Blokir 10 menit jika melanggar
+    blockDuration: 60 * 10
 });
 
 const otpVerifyLimiter = new RateLimiterMemory({
@@ -20,7 +20,6 @@ const loginLimiter = new RateLimiterMemory({
 
 
 exports.rateLimitRequestOtp = (req, res, next) => {
-    // Gunakan kombinasi IP dan Email jika ada di body untuk key yang lebih unik
     const key = req.body.email ? `${req.ip}_${req.body.email}` : req.ip;
 
     otpRequestLimiter.consume(key)

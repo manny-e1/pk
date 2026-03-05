@@ -15,16 +15,13 @@ async function main() {
     console.log('🔄 Mulai mengambil data dari database...');
 
     try {
-        // 1. Ambil Amount Limits
         const rawAmountLimits = await prisma.amountLimit.findMany();
         const amountLimits = cleanData(rawAmountLimits);
         console.log(`📦 Ditemukan ${amountLimits.length} Amount Limits`);
-        // 2. Ambil Risk Rules
         const rawRiskRules = await prisma.riskRule.findMany();
         const riskRules = cleanData(rawRiskRules);
         console.log(`📦 Ditemukan ${riskRules.length} Risk Rules`);
 
-        // 3. Ambil Auth Policies
         const rawAuthPolicies = await prisma.authPolicy.findMany();
         const authPolicies = cleanData(rawAuthPolicies);
         console.log(`📦 Ditemukan ${authPolicies.length} Auth Policies`);
@@ -33,7 +30,6 @@ async function main() {
         const rp = cleanData(raWrp);
         console.log(`📦 Ditemukan ${rp.length} RP Entries`);
 
-        // 4. Susun Data
         const seedData = {
             amountLimits,
             riskRules,

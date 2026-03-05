@@ -3,9 +3,7 @@ const { getNetworkInfo } = require('./geoIpService');
 const UAParser = require('ua-parser-js');
 const { customAlphabet } = require('nanoid');
 
-// --- HELPER VALIDASI IP ---
 const isIPv4 = (ip) => /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(ip);
-// Regex IPv6 (Support standar, compressed, dan ::1)
 const isIPv6 = (ip) => /^(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}$|^[A-F0-9]*:[A-F0-9:]+$/i.test(ip);
 
 const generateEventID = () => `evt__${customAlphabet('0123456789ABCDEF', 10)()}`;
@@ -16,23 +14,18 @@ async function createRichAuthLog(req, user, context) {
         
         let detectedIPv4 = null;
         let detectedIPv6 = null;
-        let finalIp = ''; // IP Utama yang akan disimpan & dipakai GeoIP
+        let finalIp = '';
 
-        // 1. EKTRAKSI DUAL STACK (IPv6 PRIORITAS UTAMA)
         if (typeof rawIpHeader === 'string') {
             const ipList = rawIpHeader.split(',').map(s => s.trim());
             
-            // Cari IPv6 (Identitas Paling Unik & Akurat)
             let rawIPv6 = ipList.find(ip => isIPv6(ip));
             if (rawIPv6) {
-                // Bersihkan prefix ::ffff: (jika ada format hybrid)
                 detectedIPv6 = rawIPv6.replace(/^::ffff:/, '');
             }
 
-            // Cari IPv4 (Sebagai cadangan/metadata)
             detectedIPv4 = ipList.find(ip => isIPv4(ip));
             
-            // [LOGIKA UTAMA] Prioritaskan IPv6 -> Jika tidak ada, baru IPv4 -> Fallback ke array pertama
             finalIp = detectedIPv6 || detectedIPv4 || ipList[0];
 
         } else {
@@ -41,7 +34,6 @@ async function createRichAuthLog(req, user, context) {
 
         const userAgentString = req.headers['user-agent'] || '';
 
-        // 2. Parse User Agent
         const parser = new UAParser(userAgentString);
         const uaResult = parser.getResult();
         const telemetry = context.data?.telemetry || {};
@@ -50,8 +42,6 @@ async function createRichAuthLog(req, user, context) {
                             `${uaResult.device.vendor || ''} ${uaResult.device.model || ''}`.trim() || 
                             'Desktop/Unknown';
 
-        // 3. Parse Network & Location (Menggunakan IPv6 Prioritas)
-        // Library MaxMind GeoIP2 sangat menyukai IPv6 karena databasenya lebih presisi
         const netInfo = getNetworkInfo(finalIp);
         
         const locationStr = context.data?.location || 
@@ -66,17 +56,16 @@ async function createRichAuthLog(req, user, context) {
             }
         }
 
-        // 4. SIMPAN KEDUA IP DI METADATA (Untuk Audit Forensik)
         const richMetadata = {
             ...context.data, 
             network: {
-                ip: finalIp,           // IP Utama (IPv6 jika ada)
-                ipv6: detectedIPv6,    // Rekam eksplisit IPv6
-                ipv4: detectedIPv4,    // Rekam eksplisit IPv4
+                ip: finalIp,
+                ipv6: detectedIPv6,
+                ipv4: detectedIPv4,
                 isp: netInfo.isp,
                 asn: netInfo.asn,
                 country: finalCountryCode,
-                raw_header: rawIpHeader // Header mentah untuk debug
+                raw_header: rawIpHeader
             },
             device_info: {
                 browser: telemetry.browser_name || uaResult.browser.name || 'App',
@@ -88,7 +77,6 @@ async function createRichAuthLog(req, user, context) {
             timestamp: new Date().toISOString()
         };
 
-        // 5. Simpan ke Database
         await prisma.authLog.create({
             data: {
                 id: generateEventID(),
@@ -98,7 +86,6 @@ async function createRichAuthLog(req, user, context) {
                 status: context.status || 'INFO',
                 duration: context.duration || 0,
                 
-                // Di sini akan tersimpan IPv6 (misal: 2404:c0:...)
                 ipAddress: finalIp, 
                 userAgent: userAgentString,
                 

@@ -8,14 +8,11 @@ interface ChannelTabsProps {
 export function ChannelTabs({ current, onChange }: ChannelTabsProps) {
   const tabs = [
     { id: 'web', label: 'Web' },
-    { id: 'mobile', label: 'Mobile' } // Sesuai backend kita
+    { id: 'mobile', label: 'Mobile' }
   ];
 
   return (
     <div className="flex gap-[2px] mb-5"> 
-      {/* gap-[2px] mungkin perlu 0 jika ingin border menyatu total, 
-          tapi di HTML ada margin-right kecil antar tab di beberapa design system.
-          Kita ikut style HTML: .channel-tabs { display: flex; gap: 2px; } */}
       
       {tabs.map((tab, index) => {
         const isFirst = index === 0;

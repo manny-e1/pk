@@ -24,10 +24,8 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
     info: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
   };
 
-  // Logic aman agar slider tidak tumpang tindih
   const handleLowSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value);
-    // Low tidak boleh melebihi High - 5
     if (val < highThreshold - 5) {
         onLowChange(val);
     }
@@ -35,7 +33,6 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
 
   const handleHighSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value);
-    // High tidak boleh kurang dari Low + 5
     if (val > lowThreshold + 5) {
         onHighChange(val);
     }
@@ -44,7 +41,6 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
   return (
     <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-lg)] overflow-hidden mb-6">
       
-      {/* ... Header dan Info Box tetap sama ... */}
       <div className="p-5 border-b border-[var(--border-secondary)] flex items-center justify-between">
         <div>
           <div className="text-[14px] font-semibold flex items-center gap-2 text-[var(--text-primary)]">
@@ -64,18 +60,15 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
           </div>
         </div>
 
-        {/* Visual Bar Dinamis */}
         <div className="relative h-2 bg-gradient-to-r from-[var(--success)] via-[var(--warning)] to-[var(--error)] rounded-full mb-8 mt-5">
-          {/* Marker Low - Dinamis */}
+
           <div className="absolute top-[-6px] w-1 h-5 bg-[var(--text-primary)] rounded-[2px] shadow-sm transition-all" style={{left: `${lowThreshold}%`}}></div>
           <div className="absolute top-5 text-[11px] text-[var(--text-tertiary)] -translate-x-1/2 font-mono transition-all" style={{left: `${lowThreshold}%`}}>{lowThreshold}</div>
           
-          {/* Marker High - Dinamis */}
           <div className="absolute top-[-6px] w-1 h-5 bg-[var(--text-primary)] rounded-[2px] shadow-sm transition-all" style={{left: `${highThreshold}%`}}></div>
           <div className="absolute top-5 text-[11px] text-[var(--text-tertiary)] -translate-x-1/2 font-mono transition-all" style={{left: `${highThreshold}%`}}>{highThreshold}</div>
         </div>
 
-        {/* Cards Grid - Visual Statis, Data Range Dinamis */}
         <div className="flex flex-col gap-4 mb-6">
           <div className="bg-[var(--success-bg)] border border-[var(--success-border)] rounded-[var(--radius-lg)] p-5 relative overflow-hidden">
             <div className="flex items-center justify-between mb-3">
@@ -86,7 +79,7 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
             </div>
             <div className="text-[15px] font-semibold text-[var(--text-primary)] mb-1">No Extra Friction</div>
             <div className="text-[13px] text-[var(--text-secondary)] mb-4">Standard payment flow with minimal verification. User experience is optimized for speed.</div>
-            {/* Badges */}
+
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] text-[12px] font-medium bg-black/20 text-[var(--text-primary)]">
                 <span className="w-3.5 h-3.5">{Icons.check}</span> Auto-approve
@@ -103,7 +96,7 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
             </div>
             <div className="text-[15px] font-semibold text-[var(--text-primary)] mb-1">Require FIDO2 Approval</div>
             <div className="text-[13px] text-[var(--text-secondary)] mb-4">User must authenticate with registered passkey before payment can proceed.</div>
-            {/* Badges */}
+
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] text-[12px] font-medium bg-black/20 text-[var(--text-primary)]">
                 <span className="w-3.5 h-3.5">{Icons.passkey}</span> FIDO2 Required
@@ -120,7 +113,6 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
             </div>
             <div className="text-[15px] font-semibold text-[var(--text-primary)] mb-1">FIDO2 + Cooldown / Additional Checks</div>
             <div className="text-[13px] text-[var(--text-secondary)] mb-4">Enhanced verification with mandatory waiting period and additional security measures.</div>
-            {/* Badges */}
             <div className="flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[var(--radius-md)] text-[12px] font-medium bg-black/20 text-[var(--text-primary)]">
                 <span className="w-3.5 h-3.5">{Icons.passkey}</span> FIDO2 Required
@@ -132,7 +124,6 @@ export function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHig
           </div>
         </div>
 
-        {/* Sliders Input */}
         <div className="grid grid-cols-2 gap-5 mt-5">
           <div className="w-full">
             <div className="flex justify-between items-center mb-2">

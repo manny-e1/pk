@@ -24,7 +24,6 @@ export default function AuthPoliciesPage() {
   const [activeCount, setActiveCount] = useState(0);
   const [refreshLogKey, setRefreshLogKey] = useState(0);
 
-  // --- Logic User Session & Sync (Sama seperti sebelumnya) ---
   const syncWithDatabase = async () => {
     try {
       setLoading(true);
@@ -78,7 +77,6 @@ export default function AuthPoliciesPage() {
     <div className="flex min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans">
       <main className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         
-        {/* HEADER (Sesuai HTML .header) */}
         <header className="px-6 py-4 bg-[var(--bg-secondary)] border-b border-[var(--border-primary)] flex justify-between items-center shrink-0">
            <div className="flex items-center gap-4">
               <h2 className="text-[18px] font-semibold text-[var(--text-primary)]">Authentication Policies</h2>
@@ -98,11 +96,9 @@ export default function AuthPoliciesPage() {
            </div>
         </header>
 
-        {/* CONTENT (Sesuai HTML .content) */}
         <div className="flex-1 overflow-auto p-6 custom-scrollbar relative">
             <div className={`w-full mx-auto transition-opacity ${loading ? 'opacity-50' : 'opacity-100'}`}>
                 
-                {/* SEGMENT TABS (Sesuai HTML .segment-tabs) */}
                 <div className="flex gap-1 bg-[var(--bg-tertiary)] p-1 rounded-[10px] w-fit mb-6">
                     <button onClick={() => setSegment('consumer')} className={`flex items-center gap-2 px-5 py-2.5 rounded-[8px] text-[13px] font-medium transition-all ${segment === 'consumer' ? 'bg-[var(--bg-secondary)] text-[var(--text-primary)] shadow-sm' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -114,7 +110,6 @@ export default function AuthPoliciesPage() {
                     </button>
                 </div>
 
-                {/* INFO BOX (Sesuai HTML .info-box) */}
                 <div className="flex items-start gap-3 p-3 bg-[var(--accent-muted)] border border-[rgba(59,130,246,0.3)] rounded-[8px] mb-5">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px] text-[var(--accent)] mt-0.5 shrink-0"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
                     <div className="text-[12px] text-[var(--text-secondary)] leading-relaxed">
@@ -122,11 +117,8 @@ export default function AuthPoliciesPage() {
                     </div>
                 </div>
 
-                {/* CHANNEL TABS (Sesuai HTML .channel-tabs) */}
                 <ChannelTabs current={channel} onChange={setChannel} />
 
-                {/* POLICY GRID (Sesuai HTML .policy-grid) */}
-                {/* Note: HTML punya 4 kolom, Backend kita support 3. Kita gunakan 3 agar logic jalan, tapi styling CARD persis HTML */}
                 <div className="grid grid-cols-3 gap-4 mb-8">
                     {['low', 'medium', 'high'].map(risk => (
                         <PolicyCard 
@@ -141,7 +133,6 @@ export default function AuthPoliciesPage() {
 
                 <ComparisonTable segment={segment} channel={channel} policies={policies} />
                 
-                {/* AUDIT LOG (Data Live) */}
                 <AuditLog refreshKey={refreshLogKey} />
             </div>
         </div>

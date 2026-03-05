@@ -1,7 +1,6 @@
 const prisma = require('../config/db');
 const axios = require('axios');
 
-// Helper: Parse JSON aman
 const safeJsonParse = (str) => {
     try { return str ? JSON.parse(str) : []; } 
     catch (e) { return []; }
@@ -11,7 +10,6 @@ exports.getUserDevices = async (req, res) => {
     const { email } = req.query;
 
     try {
-        // 1. Filter User Key berdasarkan Email (jika ada)
         const whereClause = email ? { user: { email: email } } : {};
 
         const devices = await prisma.userKey.findMany({
@@ -22,35 +20,25 @@ exports.getUserDevices = async (req, res) => {
 
         const formatted = await Promise.all(devices.map(async (d) => {
             
-            // 2. Siapkan Filter untuk AuthLog (Match by Email & Device Name)
             const logFilter = {};
             
-            // Filter by Email User pemilik device
             if (d.user && d.user.email) {
                 logFilter.email = d.user.email;
             }
 
-            // Filter by Device Name (Pastikan device name ada)
             if (d.deviceName) {
-                // Kita gunakan exact match. 
-                // Jika ingin lebih loose (misal nama browser berubah versi), bisa pakai 'contains'
                 logFilter.device = d.deviceName; 
             }
 
-            // 3. AMBIL STATISTIK (Count Total & Success)
-            // Kita jalankan parallel agar cepat
             const [totalLogs, successCount, recentLogs] = await Promise.all([
-                // A. Hitung Total Log Device ini
                 prisma.authLog.count({ where: logFilter }),
                 
-                // B. Hitung Success Log Device ini
                 prisma.authLog.count({ where: { ...logFilter, status: 'SUCCESS' } }),
 
-                // C. [BARU] Ambil 3 Aktivitas Terakhir untuk Device ini
                 prisma.authLog.findMany({
                     where: logFilter,
                     orderBy: { createdAt: 'desc' },
-                    take: 3, // Ambil 3 saja
+                    take: 3,
                     select: {
                         id: true,
                         eventType: true,
@@ -62,10 +50,8 @@ exports.getUserDevices = async (req, res) => {
                 })
             ]);
 
-            // 4. Hitung Success Rate
             const successRate = totalLogs > 0 ? Math.round((successCount / totalLogs) * 100) + '%' : '100%'; 
             
-            // 5. Logika Sign Counter (Approvals)
             let approvals = 0;
             const isJustActive = (new Date() - new Date(d.lastActive)) < 60000;
 
@@ -77,21 +63,17 @@ exports.getUserDevices = async (req, res) => {
                 approvals = approvals.toString();
             }
 
-            // 6. [BARU] Tentukan Last IP
-            // Prioritas: IP dari Log terakhir > IP dari tabel UserKey > Unknown
             const lastIpFromLog = recentLogs.length > 0 ? recentLogs[0].ipAddress : null;
             const finalLastIp = lastIpFromLog || d.lastUsedIp || 'Unknown IP';
 
-            // 7. [BARU] Format Recent Activity
             const formattedRecent = recentLogs.map(log => ({
                 event: log.eventType,
                 status: log.status,
                 ip: log.ipAddress,
                 location: log.location,
-                time: log.createdAt // Frontend bisa format tanggalnya
+                time: log.createdAt
             }));
 
-            // 8. Return Data Lengkap
             return {
                 ...d,
                 id: d.id.toString(),
@@ -101,20 +83,16 @@ exports.getUserDevices = async (req, res) => {
                 userId: d.user.id ? d.user.id.toString() : 'Unknown',
                 email: d.user.email ? d.user.email : 'Unknown',
                 
-                // Location & Telemetry
                 location: d.deviceTelemetry?.device_address || d.deviceTelemetry?.timezone || 'Unknown Location',
                 osName: d.deviceTelemetry?.os_name || 'Unknown OS',
                 deviceModel: d.deviceTelemetry?.device_model || 'Unknown Model',
                 osVersion: d.deviceTelemetry?.os_version || 'Unknown Version',
                 
-                // Statistik
                 successRate: successRate,
                 
-                // Owner Info
                 ownerName: d.user ? d.user.fullName : (d.userDisplayName || 'Unknown User'),
                 ownerEmail: d.user ? d.user.email : (d.username || 'No Email'),
 
-                // [BARU] Data Tambahan
                 lastIp: finalLastIp,
                 recentActivity: formattedRecent
             };
@@ -128,7 +106,6 @@ exports.getUserDevices = async (req, res) => {
     }
 };
 
-// 2. RENAME DEVICE
 exports.renameDevice = async (req, res) => {
     const { id } = req.params;
     const { newName } = req.body;
@@ -138,7 +115,6 @@ exports.renameDevice = async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 };
 
-// 3. TOGGLE STATUS
 exports.toggleDeviceStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;

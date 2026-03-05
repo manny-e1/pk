@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { Threshold } from './ThresholdTable';
 import { Toggle } from '@/components/ui/Toggle';
 
-// Mendefinisikan tipe label secara eksplisit untuk casting
-type ThresholdLabel = Threshold['label']; // 'low' | 'medium' | 'high' | 'critical'
+type ThresholdLabel = Threshold['label'];
 
 interface ThresholdModalProps {
   isOpen: boolean;
@@ -47,7 +46,6 @@ export function ThresholdModal({ isOpen, onClose, onSave, initialData }: Thresho
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[1000] opacity-100 transition-opacity">
       <div className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[12px] w-full max-w-[500px] shadow-2xl transform scale-100 transition-transform">
         
-        {/* Header */}
         <div className="p-5 border-b border-[var(--border-primary)] flex items-center justify-between">
           <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
             {initialData ? 'Edit Threshold' : 'Add Threshold'}
@@ -57,7 +55,6 @@ export function ThresholdModal({ isOpen, onClose, onSave, initialData }: Thresho
           </button>
         </div>
 
-        {/* Body */}
         <div className="p-5">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="flex flex-col gap-1.5">
@@ -83,7 +80,6 @@ export function ThresholdModal({ isOpen, onClose, onSave, initialData }: Thresho
             <select 
               className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] px-3 py-2.5 text-[13px] text-[var(--text-primary)] outline-none focus:border-[var(--accent)]" 
               value={formData.label} 
-              // PERBAIKAN DI SINI: Casting ke tipe spesifik, bukan any
               onChange={e => setFormData({...formData, label: e.target.value as ThresholdLabel})}
             >
               <option value="low">Low</option>
@@ -130,7 +126,6 @@ export function ThresholdModal({ isOpen, onClose, onSave, initialData }: Thresho
           )}
         </div>
 
-        {/* Footer */}
         <div className="p-5 border-t border-[var(--border-primary)] flex justify-end gap-2.5">
           <button onClick={onClose} className="px-4 py-2 rounded-[6px] bg-[var(--bg-tertiary)] border border-[var(--border-primary)] text-[var(--text-primary)] text-[12px] font-medium hover:bg-[var(--bg-hover)] transition-colors">Cancel</button>
           <button onClick={() => onSave(formData)} className="px-4 py-2 rounded-[6px] bg-[var(--accent)] text-white text-[12px] font-medium hover:bg-[var(--accent-hover)] transition-colors">Save Threshold</button>

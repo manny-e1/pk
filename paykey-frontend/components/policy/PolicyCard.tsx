@@ -1,6 +1,5 @@
 'use client';
 
-// Helper: Format Durasi (Detik ke Menit/Jam)
 const formatDuration = (seconds: number) => {
   if (!seconds) return '0s';
   if (seconds < 60) return `${seconds}s`;
@@ -8,7 +7,6 @@ const formatDuration = (seconds: number) => {
   return `${Math.floor(seconds / 3600)}h`;
 };
 
-// Helper: Format User Verification
 const formatUV = (uv: string, cache: number) => {
   if (uv === 'discouraged') return 'UP only';
   if (uv === 'preferred') return cache > 0 ? `Preferred (${cache}s)` : 'Preferred';
@@ -24,49 +22,40 @@ interface PolicyCardProps {
 
 export function PolicyCard({ risk, data, onEdit, isCorporate }: PolicyCardProps) {
   
-  // Konfigurasi Style Badge & Warna Indikator
   const config: any = {
     low: { 
       label: 'Low Risk', 
       dotColor: 'bg-[var(--success)]',
-      // Style Badge: Pill Shape, Success BG
       badgeClass: 'bg-[var(--success-bg)] text-[var(--success)]' 
     },
     medium: { 
       label: 'Medium Risk', 
       dotColor: 'bg-[var(--warning)]',
-      // Style Badge: Pill Shape, Warning BG
       badgeClass: 'bg-[var(--warning-bg)] text-[var(--warning)]' 
     },
     high: { 
       label: 'High Risk', 
       dotColor: 'bg-[var(--error)]',
-      // Style Badge: Pill Shape, Error BG
       badgeClass: 'bg-[var(--error-bg)] text-[var(--error)]' 
     }
   };
 
-  // Fallback ke 'low' jika risk tidak dikenali
   const c = config[risk] || config.low;
 
   return (
     <div className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[12px] overflow-hidden hover:border-[var(--border-secondary)] transition-colors flex flex-col h-full shadow-sm">
       
-      {/* --- HEADER --- */}
       <div className="px-4 py-3 border-b border-[var(--border-primary)] flex items-center justify-between bg-[var(--bg-tertiary)]/20">
         <div className="flex items-center gap-2.5">
-          {/* Dot Indicator */}
           <div className={`w-2 h-2 rounded-full ${c.dotColor} shadow-[0_0_8px_rgba(0,0,0,0.2)]`}></div>
           <h3 className="text-[14px] font-semibold text-[var(--text-primary)] tracking-tight">{c.label}</h3>
         </div>
         
-        {/* Risk Badge (Pill Style) */}
         <span className={`inline-flex items-center px-2.5 py-1 rounded-[20px] text-[10px] font-bold uppercase tracking-wide ${c.badgeClass}`}>
           {risk}
         </span>
       </div>
 
-      {/* --- BODY --- */}
       <div className="p-4 flex-1 space-y-0.5">
         <Row label="User Verification" value={formatUV(data.userVerification, data.uvCache)} />
         
@@ -82,13 +71,11 @@ export function PolicyCard({ risk, data, onEdit, isCorporate }: PolicyCardProps)
         
         <Row label="Total Timeout" value={`${data.totalTimeout}s`} mono />
         
-        {/* Field Khusus Corporate */}
         {isCorporate && data.dualAuth && (
            <Row label="Dual Auth" value={`${data.minApprovers} approvers`} valClass="text-[var(--accent)]" />
         )}
       </div>
 
-      {/* --- FOOTER --- */}
       <div className="px-4 py-3 bg-[var(--bg-tertiary)]/30 border-t border-[var(--border-primary)] flex justify-end mt-auto">
         <button 
           onClick={onEdit} 
@@ -105,7 +92,6 @@ export function PolicyCard({ risk, data, onEdit, isCorporate }: PolicyCardProps)
   );
 }
 
-// Helper Component untuk Baris Data
 const Row = ({ label, value, mono, valClass }: any) => (
   <div className="flex justify-between items-center py-2 border-b border-[var(--border-primary)] border-dashed last:border-0 last:border-b-0">
     <span className="text-[12px] text-[var(--text-tertiary)]">{label}</span>

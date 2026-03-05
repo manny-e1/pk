@@ -9,26 +9,26 @@ export interface Device {
   osVersion: ReactNode;
   osName: ReactNode;
   deviceModel: ReactNode;
-  id: string;              // Credential ID (API key)
-  dbId: string;            // Database Internal ID
-  name: string;            // Device Name
-  type: string;            // 'mobile' | 'desktop'
-  model: string;           // Detailed model
-  user: string;            // User Display Name
-  userId: string;          // User Email
-  initials: string;        // Initials
-  status: string;          // Lowercase status for UI
-  lastActive: string;      // Formatted Date
-  lastActiveClass: string; // 'recent', 'default', etc.
-  registered: string;      // Formatted Date
-  credential: string;      // Full Credential ID
-  approvals: number;       // Sign Counter
-  ip: string;              // IP Address
+  id: string;              
+  dbId: string;           
+  name: string;           
+  type: string;            
+  model: string;           
+  user: string;            
+  userId: string;          
+  initials: string;        
+  status: string;          
+  lastActive: string;      
+  lastActiveClass: string; 
+  registered: string;      
+  credential: string;      
+  approvals: number;       
+  ip: string;           
   location?: string;
   rate?: string;
   revokedOn?: string;
-  reason?: string;         // User Display Name (Nama Lengkap)
-  email: string;           // User ID murni (Contoh: USR_X7B92M1K4R)
+  reason?: string;         
+  email: string;  
 }
 
 export interface AuthEvent {

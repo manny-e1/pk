@@ -8,10 +8,9 @@ function evaluateAmount(context, config) {
     let status = 'PASS';
     let requiredMethods = [];
 
-    // Filter Limit berdasarkan Segmen User DAN Currency
     const activeLimit = amountLimits.find(limit => 
         limit.segment === userSegment && 
-        limit.currency === currency && // [FIX] Cek Mata Uang
+        limit.currency === currency &&
         amount >= limit.minAmount && 
         (limit.maxAmount === null || amount <= limit.maxAmount)
     );
@@ -35,7 +34,6 @@ function evaluateAmount(context, config) {
         }
     } 
     else {
-         // Fallback Hard Limit Global (per currency)
          const maxLimit = Math.max(...amountLimits
             .filter(l => l.segment === userSegment && l.currency === currency && l.maxAmount !== null)
             .map(l => l.maxAmount));

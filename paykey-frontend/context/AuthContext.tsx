@@ -1,4 +1,3 @@
-// context/AuthContext.tsx
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -27,7 +26,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const initAuth = async () => {
             try {
-                // Cek Session ke Backend
                 const response = await authService.me();
                 if (response.success) {
                     setUser(response.user);
@@ -35,10 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     throw new Error("Invalid session");
                 }
             } catch (error) {
-                // Jika API melempar 401, middleware mungkin lolos (karena cookie ada tapi expired/invalid)
-                // Jadi kita handle di sini sebagai layer kedua
                 console.error("Auth check failed", error);
-                // router.push('/login'); // Opsional, middleware biasanya sudah handle
             } finally {
                 setIsLoading(false);
             }

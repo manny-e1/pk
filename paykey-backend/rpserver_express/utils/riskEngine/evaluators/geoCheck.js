@@ -13,27 +13,22 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 
 function deg2rad(deg) { return deg * (Math.PI/180); }
 
-// --- EVALUATOR UTAMA ---
 async function evaluateGeo(context, config) {
     const { telemetry, userId, email, countryCode } = context;
-    const { rules } = config; // Data Rules dari ConfigLoader
+    const { rules } = config;
     
     let score = 0;
     let tags = [];
     let breakdown = [];
 
-    // 1. CARI RULE 'GEO_ANOMALY'
     const geoRule = rules.find(r => r.ruleType === 'GEO_ANOMALY');
 
-    // [DEBUG STATUS RULE]
     if (geoRule) {
         console.log(`[GeoCheck] Rule Found: GEO_ANOMALY | isActive: ${geoRule.isActive} (Type: ${typeof geoRule.isActive})`);
     } else {
         console.log(`[GeoCheck] Rule GEO_ANOMALY NOT FOUND in config!`);
     }
 
-    // 2. CEK STATUS AKTIF (STRICT CHECK)
-    // Menangani isActive = 0 (number), false (boolean), atau null
     const isRuleActive = geoRule && (geoRule.isActive === 1 || geoRule.isActive === true);
 
     if (!isRuleActive) {
@@ -41,11 +36,7 @@ async function evaluateGeo(context, config) {
         return { score, tags, breakdown };
     }
 
-    // ------------------------------------------------------------
-    // LOGIKA DI BAWAH INI HANYA JALAN JIKA RULE AKTIF
-    // ------------------------------------------------------------
 
-    // 3. QUERY DATA HISTORIS
     const lastLog = await prisma.authLog.findFirst({
         where: {
             email: email, 
@@ -57,7 +48,6 @@ async function evaluateGeo(context, config) {
 
     if (!lastLog) return { score, tags, breakdown };
 
-    // 4. PARSING DATA LAMA
     let lastLat = null; 
     let lastLng = null;
     let lastCountry = lastLog.countryCode || 'UN';
@@ -75,12 +65,10 @@ async function evaluateGeo(context, config) {
         }
     }
 
-    // Data Sekarang
     const currentLat = telemetry?.gps_latitude;
     const currentLng = telemetry?.gps_longitude;
     const currentCountry = countryCode || 'UN';
 
-    // 5. VELOCITY CHECK
     let distanceKm = 0;
     let speedKmh = 0;
 
@@ -90,24 +78,20 @@ async function evaluateGeo(context, config) {
         speedKmh = distanceKm / timeDiffHours;
     }
 
-    // --- SKENARIO A: PINDAH NEGARA ---
     if (lastCountry !== 'UN' && currentCountry !== 'UN' && lastCountry !== currentCountry) {
         if (speedKmh > 800) {
-            // IMPOSSIBLE TRAVEL
             const finalScore = Math.min(geoRule.weight * 2.5, 100); 
             score += finalScore;
             tags.push({ label: `GEO_ANOMALY: ${lastCountry} -> ${currentCountry}`, class: 'critical' });
             breakdown.push({ rule: 'GEO_ANOMALY', score: finalScore });
             console.log(`[GeoCheck] 🚨 IMPOSSIBLE COUNTRY HOP Detected`);
         } else {
-            // NORMAL NEW COUNTRY
             score += geoRule.weight;
             tags.push({ label: `GEO_ANOMALY: ${currentCountry}`, class: 'warning' });
             breakdown.push({ rule: 'GEO_ANOMALY', score: geoRule.weight });
             console.log(`[GeoCheck] ⚠️ New Country Detected`);
         }
     }
-    // --- SKENARIO B: SATU NEGARA TAPI PINDAH REGION CEPAT ---
     else if (distanceKm > 200 && speedKmh > 800) {
         const finalScore = Math.min(geoRule.weight * 2, 100);
         score += finalScore;

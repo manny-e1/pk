@@ -1,12 +1,7 @@
-// controllers/riskEngineController.js
 const prisma = require('../config/db');
-const { runRiskEngine } = require('../utils/riskEngine/index'); // <--- PANGGIL OTAK UTAMA
+const { runRiskEngine } = require('../utils/riskEngine/index');
 
-// ==========================================
-// A. CONFIGURATION (Admin Panel: GET & UPDATE)
-// ==========================================
 
-// 1. GET Config (Rules & Thresholds)
 exports.getRiskConfig = async (req, res) => {
     try {
         let threshold = await prisma.riskThreshold.findFirst();
@@ -16,7 +11,6 @@ exports.getRiskConfig = async (req, res) => {
             orderBy: [{ isActive: 'desc' }, { weight: 'desc' }]
         });
 
-        // Format untuk Frontend
         const formattedRules = rules.map(r => ({
             id: r.id,
             ruleType: r.ruleType,
@@ -36,14 +30,10 @@ exports.getRiskConfig = async (req, res) => {
     }
 };
 
-// 2. UPDATE Config (Save Rules & Thresholds)
 exports.updateRiskConfig = async (req, res) => {
-    // ... (Kode update ini SUDAH BENAR di step sebelumnya, biarkan sama) ...
-    // Intinya logic update database tetap di controller
     const { lowScore, highScore, rules } = req.body;
 
     try {
-        // Update Threshold
         if (lowScore !== undefined && highScore !== undefined) {
             const existingThreshold = await prisma.riskThreshold.findFirst();
             if (existingThreshold) {
@@ -58,7 +48,6 @@ exports.updateRiskConfig = async (req, res) => {
             }
         }
 
-        // Batch Update Rules
         if (rules && Array.isArray(rules)) {
             for (const rule of rules) {
                 const paramString = typeof rule.parameters === 'object' ? JSON.stringify(rule.parameters) : rule.parameters;
@@ -85,17 +74,11 @@ exports.updateRiskConfig = async (req, res) => {
     }
 };
 
-// ==========================================
-// B. ANALYSIS ENGINE (SIMULATOR & API)
-// ==========================================
 
-// Fungsi ini dipakai oleh "Risk Simulator" di Frontend
 exports.analyzeTransaction = async (req, res) => {
     try {
         const { transaction, user, device } = req.body;
 
-        // 1. Siapkan Context untuk Engine
-        // Mapping data dari format Simulator Frontend ke format Engine Utils
         const context = {
             email: user?.email || 'simulator@test.com',
             userId: user?.id || 'SIMULATOR_USER',
@@ -104,7 +87,6 @@ exports.analyzeTransaction = async (req, res) => {
             userSegment: user?.role === 'VIP' ? 'CORPORATE' : 'CONSUMER',
             channel: 'MOBILE',
             
-            // Telemetry & Geo
             telemetry: {
                 device_model: device?.model || 'Simulator Device',
                 is_vpn_active: device?.is_vpn || false,
@@ -115,19 +97,17 @@ exports.analyzeTransaction = async (req, res) => {
             location: 'Simulator Location'
         };
 
-        // 2. PANGGIL MODULAR ENGINE (Bukan hitung manual lagi!)
         const result = await runRiskEngine(context);
 
-        // 3. Kembalikan Response sesuai format Frontend Simulator
         res.json({
             transaction_id: "SIMULATION_" + Date.now(),
-            verdict: result.action, // ALLOW, CHALLENGE, DENY
+            verdict: result.action,
             risk_analysis: {
                 score: result.riskScore,
                 level: result.riskLevel,
-                factors: result.breakdown.map(b => b.rule) // List rule yang kena
+                factors: result.breakdown.map(b => b.rule)
             },
-            details: result // Kirim detail lengkap untuk debug
+            details: result
         });
 
     } catch (err) {

@@ -9,7 +9,6 @@ import { deviceService ,DeviceTelemetry} from '@/services/systemDevice';
 export default function SignupPage() {
   const router = useRouter();
 
-  // --- STATE ---
   const [selectedMethod, setSelectedMethod] = useState<'password' | 'passkey'>('password');
 
   const [cachedTelemetry, setCachedTelemetry] = useState<DeviceTelemetry | null>(null);
@@ -40,16 +39,13 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  // Password Strength Logic
   const [strength, setStrength] = useState(0); 
   const [passwordsMatch, setPasswordsMatch] = useState(true);
 
-  // Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [modalState, setModalState] = useState<'initial' | 'loading' | 'success' | 'error'>('initial');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // --- HANDLERS ---
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -80,7 +76,6 @@ export default function SignupPage() {
     return labels[Math.max(0, strength - 1)] + ' password';
   };
 
-  // Helper untuk warna bar kekuatan password
   const getStrengthColorClass = () => {
     const colors = ['bg-[var(--error)]', 'bg-[var(--warning)]', 'bg-[var(--accent)]', 'bg-[var(--success)]'];
     return colors[Math.max(0, strength - 1)];
@@ -91,7 +86,6 @@ export default function SignupPage() {
     return widths[Math.max(0, strength - 1)];
   };
 
-  // --- SUBMIT LOGIC ---
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,14 +156,11 @@ export default function SignupPage() {
     router.push('/login');
   };
 
-  // --- RENDER ---
   return (
     <div className="min-h-screen flex items-center justify-center p-5 bg-[var(--bg-primary)] font-sans text-[14px]">
       <div className="w-full max-w-[480px]">
-        {/* SIGNUP CARD */}
         <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-xl)] p-10 shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
             
-            {/* Header */}
             <div className="text-center mb-8">
                 <div className="inline-flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-gradient-to-br from-[var(--accent)] to-[#60a5fa] rounded-[var(--radius-md)] flex items-center justify-center">
@@ -185,7 +176,6 @@ export default function SignupPage() {
                 <p className="text-sm text-[var(--text-tertiary)]">Choose your preferred sign-up method</p>
             </div>
             
-            {/* Method Selector */}
             <div className="grid grid-cols-2 gap-3 mb-7">
                 <div 
                     className={`flex flex-col items-center gap-2.5 p-5 bg-[var(--bg-tertiary)] border-2 rounded-[var(--radius-lg)] cursor-pointer transition-all 
@@ -216,7 +206,6 @@ export default function SignupPage() {
                 </div>
             </div>
             
-            {/* Form */}
             <form onSubmit={handleSignup}>
                 <div className="mb-6">
                     <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wide mb-4 flex items-center gap-2 after:content-[''] after:flex-1 after:h-px after:bg-[var(--border-primary)]">
@@ -348,11 +337,9 @@ export default function SignupPage() {
         </div>
       </div>
 
-      {/* --- MODALS --- */}
       <div className={`fixed inset-0 bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-[1000] transition-all duration-200 ${modalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`} onClick={closeModal}>
         <div className={`bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-xl)] w-full max-w-[400px] p-10 text-center transform transition-transform duration-200 ${modalOpen ? 'scale-100' : 'scale-95'}`} onClick={e => e.stopPropagation()}>
             
-            {/* 1. INITIAL PASSKEY PROMPT */}
             {modalState === 'initial' && (
                 <>
                     <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--warning-bg)] text-[var(--warning)]">
@@ -369,7 +356,6 @@ export default function SignupPage() {
                 </>
             )}
 
-            {/* 2. LOADING */}
             {modalState === 'loading' && (
                 <>
                     <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--accent-bg)] text-[var(--accent)]">
@@ -382,7 +368,6 @@ export default function SignupPage() {
                 </>
             )}
 
-            {/* 3. SUCCESS */}
             {modalState === 'success' && (
                 <>
                     <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--success-bg)] text-[var(--success)]">
@@ -398,7 +383,6 @@ export default function SignupPage() {
                 </>
             )}
 
-            {/* 4. ERROR */}
             {modalState === 'error' && (
                 <>
                      <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--error-bg)] text-[var(--error)]">

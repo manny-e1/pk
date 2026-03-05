@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 
-// Setup Transporter (Gunakan Env Vars untuk Production)
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.mailtrap.io',
     port: process.env.SMTP_PORT || 2525,
@@ -8,12 +7,10 @@ const transporter = nodemailer.createTransport({
         user: process.env.SMTP_USER || 'user',
         pass: process.env.SMTP_PASS || 'pass'
     },
-    // secure: true // untuk port 465
 });
 
 exports.sendOtpEmail = async (toEmail, otpCode) => {
     if (process.env.NODE_ENV === 'development' && !process.env.SMTP_HOST) {
-        // Dev Mode Fallback: Log only
         console.log(`\n[DEV-EMAIL] To: ${toEmail} | OTP: ${otpCode}\n`);
         return true;
     }

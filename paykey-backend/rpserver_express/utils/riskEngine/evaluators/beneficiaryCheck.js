@@ -10,14 +10,12 @@ async function evaluateBeneficiary(context, config) {
 
     const beneRule = rules.find(r => r.ruleType === 'BENEFICIARY');
     
-    // Validasi Rule
     if (!beneRule || !beneRule.isActive || (!beneficiaryAccount && !merchantName)) {
         return { score, tags, breakdown };
     }
 
     const trustThreshold = beneRule.parameters?.trustCount || 3;
 
-    // Logic Pencarian (Sama seperti sebelumnya)
     const whereConditions = {
         userId: userId,
         authResult: 'SUCCESS',
@@ -41,7 +39,6 @@ async function evaluateBeneficiary(context, config) {
     const targetLabel = beneficiaryAccount || merchantName;
     console.log(`[BeneCheck] Checking Trust for '${targetLabel}': Found ${historyCount} past success(es).`);
 
-    // --- DEBUGGING START ---
     if (historyCount === 0) {
         console.log(`[BeneCheck] DEBUG: Entering 'New Beneficiary' Block...`);
         console.log(`[BeneCheck] DEBUG: Rule Weight = ${beneRule.weight}`);
@@ -60,7 +57,6 @@ async function evaluateBeneficiary(context, config) {
         tags.push({ label: `Unfamiliar Beneficiary (${historyCount}/${trustThreshold})`, class: 'info' });
         breakdown.push({ rule: 'BENEFICIARY', score: partialScore });
     }
-    // --- DEBUGGING END ---
 
     return { score, tags, breakdown };
 }

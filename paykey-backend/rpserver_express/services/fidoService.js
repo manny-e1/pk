@@ -5,7 +5,6 @@ const BASIC_AUTH = 'Basic ' + Buffer.from('admin:adminpass').toString('base64');
 
 class FidoService {
     
-    // Helper Internal: Proxy ke Java Server
     async _proxyRequest(endpoint, payload) {
         try {
             const response = await fetch(`${PAYKEY_SERVER}${endpoint}`, {
@@ -41,19 +40,17 @@ class FidoService {
                 authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'preferred', requireResidentKey: true }
             };
         } else {
-            // LOGIN & TRANSACTION menggunakan endpoint Auth yang sama di FIDO Server
             endpoint = '/api/paykey/auth/challenge';
             payload = { 
                 rpId: rpId, 
-                userId: user.id, // Nullable jika usernameless
-                userVerification: 'required' // Wajib untuk transaksi
+                userId: user.id,
+                userVerification: 'required'
             };
         }
 
         return await this._proxyRequest(endpoint, payload);
     }
 
-    // 2. VERIFY RESPONSE
     async verifyResponse(type, payload) {
         const endpoint = (type === 'REGISTRATION') 
             ? '/api/paykey/reg/verify' 

@@ -1,4 +1,3 @@
-// lib/data.ts
 import { Device, AuthEvent } from './types';
 
 

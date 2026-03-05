@@ -5,9 +5,6 @@ const { createRichAuthLog } = require('../utils/richLogger');
 const {ge0tNetworkInfo} = require('../utils/geoIpService');
 const { generateUserId } = require('../utils/idGenerator');
 
-// ==================================================================
-// CONTROLLERS
-// ==================================================================
 
 exports.registerPassword = async (req, res) => {
     let { fullName, email, password, companyName, mobile, role, telemetry } = req.body;
@@ -56,7 +53,6 @@ exports.registerPassword = async (req, res) => {
             }
         });
         
-        // 4. Send Token
         sendTokenCookie(res, newUser);
         res.json({ status: 'success', userId: newUser.id });
 
@@ -86,7 +82,6 @@ exports.loginPassword = async (req, res) => {
     try {
         const user = await prisma.user.findUnique({ where: { email } });
         
-        // Cek User Existence
         if (!user || !user.passwordHash) {
             await createRichAuthLog(req, { email, id: 'unknown' }, {
                 eventType: 'Login Failed',
@@ -102,8 +97,6 @@ exports.loginPassword = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Cek Role (Sesuai kode lama Anda: Admin Only)
-        // [OPSIONAL] Hapus blok ini jika User biasa boleh login password
         if (user.role !== 'ADMIN') {
             await createRichAuthLog(req, user, {
                 eventType: 'Login Blocked - Role Mismatch',
@@ -119,7 +112,6 @@ exports.loginPassword = async (req, res) => {
             return res.status(403).json({ error: 'Access Denied', message: 'Admins only.' });
         }
         
-        // Cek Status Akun
         if (user.status === 'suspended') {
             await createRichAuthLog(req, user, {
                 eventType: 'Login Blocked - Account Suspended',
@@ -136,7 +128,6 @@ exports.loginPassword = async (req, res) => {
             return res.status(403).json({ error: 'Account Suspended' });
         }
 
-        // Cek Password
         const match = await bcrypt.compare(password, user.passwordHash);
         if (!match) {
             await createRichAuthLog(req, user, {
@@ -153,7 +144,6 @@ exports.loginPassword = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Log Success (Modular)
         await createRichAuthLog(req, user, {
             eventType: 'Login Success',
             status: 'SUCCESS',

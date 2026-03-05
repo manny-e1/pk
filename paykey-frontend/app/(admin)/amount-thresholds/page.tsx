@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { SegmentSelector } from '@/components/amount/SegmentSelector';
 import { ThresholdTable, Threshold } from '@/components/amount/ThresholdTable';
 import { ThresholdModal } from '@/components/amount/ThresholdModal';
-import { adminService } from '@/services/adminService'; // Pastikan file ini ada
+import { adminService } from '@/services/adminService';
 
 export default function AmountThresholdsPage() {
   const [segment, setSegment] = useState<'consumer' | 'corporate'>('consumer');
@@ -12,7 +12,6 @@ export default function AmountThresholdsPage() {
   const [editingItem, setEditingItem] = useState<Threshold | null>(null);
   const [loading, setLoading] = useState(true);
   
-  // State data sekarang kosong saat awal, menunggu fetch dari API
   const [data, setData] = useState<Record<string, Threshold[]>>({
     consumer: [],
     corporate: []
@@ -20,7 +19,6 @@ export default function AmountThresholdsPage() {
 
   const currentData = data[segment] || [];
 
-  // --- 1. FETCH DATA DARI API ---
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -31,49 +29,42 @@ export default function AmountThresholdsPage() {
         corporate: []
       };
 
-      // Mapping Data Backend -> Frontend
       apiData.forEach((item: any) => {
         const segKey = item.segment.toLowerCase() as 'consumer' | 'corporate';
         
         if (grouped[segKey]) {
           grouped[segKey].push({
-            id: item.id, // ID dari DB (UUID String)
+            id: item.id,
             min: item.minAmount,
             max: item.maxAmount,
             weight: item.weight,
             label: item.label,
             stepUp: item.stepUp,
-            methods: item.methods || [] // Pastikan array
-          } as unknown as Threshold); // Casting jika ThresholdTable memaksa ID number
+            methods: item.methods || []
+          } as unknown as Threshold);
         }
       });
 
-      // Sort agar rapi (low to high)
       grouped.consumer.sort((a, b) => a.min - b.min);
       grouped.corporate.sort((a, b) => a.min - b.min);
 
       setData(grouped);
     } catch (err) {
       console.error("Gagal mengambil data:", err);
-      // alert("Gagal koneksi ke server");
     } finally {
       setLoading(false);
     }
   };
 
-  // Load data saat halaman dibuka
   useEffect(() => {
     fetchData();
   }, []);
 
-  // --- 2. HANDLE UPDATE (INLINE EDIT) ---
   const handleUpdate = async (id: number | string, field: keyof Threshold, val: any) => {
-    // Optimistic Update (Ubah UI dulu biar cepat)
     const prevData = { ...data };
     const updatedList = currentData.map(t => {
         if (t.id === id) {
             const newItem = { ...t, [field]: val } as Threshold;
-            // Auto-update label logic
             if (field === 'weight' && typeof val === 'number') {
                 if (val <= 25) newItem.label = 'low';
                 else if (val <= 50) newItem.label = 'medium';
@@ -86,7 +77,6 @@ export default function AmountThresholdsPage() {
     });
     setData({ ...data, [segment]: updatedList });
 
-    // Kirim ke Backend
     try {
         const itemToUpdate = updatedList.find(t => t.id === id);
         if(itemToUpdate) {
@@ -101,12 +91,11 @@ export default function AmountThresholdsPage() {
         }
     } catch (err) {
         console.error("Update gagal:", err);
-        setData(prevData); // Kembalikan jika error
+        setData(prevData);
         alert("Gagal menyimpan perubahan ke server.");
     }
   };
 
-  // --- 3. HANDLE DELETE ---
   const handleDelete = async (id: number | string) => {
     if (confirm('Hapus aturan limit ini?')) {
         const prevData = { ...data };
@@ -123,7 +112,6 @@ export default function AmountThresholdsPage() {
     }
   };
 
-  // --- 4. HANDLE MODAL (ADD & EDIT) ---
   const handleEdit = (id: number | string) => {
     const item = currentData.find(t => t.id === id);
     if (item) {
@@ -140,9 +128,8 @@ export default function AmountThresholdsPage() {
   const handleSaveModal = async (formData: Partial<Threshold>) => {
     const isEdit = !!editingItem;
     
-    // Siapkan Payload Backend
     const payload = {
-        segment: segment.toUpperCase(), // Backend perlu uppercase
+        segment: segment.toUpperCase(),
         minAmount: formData.min,
         maxAmount: formData.max,
         weight: formData.weight,
@@ -153,14 +140,11 @@ export default function AmountThresholdsPage() {
 
     try {
         if (isEdit && editingItem) {
-            // Update
             await adminService.updateAmountLimit(editingItem.id.toString(), payload);
         } else {
-            // Create New
             await adminService.createAmountLimit(payload);
         }
         
-        // Refresh data dari server agar sinkron
         await fetchData();
         setModalOpen(false);
 
@@ -175,7 +159,6 @@ export default function AmountThresholdsPage() {
       
       <main className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         
-        {/* Header */}
         <header className="px-6 py-4 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)] flex justify-between items-center shrink-0">
            <div className="flex items-center gap-4">
              <div>
@@ -192,7 +175,6 @@ export default function AmountThresholdsPage() {
            </div>
         </header>
 
-        {/* Content */}
         <div className="flex-1 overflow-auto p-6 custom-scrollbar">
             <div className="w-full mx-auto flex flex-col gap-6">
                 <SegmentSelector activeSegment={segment} onSelect={setSegment} />

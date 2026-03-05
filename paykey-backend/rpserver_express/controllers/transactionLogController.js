@@ -1,30 +1,24 @@
 const prisma = require('../config/db');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// --- 1. KONFIGURASI GOOGLE GEMINI ---
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Gunakan model sesuai request Anda
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.5-flash", // Saya ubah ke 1.5 karena 2.5 belum stabil publik, tapi silakan ganti jika Anda punya akses
+    model: "gemini-2.5-flash",
     generationConfig: { 
         responseMimeType: "application/json" 
     }
 });
 
-// --- HELPER: FUNGSI PENGAMBIL DATA (DIPISAH AGAR BISA DIPAKAI EVIDENCE) ---
-// Ini adalah logika database asli Anda yang saya ekstrak keluar
 async function gatherTransactionContext(id) {
     let tx = null;
     let authLog = null;
 
-    // A. Coba cari di Tabel Transaction
     tx = await prisma.transaction.findUnique({
         where: { id: id },
         include: { user: { include: { knownDevices: true } } }
     });
 
-    // B. Jika tidak ketemu, cari di Tabel AuthLog
     if (!tx) {
         const eventId = parseInt(id);
         if (!isNaN(eventId)) {
@@ -43,7 +37,6 @@ async function gatherTransactionContext(id) {
         }
     }
 
-    // C. Virtual Transaction (Untuk Blocked)
     if (!tx && authLog) {
         const user = await prisma.user.findUnique({ where: { email: authLog.email }, include: { knownDevices: true } });
         let parsedAmount = 0;
@@ -56,7 +49,7 @@ async function gatherTransactionContext(id) {
             amount: parsedAmount,
             currency: "MYR",
             merchantName: "Unknown (Blocked/Login)",
-            merchantCategory: "Unknown", // Default
+            merchantCategory: "Unknown",
             locationCity: authLog.location?.split(',')[0] || "Unknown",
             locationCountry: authLog.countryCode || "UN",
             timestamp: authLog.createdAt,
@@ -70,11 +63,9 @@ async function gatherTransactionContext(id) {
 
     if (!tx) throw new Error("Transaction/Event not found");
 
-    // D. Agregasi Data
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // Pastikan field timestamp sesuai schema (createdAt atau timestamp)
     const stats = await prisma.transaction.aggregate({
         where: { userId: tx.user.id, timestamp: { gte: thirtyDaysAgo } },
         _count: { id: true }, _avg: { amount: true }, _min: { amount: true }, _max: { amount: true }
@@ -94,7 +85,6 @@ async function gatherTransactionContext(id) {
 
     const txTime = tx.timestamp instanceof Date ? tx.timestamp.toISOString() : new Date(tx.timestamp).toISOString();
 
-    // E. Return Context
     return {
         transaction: {
             id: tx.id,
@@ -138,7 +128,6 @@ async function gatherTransactionContext(id) {
     };
 }
 
-// --- 2. PROMPT BUILDER (KODE ASLI ANDA) ---
 function buildInvestigationPrompt(context) {
     const fmt = (val) => val ? val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00';
     
@@ -217,12 +206,9 @@ Respond strictly in the following JSON format:
 }`;
 }
 
-// --- 3. ENDPOINTS ---
 
-// A. ENDPOINT EVIDENCE (DATA DB) -> CEPAT
 exports.getTransactionEvidence = async (req, res) => {
     try {
-        // Hanya panggil fungsi pengumpul data, TIDAK panggil AI
         const context = await gatherTransactionContext(req.params.id);
         res.json({ raw_data: context });
     } catch (err) {
@@ -231,15 +217,12 @@ exports.getTransactionEvidence = async (req, res) => {
     }
 };
 
-// B. ENDPOINT ANALYSIS (GEMINI AI) -> LAMBAT
 exports.getInvestigationReport = async (req, res) => {
     const { id } = req.params;
 
     try {
-        // 1. Ambil data (sama seperti evidence)
         const llmContext = await gatherTransactionContext(id);
 
-        // 2. Kirim ke Gemini
         const fullPrompt = buildInvestigationPrompt(llmContext);
         console.log(`[Gemini] Analyzing ID: ${id}...`);
 
@@ -248,10 +231,8 @@ exports.getInvestigationReport = async (req, res) => {
         
         const aiResponse = JSON.parse(responseText);
 
-        // Kirim hasil AI
         res.json({
             analysis: aiResponse,
-            // raw_data tidak perlu dikirim lagi karena sudah ada di endpoint evidence
         });
 
     } catch (err) {

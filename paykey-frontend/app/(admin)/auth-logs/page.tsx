@@ -25,7 +25,6 @@ interface AuthEvent {
   paymentId?: string;
   isNewDevice: boolean;
 
-  // Data Struktural untuk UI Detail
   device: {
     type: string;
     os: string;
@@ -47,7 +46,7 @@ interface AuthEvent {
     level: string;
     amount?: string;
     amountClass?: string;
-    network?: string; // 'vpn' | 'tor' | 'proxy' | null
+    network?: string;
     tags: RiskTag[];
     reasons: ReasonCode[];
     beneficiary?: string;
@@ -96,12 +95,10 @@ const SlideOver = ({ isOpen, onClose, title, children, footer }: any) => {
   );
 };
 
-// --- DATA TABLE DENGAN PAGINATION ANGKA ---
 const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPerPage, onPageChange, totalItems }: any) => {
   const start = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const end = Math.min(currentPage * itemsPerPage, totalItems);
 
-  // Logic generate nomor halaman (e.g. 1 2 3 ... 10)
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
@@ -129,7 +126,6 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
     <div className="flex flex-col h-full">
       <div className="flex-1 bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[12px] overflow-hidden flex flex-col">
 
-        {/* HEADER TABLE */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-secondary)] shrink-0">
           <div>
             <span className="text-[15px] font-semibold text-[var(--text-primary)]">Authentication Events</span>
@@ -137,7 +133,6 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
           </div>
         </div>
 
-        {/* TABLE CONTENT */}
         <div className="overflow-auto flex-1 custom-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead className="sticky top-0 bg-[var(--bg-tertiary)] z-10 shadow-sm">
@@ -157,7 +152,6 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
           </table>
         </div>
 
-        {/* PAGINATION FOOTER */}
         <div className="p-4 border-t border-[var(--border-secondary)] flex justify-between items-center shrink-0">
           <div className="text-[13px] text-[var(--text-tertiary)]">
             Showing <strong className="text-[var(--text-primary)]">{start}-{end}</strong> of <strong className="text-[var(--text-primary)]">{totalItems.toLocaleString()}</strong> events
@@ -194,14 +188,13 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
     </div>
   );
 };
-// --- LOGIC HELPER ---
 const formatType = (t: string) => t ? t.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Unknown';
 
 const getRiskTagStyle = (tag: RiskTag) => {
   const cls = tag.class?.toLowerCase() || 'default';
 
   if (cls === 'high' || cls === 'critical') return 'bg-red-500/15 text-red-500';
-  if (cls === 'medium' || cls === 'warning') return 'bg-yellow-500/15 text-yellow-600'; // Kuning agak gelap agar terbaca
+  if (cls === 'medium' || cls === 'warning') return 'bg-yellow-500/15 text-yellow-600';
   if (cls === 'low' || cls === 'info') return 'bg-blue-500/15 text-blue-500';
   if (cls === 'success') return 'bg-emerald-500/15 text-emerald-500';
 
@@ -226,12 +219,10 @@ const getCountryName = (code: string) => {
 };
 
 
-// Timeline Generator (Visual Dinamis)
 const generateTimeline = (e: AuthEvent) => {
   const timeline = [];
   const t = new Date(e.timestamp);
 
-  // 1. Final Event (Top)
   let dotColor = 'bg-[var(--success)]';
   if (e.result === 'BLOCKED' || e.result === 'FAILED' || e.result === 'REJECTED') dotColor = 'bg-[var(--error)]';
   else if (e.result.includes('CHALLENGE') || e.result === 'TIMEOUT') dotColor = 'bg-[var(--warning)]';
@@ -242,27 +233,17 @@ const generateTimeline = (e: AuthEvent) => {
     dotColor: dotColor
   });
 
-  // 2. Risk/Auth Steps
-  // if (e.result === 'SUCCESS' || e.result.includes('CHALLENGE')) {
-  //   timeline.push({
-  //     label: 'Biometric / Risk Check',
-  //     time: new Date(t.getTime() - 2000).toLocaleTimeString('en-US', { hour12: false }),
-  //     dotColor: 'bg-[var(--bg-tertiary)]'
-  //   });
-  // }
 
-  // 3. Risk Context in Timeline
   if (e.risk.tags && e.risk.tags.length > 0) {
     e.risk.tags.forEach((tag, i) => {
       timeline.push({
-        label: `${tag.label.replace(/_/g, ' ')}`, // Ambil label-nya
+        label: `${tag.label.replace(/_/g, ' ')}`,
         time: new Date(t.getTime() - (3000 + (i * 500))).toLocaleTimeString('en-US', { hour12: false }),
         dotColor: `${getRiskTagStyle(tag).includes('red') ? 'bg-[var(--error)]' : getRiskTagStyle(tag).includes('yellow') ? 'bg-[var(--warning)]' : getRiskTagStyle(tag).includes('blue') ? 'bg-[var(--info)]' : getRiskTagStyle(tag).includes('emerald') ? 'bg-[var(--success)]' : 'bg-[var(--bg-tertiary)]'}`
       });
     });
   }
 
-  // 4. Start (Bottom)
   timeline.push({
     label: 'Request initiated',
     time: new Date(t.getTime() - 5000).toLocaleTimeString('en-US', { hour12: false }),
@@ -272,14 +253,12 @@ const generateTimeline = (e: AuthEvent) => {
   return timeline;
 };
 
-// --- PAGE COMPONENT UTAMA ---
 
 export default function AuthLogsPage() {
   const [logs, setLogs] = useState<AuthEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // State Statistik
   const [stats, setStats] = useState({
     total: { value: 0, text: '—', trend: 'neutral' as any },
     success: { value: '0%', text: '—', trend: 'neutral' as any },
@@ -288,16 +267,14 @@ export default function AuthLogsPage() {
     passkey: { value: 0, text: '—', trend: 'neutral' as any }
   });
 
-  // Filters State
   const [eventType, setEventType] = useState('');
   const [resultFilter, setResultFilter] = useState('');
-  const [startDate, setStartDate] = useState(''); // DIKOSONGKAN
-  const [endDate, setEndDate] = useState('');     // DIKOSONGKAN
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [activeChips, setActiveChips] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEvent, setSelectedEvent] = useState<AuthEvent | null>(null);
 
-  // FETCH DATA (SAFE PARSING LOGIC)
   const fetchLogs = async () => {
     setLoading(true);
     try {
@@ -305,37 +282,30 @@ export default function AuthLogsPage() {
 
       const mappedData: AuthEvent[] = rawLogs.map((log: any) => {
 
-        // --- EXTRACTION LOGIC ---
         let richData: any = {};
         let tagsArray: RiskTag[] = [];
 
-        // Parse riskTags field (bisa string, bisa object)
         if (typeof log.riskTags === 'string') {
           try { richData = JSON.parse(log.riskTags); } catch { richData = {}; }
         } else if (typeof log.riskTags === 'object' && log.riskTags !== null) {
           richData = log.riskTags;
         }
 
-        // 1. Ambil Tags Array
         if (Array.isArray(richData.tags)) {
           tagsArray = richData.tags;
         } else if (Array.isArray(richData)) {
-          // Fallback jika format lama (array strings/obj langsung)
           tagsArray = richData.map((t: any) => typeof t === 'string' ? { label: t, class: 'default' } : t);
         }
 
-        // 2. Ambil Telemetry & Network
         const telemetry = richData.telemetry || {};
         const network = richData.network || {};
         const deviceInfo = richData.device_info || {};
 
-        // 3. Status Mapping
         const statusRaw = log.status?.toUpperCase() || 'UNKNOWN';
         let statusLabel = 'Success';
         if (statusRaw === 'BLOCKED' || statusRaw === 'FAILED' || statusRaw === 'REJECTED') statusLabel = 'Blocked';
         else if (statusRaw.includes('CHALLENGE') || statusRaw === 'TIMEOUT') statusLabel = 'Challenged';
 
-        // 4. Construct Event Object
         return {
           id: log.id.toString(),
           type: log.eventType || 'unknown',
@@ -393,7 +363,6 @@ export default function AuthLogsPage() {
     fetchLogs();
   }, []);
 
-  // CALC STATS
   const calculateStats = (data: AuthEvent[]) => {
     const now = new Date();
     const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -434,7 +403,6 @@ export default function AuthLogsPage() {
     });
   };
 
-  // HANDLERS
   const toggleChip = (chip: string) => { const newSet = new Set(activeChips); newSet.has(chip) ? newSet.delete(chip) : newSet.add(chip); setActiveChips(newSet); setCurrentPage(1); };
   const handleClearFilters = () => { setEventType(''); setResultFilter(''); setActiveChips(new Set()); setCurrentPage(1); };
 
@@ -449,7 +417,6 @@ export default function AuthLogsPage() {
     let matchChips = true;
     if (activeChips.has('new-device') && !e.isNewDevice) matchChips = false;
     if (activeChips.has('vpn') && e.risk.network !== 'vpn') matchChips = false;
-    // Updated chip logic with safe String usage
     if (activeChips.has('high-risk') && (
       e.risk.amountClass !== 'high' &&
       !e.risk.tags?.some(t => t.class === 'high' || t.label.toLowerCase().includes('high'))
@@ -465,7 +432,6 @@ export default function AuthLogsPage() {
     <div className="flex min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-[family-name:var(--font-inter)]">
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
 
-        {/* HEADER */}
         <header className="px-6 py-3 border-b border-[var(--border-secondary)] bg-[var(--bg-secondary)] flex justify-between items-center shrink-0 h-[60px]">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm">
@@ -489,7 +455,6 @@ export default function AuthLogsPage() {
         </header>
 
         <div className="flex-1 overflow-auto p-6 flex flex-col">
-          {/* STATS BAR */}
           <div className="grid grid-cols-5 gap-4 mb-6 shrink-0">
             <StatsCard label="Total Events (24h)" value={stats.total.value} change={stats.total.text} trend={stats.total.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>} />
             <StatsCard label="Success Rate" value={stats.success.value} change={stats.success.text} trend={stats.success.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>} />
@@ -498,7 +463,6 @@ export default function AuthLogsPage() {
             <StatsCard label="New Passkeys" value={stats.passkey.value} change={stats.passkey.text} trend={stats.passkey.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>} />
           </div>
 
-          {/* FILTERS BAR */}
           <div className="flex items-center gap-3 mb-5 shrink-0 flex-wrap">
             <div className="flex items-center gap-2"><label className="text-xs text-[var(--text-tertiary)]">Event Type</label><select className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[140px] cursor-pointer" value={eventType} onChange={e => setEventType(e.target.value)}><option value="">All Events</option><option value="passkey_registered">Passkey Registered</option><option value="payment_approval_requested">Approval Requested</option><option value="payment_approved">Payment Approved</option><option value="payment_denied">Payment Denied</option><option value="biometric_login">Biometric Login</option></select></div>
             <div className="flex items-center gap-2"><label className="text-xs text-[var(--text-tertiary)]">Result</label><select className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[120px] cursor-pointer" value={resultFilter} onChange={e => setResultFilter(e.target.value)}><option value="">All Results</option><option value="success">Success</option><option value="blocked">Blocked/Failed</option><option value="challenged">Challenged</option></select></div>
@@ -510,7 +474,6 @@ export default function AuthLogsPage() {
             <button onClick={handleClearFilters} className="px-3.5 py-1.5 text-[13px] font-medium bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all">Clear Filters</button>
           </div>
 
-          {/* TABLE RENDER */}
           {loading ? <div className="text-[var(--text-tertiary)] text-center py-10 text-sm">Loading logs...</div> :
             <DataTable
               columns={[
@@ -551,7 +514,6 @@ export default function AuthLogsPage() {
                   <td className="p-3"><div className="flex items-center gap-2"><div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-secondary)]">{e.device.type.toLowerCase().includes('mobile') || e.device.type.toLowerCase().includes('phone') ? <><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></> : <><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></>}</svg></div><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.device.model}</span><div className="flex items-center gap-1.5"><span className="text-[11px] text-[var(--text-tertiary)] max-w-[120px] truncate">{e.device.os}</span>{e.isNewDevice && <span className="text-[9px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">New</span>}</div></div></div></td>
                   <td className="p-3"><div className="flex items-center gap-2"><span className="text-base">{countryCodeToEmoji(e.location.country)}</span><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{getCountryName(e.location.country)}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{e.location.ip}</span></div></div>{e.risk.network && <div className={`mt-1 inline-block text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${e.risk.network === 'vpn' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--info-bg)] text-[var(--info)]'}`}>{e.risk.network}</div>}</td>
 
-                  {/* RISK CONTEXT RENDER */}
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1.5 max-w-[200px]">
                       {e.risk.tags.length > 0 ? (
@@ -597,7 +559,6 @@ export default function AuthLogsPage() {
           {selectedEvent && (
             <div className="space-y-6">
 
-              {/* Section 1: Authentication Event */}
               <div className="pb-2">
                 <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg> Authentication Event
@@ -616,7 +577,6 @@ export default function AuthLogsPage() {
                 </div>
               </div>
 
-              {/* Section 2: Device & Environment */}
               <div className="pb-2">
                 <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg> Device & Environment
@@ -633,7 +593,6 @@ export default function AuthLogsPage() {
                 )}
               </div>
 
-              {/* Section 3: Network & Location */}
               <div className="pb-2">
                 <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg> Network & Location
@@ -653,7 +612,6 @@ export default function AuthLogsPage() {
                 </div>
               </div>
 
-              {/* Section 4: Risk Context */}
               <div className="pb-2">
                 <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg> Risk Context
@@ -681,7 +639,6 @@ export default function AuthLogsPage() {
                 )}
               </div>
 
-              {/* Section 5: Timeline */}
               <div>
                 <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-4">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg> Event Timeline

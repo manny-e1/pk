@@ -10,12 +10,10 @@ exports.getAllUsers = async (req, res) => {
         const formattedUsers = users.map(user => ({
             id: user.id,
             name: user.fullName,
-            // Logic initials
             initials: user.fullName ? user.fullName.match(/\b\w/g || []).shift() + (user.fullName.split(' ').length > 1 ? user.fullName.split(' ').pop()[0] : '') : 'U',
             email: user.email,
             mobile: user.mobile || 'N/A', 
             
-            // PENTING: Ambil status asli dari DB
             status: user.status || 'active', 
 
             joined: new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
@@ -37,7 +35,6 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-// PUT: Update Status (LOGIKA SIMPAN PERMANEN)
 exports.updateUserStatus = async (req, res) => {
     const { id } = req.params;
     const { status, reason, note } = req.body;
@@ -45,7 +42,6 @@ exports.updateUserStatus = async (req, res) => {
     console.log(`[UPDATE] User ${id} -> ${status} (Reason: ${reason})`);
 
     try {
-        // Update ke Database MySQL via Prisma
         const updatedUser = await prisma.user.update({
             where: { id: id },
             data: { 

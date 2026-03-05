@@ -45,9 +45,8 @@ export function RiskVisualizer({ ranges }: RiskVisualizerProps) {
       {/* Visualizer Track */}
       <div className="h-14 flex rounded-md overflow-hidden w-full relative">
         {ranges.map((range) => {
-          // Logika lebar visual: max 25k dianggap 'penuh' untuk skala ini agar visual seimbang
           const rangeSize = range.max ? (range.max - range.min) : 20000; 
-          const visualFlex = Math.max(rangeSize, 2000); // Minimum width agar text terlihat
+          const visualFlex = Math.max(rangeSize, 2000); 
           
           return (
             <div 

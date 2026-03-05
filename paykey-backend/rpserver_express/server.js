@@ -15,7 +15,7 @@ const PORT = 4000;
 
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://192.168.1.3:3000', // <--- URL Frontend Admin (Next.js) via IP
+  'http://192.168.1.3:3000',
   'http://192.168.1.3:4000',
   'http://18.142.184.55:3000',
   'http://18.142.184.55:4000',
@@ -25,18 +25,7 @@ const allowedOrigins = [
   'https://api.authkey.my',
 ];
 
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin) return callback(null, true);
     
-//     if (allowedOrigins.indexOf(origin) === -1) {
-//       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-//       return callback(new Error(msg), false);
-//     }
-//     return callback(null, true);
-//   },
-//   credentials: true
-// }));
 app.use(cors({
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.includes(origin)) {
