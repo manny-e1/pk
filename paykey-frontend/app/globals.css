@@ -122,6 +122,7 @@ body {
 }
 
 /* Custom Scrollbar */
+
 .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
