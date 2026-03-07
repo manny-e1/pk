@@ -317,17 +317,14 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
             columnNumber: 11
         }, this)
     };
-    // Logic aman agar slider tidak tumpang tindih
     const handleLowSlider = (e)=>{
         const val = parseInt(e.target.value);
-        // Low tidak boleh melebihi High - 5
         if (val < highThreshold - 5) {
             onLowChange(val);
         }
     };
     const handleHighSlider = (e)=>{
         const val = parseInt(e.target.value);
-        // High tidak boleh kurang dari Low + 5
         if (val > lowThreshold + 5) {
             onHighChange(val);
         }
@@ -347,14 +344,14 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                     children: Icons.shield
                                 }, void 0, false, {
                                     fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                    lineNumber: 51,
+                                    lineNumber: 47,
                                     columnNumber: 13
                                 }, this),
                                 "Risk Thresholds"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/risk/RiskThresholds.tsx",
-                            lineNumber: 50,
+                            lineNumber: 46,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -362,18 +359,18 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                             children: "Configure score ranges for each risk level"
                         }, void 0, false, {
                             fileName: "[project]/components/risk/RiskThresholds.tsx",
-                            lineNumber: 54,
+                            lineNumber: 50,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/risk/RiskThresholds.tsx",
-                    lineNumber: 49,
+                    lineNumber: 45,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                lineNumber: 48,
+                lineNumber: 44,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -387,7 +384,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                 children: Icons.info
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 60,
+                                lineNumber: 56,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -397,7 +394,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "How Risk Scoring Works"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 62,
+                                        lineNumber: 58,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -405,19 +402,19 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "Each transaction is assigned a score from 0-100 based on configured rules. The score determines which authentication flow is triggered."
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 63,
+                                        lineNumber: 59,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 61,
+                                lineNumber: 57,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                        lineNumber: 59,
+                        lineNumber: 55,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -430,7 +427,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 70,
+                                lineNumber: 65,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -441,7 +438,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                 children: lowThreshold
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 71,
+                                lineNumber: 66,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -451,7 +448,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 74,
+                                lineNumber: 68,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -462,13 +459,13 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                 children: highThreshold
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 75,
+                                lineNumber: 69,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                        lineNumber: 68,
+                        lineNumber: 63,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -488,14 +485,14 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                         children: Icons.zap
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                        lineNumber: 83,
+                                                        lineNumber: 76,
                                                         columnNumber: 17
                                                     }, this),
                                                     " Low Risk"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 82,
+                                                lineNumber: 75,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -506,13 +503,13 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 85,
+                                                lineNumber: 78,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 81,
+                                        lineNumber: 74,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -520,7 +517,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "No Extra Friction"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 87,
+                                        lineNumber: 80,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -528,7 +525,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "Standard payment flow with minimal verification. User experience is optimized for speed."
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 88,
+                                        lineNumber: 81,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -541,25 +538,25 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                     children: Icons.check
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                    lineNumber: 92,
+                                                    lineNumber: 85,
                                                     columnNumber: 17
                                                 }, this),
                                                 " Auto-approve"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                            lineNumber: 91,
+                                            lineNumber: 84,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 90,
+                                        lineNumber: 83,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 80,
+                                lineNumber: 73,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -576,14 +573,14 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                         children: Icons.alert
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                        lineNumber: 100,
+                                                        lineNumber: 93,
                                                         columnNumber: 17
                                                     }, this),
                                                     " Medium Risk"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 99,
+                                                lineNumber: 92,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -596,13 +593,13 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 102,
+                                                lineNumber: 95,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 98,
+                                        lineNumber: 91,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -610,7 +607,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "Require FIDO2 Approval"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 104,
+                                        lineNumber: 97,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -618,7 +615,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "User must authenticate with registered passkey before payment can proceed."
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 105,
+                                        lineNumber: 98,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -631,25 +628,25 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                     children: Icons.passkey
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                    lineNumber: 109,
+                                                    lineNumber: 102,
                                                     columnNumber: 17
                                                 }, this),
                                                 " FIDO2 Required"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                            lineNumber: 108,
+                                            lineNumber: 101,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 107,
+                                        lineNumber: 100,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 97,
+                                lineNumber: 90,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -666,14 +663,14 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                         children: Icons.stop
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                        lineNumber: 117,
+                                                        lineNumber: 110,
                                                         columnNumber: 17
                                                     }, this),
                                                     " High Risk"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 116,
+                                                lineNumber: 109,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -685,13 +682,13 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 119,
+                                                lineNumber: 112,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 115,
+                                        lineNumber: 108,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -699,7 +696,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "FIDO2 + Cooldown / Additional Checks"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 121,
+                                        lineNumber: 114,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -707,7 +704,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         children: "Enhanced verification with mandatory waiting period and additional security measures."
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 122,
+                                        lineNumber: 115,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -721,14 +718,14 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                         children: Icons.passkey
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                        lineNumber: 126,
+                                                        lineNumber: 118,
                                                         columnNumber: 17
                                                     }, this),
                                                     " FIDO2 Required"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 125,
+                                                lineNumber: 117,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -739,32 +736,32 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                         children: Icons.clock
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                        lineNumber: 129,
+                                                        lineNumber: 121,
                                                         columnNumber: 17
                                                     }, this),
                                                     " Cooldown"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 128,
+                                                lineNumber: 120,
                                                 columnNumber: 16
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 124,
+                                        lineNumber: 116,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 114,
+                                lineNumber: 107,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                        lineNumber: 79,
+                        lineNumber: 72,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -781,7 +778,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                 children: "Low → Medium Threshold"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 139,
+                                                lineNumber: 130,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -789,13 +786,13 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                 children: lowThreshold
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 140,
+                                                lineNumber: 131,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 138,
+                                        lineNumber: 129,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -807,13 +804,13 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         onChange: handleLowSlider
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 142,
+                                        lineNumber: 133,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 137,
+                                lineNumber: 128,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -827,7 +824,7 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                 children: "Medium → High Threshold"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 149,
+                                                lineNumber: 140,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -835,13 +832,13 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                                 children: highThreshold
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                                lineNumber: 150,
+                                                lineNumber: 141,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 148,
+                                        lineNumber: 139,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -853,31 +850,31 @@ function RiskThresholds({ lowThreshold, highThreshold, onLowChange, onHighChange
                                         onChange: handleHighSlider
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                        lineNumber: 152,
+                                        lineNumber: 143,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                                lineNumber: 147,
+                                lineNumber: 138,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/RiskThresholds.tsx",
-                        lineNumber: 136,
+                        lineNumber: 127,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/risk/RiskThresholds.tsx",
-                lineNumber: 58,
+                lineNumber: 54,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/risk/RiskThresholds.tsx",
-        lineNumber: 45,
+        lineNumber: 42,
         columnNumber: 5
     }, this);
 }
@@ -890,236 +887,8 @@ __turbopack_context__.s([
     ()=>StepUpRules
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
-// 'use client';
-// import React, { useEffect } from 'react';
-// // --- HELPER COMPONENTS ---
-// const Toggle = ({ active, onClick }: { active: boolean, onClick: () => void }) => (
-//   <div onClick={onClick} className={`relative w-11 h-6 rounded-full cursor-pointer transition-colors border border-[var(--border-primary)] ${active ? 'bg-[var(--accent)] border-[var(--accent)]' : 'bg-[var(--bg-tertiary)]'}`}>
-//     <div className={`absolute top-[1px] left-[1px] w-[20px] h-[20px] bg-[var(--text-primary)] rounded-full transition-all ${active ? 'translate-x-[20px]' : ''}`}></div>
-//   </div>
-// );
-// const WeightPills = ({ selected, onChange }: { selected: number, onChange: (v: number) => void }) => {
-//   const options = [10, 20, 30, 40, 50];
-//   return (
-//     <div className="flex gap-2 flex-wrap">
-//       {options.map(val => (
-//         <button 
-//             key={val} 
-//             type="button" // PENTING: agar tidak submit form
-//             onClick={() => onChange(val)} 
-//             className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[20px] text-[12px] font-medium border transition-all ${selected === val ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)] hover:border-[var(--accent)]'}`}
-//         >
-//           <span className="font-mono">+{val}</span>
-//         </button>
-//       ))}
-//     </div>
-//   );
-// };
-// // --- MAIN COMPONENT ---
-// interface StepUpRulesProps {
-//   rules: any[];
-//   onChange: (updatedRules: any[]) => void;
-// }
-// export function StepUpRules({ rules = [], onChange }: StepUpRulesProps) {
-//   // Debugging: Pastikan data masuk
-//   useEffect(() => {
-//     console.log("StepUpRules Rendered with:", rules);
-//   }, [rules]);
-//   // Fungsi Update Data
-//   const updateRule = (type: string, field: string, value: any) => {
-//     const newRules = JSON.parse(JSON.stringify(rules)); 
-//     const index = newRules.findIndex((r: any) => r.ruleType === type);
-//     if (index === -1) {
-//         const newRule = { ruleType: type, isActive: false, weight: 20, parameters: {} };
-//         if (field === 'isActive' || field === 'weight') (newRule as any)[field] = value;
-//         else (newRule as any).parameters = { [field]: value };
-//         newRules.push(newRule);
-//     } else {
-//         if (field === 'isActive' || field === 'weight') {
-//             newRules[index][field] = value;
-//         } else {
-//             newRules[index].parameters = { ...newRules[index].parameters, [field]: value };
-//         }
-//     }
-//     onChange(newRules);
-//   };
-//   const getRule = (type: string) => {
-//     return rules.find(r => r.ruleType?.trim().toUpperCase() === type) || { isActive: false, parameters: {}, weight: 20 };
-//   };
-//   // Helper Profesional untuk mencegah bug Arrow Down (Jangan sampai kurang dari 1)
-//   const handleNumberInput = (type: string, paramKey: string, rawValue: string) => {
-//     if (rawValue === '') {
-//         updateRule(type, paramKey, ''); 
-//         return;
-//     }
-//     const val = parseInt(rawValue);
-//     if (!isNaN(val)) updateRule(type, paramKey, Math.max(1, val)); 
-//   };
-//   // Renderer Kartu
-//   const renderRuleCard = (type: string, label: string, desc: string, icon: any, children: any) => {
-//     const rule = getRule(type);
-//     const isActive = rule.isActive || false;
-//     const weight = rule.weight || 20;
-//     return (
-//         <div className={`bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-lg)] p-4 transition-all mb-3 ${isActive ? 'hover:border-[var(--accent)]' : 'opacity-60'}`}>
-//             <div className="flex items-start justify-between mb-3">
-//                 <div>
-//                     <div className="text-[14px] font-semibold text-[var(--text-primary)] flex items-center gap-2 mb-1">
-//                         {icon}
-//                         {label}
-//                         {rule.id && <span className="w-2 h-2 rounded-full bg-green-500" title="Sync with DB"></span>}
-//                     </div>
-//                     <div className="text-[12px] text-[var(--text-tertiary)]">{desc}</div>
-//                 </div>
-//                 <Toggle active={isActive} onClick={() => updateRule(type, 'isActive', !isActive)} />
-//             </div>
-//             {isActive && (
-//                 <div className="mt-3 pt-3 border-t border-[var(--border-secondary)] space-y-3">
-//                     <div className="flex items-center gap-3">
-//                         <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Risk Score Weight</span>
-//                         <WeightPills selected={weight} onChange={(v) => updateRule(type, 'weight', v)} />
-//                     </div>
-//                     {children}
-//                 </div>
-//             )}
-//             {/* BAGIAN GEO ANOMALY & VPN/PROXY DIKEMBALIKAN */}
-//             {isActive && type === 'GEO_ANOMALY' && (
-//               <div className="mt-3 pt-3 border-t border-[var(--border-secondary)] space-y-3">
-//                 <div className="flex items-center gap-3">
-//                         <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">VPN/Proxy Detection</span>
-//                         <Toggle active={getRule('GEO_ANOMALY').parameters?.detectVPN || false} onClick={() => updateRule('GEO_ANOMALY', 'detectVPN', !getRule('GEO_ANOMALY').parameters?.detectVPN)} />
-//                         <span className="text-[12px] text-[var(--text-tertiary)]">Add +15 for VPN/Proxy</span>
-//                     </div>
-//               </div>
-//             )}
-//         </div>
-//     );
-//   };
-//   return (
-//     <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-lg)] overflow-hidden mb-6">
-//       <div className="p-5 border-b border-[var(--border-secondary)] flex items-center justify-between">
-//         <div>
-//           <div className="text-[14px] font-semibold flex items-center gap-2 text-[var(--text-primary)]">
-//             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-[var(--accent)]"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-//             Step-up Authentication Rules
-//           </div>
-//           <div className="text-[12px] text-[var(--text-tertiary)] mt-0.5">Configure conditions that trigger elevated authentication</div>
-//         </div>
-//       </div>
-//       <div className="p-5 flex flex-col gap-3">
-//         {/* RULE 1: AMOUNT */}
-//         {renderRuleCard('AMOUNT', 'Payment Amount Threshold', 'Trigger step-up when payment amount exceeds threshold', 
-//             <span>💰</span>,
-//             <div className="flex items-center gap-3">
-//                 <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Threshold Amount</span>
-//                 <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] overflow-hidden max-w-[200px]">
-//                   <input type="number" 
-//                     className="w-full bg-transparent text-[var(--text-primary)] text-[13px] font-mono px-3 py-1.5 outline-none" 
-//                     value={getRule('AMOUNT').parameters?.amountThreshold || 0}
-//                     onChange={(e) => handleNumberInput('AMOUNT', 'amountThreshold', e.target.value)}
-//                   />
-//                   <span className="px-3 py-1.5 bg-[var(--bg-hover)] text-[var(--text-tertiary)] text-[12px] border-l border-[var(--border-primary)]">USD</span>
-//                 </div>
-//             </div>
-//         )}
-//         {/* RULE 2: NEW DEVICE */}
-//         {renderRuleCard('NEW_DEVICE', 'First Payment from Device', 'Trigger step-up for first payment from unrecognized device',
-//             <span>📱</span>,
-//             <div className="flex items-center gap-3">
-//                 <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Trust Period</span>
-//                 <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] overflow-hidden max-w-[200px]">
-//                   <input type="number" 
-//                      className="w-full bg-transparent text-[var(--text-primary)] text-[13px] font-mono px-3 py-1.5 outline-none" 
-//                      value={getRule('NEW_DEVICE').parameters?.days || 90}
-//                      onChange={(e) => handleNumberInput('NEW_DEVICE', 'days', e.target.value)}
-//                   />
-//                   <span className="px-3 py-1.5 bg-[var(--bg-hover)] text-[var(--text-tertiary)] text-[12px] border-l border-[var(--border-primary)]">days</span>
-//                 </div>
-//             </div>
-//         )}
-//         {/* RULE 3: VELOCITY LIMIT */}
-//         {renderRuleCard('VELOCITY_LIMIT', 'High Frequency', 'Detect if user makes too many transactions in a short time window.',
-//             <span>⚡</span>,
-//             <div className="flex flex-col gap-3">
-//                 <div className="flex items-center gap-3">
-//                     <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Max Transactions</span>
-//                     <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] overflow-hidden w-[200px] focus-within:border-[var(--accent)] transition-colors">
-//                         <input type="number"
-//                             className="w-full bg-transparent text-[var(--text-primary)] text-[13px] font-mono px-3 py-1.5 outline-none"
-//                             value={getRule('VELOCITY_LIMIT').parameters?.maxCount || 5}
-//                             onChange={(e) => handleNumberInput('VELOCITY_LIMIT', 'maxCount', e.target.value)}
-//                         />
-//                         <span className="px-3 py-1.5 bg-[var(--bg-hover)] text-[var(--text-tertiary)] text-[11px] font-medium border-l border-[var(--border-primary)]">count</span>
-//                     </div>
-//                 </div>
-//                 <div className="flex items-center gap-3">
-//                     <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Time Window</span>
-//                     <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] overflow-hidden w-[200px] focus-within:border-[var(--accent)] transition-colors">
-//                         <input type="number"
-//                             className="w-full bg-transparent text-[var(--text-primary)] text-[13px] font-mono px-3 py-1.5 outline-none"
-//                             value={getRule('VELOCITY_LIMIT').parameters?.windowMinutes || 10}
-//                             onChange={(e) => handleNumberInput('VELOCITY_LIMIT', 'windowMinutes', e.target.value)}
-//                         />
-//                         <span className="px-3 py-1.5 bg-[var(--bg-hover)] text-[var(--text-tertiary)] text-[11px] font-medium border-l border-[var(--border-primary)]">minutes</span>
-//                     </div>
-//                 </div>
-//                 <p className="text-[11px] text-[var(--text-tertiary)] italic ml-[132px]">
-//                    Example: Allow max 5 transactions every 10 minutes.
-//                 </p>
-//             </div>
-//         )}
-//         {/* RULE 4: GEO ANOMALY */}
-//         {renderRuleCard('GEO_ANOMALY', 'Geographic Anomaly', 'Trigger step-up when payment originates from unexpected location',
-//             <span>🌍</span>,
-//             <div className="flex items-center gap-3">
-//                 <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Detection Level</span>
-//                 <select 
-//                     className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] text-[var(--text-primary)] text-[12px] rounded-[var(--radius-md)] px-3 py-1.5 w-[200px] outline-none"
-//                     value={getRule('GEO_ANOMALY').parameters?.level || 'country'}
-//                     onChange={(e) => updateRule('GEO_ANOMALY', 'level', e.target.value)}
-//                 >
-//                     <option value="country">Country change</option>
-//                     <option value="region">Region change</option>
-//                 </select>
-//             </div>
-//         )}
-//         {/* RULE 5: BENEFICIARY */}
-//         {renderRuleCard('BENEFICIARY', 'New Beneficiary', 'Trigger step-up for payments to new recipients',
-//             <span>👤</span>,
-//             <div className="flex items-center gap-3">
-//                 <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Trust After</span>
-//                 <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] overflow-hidden max-w-[200px]">
-//                   <input type="number" 
-//                     className="w-full bg-transparent text-[var(--text-primary)] text-[13px] font-mono px-3 py-1.5 outline-none" 
-//                     value={getRule('BENEFICIARY').parameters?.trustCount || 3}
-//                     onChange={(e) => handleNumberInput('BENEFICIARY', 'trustCount', e.target.value)}
-//                   />
-//                   <span className="px-3 py-1.5 bg-[var(--bg-hover)] text-[var(--text-tertiary)] text-[12px] border-l border-[var(--border-primary)]">transactions</span>
-//                 </div>
-//             </div>
-//         )}
-//         {/* RULE 6: DORMANT */}
-//         {renderRuleCard('DORMANT', 'Dormant Account', 'Trigger step-up for inactive accounts',
-//             <span>💤</span>,
-//             <div className="flex items-center gap-3">
-//                 <span className="text-[12px] text-[var(--text-tertiary)] min-w-[120px]">Inactivity Days</span>
-//                 <div className="flex items-center bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] overflow-hidden max-w-[200px]">
-//                   <input type="number" 
-//                     className="w-full bg-transparent text-[var(--text-primary)] text-[13px] font-mono px-3 py-1.5 outline-none" 
-//                     value={getRule('DORMANT').parameters?.days || 180}
-//                     onChange={(e) => handleNumberInput('DORMANT', 'days', e.target.value)}
-//                   />
-//                   <span className="px-3 py-1.5 bg-[var(--bg-hover)] text-[var(--text-tertiary)] text-[12px] border-l border-[var(--border-primary)]">days</span>
-//                 </div>
-//             </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
 'use client';
 ;
-// --- HELPER COMPONENTS ---
 const Toggle = ({ active, onClick })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         onClick: onClick,
         className: `relative w-11 h-6 rounded-full cursor-pointer transition-colors border border-[var(--border-primary)] ${active ? 'bg-[var(--accent)] border-[var(--accent)]' : 'bg-[var(--bg-tertiary)]'}`,
@@ -1127,12 +896,12 @@ const Toggle = ({ active, onClick })=>/*#__PURE__*/ (0, __TURBOPACK__imported__m
             className: `absolute top-[1px] left-[1px] w-[20px] h-[20px] bg-[var(--text-primary)] rounded-full transition-all ${active ? 'translate-x-[20px]' : ''}`
         }, void 0, false, {
             fileName: "[project]/components/risk/StepUpRules.tsx",
-            lineNumber: 262,
+            lineNumber: 7,
             columnNumber: 5
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/components/risk/StepUpRules.tsx",
-        lineNumber: 261,
+        lineNumber: 6,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 const WeightPills = ({ selected, onChange })=>{
@@ -1157,17 +926,17 @@ const WeightPills = ({ selected, onChange })=>{
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                    lineNumber: 272,
+                    lineNumber: 17,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, val, false, {
                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                lineNumber: 271,
+                lineNumber: 16,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)))
     }, void 0, false, {
         fileName: "[project]/components/risk/StepUpRules.tsx",
-        lineNumber: 269,
+        lineNumber: 14,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -1230,13 +999,13 @@ function StepUpRules({ rules = [], onChange }) {
                                             title: "Sync with DB"
                                         }, void 0, false, {
                                             fileName: "[project]/components/risk/StepUpRules.tsx",
-                                            lineNumber: 317,
+                                            lineNumber: 62,
                                             columnNumber: 37
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                                    lineNumber: 315,
+                                    lineNumber: 60,
                                     columnNumber: 21
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1244,13 +1013,13 @@ function StepUpRules({ rules = [], onChange }) {
                                     children: desc
                                 }, void 0, false, {
                                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                                    lineNumber: 319,
+                                    lineNumber: 64,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/risk/StepUpRules.tsx",
-                            lineNumber: 314,
+                            lineNumber: 59,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Toggle, {
@@ -1258,13 +1027,13 @@ function StepUpRules({ rules = [], onChange }) {
                             onClick: ()=>updateRule(type, 'isActive', !isActive)
                         }, void 0, false, {
                             fileName: "[project]/components/risk/StepUpRules.tsx",
-                            lineNumber: 321,
+                            lineNumber: 66,
                             columnNumber: 17
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                    lineNumber: 313,
+                    lineNumber: 58,
                     columnNumber: 13
                 }, this),
                 isActive && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1278,7 +1047,7 @@ function StepUpRules({ rules = [], onChange }) {
                                     children: "Risk Score Weight"
                                 }, void 0, false, {
                                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                                    lineNumber: 327,
+                                    lineNumber: 72,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(WeightPills, {
@@ -1286,20 +1055,20 @@ function StepUpRules({ rules = [], onChange }) {
                                     onChange: (v)=>updateRule(type, 'weight', v)
                                 }, void 0, false, {
                                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                                    lineNumber: 328,
+                                    lineNumber: 73,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/risk/StepUpRules.tsx",
-                            lineNumber: 326,
+                            lineNumber: 71,
                             columnNumber: 25
                         }, this),
                         children
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                    lineNumber: 324,
+                    lineNumber: 69,
                     columnNumber: 17
                 }, this),
                 isActive && type === 'GEO_ANOMALY' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1312,7 +1081,7 @@ function StepUpRules({ rules = [], onChange }) {
                                 children: "VPN/Proxy Detection"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 339,
+                                lineNumber: 84,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Toggle, {
@@ -1320,7 +1089,7 @@ function StepUpRules({ rules = [], onChange }) {
                                 onClick: ()=>updateRule('GEO_ANOMALY', 'detectVPN', !getRule('GEO_ANOMALY').parameters?.detectVPN)
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 340,
+                                lineNumber: 85,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1328,28 +1097,27 @@ function StepUpRules({ rules = [], onChange }) {
                                 children: "Add +15 for VPN/Proxy"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 341,
+                                lineNumber: 86,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 338,
+                        lineNumber: 83,
                         columnNumber: 17
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                    lineNumber: 337,
+                    lineNumber: 82,
                     columnNumber: 15
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/risk/StepUpRules.tsx",
-            lineNumber: 312,
+            lineNumber: 57,
             columnNumber: 9
         }, this);
     };
-    // --- LOGIKA KHUSUS AMOUNT TIERS (HANYA 3 ITEMS & SLIDER NYATA) ---
     const amountRule = getRule('AMOUNT');
     const tiers = amountRule.parameters?.tiers || [
         {
@@ -1395,19 +1163,19 @@ function StepUpRules({ rules = [], onChange }) {
                                         points: "22 12 18 12 15 21 9 3 6 12 2 12"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 368,
+                                        lineNumber: 113,
                                         columnNumber: 129
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                                    lineNumber: 368,
+                                    lineNumber: 113,
                                     columnNumber: 13
                                 }, this),
                                 "Step-up Authentication Rules"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/risk/StepUpRules.tsx",
-                            lineNumber: 367,
+                            lineNumber: 112,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1415,18 +1183,18 @@ function StepUpRules({ rules = [], onChange }) {
                             children: "Configure conditions that trigger elevated authentication"
                         }, void 0, false, {
                             fileName: "[project]/components/risk/StepUpRules.tsx",
-                            lineNumber: 371,
+                            lineNumber: 116,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/risk/StepUpRules.tsx",
-                    lineNumber: 366,
+                    lineNumber: 111,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                lineNumber: 365,
+                lineNumber: 110,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1436,7 +1204,7 @@ function StepUpRules({ rules = [], onChange }) {
                         children: "💰"
                     }, void 0, false, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 379,
+                        lineNumber: 123,
                         columnNumber: 13
                     }, this), /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "space-y-4",
@@ -1453,7 +1221,7 @@ function StepUpRules({ rules = [], onChange }) {
                                                 onChange: (e)=>updateTier(i, 'min', e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 384,
+                                                lineNumber: 128,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1461,7 +1229,7 @@ function StepUpRules({ rules = [], onChange }) {
                                                 children: "to"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 385,
+                                                lineNumber: 129,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1471,13 +1239,13 @@ function StepUpRules({ rules = [], onChange }) {
                                                 onChange: (e)=>updateTier(i, 'max', e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 386,
+                                                lineNumber: 130,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 383,
+                                        lineNumber: 127,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1491,12 +1259,12 @@ function StepUpRules({ rules = [], onChange }) {
                                             onChange: (e)=>updateTier(i, 'score', e.target.value)
                                         }, void 0, false, {
                                             fileName: "[project]/components/risk/StepUpRules.tsx",
-                                            lineNumber: 391,
+                                            lineNumber: 134,
                                             columnNumber: 29
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 390,
+                                        lineNumber: 133,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1507,7 +1275,7 @@ function StepUpRules({ rules = [], onChange }) {
                                                 children: "+"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 402,
+                                                lineNumber: 145,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1517,32 +1285,31 @@ function StepUpRules({ rules = [], onChange }) {
                                                 onChange: (e)=>updateTier(i, 'score', e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 403,
+                                                lineNumber: 146,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 401,
+                                        lineNumber: 144,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, i, true, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 382,
+                                lineNumber: 126,
                                 columnNumber: 21
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 380,
+                        lineNumber: 124,
                         columnNumber: 13
-                    }, this), true // Hide generic weight pills
-                    ),
+                    }, this), true),
                     renderRuleCard('NEW_DEVICE', 'First Payment from Device', 'Trigger step-up for first payment from unrecognized device', /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "📱"
                     }, void 0, false, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 412,
+                        lineNumber: 155,
                         columnNumber: 130
                     }, this), /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center gap-3",
@@ -1552,7 +1319,7 @@ function StepUpRules({ rules = [], onChange }) {
                                 children: "Trust Period"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 414,
+                                lineNumber: 157,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1566,7 +1333,7 @@ function StepUpRules({ rules = [], onChange }) {
                                         onChange: (e)=>handleNumberInput('NEW_DEVICE', 'days', e.target.value)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 416,
+                                        lineNumber: 159,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1574,26 +1341,26 @@ function StepUpRules({ rules = [], onChange }) {
                                         children: "days"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 419,
+                                        lineNumber: 162,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 415,
+                                lineNumber: 158,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 413,
+                        lineNumber: 156,
                         columnNumber: 13
                     }, this)),
                     renderRuleCard('VELOCITY_LIMIT', 'High Frequency', 'Detect if user makes too many transactions in a short time window.', /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "⚡"
                     }, void 0, false, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 425,
+                        lineNumber: 168,
                         columnNumber: 131
                     }, this), /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex flex-col gap-3",
@@ -1606,7 +1373,7 @@ function StepUpRules({ rules = [], onChange }) {
                                         children: "Max Transactions"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 428,
+                                        lineNumber: 171,
                                         columnNumber: 21
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1620,7 +1387,7 @@ function StepUpRules({ rules = [], onChange }) {
                                                 onChange: (e)=>handleNumberInput('VELOCITY_LIMIT', 'maxCount', e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 430,
+                                                lineNumber: 173,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1628,19 +1395,19 @@ function StepUpRules({ rules = [], onChange }) {
                                                 children: "count"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 433,
+                                                lineNumber: 176,
                                                 columnNumber: 25
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 429,
+                                        lineNumber: 172,
                                         columnNumber: 21
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 427,
+                                lineNumber: 170,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1651,7 +1418,7 @@ function StepUpRules({ rules = [], onChange }) {
                                         children: "Time Window"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 437,
+                                        lineNumber: 180,
                                         columnNumber: 21
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1665,7 +1432,7 @@ function StepUpRules({ rules = [], onChange }) {
                                                 onChange: (e)=>handleNumberInput('VELOCITY_LIMIT', 'windowMinutes', e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 439,
+                                                lineNumber: 182,
                                                 columnNumber: 25
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1673,32 +1440,32 @@ function StepUpRules({ rules = [], onChange }) {
                                                 children: "minutes"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                                lineNumber: 442,
+                                                lineNumber: 185,
                                                 columnNumber: 25
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 438,
+                                        lineNumber: 181,
                                         columnNumber: 21
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 436,
+                                lineNumber: 179,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 426,
+                        lineNumber: 169,
                         columnNumber: 13
                     }, this)),
                     renderRuleCard('GEO_ANOMALY', 'Geographic Anomaly', 'Trigger step-up when payment originates from unexpected location', /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "🌍"
                     }, void 0, false, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 449,
+                        lineNumber: 192,
                         columnNumber: 130
                     }, this), /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center gap-3",
@@ -1708,7 +1475,7 @@ function StepUpRules({ rules = [], onChange }) {
                                 children: "Detection Level"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 451,
+                                lineNumber: 194,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1721,7 +1488,7 @@ function StepUpRules({ rules = [], onChange }) {
                                         children: "Country change"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 457,
+                                        lineNumber: 200,
                                         columnNumber: 21
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1729,26 +1496,26 @@ function StepUpRules({ rules = [], onChange }) {
                                         children: "Region change"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 458,
+                                        lineNumber: 201,
                                         columnNumber: 21
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 452,
+                                lineNumber: 195,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 450,
+                        lineNumber: 193,
                         columnNumber: 13
                     }, this)),
                     renderRuleCard('BENEFICIARY', 'New Beneficiary', 'Trigger step-up for payments to new recipients', /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "👤"
                     }, void 0, false, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 464,
+                        lineNumber: 206,
                         columnNumber: 109
                     }, this), /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center gap-3",
@@ -1758,7 +1525,7 @@ function StepUpRules({ rules = [], onChange }) {
                                 children: "Trust After"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 466,
+                                lineNumber: 208,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1772,7 +1539,7 @@ function StepUpRules({ rules = [], onChange }) {
                                         onChange: (e)=>handleNumberInput('BENEFICIARY', 'trustCount', e.target.value)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 468,
+                                        lineNumber: 210,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1780,26 +1547,26 @@ function StepUpRules({ rules = [], onChange }) {
                                         children: "transactions"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 471,
+                                        lineNumber: 213,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 467,
+                                lineNumber: 209,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 465,
+                        lineNumber: 207,
                         columnNumber: 13
                     }, this)),
                     renderRuleCard('DORMANT', 'Dormant Account', 'Trigger step-up for inactive accounts', /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "💤"
                     }, void 0, false, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 477,
+                        lineNumber: 218,
                         columnNumber: 96
                     }, this), /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center gap-3",
@@ -1809,7 +1576,7 @@ function StepUpRules({ rules = [], onChange }) {
                                 children: "Inactivity Days"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 479,
+                                lineNumber: 220,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1823,7 +1590,7 @@ function StepUpRules({ rules = [], onChange }) {
                                         onChange: (e)=>handleNumberInput('DORMANT', 'days', e.target.value)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 481,
+                                        lineNumber: 222,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1831,31 +1598,31 @@ function StepUpRules({ rules = [], onChange }) {
                                         children: "days"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                                        lineNumber: 484,
+                                        lineNumber: 225,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                                lineNumber: 480,
+                                lineNumber: 221,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/StepUpRules.tsx",
-                        lineNumber: 478,
+                        lineNumber: 219,
                         columnNumber: 13
                     }, this))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/risk/StepUpRules.tsx",
-                lineNumber: 375,
+                lineNumber: 120,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/risk/StepUpRules.tsx",
-        lineNumber: 364,
+        lineNumber: 109,
         columnNumber: 5
     }, this);
 }
@@ -1869,225 +1636,6 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
-// 'use client';
-// import { useState } from 'react';
-// // Props: Terima konfigurasi live dari parent agar hasil simulasi AKURAT
-// interface RiskSimulatorProps {
-//   lowThreshold: number;
-//   highThreshold: number;
-//   activeRules: any[]; 
-// }
-// interface RiskResult {
-//   score: number;
-//   level: string;
-//   style: string;
-//   action: string;
-//   breakdown: Array<{ label: string; val: string }>;
-// }
-// export function RiskSimulator({ lowThreshold, highThreshold, activeRules }: RiskSimulatorProps) {
-//   // Input State
-//   const [amount, setAmount] = useState('750');
-//   const [flags, setFlags] = useState({ 
-//     newBen: true, 
-//     newDev: false, 
-//     geo: false, 
-//     dormant: false, 
-//     vpn: false 
-//   });
-//   // Output State
-//   const [result, setResult] = useState<RiskResult | null>(null);
-//   const toggleFlag = (key: keyof typeof flags) => setFlags(p => ({ ...p, [key]: !p[key] }));
-//   // --- LOGIC ENGINE SIMULASI (Manual Run) ---
-//   const runSimulation = () => {
-//     let currentScore = 0;
-//     const breakdown: Array<{ label: string; val: string }> = [];
-//     // Helper untuk mencari rule aktif
-//     const getRule = (type: string) => activeRules.find(r => r.ruleType === type);
-//     // 1. Evaluasi Rule: Amount
-//     // Kita gunakan input user (amount) dibandingkan dengan rule 'AMOUNT'
-//     const amountRule = getRule('AMOUNT');
-//     const inputAmount = parseInt(amount) || 0;
-//     if (amountRule && amountRule.isActive) {
-//         const threshold = amountRule.parameters?.amountThreshold || 0;
-//         if (inputAmount > threshold) {
-//             currentScore += (amountRule.weight || 0);
-//             breakdown.push({ label: `Amount > ${threshold}`, val: `+${amountRule.weight}` });
-//         }
-//     }
-//     // 2. Evaluasi Flags Manual
-//     // Kita cocokkan flag input user dengan Rule yang relevan di database
-//     // New Beneficiary
-//     const benRule = getRule('BENEFICIARY');
-//     if (flags.newBen && benRule && benRule.isActive) {
-//         currentScore += (benRule.weight || 0);
-//         breakdown.push({ label: 'New beneficiary', val: `+${benRule.weight}` });
-//     }
-//     // New Device
-//     const devRule = getRule('NEW_DEVICE');
-//     if (flags.newDev && devRule && devRule.isActive) {
-//         currentScore += (devRule.weight || 0);
-//         breakdown.push({ label: 'New device', val: `+${devRule.weight}` });
-//     }
-//     // Geo Anomaly
-//     const geoRule = getRule('GEO_ANOMALY');
-//     if (flags.geo && geoRule && geoRule.isActive) {
-//         currentScore += (geoRule.weight || 0);
-//         breakdown.push({ label: 'Geographic anomaly', val: `+${geoRule.weight}` });
-//     }
-//     // Dormant Account
-//     const dormantRule = getRule('DORMANT');
-//     if (flags.dormant && dormantRule && dormantRule.isActive) {
-//         currentScore += (dormantRule.weight || 0);
-//         breakdown.push({ label: 'Dormant account', val: `+${dormantRule.weight}` });
-//     }
-//     // Batasi skor maksimal 100
-//     currentScore = Math.min(currentScore, 100);
-//     // Tentukan Level & Action
-//     let level = 'Low Risk';
-//     let style = 'low';
-//     let action = 'Auto-approved';
-//     if (currentScore >= highThreshold) {
-//         level = 'High Risk';
-//         style = 'high';
-//         action = 'Block / Critical Auth';
-//     } else if (currentScore >= lowThreshold) {
-//         level = 'Medium Risk';
-//         style = 'medium';
-//         action = 'Step-Up Required (FIDO2/OTP)';
-//     }
-//     setResult({ score: currentScore, level, style, action, breakdown });
-//   };
-//   return (
-//     <div className="w-[380px] flex flex-col gap-6 sticky h-fit">
-//       {/* SIMULATOR CARD */}
-//       <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[12px] overflow-hidden shadow-sm">
-//         <div className="p-5 border-b border-[var(--border-secondary)]">
-//           <div className="text-[14px] font-semibold text-[var(--text-primary)] flex items-center gap-2">
-//             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-[var(--text-tertiary)]"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-//             Risk Simulator
-//           </div>
-//           <div className="text-[12px] text-[var(--text-tertiary)] mt-0.5">Test your configuration</div>
-//         </div>
-//         <div className="p-5">
-//           {/* Input Amount */}
-//           <div className="mb-4">
-//             <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-1.5 uppercase tracking-wide">Payment Amount</label>
-//             <div className="flex items-center bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] overflow-hidden focus-within:border-[var(--accent)] transition-colors">
-//               <input 
-//                 type="number" 
-//                 className="w-full bg-transparent text-[var(--text-primary)] text-[13px] font-mono px-3 py-2.5 outline-none placeholder-[var(--text-tertiary)]" 
-//                 value={amount} 
-//                 onChange={e => setAmount(e.target.value)} 
-//               />
-//               <span className="px-3 py-2.5 bg-[var(--bg-hover)] text-[var(--text-tertiary)] text-[12px] border-l border-[var(--border-primary)]">USD</span>
-//             </div>
-//           </div>
-//           {/* Scenario Flags */}
-//           <div className="mb-5">
-//             <label className="block text-[12px] font-medium text-[var(--text-secondary)] mb-2 uppercase tracking-wide">Scenario Flags</label>
-//             <div className="flex flex-col gap-2">
-//               {[
-//                 { k: 'newBen' as const, l: 'New beneficiary' },
-//                 { k: 'newDev' as const, l: 'New device' },
-//                 { k: 'geo' as const, l: 'Geographic anomaly' },
-//                 { k: 'dormant' as const, l: 'Dormant account' },
-//                 { k: 'vpn' as const, l: 'VPN/Proxy detected' },
-//               ].map((item) => (
-//                 <div 
-//                     key={item.k} 
-//                     onClick={() => toggleFlag(item.k as keyof typeof flags)} 
-//                     className="flex items-center gap-2.5 p-2.5 bg-[var(--bg-tertiary)] rounded-[6px] cursor-pointer hover:bg-[var(--bg-hover)] transition-all border border-transparent hover:border-[var(--border-primary)]"
-//                 >
-//                   <div className={`w-[18px] h-[18px] border rounded-[4px] flex items-center justify-center transition-all ${flags[item.k as keyof typeof flags] ? 'bg-[var(--accent)] border-[var(--accent)]' : 'border-[var(--border-primary)] bg-[var(--bg-secondary)]'}`}>
-//                     {flags[item.k as keyof typeof flags] && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3 h-3 text-white"><polyline points="20 6 9 17 4 12"/></svg>}
-//                   </div>
-//                   <span className="text-[13px] text-[var(--text-primary)]">{item.l}</span>
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//           {/* Action Button */}
-//           <button 
-//             onClick={runSimulation} 
-//             className="w-full flex items-center justify-center gap-2 py-2.5 bg-[var(--accent)] text-white rounded-[6px] text-[13px] font-medium hover:bg-[var(--accent-hover)] transition-all shadow-md active:scale-[0.98]"
-//           >
-//             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-//             Run Simulation
-//           </button>
-//           {/* Result Card */}
-//           {result && (
-//             <div className={`mt-5 p-4 rounded-[8px] border animate-[slideIn_0.3s_ease-out] ${
-//                 result.style === 'low' ? 'bg-[var(--success-bg)] border-[var(--success-border)]' : 
-//                 result.style === 'medium' ? 'bg-[var(--warning-bg)] border-[var(--warning-border)]' : 
-//                 'bg-[var(--error-bg)] border-[var(--error-border)]'
-//             }`}>
-//                 {/* Result Header */}
-//                 <div className="flex items-center justify-between mb-3 border-b border-[rgba(0,0,0,0.05)] pb-2">
-//                     <span className={`text-[28px] font-bold font-mono leading-none ${
-//                         result.style === 'low' ? 'text-[var(--success)]' : 
-//                         result.style === 'medium' ? 'text-[var(--warning)]' : 'text-[var(--error)]'
-//                     }`}>{result.score}</span>
-//                     <span className={`text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-[20px] ${
-//                         result.style === 'low' ? 'bg-[var(--success)] text-black' : 
-//                         result.style === 'medium' ? 'bg-[var(--warning)] text-black' : 'bg-[var(--error)] text-white'
-//                     }`}>{result.level}</span>
-//                 </div>
-//                 {/* Breakdown List */}
-//                 <div className="space-y-1.5 mb-3 pb-3 border-b border-[rgba(0,0,0,0.05)]">
-//                     <div className="flex justify-between text-[12px]">
-//                         <span className="text-[var(--text-secondary)]">Base score</span>
-//                         <span className="font-mono font-semibold text-[var(--text-primary)]">0</span>
-//                     </div>
-//                     {result.breakdown.length > 0 ? (
-//                         result.breakdown.map((b, i) => (
-//                             <div key={i} className="flex justify-between text-[12px]">
-//                                 <span className="text-[var(--text-secondary)]">{b.label}</span>
-//                                 <span className="font-mono font-semibold text-[var(--error)]">{b.val}</span>
-//                             </div>
-//                         ))
-//                     ) : (
-//                         <div className="text-[12px] text-[var(--text-tertiary)] italic">No risk factors triggered</div>
-//                     )}
-//                 </div>
-//                 {/* Required Action */}
-//                 <div className="text-[13px] text-[var(--text-primary)]">
-//                     <strong className="block mb-1.5 text-[11px] uppercase tracking-wide opacity-70">Required Action</strong>
-//                     <div className="flex items-center gap-2 text-[12px] font-medium">
-//                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-//                         {result.action}
-//                     </div>
-//                 </div>
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//       {/* CONFIG IMPACT CARD (Statistik Dummy / Historical) */}
-//       <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[12px] overflow-hidden shadow-sm">
-//         <div className="p-5 border-b border-[var(--border-secondary)]">
-//           <div className="text-[14px] font-semibold text-[var(--text-primary)] flex items-center gap-2">
-//             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-[var(--text-tertiary)]"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
-//             Configuration Impact
-//           </div>
-//           <div className="text-[12px] text-[var(--text-tertiary)] mt-0.5">Based on last 7 days</div>
-//         </div>
-//         <div className="p-5 space-y-0">
-//             {[
-//                 { l: 'Low risk transactions', v: '68%', c: 'text-[var(--success)]' },
-//                 { l: 'Medium risk (FIDO2)', v: '24%', c: 'text-[var(--warning)]' },
-//                 { l: 'High risk (Step-up)', v: '8%', c: 'text-[var(--error)]' },
-//                 { l: 'Avg. approval time', v: '2.4s', c: 'text-[var(--text-primary)]' },
-//                 { l: 'Step-up success rate', v: '94.2%', c: 'text-[var(--success)]' }
-//             ].map((s, i) => (
-//                 <div key={i} className="flex justify-between items-center text-[12px] py-2.5 border-b border-[var(--border-secondary)] last:border-0 last:pb-0">
-//                     <span className="text-[var(--text-secondary)]">{s.l}</span>
-//                     <span className={`font-mono font-semibold ${s.c}`}>{s.v}</span>
-//                 </div>
-//             ))}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
 'use client';
 ;
 ;
@@ -2095,7 +1643,6 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
     avgTime: '0.00s',
     successRate: '0.0%'
 } }) {
-    // Input State
     const [amount, setAmount] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('750');
     const [flags, setFlags] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
         newBen: true,
@@ -2114,17 +1661,14 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                 ...p,
                 [key]: !p[key]
             }));
-    // --- LOGIC ENGINE SIMULASI ---
     const runSimulation = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(()=>{
         let currentScore = 0;
         const breakdown = [];
         const getRule = (type)=>activeRules.find((r)=>r.ruleType === type);
-        // 1. Evaluasi Rule: Amount (MENDUKUNG TIERS / RANGES)
         const amountRule = getRule('AMOUNT');
         const inputAmount = parseInt(amount) || 0;
         if (amountRule && amountRule.isActive) {
             if (amountRule.parameters?.tiers) {
-                // Logika baru: Mencari tier yang sesuai
                 const tiers = amountRule.parameters.tiers;
                 const matchedTier = tiers.find((t)=>inputAmount >= t.min && inputAmount <= t.max);
                 if (matchedTier) {
@@ -2142,7 +1686,6 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                     });
                 }
             } else {
-                // Logika Fallback (jika DB masih menyimpan versi lama)
                 const threshold = amountRule.parameters?.amountThreshold || 0;
                 if (inputAmount > threshold) {
                     currentScore += amountRule.weight || 0;
@@ -2153,7 +1696,6 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                 }
             }
         }
-        // 2. Evaluasi Flags
         const benRule = getRule('BENEFICIARY');
         if (flags.newBen && benRule && benRule.isActive) {
             currentScore += benRule.weight || 0;
@@ -2228,12 +1770,9 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
         lowThreshold,
         highThreshold
     ]);
-    // Hanya jalankan simulasi sekali pada mount awal
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         runSimulation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    // --- LIVE IMPACT CALCULATION DENGAN DUKUNGAN TIERS ---
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (!historicalTxns || historicalTxns.length === 0) return;
         let lowCount = 0, midCount = 0, highCount = 0;
@@ -2292,19 +1831,19 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                             points: "13 2 3 14 12 14 11 22 21 10 12 10 13 2"
                                         }, void 0, false, {
                                             fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                            lineNumber: 418,
+                                            lineNumber: 161,
                                             columnNumber: 136
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 418,
+                                        lineNumber: 161,
                                         columnNumber: 13
                                     }, this),
                                     "Risk Simulator"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 417,
+                                lineNumber: 160,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2312,13 +1851,13 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                 children: "Test your configuration"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 421,
+                                lineNumber: 164,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                        lineNumber: 416,
+                        lineNumber: 159,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2332,7 +1871,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                         children: "Payment Amount"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 426,
+                                        lineNumber: 169,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2345,7 +1884,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                 onChange: (e)=>setAmount(e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 428,
+                                                lineNumber: 171,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2353,19 +1892,19 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                 children: "USD"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 434,
+                                                lineNumber: 177,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 427,
+                                        lineNumber: 170,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 425,
+                                lineNumber: 168,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2376,7 +1915,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                         children: "Scenario Flags"
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 439,
+                                        lineNumber: 182,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2418,17 +1957,17 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                                 points: "20 6 9 17 4 12"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                                lineNumber: 454,
+                                                                lineNumber: 197,
                                                                 columnNumber: 217
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                            lineNumber: 454,
+                                                            lineNumber: 197,
                                                             columnNumber: 21
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                        lineNumber: 453,
+                                                        lineNumber: 196,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2436,24 +1975,24 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                         children: item.l
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                        lineNumber: 456,
+                                                        lineNumber: 199,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, item.k, true, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 448,
+                                                lineNumber: 191,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 440,
+                                        lineNumber: 183,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 438,
+                                lineNumber: 181,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2470,19 +2009,19 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                             points: "5 3 19 12 5 21 5 3"
                                         }, void 0, false, {
                                             fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                            lineNumber: 466,
+                                            lineNumber: 209,
                                             columnNumber: 108
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 466,
+                                        lineNumber: 209,
                                         columnNumber: 13
                                     }, this),
                                     "Run Simulation"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 462,
+                                lineNumber: 205,
                                 columnNumber: 11
                             }, this),
                             result && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2496,7 +2035,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                 children: result.score
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 477,
+                                                lineNumber: 220,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2504,13 +2043,13 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                 children: result.level
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 481,
+                                                lineNumber: 224,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 476,
+                                        lineNumber: 219,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2524,7 +2063,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                         children: "Base score"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                        lineNumber: 489,
+                                                        lineNumber: 232,
                                                         columnNumber: 25
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2532,13 +2071,13 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                         children: "0"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                        lineNumber: 490,
+                                                        lineNumber: 233,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 488,
+                                                lineNumber: 231,
                                                 columnNumber: 21
                                             }, this),
                                             result.breakdown.length > 0 && result.breakdown.map((b, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2549,7 +2088,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                             children: b.label
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                            lineNumber: 494,
+                                                            lineNumber: 237,
                                                             columnNumber: 29
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2557,19 +2096,19 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                             children: b.val
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                            lineNumber: 495,
+                                                            lineNumber: 238,
                                                             columnNumber: 29
                                                         }, this)
                                                     ]
                                                 }, i, true, {
                                                     fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                    lineNumber: 493,
+                                                    lineNumber: 236,
                                                     columnNumber: 25
                                                 }, this))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 487,
+                                        lineNumber: 230,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2580,7 +2119,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                 children: "Required Actions:"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 501,
+                                                lineNumber: 244,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2598,48 +2137,48 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                                     points: "20 6 9 17 4 12"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                                    lineNumber: 505,
+                                                                    lineNumber: 248,
                                                                     columnNumber: 165
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                                lineNumber: 505,
+                                                                lineNumber: 248,
                                                                 columnNumber: 33
                                                             }, this),
                                                             act
                                                         ]
                                                     }, index, true, {
                                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                        lineNumber: 504,
+                                                        lineNumber: 247,
                                                         columnNumber: 29
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 502,
+                                                lineNumber: 245,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 500,
+                                        lineNumber: 243,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 471,
+                                lineNumber: 214,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                        lineNumber: 424,
+                        lineNumber: 167,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                lineNumber: 415,
+                lineNumber: 158,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2662,34 +2201,34 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                                 d: "M12 20V10"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 520,
+                                                lineNumber: 262,
                                                 columnNumber: 136
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                 d: "M18 20V4"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 520,
+                                                lineNumber: 262,
                                                 columnNumber: 157
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                 d: "M6 20v-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                                lineNumber: 520,
+                                                lineNumber: 262,
                                                 columnNumber: 177
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 520,
+                                        lineNumber: 262,
                                         columnNumber: 13
                                     }, this),
                                     "Configuration Impact"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 519,
+                                lineNumber: 261,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2697,13 +2236,13 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                 children: "Based on Live DB Rules Evaluation"
                             }, void 0, false, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 523,
+                                lineNumber: 265,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                        lineNumber: 518,
+                        lineNumber: 260,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2742,7 +2281,7 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                         children: s.l
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 534,
+                                        lineNumber: 276,
                                         columnNumber: 21
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2750,30 +2289,30 @@ function RiskSimulator({ lowThreshold, highThreshold, activeRules, historicalTxn
                                         children: s.v
                                     }, void 0, false, {
                                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                        lineNumber: 535,
+                                        lineNumber: 277,
                                         columnNumber: 21
                                     }, this)
                                 ]
                             }, i, true, {
                                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                                lineNumber: 533,
+                                lineNumber: 275,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/components/risk/RiskSimulation.tsx",
-                        lineNumber: 525,
+                        lineNumber: 267,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/risk/RiskSimulation.tsx",
-                lineNumber: 517,
+                lineNumber: 259,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/risk/RiskSimulation.tsx",
-        lineNumber: 413,
+        lineNumber: 157,
         columnNumber: 5
     }, this);
 }
@@ -2785,95 +2324,9 @@ __turbopack_context__.s([
     "adminService",
     ()=>adminService
 ]);
-// import axios from 'axios';
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
-// export const adminService = {
-//   // --- 1. AMOUNT THRESHOLDS ---
-//     getAmountLimits: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/limits`);
-//         return res.data;
-//     },
-//     updateAmountLimit: async (id: string, data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/limits/${id}`, data);
-//         return res.data;
-//     },
-//     createAmountLimit: async (data: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/limits`, data);
-//         return res.data;
-//     },
-//     deleteAmountLimit: async (id: string) => {
-//         const res = await axios.delete(`${API_URL}/api/admin/limits/${id}`);
-//         return res.data;
-//     },
-//     getRiskRules: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-rules`);
-//         return res.data;
-//     },
-//     // [POST] Simpan Rules (Batch Update) - INI YANG BARU
-//     saveRiskConfigBatch: async (rules: any[]) => {
-//         const res = await axios.post(`${API_URL}/api/admin/risk-rules/batch-update`, { rules });
-//         return res.data;
-//     },
-//     // [GET] Thresholds
-//     getRiskConfig: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-config`);
-//         return res.data;
-//     },
-//     // [PUT] Update Thresholds
-//     updateRiskConfig: async (data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/risk-config`, data);
-//         return res.data;
-//     },
-//     // --- 3. AUTH POLICIES ---
-//     getPolicies: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies`);
-//         return res.data;
-//     },
-//     upsertPolicy: async (payload: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/policies`, payload);
-//         return res.data;
-//     },
-//     getPolicyAuditLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies/audit`);
-//         return res.data;
-//     },
-//     // --- 4. INVESTIGATION & LOGS ---
-//     getTransactions: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions`);
-//         return res.data;
-//     },
-//     getTransactionDetail: async (id: string) => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions/${id}`);
-//         return res.data;
-//     }
-//     ,
-//     getAuthLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/logs`);
-//         return res.data;
-//     },
-//     getDashboardStats: async (range: string) => {
-//     const res = await axios.get(`${API_URL}/api/admin/dashboard`, { 
-//         params: { timeRange: range } 
-//     });
-//     return res.data;
-//     },
-//     // 1. Fetch Evidence (Cepat)    
-//     async getTransactionEvidence(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/evidence`);
-//         if (!res.ok) throw new Error('Failed to load evidence');
-//         return res.json();
-//     },
-//     // 2. Fetch Analysis (Lambat)
-//     async getInvestigationReport(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/investigate`);
-//         if (!res.ok) throw new Error('Failed to load analysis');
-//         return res.json();
-//     }
-// };
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/apiClient.ts [app-ssr] (ecmascript)");
 ;
 const adminService = {
-    // --- 1. AMOUNT THRESHOLDS ---
     getAmountLimits: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/limits`);
         return res.data;
@@ -2890,23 +2343,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].delete(`/api/admin/limits/${id}`);
         return res.data;
     },
-    // --- 2. RISK CONFIG & RULES ---
-    // getRiskRules: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-rules`);
-    //     return res.data;
-    // },
-    // saveRiskConfigBatch: async (rules: any[]) => {
-    //     const res = await apiClient.post(`/api/admin/risk-rules/batch-update`, { rules });
-    //     return res.data;
-    // },
-    // getRiskConfig: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-config`);
-    //     return res.data;
-    // },
-    // updateRiskConfig: async (data: any) => {
-    //     const res = await apiClient.put(`/api/admin/risk-config`, data);
-    //     return res.data;
-    // },
     getRiskRules: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/risk-rules`);
         return res.data;
@@ -2916,18 +2352,15 @@ const adminService = {
         return res.data;
     },
     saveRiskConfigBatch: async (rulesPayload)=>{
-        // Cukup kirimkan object { rules: rulesPayload } langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-rules', {
             rules: rulesPayload
         });
         return res.data;
     },
     updateRiskConfig: async (payload)=>{
-        // Cukup kirimkan variable payload langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-config', payload);
         return res.data;
     },
-    // --- 3. AUTH POLICIES ---
     getPolicies: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies`);
         return res.data;
@@ -2940,7 +2373,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies/audit`);
         return res.data;
     },
-    // --- 4. INVESTIGATION & LOGS ---
     getTransactions: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions`);
         return res.data;
@@ -2984,178 +2416,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$risk$2f$RiskTh
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$risk$2f$StepUpRules$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/risk/StepUpRules.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$risk$2f$RiskSimulation$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/risk/RiskSimulation.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/adminService.ts [app-ssr] (ecmascript)");
-// 'use client';
-// import { useState, useEffect } from 'react';
-// import { RiskThresholds } from '@/components/risk/RiskThresholds';
-// import { StepUpRules } from '@/components/risk/StepUpRules';
-// import { RiskSimulator } from '@/components/risk/RiskSimulation';
-// import { adminService } from '@/services/adminService';
-// import { rule } from 'postcss';
-// // Default rules agar UI tidak blank saat loading atau jika DB kosong
-// const defaultRules = [
-//   { ruleType: 'AMOUNT', ruleName: 'Payment Amount Threshold', isActive: true, weight: 20, parameters: { amountThreshold: 500 } },
-//   { ruleType: 'NEW_DEVICE', ruleName: 'First Payment from Device', isActive: false, weight: 30, parameters: { days: 90 } },
-//   { ruleType: 'GEO_ANOMALY', ruleName: 'Geographic Anomaly', isActive: false, weight: 25, parameters: { level: 'country' } },
-//   { ruleType: 'BENEFICIARY', ruleName: 'New Beneficiary', isActive: false, weight: 15, parameters: { trustCount: 3 } },
-//   { ruleType: 'DORMANT', ruleName: 'Dormant Account', isActive: false, weight: 40, parameters: { days: 180 } },
-//   { ruleType: 'VELOCITY_LIMIT', ruleName: 'High Frequency Transactions', isActive: false, weight: 35, parameters: { maxTransactions: 5, timeWindowMinutes: 10 } },
-// ];
-// export default function RiskConfigPage() {
-//   const [lowThreshold, setLowThreshold] = useState(30);
-//   const [highThreshold, setHighThreshold] = useState(60);
-//   // Mulai dengan defaultRules agar UI langsung tampil (Skeleton effect)
-//   const [rules, setRules] = useState<any[]>(defaultRules);
-//   const [toast, setToast] = useState<string | null>(null);
-//   const [isLoading, setIsLoading] = useState(true);
-//   // 1. LOAD DATA DARI DB SAAT MOUNT
-//   useEffect(() => {
-//     async function fetchData() {
-//       try {
-//         // Fetch Parallel: Rules & Thresholds
-//         const [apiRules, config] = await Promise.all([
-//             adminService.getRiskRules(),
-//             adminService.getRiskConfig()
-//         ]);
-//         console.log("API Rules Loaded:", apiRules);
-//         // MAPPING DATA: API (riskScore) -> UI (weight)
-//         if (Array.isArray(apiRules) && apiRules.length > 0) {
-//              const uiRules = apiRules.map((r: any) => ({
-//                 id: r.id,
-//                 ruleType: r.ruleType,
-//                 ruleName: r.ruleName,
-//                 isActive: r.isActive,
-//                 // UI pakai 'weight', DB pakai 'riskScore'
-//                 weight: r.riskScore ?? r.weight ?? 0,
-//                 // Pastikan parameters adalah object
-//                 parameters: typeof r.parameters === 'string' ? JSON.parse(r.parameters) : (r.parameters || {})
-//             }));
-//             // Merge dengan defaultRules untuk memastikan urutan dan rule yang mungkin belum ada di DB tetap tampil
-//             const mergedRules = defaultRules.map(def => {
-//                 const found = uiRules.find(r => r.ruleType === def.ruleType);
-//                 return found ? { ...def, ...found } : def;
-//             });
-//             setRules(mergedRules);
-//         }
-//         // Set Thresholds
-//         if (config) {
-//              setLowThreshold(config.lowScore ?? 30);
-//              setHighThreshold(config.highScore ?? 60);
-//         }
-//       } catch (err) {
-//         console.error("Failed to load risk config:", err);
-//         showToast("Failed to connect to server. Using default configuration.");
-//       } finally {
-//         setIsLoading(false);
-//       }
-//     }
-//     fetchData();
-//   }, []);
-//   // Helper Toast
-//   const showToast = (msg: string) => {
-//     setToast(msg);
-//     setTimeout(() => setToast(null), 3000);
-//   };
-//   // 2. HANDLE LOCAL CHANGES (Update State UI)
-//   const handleRulesChange = (updatedRules: any[]) => {
-//     setRules(updatedRules);
-//   };
-//   const handleLowChange = (val: number) => setLowThreshold(val);
-//   const handleHighChange = (val: number) => setHighThreshold(val);
-//   // 3. SAVE DATA KE DB (Batch Update)
-//   const handleSave = async () => {
-//     try {
-//         // Mapping Balik: UI (weight) -> Backend (riskScore)
-//         const dbPayload = rules.map(r => ({
-//             id: r.id, 
-//             ruleType: r.ruleType,
-//             ruleName: r.ruleName || r.ruleType,
-//             riskScore: r.weight,  // Kembalikan ke format DB
-//             isActive: r.isActive,
-//             parameters: r.parameters
-//         }));
-//         // Simpan Rules
-//         await adminService.saveRiskConfigBatch(dbPayload);
-//         // Simpan Thresholds (Opsional: buat endpoint terpisah jika perlu)
-//         await adminService.updateRiskConfig({ lowScore: lowThreshold, highScore: highThreshold });
-//         showToast('Configuration saved successfully!');
-//         console.log("Configuration saved to DB");
-//     } catch (e) {
-//         console.error("Save failed:", e);
-//         showToast('Failed to save configuration');
-//     }
-//   };
-//   return (
-//     <div className="flex flex-col h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-[family-name:var(--font-inter)] overflow-hidden">
-//       {/* Header (Fixed Top) */}
-//       <header className="px-6 py-3 border-b border-[var(--border-secondary)] bg-[var(--bg-secondary)] flex justify-between items-center shrink-0 h-[60px]">
-//            <div className="flex items-center gap-4">
-//              <div className="flex items-center gap-2 text-sm">
-//                 <span className="text-[var(--text-tertiary)]">Security</span>
-//                 <span className="text-[var(--text-muted)]">/</span>
-//                 <span className="font-medium text-[var(--text-primary)]">Risk Configuration</span>
-//              </div>
-//              {isLoading && <span className="text-xs text-[var(--text-tertiary)] animate-pulse ml-2">Syncing...</span>}
-//            </div>
-//            <div className="flex items-center gap-3">
-//              <button 
-//                 onClick={() => { setRules(defaultRules); showToast('Defaults restored (unsaved)'); }} 
-//                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-md)] text-[13px] font-medium bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-primary)] hover:bg-[var(--bg-hover)] transition-all"
-//              >
-//                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-//                 Reset to Defaults
-//              </button>
-//              {/* Tombol Save memanggil handleSave API */}
-//              <button 
-//                 onClick={handleSave} 
-//                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-md)] text-[13px] font-medium bg-[var(--success)] text-black hover:bg-[#22c55e] transition-all shadow-sm"
-//              >
-//                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-//                 Save Configuration
-//              </button>
-//            </div>
-//       </header>
-//       {/* Content Layout (Scrollable Area) */}
-//       <div className="flex-1 overflow-auto p-6 custom-scrollbar">
-//           <div className="flex gap-6  mx-auto h-full">
-//               {/* Left Column (Main Config) */}
-//               <div className="flex-1 min-w-0 space-y-6">
-//                   {/* Thresholds Component */}
-//                   <RiskThresholds 
-//                       lowThreshold={lowThreshold} 
-//                       highThreshold={highThreshold}
-//                       onLowChange={handleLowChange}
-//                       onHighChange={handleHighChange}
-//                   />
-//                   {/* Rules Component (Editable) */}
-//                   <StepUpRules 
-//                       rules={rules} 
-//                       onChange={handleRulesChange} 
-//                   />
-//               </div>
-//               {/* Right Column (Simulator - Sticky) */}
-//               <div className="w-[400px] xl:w-[450px] shrink-0">
-//                   <div className="sticky top-0">
-//                       <RiskSimulator 
-//                           lowThreshold={lowThreshold} 
-//                           highThreshold={highThreshold} 
-//                           activeRules={rules}
-//                       />
-//                   </div>
-//               </div>
-//           </div>
-//       </div>
-//       {/* Toast Notification */}
-//       {toast && (
-//         <div className="fixed bottom-6 right-6 bg-[var(--success-bg)] border border-[var(--success-border)] text-[var(--text-primary)] px-4 py-3 rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.5)] z-50 flex items-center gap-3 animate-[slideIn_0.3s_ease-out]">
-//             <div className="w-5 h-5 rounded-full bg-[var(--success)] text-black flex items-center justify-center">
-//                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3"><polyline points="20 6 9 17 4 12"/></svg>
-//             </div>
-//             <span className="text-[13px] font-medium">{toast}</span>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
 'use client';
 ;
 ;
@@ -3163,7 +2423,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$
 ;
 ;
 ;
-// Default rules agar UI tidak blank saat loading atau jika DB kosong
 const defaultRules = [
     {
         ruleType: 'AMOUNT',
@@ -3222,14 +2481,12 @@ const defaultRules = [
     }
 ];
 function RiskConfigPage() {
-    // --- PENAMBAHAN STATE UNTUK TAB ---
     const [segment, setSegment] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('consumer');
     const [historicalTxns, setHistoricalTxns] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [realMetrics, setRealMetrics] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
         avgTime: '0.00s',
         successRate: '0.0%'
     });
-    // --- STATE UNTUK MENAMPUNG SEMUA DATA DARI DB ---
     const [allRulesData, setAllRulesData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [allConfigsData, setAllConfigsData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [lowThreshold, setLowThreshold] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(30);
@@ -3237,46 +2494,22 @@ function RiskConfigPage() {
     const [rules, setRules] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(defaultRules);
     const [toast, setToast] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
-    // 1. FUNGSI FETCH DATA GLOBAL
-    // const fetchAllData = async () => {
-    //   setIsLoading(true);
-    //   try {
-    //     // Ambil seluruh data sekaligus (Tanpa Segment di URL)
-    //     const [apiRules, apiConfigs] = await Promise.all([
-    //         adminService.getRiskRules(),
-    //         adminService.getRiskConfig()
-    //     ]);
-    //     if (Array.isArray(apiRules)) setAllRulesData(apiRules);
-    //     if (Array.isArray(apiConfigs)) setAllConfigsData(apiConfigs);
-    //   } catch (err) {
-    //     console.error("Failed to load risk config:", err);
-    //     showToast("Failed to connect to server. Using default configuration.");
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // };
     const fetchAllData = async ()=>{
         setIsLoading(true);
         try {
             const [apiRules, apiConfigs, dashboardStats] = await Promise.all([
                 __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].getRiskRules(),
                 __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].getRiskConfig(),
-                // Ambil data dashboard asli
                 __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].getDashboardStats ? __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].getDashboardStats('7d').catch(()=>null) : Promise.resolve(null)
             ]);
             if (Array.isArray(apiRules)) setAllRulesData(apiRules);
             if (Array.isArray(apiConfigs)) setAllConfigsData(apiConfigs);
-            // --- BACA DATA ASLI DARI JSON BACKEND ---
             if (dashboardStats && dashboardStats.metrics) {
-                // Gunakan 'totalTx' persis seperti di JSON Anda
                 const totalRealTx = dashboardStats.metrics.totalTx || 0;
-                // Simpan metrik asli untuk ditampilkan di UI
                 setRealMetrics({
                     avgTime: dashboardStats.metrics.avgTime || '0.00s',
                     successRate: (dashboardStats.metrics.successRate || '0') + '%'
                 });
-                // Buat data sampel berdasarkan JUMLAH ASLI transaksi (24 transaksi)
-                // Ini diperlukan agar slider bisa menghitung % Low/Mid/High secara interaktif
                 const sampleTxns = Array.from({
                     length: totalRealTx
                 }, (_, i)=>({
@@ -3294,14 +2527,11 @@ function RiskConfigPage() {
             setIsLoading(false);
         }
     };
-    // 2. LOAD DATA SEKALI SAAT KOMPONEN MOUNT
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         fetchAllData();
     }, []);
-    // 3. FILTER DATA SAAT TAB SEGMENT BERUBAH
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const currentSegment = segment.toUpperCase();
-        // Filter Thresholds
         const configForSegment = allConfigsData.find((c)=>(c.segment || '').toUpperCase() === currentSegment);
         if (configForSegment) {
             setLowThreshold(configForSegment.lowScore ?? 30);
@@ -3310,13 +2540,11 @@ function RiskConfigPage() {
             setLowThreshold(30);
             setHighThreshold(60);
         }
-        // Filter Rules
         const rulesForSegment = allRulesData.filter((r)=>(r.segment || '').toUpperCase() === currentSegment);
         if (rulesForSegment.length > 0) {
             const mergedRules = defaultRules.map((def)=>{
                 const found = rulesForSegment.find((r)=>r.ruleType === def.ruleType);
                 const mergedParams = found?.parameters && Object.keys(found.parameters).length > 0 ? found.parameters : def.parameters;
-                // [PERBAIKAN KRITIS]: Pastikan `riskScore` dari DB dipetakan menjadi `weight` untuk UI
                 if (found) {
                     return {
                         ...def,
@@ -3336,40 +2564,32 @@ function RiskConfigPage() {
         allRulesData,
         allConfigsData
     ]);
-    // Helper Toast
     const showToast = (msg)=>{
         setToast(msg);
         setTimeout(()=>setToast(null), 3000);
     };
-    // 4. HANDLE LOCAL CHANGES (Update State UI)
     const handleRulesChange = (updatedRules)=>{
         setRules(updatedRules);
     };
     const handleLowChange = (val)=>setLowThreshold(val);
     const handleHighChange = (val)=>setHighThreshold(val);
-    // 5. SAVE DATA KE DB
     const handleSave = async ()=>{
         try {
-            // Mapping Balik: UI (weight) -> Backend (riskScore)
             const dbPayload = rules.map((r)=>({
-                    // CATATAN: 'id' sengaja dihilangkan agar DB tidak bingung dan bergantung pada ruleType
                     ruleType: r.ruleType,
                     ruleName: r.ruleName || r.ruleType,
                     riskScore: r.weight,
                     isActive: r.isActive,
                     parameters: r.parameters,
-                    segment: segment.toUpperCase() // Menyisipkan segment agar backend tahu ini milik siapa
+                    segment: segment.toUpperCase()
                 }));
-            // Simpan Rules
             await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].saveRiskConfigBatch(dbPayload);
-            // Simpan Thresholds
             await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].updateRiskConfig({
                 lowScore: lowThreshold,
                 highScore: highThreshold,
                 segment: segment.toUpperCase()
             });
             showToast('Configuration saved successfully!');
-            // CATATAN: Tarik data terbaru setelah sukses menyimpan!
             await fetchAllData();
         } catch (e) {
             console.error("Save failed:", e);
@@ -3393,7 +2613,7 @@ function RiskConfigPage() {
                                         children: "Security"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 398,
+                                        lineNumber: 159,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3401,7 +2621,7 @@ function RiskConfigPage() {
                                         children: "/"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 399,
+                                        lineNumber: 160,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3409,13 +2629,13 @@ function RiskConfigPage() {
                                         children: "Risk Configuration"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 400,
+                                        lineNumber: 161,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 397,
+                                lineNumber: 158,
                                 columnNumber: 14
                             }, this),
                             isLoading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3423,13 +2643,13 @@ function RiskConfigPage() {
                                 children: "Syncing..."
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 402,
+                                lineNumber: 163,
                                 columnNumber: 28
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                        lineNumber: 396,
+                        lineNumber: 157,
                         columnNumber: 12
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3453,27 +2673,27 @@ function RiskConfigPage() {
                                                 d: "M1 4v6h6"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                                lineNumber: 410,
+                                                lineNumber: 171,
                                                 columnNumber: 112
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                 d: "M3.51 15a9 9 0 1 0 2.13-9.36L1 10"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                                lineNumber: 410,
+                                                lineNumber: 171,
                                                 columnNumber: 132
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 410,
+                                        lineNumber: 171,
                                         columnNumber: 17
                                     }, this),
                                     "Reset to Defaults"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 406,
+                                lineNumber: 167,
                                 columnNumber: 14
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3491,46 +2711,46 @@ function RiskConfigPage() {
                                                 d: "M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                                lineNumber: 418,
+                                                lineNumber: 178,
                                                 columnNumber: 112
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                 points: "17 21 17 13 7 13 7 21"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                                lineNumber: 418,
+                                                lineNumber: 178,
                                                 columnNumber: 187
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                 points: "7 3 7 8 15 8"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                                lineNumber: 418,
+                                                lineNumber: 178,
                                                 columnNumber: 229
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 418,
+                                        lineNumber: 178,
                                         columnNumber: 17
                                     }, this),
                                     "Save Configuration"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 414,
+                                lineNumber: 174,
                                 columnNumber: 14
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                        lineNumber: 405,
+                        lineNumber: 166,
                         columnNumber: 12
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                lineNumber: 395,
+                lineNumber: 156,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3554,7 +2774,7 @@ function RiskConfigPage() {
                                                 d: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                                lineNumber: 433,
+                                                lineNumber: 191,
                                                 columnNumber: 114
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -3563,20 +2783,20 @@ function RiskConfigPage() {
                                                 r: "4"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                                lineNumber: 433,
+                                                lineNumber: 191,
                                                 columnNumber: 167
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 433,
+                                        lineNumber: 191,
                                         columnNumber: 19
                                     }, this),
                                     "Consumer Banking"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 429,
+                                lineNumber: 187,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3593,25 +2813,25 @@ function RiskConfigPage() {
                                             d: "M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                            lineNumber: 440,
+                                            lineNumber: 198,
                                             columnNumber: 114
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 440,
+                                        lineNumber: 198,
                                         columnNumber: 19
                                     }, this),
                                     "Corporate Banking"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 436,
+                                lineNumber: 194,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                        lineNumber: 428,
+                        lineNumber: 186,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3627,7 +2847,7 @@ function RiskConfigPage() {
                                         onHighChange: handleHighChange
                                     }, `thresh-${segment}`, false, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 451,
+                                        lineNumber: 206,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$risk$2f$StepUpRules$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["StepUpRules"], {
@@ -3635,13 +2855,13 @@ function RiskConfigPage() {
                                         onChange: handleRulesChange
                                     }, `rules-${segment}`, false, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 460,
+                                        lineNumber: 214,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 449,
+                                lineNumber: 205,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3656,29 +2876,29 @@ function RiskConfigPage() {
                                         realMetrics: realMetrics
                                     }, `sim-${segment}`, false, {
                                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                        lineNumber: 471,
+                                        lineNumber: 223,
                                         columnNumber: 23
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                    lineNumber: 469,
+                                    lineNumber: 222,
                                     columnNumber: 19
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 468,
+                                lineNumber: 221,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                        lineNumber: 446,
+                        lineNumber: 203,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                lineNumber: 425,
+                lineNumber: 184,
                 columnNumber: 7
             }, this),
             toast && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3696,17 +2916,17 @@ function RiskConfigPage() {
                                 points: "20 6 9 17 4 12"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                                lineNumber: 488,
+                                lineNumber: 239,
                                 columnNumber: 114
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                            lineNumber: 488,
+                            lineNumber: 239,
                             columnNumber: 17
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                        lineNumber: 487,
+                        lineNumber: 238,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3714,19 +2934,19 @@ function RiskConfigPage() {
                         children: toast
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                        lineNumber: 490,
+                        lineNumber: 241,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/risk-config/page.tsx",
-                lineNumber: 486,
+                lineNumber: 237,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(admin)/risk-config/page.tsx",
-        lineNumber: 392,
+        lineNumber: 154,
         columnNumber: 5
     }, this);
 }

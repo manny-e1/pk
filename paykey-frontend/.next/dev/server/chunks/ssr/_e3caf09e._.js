@@ -18,7 +18,7 @@ function ChannelTabs({ current, onChange }) {
         {
             id: 'mobile',
             label: 'Mobile'
-        } // Sesuai backend kita
+        }
     ];
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex gap-[2px] mb-5",
@@ -40,7 +40,7 @@ function ChannelTabs({ current, onChange }) {
                 children: tab.label
             }, tab.id, false, {
                 fileName: "[project]/components/policy/ChannelTabs.tsx",
-                lineNumber: 26,
+                lineNumber: 23,
                 columnNumber: 11
             }, this);
         })
@@ -61,42 +61,35 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 'use client';
 ;
-// Helper: Format Durasi (Detik ke Menit/Jam)
 const formatDuration = (seconds)=>{
     if (!seconds) return '0s';
     if (seconds < 60) return `${seconds}s`;
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
     return `${Math.floor(seconds / 3600)}h`;
 };
-// Helper: Format User Verification
 const formatUV = (uv, cache)=>{
     if (uv === 'discouraged') return 'UP only';
     if (uv === 'preferred') return cache > 0 ? `Preferred (${cache}s)` : 'Preferred';
     return cache > 0 ? `Required (${cache}s)` : 'Required (fresh)';
 };
 function PolicyCard({ risk, data, onEdit, isCorporate }) {
-    // Konfigurasi Style Badge & Warna Indikator
     const config = {
         low: {
             label: 'Low Risk',
             dotColor: 'bg-[var(--success)]',
-            // Style Badge: Pill Shape, Success BG
             badgeClass: 'bg-[var(--success-bg)] text-[var(--success)]'
         },
         medium: {
             label: 'Medium Risk',
             dotColor: 'bg-[var(--warning)]',
-            // Style Badge: Pill Shape, Warning BG
             badgeClass: 'bg-[var(--warning-bg)] text-[var(--warning)]'
         },
         high: {
             label: 'High Risk',
             dotColor: 'bg-[var(--error)]',
-            // Style Badge: Pill Shape, Error BG
             badgeClass: 'bg-[var(--error-bg)] text-[var(--error)]'
         }
     };
-    // Fallback ke 'low' jika risk tidak dikenali
     const c = config[risk] || config.low;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[12px] overflow-hidden hover:border-[var(--border-secondary)] transition-colors flex flex-col h-full shadow-sm",
@@ -111,7 +104,7 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                                 className: `w-2 h-2 rounded-full ${c.dotColor} shadow-[0_0_8px_rgba(0,0,0,0.2)]`
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/PolicyCard.tsx",
-                                lineNumber: 59,
+                                lineNumber: 50,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -119,13 +112,13 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                                 children: c.label
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/PolicyCard.tsx",
-                                lineNumber: 60,
+                                lineNumber: 51,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 57,
+                        lineNumber: 49,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -133,13 +126,13 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                         children: risk
                     }, void 0, false, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 64,
+                        lineNumber: 54,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/policy/PolicyCard.tsx",
-                lineNumber: 56,
+                lineNumber: 48,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -150,7 +143,7 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                         value: formatUV(data.userVerification, data.uvCache)
                     }, void 0, false, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 71,
+                        lineNumber: 60,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Row, {
@@ -159,7 +152,7 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                         valClass: data.requireStepUp ? 'text-[var(--warning)]' : 'text-[var(--success)]'
                     }, void 0, false, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 73,
+                        lineNumber: 62,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Row, {
@@ -167,7 +160,7 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                         value: data.maxAttempts
                     }, void 0, false, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 79,
+                        lineNumber: 68,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Row, {
@@ -176,7 +169,7 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                         mono: true
                     }, void 0, false, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 81,
+                        lineNumber: 70,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Row, {
@@ -185,7 +178,7 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                         mono: true
                     }, void 0, false, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 83,
+                        lineNumber: 72,
                         columnNumber: 9
                     }, this),
                     isCorporate && data.dualAuth && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Row, {
@@ -194,13 +187,13 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                         valClass: "text-[var(--accent)]"
                     }, void 0, false, {
                         fileName: "[project]/components/policy/PolicyCard.tsx",
-                        lineNumber: 87,
+                        lineNumber: 75,
                         columnNumber: 12
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/policy/PolicyCard.tsx",
-                lineNumber: 70,
+                lineNumber: 59,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -220,42 +213,41 @@ function PolicyCard({ risk, data, onEdit, isCorporate }) {
                                     d: "M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/PolicyCard.tsx",
-                                    lineNumber: 98,
+                                    lineNumber: 85,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                     d: "M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/PolicyCard.tsx",
-                                    lineNumber: 99,
+                                    lineNumber: 86,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/PolicyCard.tsx",
-                            lineNumber: 97,
+                            lineNumber: 84,
                             columnNumber: 11
                         }, this),
                         "Edit"
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/PolicyCard.tsx",
-                    lineNumber: 93,
+                    lineNumber: 80,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/policy/PolicyCard.tsx",
-                lineNumber: 92,
+                lineNumber: 79,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/policy/PolicyCard.tsx",
-        lineNumber: 53,
+        lineNumber: 46,
         columnNumber: 5
     }, this);
 }
-// Helper Component untuk Baris Data
 const Row = ({ label, value, mono, valClass })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex justify-between items-center py-2 border-b border-[var(--border-primary)] border-dashed last:border-0 last:border-b-0",
         children: [
@@ -264,7 +256,7 @@ const Row = ({ label, value, mono, valClass })=>/*#__PURE__*/ (0, __TURBOPACK__i
                 children: label
             }, void 0, false, {
                 fileName: "[project]/components/policy/PolicyCard.tsx",
-                lineNumber: 111,
+                lineNumber: 97,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -272,13 +264,13 @@ const Row = ({ label, value, mono, valClass })=>/*#__PURE__*/ (0, __TURBOPACK__i
                 children: value
             }, void 0, false, {
                 fileName: "[project]/components/policy/PolicyCard.tsx",
-                lineNumber: 112,
+                lineNumber: 98,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/components/policy/PolicyCard.tsx",
-        lineNumber: 110,
+        lineNumber: 96,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 }),
@@ -290,162 +282,22 @@ __turbopack_context__.s([
     ()=>ComparisonTable
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
-// 'use client';
-// export const ComparisonTable = ({ segment, channel, policies }: any) => {
-//   const risks = ['low', 'medium', 'high'];
-//   const p = policies?.[segment]?.[channel];
-//   // Helper konversi waktu (detik -> menit/jam)
-//   const formatTime = (seconds: number) => {
-//     if (!seconds) return '';
-//     if (seconds < 60) return `${seconds}s`;
-//     if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
-//     return `${Math.floor(seconds / 3600)}h`;
-//   };
-//   // Badge User Verification
-//   const formatUVBadge = (uv: string, cache: number) => {
-//     if (!uv) return <span className="text-[var(--text-tertiary)]">—</span>;
-//     let label = '';
-//     let styleClass = '';
-//     if (uv === 'preferred') {
-//       // Blue / Accent
-//       const timeStr = cache > 0 ? ` (${formatTime(cache)})` : '';
-//       label = `Preferred${timeStr}`;
-//       // FIX: Gunakan var(--accent-bg) yang baru ditambahkan
-//       styleClass = 'bg-[var(--accent-bg)] text-[var(--accent)]';
-//     } else if (uv === 'required') {
-//       // Orange / Warning
-//       const timeStr = cache > 0 ? ` (${formatTime(cache)})` : '';
-//       label = `Required${timeStr}`;
-//       // FIX: Gunakan var(--warning-bg) sesuai globals.css
-//       styleClass = 'bg-[var(--warning-bg)] text-[var(--warning)]';
-//     } else {
-//       // Green / Success (UP Only)
-//       label = 'UP Only';
-//       // FIX: Gunakan var(--success-bg) sesuai globals.css
-//       styleClass = 'bg-[var(--success-bg)] text-[var(--success)]';
-//     }
-//     return (
-//         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[20px] text-xs font-medium whitespace-nowrap ${styleClass}`}>
-//             {label}
-//         </span>
-//     );
-//   };
-//   // Badge Lockout Action
-//   const formatLockoutBadge = (action: string) => {
-//     if (!action) return <span className="text-[var(--text-tertiary)]">—</span>;
-//     let label = action.replace('_', ' '); 
-//     let styleClass = '';
-//     switch (action) {
-//         case 'soft_lock':
-//             // Warning
-//             styleClass = 'bg-[var(--warning-bg)] text-[var(--warning)]';
-//             label = 'Soft Lock';
-//             break;
-//         case 'suspend_device':
-//         case 'suspend_account':
-//         case 'hard_lock':
-//             // Error
-//             styleClass = 'bg-[var(--error-bg)] text-[var(--error)]';
-//             label = label.charAt(0).toUpperCase() + label.slice(1);
-//             break;
-//         default:
-//             // Neutral
-//             styleClass = 'bg-[var(--bg-tertiary)] text-[var(--text-secondary)]';
-//             break;
-//     }
-//     return (
-//         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[20px] text-xs font-medium whitespace-nowrap capitalize ${styleClass}`}>
-//             {label}
-//         </span>
-//     );
-//   };
-//   if (!p) return null;
-//   const rows = [
-//     { 
-//       label: 'User Verification', 
-//       render: (r: string) => formatUVBadge(p[r]?.userVerification, p[r]?.uvCache) 
-//     },
-//     { 
-//       label: 'Transaction Signing', 
-//       render: (r: string) => p[r]?.txnSigning ? 
-//         <span className="text-[var(--text-primary)] font-medium">✓ Yes</span> : 
-//         <span className="text-[var(--text-tertiary)]">—</span> 
-//     },
-//     { 
-//       label: 'Step-Up Required', 
-//       render: (r: string) => p[r]?.requireStepUp ? 
-//         <span className="text-[12px] text-[var(--accent)] font-medium">Email OTP</span> : 
-//         <span className="text-[var(--text-tertiary)]">—</span> 
-//     },
-//     { 
-//       label: 'Lockout Action', 
-//       render: (r: string) => formatLockoutBadge(p[r]?.lockoutAction) 
-//     },
-//     { 
-//       label: 'Total Timeout', 
-//       render: (r: string) => p[r]?.totalTimeout ? 
-//         <span className="font-mono text-[12px] text-[var(--text-primary)]">{p[r].totalTimeout}s</span> : 
-//         <span className="text-[var(--text-tertiary)]">—</span> 
-//     }
-//   ];
-//   return (
-//     <div className="mb-8 mt-8">
-//       {/* Header */}
-//       <div className="flex items-center justify-between mb-4">
-//         <div className="flex items-center gap-2.5 text-[16px] font-semibold text-[var(--text-primary)]">
-//           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-[var(--text-tertiary)]"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-//           Policy Comparison
-//         </div>
-//         <span className="text-[12px] text-[var(--text-tertiary)] uppercase tracking-wide font-medium">
-//           {segment} Banking · {channel}
-//         </span>
-//       </div>
-//       {/* Table */}
-//       <div className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[12px] overflow-hidden">
-//         <table className="w-full border-collapse text-left">
-//           <thead>
-//             <tr>
-//               <th className="p-4 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-tertiary)] border-b border-[var(--border-primary)] w-[200px]">Setting</th>
-//               {risks.map(r => (
-//                 <th key={r} className="p-4 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider bg-[var(--bg-tertiary)] border-b border-[var(--border-primary)] capitalize">{r} Risk</th>
-//               ))}
-//             </tr>
-//           </thead>
-//           <tbody className="divide-y divide-[var(--border-primary)]">
-//             {rows.map((row, i) => (
-//               <tr key={i} className="hover:bg-[var(--bg-tertiary)]/5 transition-colors">
-//                 <td className="p-4 text-[13px] font-medium text-[var(--text-primary)] bg-[var(--bg-tertiary)]/5">{row.label}</td>
-//                 {risks.map(r => (
-//                   <td key={r} className="p-4 text-[13px] text-[var(--text-primary)]">
-//                     {row.render(r)}
-//                   </td>
-//                 ))}
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// };
 'use client';
 ;
 const ComparisonTable = ({ segment, channel, policies })=>{
-    // Kita sesuaikan risk level dengan struktur state yang ada (Low, Medium, High)
     const risks = [
         'low',
         'medium',
         'high'
     ];
     const p = policies?.[segment]?.[channel];
-    // 1. Helper: Konversi Waktu (Detik -> Menit/Jam/Hari)
     const formatDuration = (seconds)=>{
         if (!seconds) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
             className: "text-[var(--text-tertiary)]",
             children: "—"
         }, void 0, false, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 165,
+            lineNumber: 8,
             columnNumber: 26
         }, ("TURBOPACK compile-time value", void 0));
         if (seconds < 60) return `${seconds}s`;
@@ -453,14 +305,13 @@ const ComparisonTable = ({ segment, channel, policies })=>{
         if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
         return `${Math.floor(seconds / 86400)}d`;
     };
-    // 2. Helper: Render Badge User Verification (UV)
     const formatUVBadge = (uv, cache)=>{
         if (!uv) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
             className: "text-[var(--text-tertiary)]",
             children: "—"
         }, void 0, false, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 174,
+            lineNumber: 16,
             columnNumber: 21
         }, ("TURBOPACK compile-time value", void 0));
         if (uv === 'discouraged') {
@@ -469,7 +320,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                 children: "UP Only"
             }, void 0, false, {
                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                lineNumber: 177,
+                lineNumber: 19,
                 columnNumber: 14
             }, ("TURBOPACK compile-time value", void 0));
         }
@@ -482,7 +333,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                         children: "Preferred"
                     }, void 0, false, {
                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                        lineNumber: 183,
+                        lineNumber: 25,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)),
                     cache > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
@@ -494,17 +345,16 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                        lineNumber: 184,
+                        lineNumber: 26,
                         columnNumber: 25
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                lineNumber: 182,
+                lineNumber: 24,
                 columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0));
         }
-        // Required
         return cache > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "flex items-center gap-1.5",
             children: [
@@ -513,7 +363,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     children: "Required"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 192,
+                    lineNumber: 33,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
@@ -525,31 +375,30 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 193,
+                    lineNumber: 34,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 191,
+            lineNumber: 32,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
             className: "inline-flex px-2 py-0.5 rounded-[4px] text-[11px] font-medium bg-[var(--error-muted)] text-[var(--error)]",
             children: "Fresh UV"
         }, void 0, false, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 196,
+            lineNumber: 37,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0));
     };
-    // 3. Helper: Format Step-Up Methods
     const formatStepUp = (methods)=>{
         if (!methods || methods.length === 0) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
             className: "text-[var(--text-tertiary)]",
             children: "—"
         }, void 0, false, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 202,
+            lineNumber: 42,
             columnNumber: 50
         }, ("TURBOPACK compile-time value", void 0));
         const labels = {
@@ -565,18 +414,17 @@ const ComparisonTable = ({ segment, channel, policies })=>{
             children: displayStr
         }, void 0, false, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 213,
+            lineNumber: 53,
             columnNumber: 12
         }, ("TURBOPACK compile-time value", void 0));
     };
-    // 4. Helper: Render Badge Lockout Action
     const formatLockoutBadge = (action)=>{
         if (!action) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
             className: "text-[var(--text-tertiary)]",
             children: "—"
         }, void 0, false, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 218,
+            lineNumber: 57,
             columnNumber: 25
         }, ("TURBOPACK compile-time value", void 0));
         const badges = {
@@ -606,12 +454,11 @@ const ComparisonTable = ({ segment, channel, policies })=>{
             children: b.label
         }, void 0, false, {
             fileName: "[project]/components/policy/ComparisonTable.tsx",
-            lineNumber: 230,
+            lineNumber: 69,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0));
     };
     if (!p) return null;
-    // Mendefinisikan Semua Baris Data Persis Seperti HTML
     const rows = [
         {
             label: 'User Verification',
@@ -624,14 +471,14 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     children: "✓ Yes"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 241,
+                    lineNumber: 79,
                     columnNumber: 79
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                     className: "text-[var(--text-tertiary)]",
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 241,
+                    lineNumber: 79,
                     columnNumber: 151
                 }, ("TURBOPACK compile-time value", void 0))
         },
@@ -642,7 +489,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 242,
+                    lineNumber: 80,
                     columnNumber: 115
                 }, ("TURBOPACK compile-time value", void 0))
         },
@@ -653,14 +500,14 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     children: "✓ Yes"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 243,
+                    lineNumber: 81,
                     columnNumber: 82
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                     className: "text-[var(--text-tertiary)]",
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 243,
+                    lineNumber: 81,
                     columnNumber: 154
                 }, ("TURBOPACK compile-time value", void 0))
         },
@@ -674,14 +521,14 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 244,
+                    lineNumber: 82,
                     columnNumber: 80
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                     className: "text-[var(--text-tertiary)]",
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 244,
+                    lineNumber: 82,
                     columnNumber: 171
                 }, ("TURBOPACK compile-time value", void 0))
         },
@@ -692,14 +539,14 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     children: p[r].maxAttempts
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 245,
+                    lineNumber: 83,
                     columnNumber: 87
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                     className: "text-[var(--text-tertiary)]",
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 245,
+                    lineNumber: 83,
                     columnNumber: 172
                 }, ("TURBOPACK compile-time value", void 0))
         },
@@ -710,7 +557,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     children: formatDuration(p[r]?.lockoutDuration)
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 246,
+                    lineNumber: 84,
                     columnNumber: 57
                 }, ("TURBOPACK compile-time value", void 0))
         },
@@ -728,14 +575,14 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 248,
+                    lineNumber: 86,
                     columnNumber: 75
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                     className: "text-[var(--text-tertiary)]",
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 248,
+                    lineNumber: 86,
                     columnNumber: 172
                 }, ("TURBOPACK compile-time value", void 0))
         },
@@ -749,19 +596,18 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 249,
+                    lineNumber: 87,
                     columnNumber: 73
                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                     className: "text-[var(--text-tertiary)]",
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 249,
+                    lineNumber: 87,
                     columnNumber: 169
                 }, ("TURBOPACK compile-time value", void 0))
         }
     ];
-    // Tambahkan baris Dual Authorization khusus jika segment Corporate
     if (segment === 'corporate') {
         rows.push({
             label: 'Dual Authorization',
@@ -771,7 +617,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     children: "—"
                 }, void 0, false, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 257,
+                    lineNumber: 94,
                     columnNumber: 37
                 }, ("TURBOPACK compile-time value", void 0));
                 return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -788,7 +634,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                     d: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                    lineNumber: 260,
+                                    lineNumber: 97,
                                     columnNumber: 108
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -797,27 +643,27 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                     r: "4"
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                    lineNumber: 260,
+                                    lineNumber: 97,
                                     columnNumber: 159
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                     d: "M23 21v-2a4 4 0 00-3-3.87"
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                    lineNumber: 260,
+                                    lineNumber: 97,
                                     columnNumber: 188
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                     d: "M16 3.13a4 4 0 010 7.75"
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                    lineNumber: 260,
+                                    lineNumber: 97,
                                     columnNumber: 225
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/ComparisonTable.tsx",
-                            lineNumber: 260,
+                            lineNumber: 97,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         p[r].minApprovers,
@@ -825,7 +671,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 259,
+                    lineNumber: 96,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0));
             }
@@ -856,7 +702,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                         ry: "2"
                                     }, void 0, false, {
                                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                        lineNumber: 273,
+                                        lineNumber: 109,
                                         columnNumber: 134
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -866,7 +712,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                         y2: "9"
                                     }, void 0, false, {
                                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                        lineNumber: 273,
+                                        lineNumber: 109,
                                         columnNumber: 190
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -876,20 +722,20 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                         y2: "9"
                                     }, void 0, false, {
                                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                        lineNumber: 273,
+                                        lineNumber: 109,
                                         columnNumber: 226
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                lineNumber: 273,
+                                lineNumber: 109,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             "Policy Comparison"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                        lineNumber: 272,
+                        lineNumber: 108,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -900,7 +746,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                 children: segment
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                lineNumber: 277,
+                                lineNumber: 113,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             " Banking · ",
@@ -909,19 +755,19 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                 children: channel
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                lineNumber: 277,
+                                lineNumber: 113,
                                 columnNumber: 67
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                        lineNumber: 276,
+                        lineNumber: 112,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                lineNumber: 271,
+                lineNumber: 107,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -937,7 +783,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                         children: "Setting"
                                     }, void 0, false, {
                                         fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                        lineNumber: 286,
+                                        lineNumber: 121,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     risks.map((r)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("th", {
@@ -948,18 +794,18 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                             ]
                                         }, r, true, {
                                             fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                            lineNumber: 288,
+                                            lineNumber: 123,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                lineNumber: 285,
+                                lineNumber: 120,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/components/policy/ComparisonTable.tsx",
-                            lineNumber: 284,
+                            lineNumber: 119,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -972,7 +818,7 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                             children: row.label
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                            lineNumber: 295,
+                                            lineNumber: 130,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         risks.map((r)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -980,35 +826,35 @@ const ComparisonTable = ({ segment, channel, policies })=>{
                                                 children: row.render(r)
                                             }, r, false, {
                                                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                                lineNumber: 299,
+                                                lineNumber: 134,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)))
                                     ]
                                 }, i, true, {
                                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                                    lineNumber: 294,
+                                    lineNumber: 129,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)))
                         }, void 0, false, {
                             fileName: "[project]/components/policy/ComparisonTable.tsx",
-                            lineNumber: 292,
+                            lineNumber: 127,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/ComparisonTable.tsx",
-                    lineNumber: 283,
+                    lineNumber: 118,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/components/policy/ComparisonTable.tsx",
-                lineNumber: 282,
+                lineNumber: 117,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/components/policy/ComparisonTable.tsx",
-        lineNumber: 269,
+        lineNumber: 106,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -1020,95 +866,9 @@ __turbopack_context__.s([
     "adminService",
     ()=>adminService
 ]);
-// import axios from 'axios';
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
-// export const adminService = {
-//   // --- 1. AMOUNT THRESHOLDS ---
-//     getAmountLimits: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/limits`);
-//         return res.data;
-//     },
-//     updateAmountLimit: async (id: string, data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/limits/${id}`, data);
-//         return res.data;
-//     },
-//     createAmountLimit: async (data: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/limits`, data);
-//         return res.data;
-//     },
-//     deleteAmountLimit: async (id: string) => {
-//         const res = await axios.delete(`${API_URL}/api/admin/limits/${id}`);
-//         return res.data;
-//     },
-//     getRiskRules: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-rules`);
-//         return res.data;
-//     },
-//     // [POST] Simpan Rules (Batch Update) - INI YANG BARU
-//     saveRiskConfigBatch: async (rules: any[]) => {
-//         const res = await axios.post(`${API_URL}/api/admin/risk-rules/batch-update`, { rules });
-//         return res.data;
-//     },
-//     // [GET] Thresholds
-//     getRiskConfig: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-config`);
-//         return res.data;
-//     },
-//     // [PUT] Update Thresholds
-//     updateRiskConfig: async (data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/risk-config`, data);
-//         return res.data;
-//     },
-//     // --- 3. AUTH POLICIES ---
-//     getPolicies: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies`);
-//         return res.data;
-//     },
-//     upsertPolicy: async (payload: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/policies`, payload);
-//         return res.data;
-//     },
-//     getPolicyAuditLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies/audit`);
-//         return res.data;
-//     },
-//     // --- 4. INVESTIGATION & LOGS ---
-//     getTransactions: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions`);
-//         return res.data;
-//     },
-//     getTransactionDetail: async (id: string) => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions/${id}`);
-//         return res.data;
-//     }
-//     ,
-//     getAuthLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/logs`);
-//         return res.data;
-//     },
-//     getDashboardStats: async (range: string) => {
-//     const res = await axios.get(`${API_URL}/api/admin/dashboard`, { 
-//         params: { timeRange: range } 
-//     });
-//     return res.data;
-//     },
-//     // 1. Fetch Evidence (Cepat)    
-//     async getTransactionEvidence(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/evidence`);
-//         if (!res.ok) throw new Error('Failed to load evidence');
-//         return res.json();
-//     },
-//     // 2. Fetch Analysis (Lambat)
-//     async getInvestigationReport(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/investigate`);
-//         if (!res.ok) throw new Error('Failed to load analysis');
-//         return res.json();
-//     }
-// };
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/apiClient.ts [app-ssr] (ecmascript)");
 ;
 const adminService = {
-    // --- 1. AMOUNT THRESHOLDS ---
     getAmountLimits: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/limits`);
         return res.data;
@@ -1125,23 +885,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].delete(`/api/admin/limits/${id}`);
         return res.data;
     },
-    // --- 2. RISK CONFIG & RULES ---
-    // getRiskRules: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-rules`);
-    //     return res.data;
-    // },
-    // saveRiskConfigBatch: async (rules: any[]) => {
-    //     const res = await apiClient.post(`/api/admin/risk-rules/batch-update`, { rules });
-    //     return res.data;
-    // },
-    // getRiskConfig: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-config`);
-    //     return res.data;
-    // },
-    // updateRiskConfig: async (data: any) => {
-    //     const res = await apiClient.put(`/api/admin/risk-config`, data);
-    //     return res.data;
-    // },
     getRiskRules: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/risk-rules`);
         return res.data;
@@ -1151,18 +894,15 @@ const adminService = {
         return res.data;
     },
     saveRiskConfigBatch: async (rulesPayload)=>{
-        // Cukup kirimkan object { rules: rulesPayload } langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-rules', {
             rules: rulesPayload
         });
         return res.data;
     },
     updateRiskConfig: async (payload)=>{
-        // Cukup kirimkan variable payload langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-config', payload);
         return res.data;
     },
-    // --- 3. AUTH POLICIES ---
     getPolicies: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies`);
         return res.data;
@@ -1175,7 +915,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies/audit`);
         return res.data;
     },
-    // --- 4. INVESTIGATION & LOGS ---
     getTransactions: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions`);
         return res.data;
@@ -1239,7 +978,6 @@ function AuditLog({ refreshKey }) {
     }, [
         refreshKey
     ]);
-    // Format Tanggal: "Jan 4, 14:32"
     const formatDate = (dateString)=>{
         return new Date(dateString).toLocaleDateString('en-US', {
             month: 'short',
@@ -1247,11 +985,9 @@ function AuditLog({ refreshKey }) {
             hour: '2-digit',
             minute: '2-digit',
             hour12: false
-        }).replace(',', ''); // Hapus koma agar persis request
+        }).replace(',', '');
     };
-    // Helper untuk menebalkan kata kunci (Consumer, Corporate, High, dll)
     const formatActionText = (text)=>{
-        // Regex untuk menangkap kata kunci Policy
         return text.replace(/(Consumer|Corporate|High|Medium|Low|Risk|Critical)/gi, '<strong class="text-[var(--text-primary)] font-semibold">$1</strong>');
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1273,27 +1009,27 @@ function AuditLog({ refreshKey }) {
                                 r: "10"
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/AuditLog.tsx",
-                                lineNumber: 46,
+                                lineNumber: 42,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                 points: "12 6 12 12 16 14"
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/AuditLog.tsx",
-                                lineNumber: 46,
+                                lineNumber: 42,
                                 columnNumber: 43
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/policy/AuditLog.tsx",
-                        lineNumber: 45,
+                        lineNumber: 41,
                         columnNumber: 9
                     }, this),
                     "Recent Policy Changes"
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/policy/AuditLog.tsx",
-                lineNumber: 44,
+                lineNumber: 40,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1303,17 +1039,16 @@ function AuditLog({ refreshKey }) {
                     children: "Loading history..."
                 }, void 0, false, {
                     fileName: "[project]/components/policy/AuditLog.tsx",
-                    lineNumber: 54,
+                    lineNumber: 49,
                     columnNumber: 12
                 }, this) : logs.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "text-center py-4 text-[12px] text-[var(--text-tertiary)]",
                     children: "No recent activity recorded."
                 }, void 0, false, {
                     fileName: "[project]/components/policy/AuditLog.tsx",
-                    lineNumber: 56,
+                    lineNumber: 51,
                     columnNumber: 12
-                }, this) : logs.map((log, i)=>// Flex Row Layout (Sesuai Request HTML: Time | Action | User)
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                }, this) : logs.map((log, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: `flex items-start  py-2 text-[12px] ${i !== logs.length - 1 ? 'border-b border-[var(--border-primary)]' : ''}`,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1321,7 +1056,7 @@ function AuditLog({ refreshKey }) {
                                 children: formatDate(log.createdAt)
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/AuditLog.tsx",
-                                lineNumber: 63,
+                                lineNumber: 56,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1332,12 +1067,12 @@ function AuditLog({ refreshKey }) {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/AuditLog.tsx",
-                                    lineNumber: 69,
+                                    lineNumber: 61,
                                     columnNumber: 18
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/AuditLog.tsx",
-                                lineNumber: 68,
+                                lineNumber: 60,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1345,24 +1080,24 @@ function AuditLog({ refreshKey }) {
                                 children: log.adminEmail || 'System'
                             }, void 0, false, {
                                 fileName: "[project]/components/policy/AuditLog.tsx",
-                                lineNumber: 73,
+                                lineNumber: 64,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, i, true, {
                         fileName: "[project]/components/policy/AuditLog.tsx",
-                        lineNumber: 60,
+                        lineNumber: 54,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/policy/AuditLog.tsx",
-                lineNumber: 52,
+                lineNumber: 47,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/policy/AuditLog.tsx",
-        lineNumber: 42,
+        lineNumber: 39,
         columnNumber: 5
     }, this);
 }
@@ -1376,209 +1111,6 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
-// 'use client';
-// import { useState, useEffect } from 'react';
-// // Tipe data disesuaikan dengan permintaan client
-// interface PolicyConfig {
-//   userVerification: string; // 'discouraged' | 'required'
-//   uvCache: number;
-//   requireStepUp: boolean;
-//   stepUpMethods: string[]; // Hanya ['email_otp']
-//   txnSigning: boolean;
-//   knownDevice: boolean;
-//   minDeviceAge: number;
-//   maxAttempts: number;
-//   lockoutDuration: number;
-//   lockoutAction: string; // 'soft_lock', 'suspend_device', 'suspend_account'
-//   totalTimeout: number;
-//   fido2Timeout: number;
-//   stepUpTimeout: number;
-//   baseDelay: number;
-//   progDelay: boolean;
-//   // Field Corporate only
-//   dualAuth?: boolean;
-//   minApprovers?: number;
-//   approvalTimeout?: number;
-// }
-// const defaultValues: PolicyConfig = {
-//   userVerification: 'discouraged',
-//   uvCache: 300,
-//   requireStepUp: false,
-//   stepUpMethods: [],
-//   txnSigning: false,
-//   knownDevice: false,
-//   minDeviceAge: 0,
-//   maxAttempts: 3,
-//   lockoutDuration: 300,
-//   lockoutAction: 'soft_lock',
-//   totalTimeout: 180,
-//   fido2Timeout: 120,
-//   stepUpTimeout: 60,
-//   baseDelay: 0,
-//   progDelay: false
-// };
-// export const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate, onSave }: any) => {
-//   const [formData, setFormData] = useState<PolicyConfig>({ ...defaultValues, ...initialData });
-//   useEffect(() => {
-//     // eslint-disable-next-line react-hooks/set-state-in-effect
-//     if (isOpen) setFormData({ ...defaultValues, ...initialData });
-//   }, [isOpen, initialData]);
-//   if (!isOpen) return null;
-//   const handleChange = (field: keyof PolicyConfig, value: any) => {
-//     setFormData(prev => ({ ...prev, [field]: value }));
-//   };
-//   return (
-//     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[2000] p-4" onClick={onClose}>
-//       <div className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[12px] w-full max-w-[600px] flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-//         {/* Header */}
-//         <div className="p-5 border-b border-[var(--border-primary)] flex justify-between items-center">
-//           <h3 className="text-lg font-semibold capitalize text-[var(--text-primary)]">Edit {policyName.replace(/_/g, ' ')} Policy</h3>
-//           <button onClick={onClose} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">✕</button>
-//         </div>
-//         {/* Scrollable Body */}
-//         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-6">
-//             {/* 1. General Auth Settings */}
-//             <section>
-//                 <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase mb-4">Authentication Requirements</h4>
-//                 <div className="grid grid-cols-2 gap-4">
-//                     <div>
-//                         <label className="block text-[12px] text-[var(--text-secondary)] mb-1.5">User Verification (UV)</label>
-//                         <select 
-//                             className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm text-[var(--text-primary)]"
-//                             value={formData.userVerification}
-//                             onChange={e => handleChange('userVerification', e.target.value)}
-//                         >
-//                             <option value="discouraged">Discouraged (UP Only - Tap)</option>
-//                             <option value="required">Required (UV Mandatory - Bio/PIN)</option>
-//                         </select>
-//                     </div>
-//                     <div>
-//                         <label className="block text-[12px] text-[var(--text-secondary)] mb-1.5">UV Cache Window (Seconds)</label>
-//                         <input type="number" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm text-[var(--text-primary)]"
-//                             value={formData.uvCache} onChange={e => handleChange('uvCache', parseInt(e.target.value))} />
-//                     </div>
-//                 </div>
-//                 <div className="mt-4 space-y-2">
-//                     <label className="flex items-center gap-2 cursor-pointer">
-//                         <input type="checkbox" checked={formData.txnSigning} onChange={e => handleChange('txnSigning', e.target.checked)} className="rounded bg-[var(--bg-tertiary)] border-[var(--border-primary)]" />
-//                         <span className="text-sm text-[var(--text-primary)]">Enable Transaction Signing (Include details in challenge)</span>
-//                     </label>
-//                     <label className="flex items-center gap-2 cursor-pointer">
-//                         <input type="checkbox" checked={formData.knownDevice} onChange={e => handleChange('knownDevice', e.target.checked)} className="rounded bg-[var(--bg-tertiary)] border-[var(--border-primary)]" />
-//                         <span className="text-sm text-[var(--text-primary)]">Require Known Device</span>
-//                     </label>
-//                 </div>
-//             </section>
-//             {/* 2. Step-Up Auth */}
-//             <section>
-//                 <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase mb-4 border-t border-[var(--border-primary)] pt-4">Step-Up Authentication</h4>
-//                 <div className="flex items-center justify-between mb-4">
-//                     <span className="text-sm text-[var(--text-primary)]">Require Step-Up?</span>
-//                     <input type="checkbox" checked={formData.requireStepUp} onChange={e => handleChange('requireStepUp', e.target.checked)} />
-//                 </div>
-//                 {formData.requireStepUp && (
-//                     <div>
-//                         <label className="block text-[12px] text-[var(--text-secondary)] mb-1.5">Allowed Method</label>
-//                         <select disabled className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm text-[var(--text-primary)] opacity-70 cursor-not-allowed">
-//                             <option>Email OTP (Default)</option>
-//                         </select>
-//                         <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Only Email OTP is supported per current configuration.</p>
-//                     </div>
-//                 )}
-//             </section>
-//             {/* 3. Security & Lockout */}
-//             <section>
-//                 <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase mb-4 border-t border-[var(--border-primary)] pt-4">Security Controls</h4>
-//                 <div className="grid grid-cols-2 gap-4 mb-4">
-//                     <div>
-//                         <label className="block text-[12px] text-[var(--text-secondary)] mb-1.5">Max Attempts</label>
-//                         <input type="number" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm text-[var(--text-primary)]"
-//                             value={formData.maxAttempts} onChange={e => handleChange('maxAttempts', parseInt(e.target.value))} />
-//                     </div>
-//                     <div>
-//                         <label className="block text-[12px] text-[var(--text-secondary)] mb-1.5">Lockout Action</label>
-//                         <select 
-//                             className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm text-[var(--text-primary)]"
-//                             value={formData.lockoutAction}
-//                             onChange={e => handleChange('lockoutAction', e.target.value)}
-//                         >
-//                             <option value="soft_lock">Soft Lock (Temporary)</option>
-//                             <option value="suspend_device">Suspend Device</option>
-//                             <option value="suspend_account">Suspend Account</option>
-//                         </select>
-//                     </div>
-//                 </div>
-//                 <div className="grid grid-cols-2 gap-4">
-//                     <div>
-//                         <label className="block text-[12px] text-[var(--text-secondary)] mb-1.5">Base Delay (Seconds)</label>
-//                         <input type="number" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm text-[var(--text-primary)]"
-//                             value={formData.baseDelay || 0} onChange={e => handleChange('baseDelay', parseInt(e.target.value))} />
-//                     </div>
-//                     <div className="flex items-end pb-2">
-//                         <label className="flex items-center gap-2 cursor-pointer">
-//                             <input type="checkbox" checked={formData.progDelay} onChange={e => handleChange('progDelay', e.target.checked)} />
-//                             <span className="text-sm text-[var(--text-primary)]">Progressive Delay (2x)</span>
-//                         </label>
-//                     </div>
-//                 </div>
-//             </section>
-//             {/* 4. Timeouts */}
-//             <section>
-//                 <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase mb-4 border-t border-[var(--border-primary)] pt-4">Timeouts (Seconds)</h4>
-//                 <div className="grid grid-cols-3 gap-3">
-//                     <div>
-//                         <label className="block text-[11px] text-[var(--text-secondary)] mb-1">Total Timeout</label>
-//                         <input type="number" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm"
-//                             value={formData.totalTimeout} onChange={e => handleChange('totalTimeout', parseInt(e.target.value))} />
-//                     </div>
-//                     <div>
-//                         <label className="block text-[11px] text-[var(--text-secondary)] mb-1">FIDO2 Timeout</label>
-//                         <input type="number" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm"
-//                             value={formData.fido2Timeout} onChange={e => handleChange('fido2Timeout', parseInt(e.target.value))} />
-//                     </div>
-//                     <div>
-//                         <label className="block text-[11px] text-[var(--text-secondary)] mb-1">Step-Up Timeout</label>
-//                         <input type="number" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm"
-//                             value={formData.stepUpTimeout} onChange={e => handleChange('stepUpTimeout', parseInt(e.target.value))} />
-//                     </div>
-//                 </div>
-//             </section>
-//             {/* Corporate Only Fields */}
-//             {isCorporate && (
-//                 <section>
-//                     <h4 className="text-xs font-bold text-[var(--accent)] uppercase mb-4 border-t border-[var(--accent)]/30 pt-4">Corporate Controls</h4>
-//                     <div className="flex items-center gap-4 mb-3">
-//                         <label className="flex items-center gap-2 cursor-pointer">
-//                             <input type="checkbox" checked={formData.dualAuth} onChange={e => handleChange('dualAuth', e.target.checked)} />
-//                             <span className="text-sm text-[var(--text-primary)] font-medium">Require Dual Approval</span>
-//                         </label>
-//                     </div>
-//                     {formData.dualAuth && (
-//                         <div className="grid grid-cols-2 gap-4">
-//                             <div>
-//                                 <label className="block text-[11px] text-[var(--text-secondary)] mb-1">Min. Approvers</label>
-//                                 <input type="number" min="1" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm"
-//                                     value={formData.minApprovers} onChange={e => handleChange('minApprovers', parseInt(e.target.value))} />
-//                             </div>
-//                             <div>
-//                                 <label className="block text-[11px] text-[var(--text-secondary)] mb-1">Approval Timeout (Hours)</label>
-//                                 <input type="number" className="w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] p-2 text-sm"
-//                                     value={formData.approvalTimeout} onChange={e => handleChange('approvalTimeout', parseInt(e.target.value))} />
-//                             </div>
-//                         </div>
-//                     )}
-//                 </section>
-//             )}
-//         </div>
-//         {/* Footer Actions */}
-//         <div className="p-5 border-t border-[var(--border-primary)] flex justify-end gap-3 bg-[var(--bg-secondary)] rounded-b-[12px]">
-//             <button onClick={onClose} className="px-4 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] text-sm hover:bg-[var(--bg-hover)]">Cancel</button>
-//             <button onClick={() => onSave(formData)} className="px-4 py-2 bg-[var(--accent)] text-white rounded-[6px] text-sm hover:bg-[var(--accent-hover)]">Save Changes</button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
 'use client';
 ;
 ;
@@ -1606,7 +1138,6 @@ const defaultValues = {
     minApprovers: 2,
     approvalTimeout: 4
 };
-// Dictionary untuk label Step-Up
 const STEP_UP_LABELS = {
     hardware_totp: 'Hardware TOTP',
     push_otp: 'Push OTP (Mobile App)',
@@ -1614,7 +1145,6 @@ const STEP_UP_LABELS = {
     email_otp: 'Email OTP',
     callback: 'Callback Verification'
 };
-// Komponen Reusable Switch Toggle (Mirip HTML Anda)
 const ToggleSwitch = ({ label, desc, checked, onChange })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex items-center justify-between py-3 border-b border-[var(--border-primary)] last:border-0",
         children: [
@@ -1626,7 +1156,7 @@ const ToggleSwitch = ({ label, desc, checked, onChange })=>/*#__PURE__*/ (0, __T
                         children: label
                     }, void 0, false, {
                         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                        lineNumber: 301,
+                        lineNumber: 70,
                         columnNumber: 7
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1634,13 +1164,13 @@ const ToggleSwitch = ({ label, desc, checked, onChange })=>/*#__PURE__*/ (0, __T
                         children: desc
                     }, void 0, false, {
                         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                        lineNumber: 302,
+                        lineNumber: 71,
                         columnNumber: 7
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                lineNumber: 300,
+                lineNumber: 69,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1650,18 +1180,18 @@ const ToggleSwitch = ({ label, desc, checked, onChange })=>/*#__PURE__*/ (0, __T
                     className: `absolute w-[18px] h-[18px] bg-white rounded-full top-[3px] transition-all duration-200 ${checked ? 'left-[23px]' : 'left-[3px]'}`
                 }, void 0, false, {
                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                    lineNumber: 308,
+                    lineNumber: 77,
                     columnNumber: 7
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                lineNumber: 304,
+                lineNumber: 73,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-        lineNumber: 299,
+        lineNumber: 68,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate, onSave })=>{
@@ -1696,7 +1226,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                 val
             ]);
         }
-        e.target.value = ''; // Reset select
+        e.target.value = '';
     };
     const handleRemoveStepUp = (methodToRemove)=>{
         handleChange('stepUpMethods', formData.stepUpMethods.filter((m)=>m !== methodToRemove));
@@ -1722,7 +1252,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 347,
+                            lineNumber: 115,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1742,7 +1272,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                        lineNumber: 351,
+                                        lineNumber: 119,
                                         columnNumber: 118
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1752,24 +1282,24 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                        lineNumber: 351,
+                                        lineNumber: 119,
                                         columnNumber: 155
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                lineNumber: 351,
+                                lineNumber: 119,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         }, void 0, false, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 350,
+                            lineNumber: 118,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                    lineNumber: 346,
+                    lineNumber: 114,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1797,27 +1327,27 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     ry: "2"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 361,
+                                                    lineNumber: 127,
                                                     columnNumber: 144
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M7 11V7a5 5 0 0110 0v4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 361,
+                                                    lineNumber: 127,
                                                     columnNumber: 201
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 361,
+                                            lineNumber: 127,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "FIDO2 Authentication"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 360,
+                                    lineNumber: 126,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1831,7 +1361,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "User Verification"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 366,
+                                                    lineNumber: 132,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1844,7 +1374,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Discouraged (UP only)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 369,
+                                                            lineNumber: 135,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1852,7 +1382,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Preferred (UV if available)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 370,
+                                                            lineNumber: 136,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1860,13 +1390,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Required (UV mandatory)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 371,
+                                                            lineNumber: 137,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 367,
+                                                    lineNumber: 133,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1874,13 +1404,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Whether biometric/PIN is required"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 373,
+                                                    lineNumber: 139,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 365,
+                                            lineNumber: 131,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1891,7 +1421,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "UV Cache Window"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 376,
+                                                    lineNumber: 142,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1904,7 +1434,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             onChange: (e)=>handleChange('uvCache', parseInt(e.target.value))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 378,
+                                                            lineNumber: 144,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1912,13 +1442,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "seconds"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 380,
+                                                            lineNumber: 146,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 377,
+                                                    lineNumber: 143,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1926,19 +1456,19 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "0 = fresh UV required every time"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 382,
+                                                    lineNumber: 148,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 375,
+                                            lineNumber: 141,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 364,
+                                    lineNumber: 130,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1951,7 +1481,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                             onChange: (v)=>handleChange('txnSigning', v)
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 387,
+                                            lineNumber: 153,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ToggleSwitch, {
@@ -1961,13 +1491,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                             onChange: (v)=>handleChange('knownDevice', v)
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 388,
+                                            lineNumber: 154,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 386,
+                                    lineNumber: 152,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1981,7 +1511,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Minimum Device Age"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 393,
+                                                    lineNumber: 159,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1994,7 +1524,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             onChange: (e)=>handleChange('minDeviceAge', parseInt(e.target.value))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 395,
+                                                            lineNumber: 161,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2002,19 +1532,19 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "days"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 397,
+                                                            lineNumber: 163,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 394,
+                                                    lineNumber: 160,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 392,
+                                            lineNumber: 158,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2025,7 +1555,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Allowed Device Types"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 401,
+                                                    lineNumber: 167,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2038,7 +1568,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "All (Platform + Cross-platform)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 404,
+                                                            lineNumber: 170,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2046,7 +1576,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Platform only (Built-in)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 405,
+                                                            lineNumber: 171,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2054,31 +1584,31 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Cross-platform only (USB/NFC)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 406,
+                                                            lineNumber: 172,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 402,
+                                                    lineNumber: 168,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 400,
+                                            lineNumber: 166,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 391,
+                                    lineNumber: 157,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 359,
+                            lineNumber: 125,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -2097,19 +1627,19 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                 d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                lineNumber: 415,
+                                                lineNumber: 180,
                                                 columnNumber: 144
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 415,
+                                            lineNumber: 180,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Step-Up Authentication"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 414,
+                                    lineNumber: 179,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ToggleSwitch, {
@@ -2119,7 +1649,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                     onChange: (v)=>handleChange('requireStepUp', v)
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 419,
+                                    lineNumber: 184,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 formData.requireStepUp && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2130,7 +1660,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                             children: "Allowed Step-Up Methods"
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 423,
+                                            lineNumber: 188,
                                             columnNumber: 25
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2156,7 +1686,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                                         y2: "18"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                                        lineNumber: 429,
+                                                                        lineNumber: 194,
                                                                         columnNumber: 140
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2166,29 +1696,29 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                                         y2: "18"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                                        lineNumber: 429,
+                                                                        lineNumber: 194,
                                                                         columnNumber: 177
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                                lineNumber: 429,
+                                                                lineNumber: 194,
                                                                 columnNumber: 41
                                                             }, ("TURBOPACK compile-time value", void 0))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 428,
+                                                            lineNumber: 193,
                                                             columnNumber: 37
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, method, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 426,
+                                                    lineNumber: 191,
                                                     columnNumber: 33
                                                 }, ("TURBOPACK compile-time value", void 0)))
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 424,
+                                            lineNumber: 189,
                                             columnNumber: 25
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2202,7 +1732,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "+ Add method..."
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 436,
+                                                    lineNumber: 201,
                                                     columnNumber: 29
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 Object.entries(STEP_UP_LABELS).map(([key, label])=>!formData.stepUpMethods.includes(key) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2210,25 +1740,25 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                         children: label
                                                     }, key, false, {
                                                         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                        lineNumber: 438,
+                                                        lineNumber: 203,
                                                         columnNumber: 74
                                                     }, ("TURBOPACK compile-time value", void 0)))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 434,
+                                            lineNumber: 199,
                                             columnNumber: 25
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 422,
+                                    lineNumber: 187,
                                     columnNumber: 21
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 413,
+                            lineNumber: 178,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -2248,27 +1778,27 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     points: "23 4 23 10 17 10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 448,
+                                                    lineNumber: 212,
                                                     columnNumber: 144
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M20.49 15a9 9 0 11-2.12-9.36L23 10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 448,
+                                                    lineNumber: 212,
                                                     columnNumber: 181
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 448,
+                                            lineNumber: 212,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Retry & Lockout Settings"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 447,
+                                    lineNumber: 211,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2282,7 +1812,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Max Attempts"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 453,
+                                                    lineNumber: 217,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2292,13 +1822,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('maxAttempts', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 454,
+                                                    lineNumber: 218,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 452,
+                                            lineNumber: 216,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2309,7 +1839,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Lockout Duration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 458,
+                                                    lineNumber: 222,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2322,7 +1852,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             onChange: (e)=>handleChange('lockoutDuration', parseInt(e.target.value))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 460,
+                                                            lineNumber: 224,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2330,19 +1860,19 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "sec"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 462,
+                                                            lineNumber: 226,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 459,
+                                                    lineNumber: 223,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 457,
+                                            lineNumber: 221,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2353,7 +1883,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Lockout Action"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 466,
+                                                    lineNumber: 230,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2366,7 +1896,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Soft Lock"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 469,
+                                                            lineNumber: 233,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2374,7 +1904,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Hard Lock"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 470,
+                                                            lineNumber: 234,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2382,7 +1912,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Suspend Device"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 471,
+                                                            lineNumber: 235,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2390,25 +1920,25 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "Freeze Account"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 472,
+                                                            lineNumber: 236,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 467,
+                                                    lineNumber: 231,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 465,
+                                            lineNumber: 229,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 451,
+                                    lineNumber: 215,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2422,7 +1952,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "CAPTCHA After Failures"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 479,
+                                                    lineNumber: 243,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2432,7 +1962,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('captchaAfter', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 480,
+                                                    lineNumber: 244,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2440,13 +1970,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "0 = always require CAPTCHA"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 482,
+                                                    lineNumber: 246,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 478,
+                                            lineNumber: 242,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2457,7 +1987,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Base Delay"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 485,
+                                                    lineNumber: 249,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2470,7 +2000,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             onChange: (e)=>handleChange('baseDelay', parseInt(e.target.value))
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 487,
+                                                            lineNumber: 251,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2478,25 +2008,25 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                             children: "sec"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                            lineNumber: 489,
+                                                            lineNumber: 253,
                                                             columnNumber: 29
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 486,
+                                                    lineNumber: 250,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 484,
+                                            lineNumber: 248,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 477,
+                                    lineNumber: 241,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2509,7 +2039,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                             onChange: (v)=>handleChange('progDelay', v)
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 495,
+                                            lineNumber: 259,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ToggleSwitch, {
@@ -2519,19 +2049,19 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                             onChange: (v)=>handleChange('notifySecurity', v)
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 496,
+                                            lineNumber: 260,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 494,
+                                    lineNumber: 258,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 446,
+                            lineNumber: 210,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -2553,27 +2083,27 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     r: "10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 503,
+                                                    lineNumber: 266,
                                                     columnNumber: 144
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                     points: "12 6 12 12 16 14"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 503,
+                                                    lineNumber: 266,
                                                     columnNumber: 176
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 503,
+                                            lineNumber: 266,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Timeout Settings (Seconds)"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 502,
+                                    lineNumber: 265,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2587,7 +2117,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Total Timeout"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 508,
+                                                    lineNumber: 271,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2597,13 +2127,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('totalTimeout', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 509,
+                                                    lineNumber: 272,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 507,
+                                            lineNumber: 270,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2614,7 +2144,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "FIDO2 Timeout"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 513,
+                                                    lineNumber: 276,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2624,13 +2154,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('fido2Timeout', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 514,
+                                                    lineNumber: 277,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 512,
+                                            lineNumber: 275,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2641,7 +2171,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Step-Up Timeout"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 518,
+                                                    lineNumber: 281,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2651,13 +2181,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('stepUpTimeout', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 519,
+                                                    lineNumber: 282,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 517,
+                                            lineNumber: 280,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2668,7 +2198,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Idle Timeout"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 523,
+                                                    lineNumber: 286,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2678,25 +2208,25 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('idleTimeout', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 524,
+                                                    lineNumber: 287,
                                                     columnNumber: 25
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 522,
+                                            lineNumber: 285,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 506,
+                                    lineNumber: 269,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 501,
+                            lineNumber: 264,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         isCorporate && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -2715,7 +2245,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     d: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 534,
+                                                    lineNumber: 296,
                                                     columnNumber: 148
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -2724,34 +2254,34 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     r: "4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 534,
+                                                    lineNumber: 296,
                                                     columnNumber: 199
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M23 21v-2a4 4 0 00-3-3.87"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 534,
+                                                    lineNumber: 296,
                                                     columnNumber: 228
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M16 3.13a4 4 0 010 7.75"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 534,
+                                                    lineNumber: 296,
                                                     columnNumber: 265
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 534,
+                                            lineNumber: 296,
                                             columnNumber: 25
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Dual Authorization (Corporate)"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 533,
+                                    lineNumber: 295,
                                     columnNumber: 21
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ToggleSwitch, {
@@ -2761,7 +2291,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                     onChange: (v)=>handleChange('dualAuth', v)
                                 }, void 0, false, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 538,
+                                    lineNumber: 300,
                                     columnNumber: 21
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 formData.dualAuth && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2775,7 +2305,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Minimum Approvers"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 543,
+                                                    lineNumber: 305,
                                                     columnNumber: 33
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2786,13 +2316,13 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('minApprovers', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 544,
+                                                    lineNumber: 306,
                                                     columnNumber: 33
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 542,
+                                            lineNumber: 304,
                                             columnNumber: 29
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2803,7 +2333,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     children: "Approval Timeout (Hours)"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 548,
+                                                    lineNumber: 310,
                                                     columnNumber: 33
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2813,31 +2343,31 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                                     onChange: (e)=>handleChange('approvalTimeout', parseInt(e.target.value))
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                                    lineNumber: 549,
+                                                    lineNumber: 311,
                                                     columnNumber: 33
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 547,
+                                            lineNumber: 309,
                                             columnNumber: 29
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 541,
+                                    lineNumber: 303,
                                     columnNumber: 25
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 532,
+                            lineNumber: 294,
                             columnNumber: 17
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                    lineNumber: 356,
+                    lineNumber: 123,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2849,7 +2379,7 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                             children: "Cancel"
                         }, void 0, false, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 561,
+                            lineNumber: 322,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2867,51 +2397,51 @@ const EditPolicyModal = ({ isOpen, onClose, policyName, initialData, isCorporate
                                             d: "M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 565,
+                                            lineNumber: 326,
                                             columnNumber: 112
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                             points: "17 21 17 13 7 13 7 21"
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 565,
+                                            lineNumber: 326,
                                             columnNumber: 183
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                             points: "7 3 7 8 15 8"
                                         }, void 0, false, {
                                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                            lineNumber: 565,
+                                            lineNumber: 326,
                                             columnNumber: 225
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                                    lineNumber: 565,
+                                    lineNumber: 326,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 "Save Policy"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                            lineNumber: 564,
+                            lineNumber: 325,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/policy/EditPolicyModal.tsx",
-                    lineNumber: 560,
+                    lineNumber: 321,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/components/policy/EditPolicyModal.tsx",
-            lineNumber: 343,
+            lineNumber: 112,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/components/policy/EditPolicyModal.tsx",
-        lineNumber: 342,
+        lineNumber: 111,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
@@ -2976,7 +2506,6 @@ function AuthPoliciesPage() {
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [activeCount, setActiveCount] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [refreshLogKey, setRefreshLogKey] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
-    // --- Logic User Session & Sync (Sama seperti sebelumnya) ---
     const syncWithDatabase = async ()=>{
         try {
             setLoading(true);
@@ -3057,7 +2586,7 @@ function AuthPoliciesPage() {
                                         children: "Authentication Policies"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                        lineNumber: 84,
+                                        lineNumber: 82,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3065,13 +2594,13 @@ function AuthPoliciesPage() {
                                         children: loading ? 'Syncing...' : `${activeCount} Active Policies`
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                        lineNumber: 85,
+                                        lineNumber: 83,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                lineNumber: 83,
+                                lineNumber: 81,
                                 columnNumber: 12
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3091,14 +2620,14 @@ function AuthPoliciesPage() {
                                                         d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                        lineNumber: 91,
+                                                        lineNumber: 89,
                                                         columnNumber: 112
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                         points: "7 10 12 15 17 10"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                        lineNumber: 91,
+                                                        lineNumber: 89,
                                                         columnNumber: 165
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -3108,20 +2637,20 @@ function AuthPoliciesPage() {
                                                         y2: "3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                        lineNumber: 91,
+                                                        lineNumber: 89,
                                                         columnNumber: 202
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                lineNumber: 91,
+                                                lineNumber: 89,
                                                 columnNumber: 17
                                             }, this),
                                             "Export"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                        lineNumber: 90,
+                                        lineNumber: 88,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3142,7 +2671,7 @@ function AuthPoliciesPage() {
                                                         y2: "19"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                        lineNumber: 95,
+                                                        lineNumber: 93,
                                                         columnNumber: 112
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -3152,32 +2681,32 @@ function AuthPoliciesPage() {
                                                         y2: "12"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                        lineNumber: 95,
+                                                        lineNumber: 93,
                                                         columnNumber: 150
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                lineNumber: 95,
+                                                lineNumber: 93,
                                                 columnNumber: 17
                                             }, this),
                                             "Save Policy"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                        lineNumber: 94,
+                                        lineNumber: 92,
                                         columnNumber: 14
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                lineNumber: 89,
+                                lineNumber: 87,
                                 columnNumber: 12
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                        lineNumber: 82,
+                        lineNumber: 80,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3203,7 +2732,7 @@ function AuthPoliciesPage() {
                                                             d: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                            lineNumber: 108,
+                                                            lineNumber: 104,
                                                             columnNumber: 120
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -3212,20 +2741,20 @@ function AuthPoliciesPage() {
                                                             r: "4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                            lineNumber: 108,
+                                                            lineNumber: 104,
                                                             columnNumber: 173
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                    lineNumber: 108,
+                                                    lineNumber: 104,
                                                     columnNumber: 25
                                                 }, this),
                                                 "Consumer Banking"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                            lineNumber: 107,
+                                            lineNumber: 103,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3242,25 +2771,25 @@ function AuthPoliciesPage() {
                                                         d: "M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                        lineNumber: 112,
+                                                        lineNumber: 108,
                                                         columnNumber: 120
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                    lineNumber: 112,
+                                                    lineNumber: 108,
                                                     columnNumber: 25
                                                 }, this),
                                                 "Corporate Banking"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                            lineNumber: 111,
+                                            lineNumber: 107,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                    lineNumber: 106,
+                                    lineNumber: 102,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3279,27 +2808,27 @@ function AuthPoliciesPage() {
                                                     r: "10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                    lineNumber: 119,
+                                                    lineNumber: 114,
                                                     columnNumber: 163
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M12 16v-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                    lineNumber: 119,
+                                                    lineNumber: 114,
                                                     columnNumber: 195
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M12 8h.01"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                    lineNumber: 119,
+                                                    lineNumber: 114,
                                                     columnNumber: 216
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                            lineNumber: 119,
+                                            lineNumber: 114,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3310,20 +2839,20 @@ function AuthPoliciesPage() {
                                                     children: "Policy Configuration:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                                    lineNumber: 121,
+                                                    lineNumber: 116,
                                                     columnNumber: 25
                                                 }, this),
                                                 " Authentication requirements are determined by risk level and channel. Higher risk transactions require stronger authentication (fresh UV, step-up factors) and have stricter retry limits and shorter timeouts."
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                            lineNumber: 120,
+                                            lineNumber: 115,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                    lineNumber: 118,
+                                    lineNumber: 113,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$policy$2f$ChannelTabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ChannelTabs"], {
@@ -3331,7 +2860,7 @@ function AuthPoliciesPage() {
                                     onChange: setChannel
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                    lineNumber: 126,
+                                    lineNumber: 120,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3350,12 +2879,12 @@ function AuthPoliciesPage() {
                                             isCorporate: segment === 'corporate'
                                         }, risk, false, {
                                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                            lineNumber: 132,
+                                            lineNumber: 124,
                                             columnNumber: 25
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                    lineNumber: 130,
+                                    lineNumber: 122,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$policy$2f$ComparisonTable$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ComparisonTable"], {
@@ -3364,31 +2893,31 @@ function AuthPoliciesPage() {
                                     policies: policies
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                    lineNumber: 142,
+                                    lineNumber: 134,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$policy$2f$AuditLog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AuditLog"], {
                                     refreshKey: refreshLogKey
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                    lineNumber: 145,
+                                    lineNumber: 136,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                            lineNumber: 103,
+                            lineNumber: 100,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                        lineNumber: 102,
+                        lineNumber: 99,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                lineNumber: 79,
+                lineNumber: 78,
                 columnNumber: 7
             }, this),
             isModalOpen && editingRisk && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$policy$2f$EditPolicyModal$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["EditPolicyModal"], {
@@ -3400,7 +2929,7 @@ function AuthPoliciesPage() {
                 onSave: handleSavePolicy
             }, void 0, false, {
                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                lineNumber: 151,
+                lineNumber: 142,
                 columnNumber: 9
             }, this),
             toast && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3418,17 +2947,17 @@ function AuthPoliciesPage() {
                                 points: "20 6 9 17 4 12"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                lineNumber: 161,
+                                lineNumber: 152,
                                 columnNumber: 116
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                            lineNumber: 161,
+                            lineNumber: 152,
                             columnNumber: 17
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                        lineNumber: 160,
+                        lineNumber: 151,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3438,7 +2967,7 @@ function AuthPoliciesPage() {
                                 children: "Success"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                lineNumber: 164,
+                                lineNumber: 155,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3446,25 +2975,25 @@ function AuthPoliciesPage() {
                                 children: toast
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                                lineNumber: 165,
+                                lineNumber: 156,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                        lineNumber: 163,
+                        lineNumber: 154,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-                lineNumber: 159,
+                lineNumber: 150,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(admin)/auth-policies/page.tsx",
-        lineNumber: 78,
+        lineNumber: 77,
         columnNumber: 5
     }, this);
 }

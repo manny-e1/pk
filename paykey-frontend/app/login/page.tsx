@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/services/authService';
 import { deviceService, DeviceTelemetry } from '@/services/systemDevice';
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -154,14 +155,15 @@ export default function LoginPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-[var(--radius-md)] flex items-center justify-center bg-gradient-to-br from-[var(--accent)] to-[#60a5fa]">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-[22px] h-[22px] text-white">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
-              </div>
-              <span className="font-semibold text-lg text-[var(--text-primary)]">Secure Paykey</span>
-              <span className="text-[10px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded-[10px]">FIDO2</span>
+            
+            <Image 
+              src="/Logo.png" // Pastikan file berada di public/nama-logo-kamu.png
+              alt="Secure Paykey Logo" 
+              width={200} 
+              height={22} 
+              className="object-contain" // Memastikan proporsi gambar tetap terjaga
+            />
+
             </div>
             <h1 className="text-xl font-semibold mb-2 text-[var(--text-primary)]">
               {verifiedUser ? `Welcome Back, ${verifiedUser.name.split(' ')[0]}` : 'Admin Login'}

@@ -10,7 +10,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/axios/lib/axios.js [app-client] (ecmascript)");
 ;
 const apiClient = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].create({
-    baseURL: ("TURBOPACK compile-time value", "https://api.authkey.my") || 'https://api.authkey.my',
+    baseURL: ("TURBOPACK compile-time value", "https://api.authkey.my/admin") || 'https://api.authkey.my',
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
@@ -42,131 +42,12 @@ __turbopack_context__.s([
     "authService",
     ()=>authService
 ]);
-// import {
-//   startRegistration,
-//   startAuthentication,
-// } from "@simplewebauthn/browser";
-// import { DeviceTelemetry } from "./systemDevice";
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
-// // --- Helper Request (Global) ---
-// async function apiRequest(
-//   endpoint: string,
-//   method: "POST" | "GET",
-//   body?: unknown,
-// ) {
-//   const headers = { "Content-Type": "application/json" };
-//   const config: RequestInit = { 
-//     method, 
-//     headers,
-//     // [PENTING] Aktifkan ini agar Browser mau menyimpan Cookie Session dari Backend
-//     // (Terutama saat Login Password & Login Passkey sukses)
-//     credentials: 'include' 
-//   };
-//   if (body) config.body = JSON.stringify(body);
-//   const res = await fetch(`${API_URL}${endpoint}`, config);
-//   const data = await res.json();
-//   if (!res.ok) {
-//     if (res.status === 401) throw new Error("UNAUTHORIZED");
-//     throw new Error(data.error || data.message || "API Request Failed");
-//   }
-//   return data;
-// }
-// export const authService = {
-//   // [PRE-LOGIN] Cek User (Sesuai Logic Anda)
-//   checkUser: async (email: string) => {
-//     return apiRequest("/auth/check", "POST", { email });
-//   },
-//   // [LOGIN] Password
-//   loginPassword: async (email: string, password: string, telemetry?: DeviceTelemetry) => {
-//     return apiRequest("/auth/login", "POST", { email, password, telemetry });
-//   },
-//   // [LOGIN] Passkey
-//   loginPasskey: async (email: string, telemetry?: DeviceTelemetry) => {
-//     try {
-//       // Step A: Minta Challenge
-//       const options = await apiRequest("/auth/start", "POST", { username: email, telemetry });
-//       // Step B: Scan Jari/Wajah
-//       //const asseResp = await startAuthentication(options);
-//       const asseResp = await startAuthentication({ optionsJSON: options });
-//       // Step C: Verifikasi ke Backend
-//       const payload = {
-//         serverPublicKeyCredential: {
-//           id: asseResp.id,
-//           type: asseResp.type,
-//           response: {
-//             clientDataJSON: asseResp.response.clientDataJSON,
-//             authenticatorData: asseResp.response.authenticatorData,
-//             signature: asseResp.response.signature,
-//             userHandle: asseResp.response.userHandle,
-//           },
-//         },
-//         sessionId: options.sessionId,
-//         origin: window.location.origin,
-//         rpId: "console.authkey.my",
-//         tokenBinding: null,
-//         telemetry: telemetry || null,
-//       };
-//       // Backend akan set Cookie 'auth_token' jika ini sukses
-//       return apiRequest("/auth/complete", "POST", payload);
-//     } catch (error) {
-//       console.error("Passkey Login Error:", error);
-//       throw error;
-//     }
-//   },
-//   // [REGISTER] Password
-//   registerPassword: async (fullName: string, email: string, password: string, companyName?: string, mobile?: string, telemetry?: DeviceTelemetry) => {
-//     return apiRequest("/reg/password", "POST", { fullName, email, password, companyName, mobile, role: "ADMIN" });
-//   },
-//   // [REGISTER] Passkey
-//   registerPasskey: async (email: string, fullName: string, mobile?: string, telemetry?: DeviceTelemetry) => {
-//     try {
-//       const options = await apiRequest("/reg/start", "POST", { username: email, fullName: fullName, mobile ,telemetry });
-//       //const attResp = await startRegistration(options);
-//       const attResp = await startRegistration({ optionsJSON: options });
-//       const payload = {
-//         serverPublicKeyCredential: {
-//           id: attResp.id,
-//           type: attResp.type,
-//           response: {
-//             clientDataJSON: attResp.response.clientDataJSON,
-//             attestationObject: attResp.response.attestationObject,
-//           },
-//         },
-//         sessionId: options.sessionId,
-//         origin: window.location.origin,
-//         rpId: "console.authkey.my",
-//         tokenBinding: null,
-//         telemetry: telemetry || null,
-//       };
-//       return apiRequest("/reg/complete", "POST", payload);
-//     } catch (error) {
-//       console.error("Passkey Reg Error:", error);
-//       throw error;
-//     }
-//   },
-//   logout: async () => {
-//     try {
-//       await apiRequest("/auth/logout", "POST");
-//     } catch (error) {
-//       console.warn("Logout API warning:", error);
-//     } finally {
-//       if (typeof window !== 'undefined') {
-//         window.location.href = "/login";
-//       }
-//     }
-//   },
-//   // [SESSION] Cek Token (Untuk Dashboard)
-//   me: async () => {
-//     return apiRequest("/auth/me", "GET");
-//   },
-// };
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$simplewebauthn$2f$browser$2f$esm$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/@simplewebauthn/browser/esm/index.js [app-client] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$simplewebauthn$2f$browser$2f$esm$2f$methods$2f$startRegistration$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@simplewebauthn/browser/esm/methods/startRegistration.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$simplewebauthn$2f$browser$2f$esm$2f$methods$2f$startAuthentication$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@simplewebauthn/browser/esm/methods/startAuthentication.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/apiClient.ts [app-client] (ecmascript)");
 ;
 ;
-// --- Helper Request yang Diperbarui Menggunakan apiClient ---
 async function apiRequest(endpoint, method, body) {
     try {
         const config = body ? {
