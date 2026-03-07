@@ -10,29 +10,24 @@ import Image from "next/image";
 export default function LoginPage() {
   const router = useRouter();
 
-  // --- STATE ---
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [cachedTelemetry, setCachedTelemetry] = useState<DeviceTelemetry | null>(null);
 
-  // Status Verifikasi User (Untuk mengubah tampilan Email -> Widget)
   const [verifiedUser, setVerifiedUser] = useState<{
     name: string;
     email: string;
     hasPasskey?: boolean;
   } | null>(null);
 
-  // UI States
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecking, setIsChecking] = useState(false); // Loading saat cek email
-  const [isLoading, setIsLoading] = useState(false);   // Loading saat submit login
+  const [isChecking, setIsChecking] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Ref untuk pindah fokus
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  // --- LOGIC ---
 
   useEffect(() => {
     const initTelemetry = async () => {
@@ -55,7 +50,6 @@ export default function LoginPage() {
     setTimeout(() => setErrorMessage(''), 4000);
   };
 
-  // 1. OTOMATIS CHECK EMAIL (2-Step Login Flow)
   const handleCheckEmail = async () => {
     if (!email || isChecking || verifiedUser) return;
 
@@ -65,7 +59,7 @@ export default function LoginPage() {
     try {
       const res = await authService.checkUser(email);
 
-      await new Promise(r => setTimeout(r, 600)); // Smooth loading
+      await new Promise(r => setTimeout(r, 600));
 
       if (!res.exists) {
         handleError("Account not found. Please check your email.");
@@ -77,14 +71,12 @@ export default function LoginPage() {
         return;
       }
 
-      // Simpan data user & Lanjut ke Step 2 (Password/Passkey)
       setVerifiedUser({
         name: res.name || 'Administrator',
         email: email,
         hasPasskey: res.hasPasskey
       });
 
-      // Fokus otomatis ke password setelah transisi UI
       setTimeout(() => passwordInputRef.current?.focus(), 100);
 
     } catch (err: any) {
@@ -94,7 +86,6 @@ export default function LoginPage() {
     }
   };
 
-  // Handle tombol Enter di email
   const handleEmailKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -102,7 +93,6 @@ export default function LoginPage() {
     }
   };
 
-  // 2. LOGIN PASSWORD
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) return handleError("Password required");
@@ -120,7 +110,6 @@ export default function LoginPage() {
     }
   };
 
-  // 3. LOGIN PASSKEY
   const handlePasskeyLogin = async () => {
     if (!verifiedUser?.hasPasskey || isLoading) return;
 
@@ -144,24 +133,21 @@ export default function LoginPage() {
     setErrorMessage('');
   };
 
-  // --- RENDER ---
   return (
     <div className="min-h-screen flex items-center justify-center p-5 bg-[var(--bg-primary)] font-sans text-[14px]">
       <div className="w-full max-w-[400px]">
         
-        {/* Login Card */}
         <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-xl)] p-10 shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
 
-          {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-3 mb-6">
+            <div className="inline-flex items-center gap-3">
             
             <Image 
-              src="/Logo.png" // Pastikan file berada di public/nama-logo-kamu.png
+              src="/Logo.png"
               alt="Secure Paykey Logo" 
               width={200} 
               height={22} 
-              className="object-contain" // Memastikan proporsi gambar tetap terjaga
+              className="object-contain"
             />
 
             </div>
@@ -173,19 +159,14 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Error Message */}
           {errorMessage && (
             <div className="mb-4 p-3 rounded-[var(--radius-md)] bg-[var(--error-muted)] border border-[var(--error)] text-[var(--error)] text-xs text-center font-medium animate-pulse">
               {errorMessage}
             </div>
           )}
 
-          {/* --- IDENTIFIER-FIRST FLOW CONTROLLER --- */}
           {!verifiedUser ? (
             
-            // ==========================================
-            // STEP 1: INPUT EMAIL SAJA
-            // ==========================================
             <div className="animate-scale-in">
               <div className="mb-6">
                 <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">Email Address</label>
@@ -224,11 +205,7 @@ export default function LoginPage() {
 
           ) : (
 
-            // ==========================================
-            // STEP 2: PASSWORD & PASSKEY
-            // ==========================================
             <div className="animate-scale-in">
-              {/* User Verified Widget */}
               <div className="flex items-center gap-3 p-3.5 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] mb-6">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0 bg-gradient-to-br from-[var(--accent)] to-[var(--purple)]">
                   {verifiedUser.name.substring(0, 2).toUpperCase()}
@@ -244,7 +221,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Form Password */}
               <form onSubmit={handleLogin}>
                 <div className="mb-5">
                   <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">Password</label>
@@ -303,14 +279,12 @@ export default function LoginPage() {
                 Forgot password?
               </a>
 
-              {/* Divider */}
               <div className="flex items-center gap-4 my-6">
                 <div className="flex-1 h-px bg-[var(--border-primary)]"></div>
                 <span className="text-xs text-[var(--text-tertiary)]">or</span>
                 <div className="flex-1 h-px bg-[var(--border-primary)]"></div>
               </div>
 
-              {/* Tombol Passkey */}
               <button
                 onClick={handlePasskeyLogin}
                 disabled={!verifiedUser?.hasPasskey || isLoading}

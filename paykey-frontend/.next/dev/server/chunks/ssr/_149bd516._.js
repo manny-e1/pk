@@ -75,7 +75,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$authService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/authService.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$systemDevice$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/systemDevice.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -84,7 +86,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$systemDevice$2e$
 ;
 function SignupPage() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
-    // --- STATE ---
     const [selectedMethod, setSelectedMethod] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('password');
     const [cachedTelemetry, setCachedTelemetry] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
@@ -108,14 +109,11 @@ function SignupPage() {
     }, []);
     const [showPassword, setShowPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [showConfirmPassword, setShowConfirmPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    // Password Strength Logic
     const [strength, setStrength] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [passwordsMatch, setPasswordsMatch] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
-    // Modal State
     const [modalOpen, setModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [modalState, setModalState] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('initial');
     const [errorMessage, setErrorMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
-    // --- HANDLERS ---
     const handleInputChange = (e)=>{
         const { id, value } = e.target;
         setFormData((prev)=>({
@@ -151,7 +149,6 @@ function SignupPage() {
         ];
         return labels[Math.max(0, strength - 1)] + ' password';
     };
-    // Helper untuk warna bar kekuatan password
     const getStrengthColorClass = ()=>{
         const colors = [
             'bg-[var(--error)]',
@@ -170,7 +167,6 @@ function SignupPage() {
         ];
         return widths[Math.max(0, strength - 1)];
     };
-    // --- SUBMIT LOGIC ---
     const handleSignup = async (e)=>{
         e.preventDefault();
         if (!formData.fullName || !formData.email || !formData.mobile) {
@@ -222,7 +218,6 @@ function SignupPage() {
     const handleContinue = ()=>{
         router.push('/login');
     };
-    // --- RENDER ---
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "min-h-screen flex items-center justify-center p-5 bg-[var(--bg-primary)] font-sans text-[14px]",
         children: [
@@ -235,90 +230,44 @@ function SignupPage() {
                             className: "text-center mb-8",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "inline-flex items-center gap-3 mb-6",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "w-10 h-10 bg-gradient-to-br from-[var(--accent)] to-[#60a5fa] rounded-[var(--radius-md)] flex items-center justify-center",
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                                viewBox: "0 0 24 24",
-                                                fill: "none",
-                                                stroke: "currentColor",
-                                                strokeWidth: "2.5",
-                                                className: "w-[22px] h-[22px] text-white",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
-                                                        x: "3",
-                                                        y: "11",
-                                                        width: "18",
-                                                        height: "11",
-                                                        rx: "2",
-                                                        ry: "2"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 177,
-                                                        columnNumber: 29
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                                        d: "M7 11V7a5 5 0 0 1 10 0v4"
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 178,
-                                                        columnNumber: 29
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 176,
-                                                columnNumber: 25
-                                            }, this)
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 175,
-                                            columnNumber: 21
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "font-semibold text-lg text-[var(--text-primary)]",
-                                            children: "Secure Paykey"
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 181,
-                                            columnNumber: 21
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-[10px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded-[10px]",
-                                            children: "FIDO2"
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 182,
-                                            columnNumber: 21
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                    className: "inline-flex items-center gap-3",
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                        src: "/Logo.png",
+                                        alt: "Secure Paykey Logo",
+                                        width: 200,
+                                        height: 22,
+                                        className: "object-contain"
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/signup/page.tsx",
+                                        lineNumber: 167,
+                                        columnNumber: 29
+                                    }, this)
+                                }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 174,
-                                    columnNumber: 17
+                                    lineNumber: 166,
+                                    columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                     className: "text-xl font-semibold mb-2 text-[var(--text-primary)]",
                                     children: "Create Account"
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 184,
-                                    columnNumber: 17
+                                    lineNumber: 176,
+                                    columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-[var(--text-tertiary)]",
                                     children: "Choose your preferred sign-up method"
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 185,
-                                    columnNumber: 17
+                                    lineNumber: 177,
+                                    columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/signup/page.tsx",
-                            lineNumber: 173,
-                            columnNumber: 13
+                            lineNumber: 165,
+                            columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "grid grid-cols-2 gap-3 mb-7",
@@ -346,48 +295,48 @@ function SignupPage() {
                                                         ry: "2"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 197,
-                                                        columnNumber: 29
+                                                        lineNumber: 188,
+                                                        columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                         d: "M7 11V7a5 5 0 0 1 10 0v4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 198,
-                                                        columnNumber: 29
+                                                        lineNumber: 189,
+                                                        columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 196,
-                                                columnNumber: 25
+                                                lineNumber: 187,
+                                                columnNumber: 33
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 195,
-                                            columnNumber: 21
+                                            lineNumber: 186,
+                                            columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: `text-sm font-semibold ${selectedMethod === 'password' ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}`,
                                             children: "Email & Password"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 201,
-                                            columnNumber: 21
+                                            lineNumber: 192,
+                                            columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: "text-[11px] text-[var(--text-tertiary)] text-center",
                                             children: "Traditional login method"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 202,
-                                            columnNumber: 21
+                                            lineNumber: 193,
+                                            columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 190,
-                                    columnNumber: 17
+                                    lineNumber: 181,
+                                    columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: `flex flex-col items-center gap-2.5 p-5 bg-[var(--bg-tertiary)] border-2 rounded-[var(--radius-lg)] cursor-pointer transition-all 
@@ -406,46 +355,46 @@ function SignupPage() {
                                                     d: "M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/signup/page.tsx",
-                                                    lineNumber: 211,
-                                                    columnNumber: 29
+                                                    lineNumber: 202,
+                                                    columnNumber: 37
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 210,
-                                                columnNumber: 25
+                                                lineNumber: 201,
+                                                columnNumber: 33
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 209,
-                                            columnNumber: 21
+                                            lineNumber: 200,
+                                            columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: `text-sm font-semibold ${selectedMethod === 'passkey' ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}`,
                                             children: "Passkey"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 214,
-                                            columnNumber: 21
+                                            lineNumber: 205,
+                                            columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: "text-[11px] text-[var(--text-tertiary)] text-center",
                                             children: "Passwordless with FIDO2"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 215,
-                                            columnNumber: 21
+                                            lineNumber: 206,
+                                            columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 204,
-                                    columnNumber: 17
+                                    lineNumber: 195,
+                                    columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/signup/page.tsx",
-                            lineNumber: 189,
-                            columnNumber: 13
+                            lineNumber: 180,
+                            columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                             onSubmit: handleSignup,
@@ -458,8 +407,8 @@ function SignupPage() {
                                             children: "Personal Information"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 222,
-                                            columnNumber: 21
+                                            lineNumber: 212,
+                                            columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "mb-4",
@@ -469,8 +418,8 @@ function SignupPage() {
                                                     children: "Full Name"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/signup/page.tsx",
-                                                    lineNumber: 227,
-                                                    columnNumber: 25
+                                                    lineNumber: 217,
+                                                    columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                     type: "text",
@@ -482,14 +431,14 @@ function SignupPage() {
                                                     required: true
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/signup/page.tsx",
-                                                    lineNumber: 228,
-                                                    columnNumber: 25
+                                                    lineNumber: 218,
+                                                    columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 226,
-                                            columnNumber: 21
+                                            lineNumber: 216,
+                                            columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "grid grid-cols-2 gap-3",
@@ -501,8 +450,8 @@ function SignupPage() {
                                                             children: "Email Address"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/signup/page.tsx",
-                                                            lineNumber: 233,
-                                                            columnNumber: 29
+                                                            lineNumber: 223,
+                                                            columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                             type: "email",
@@ -514,14 +463,14 @@ function SignupPage() {
                                                             required: true
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/signup/page.tsx",
-                                                            lineNumber: 234,
-                                                            columnNumber: 29
+                                                            lineNumber: 224,
+                                                            columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/signup/page.tsx",
-                                                    lineNumber: 232,
-                                                    columnNumber: 25
+                                                    lineNumber: 222,
+                                                    columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     children: [
@@ -530,8 +479,8 @@ function SignupPage() {
                                                             children: "Mobile Number"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/signup/page.tsx",
-                                                            lineNumber: 237,
-                                                            columnNumber: 29
+                                                            lineNumber: 227,
+                                                            columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                             type: "tel",
@@ -543,26 +492,26 @@ function SignupPage() {
                                                             required: true
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/signup/page.tsx",
-                                                            lineNumber: 238,
-                                                            columnNumber: 29
+                                                            lineNumber: 228,
+                                                            columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/signup/page.tsx",
-                                                    lineNumber: 236,
-                                                    columnNumber: 25
+                                                    lineNumber: 226,
+                                                    columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 231,
-                                            columnNumber: 21
+                                            lineNumber: 221,
+                                            columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 221,
-                                    columnNumber: 17
+                                    lineNumber: 211,
+                                    columnNumber: 25
                                 }, this),
                                 selectedMethod === 'password' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "animate-scale-in",
@@ -574,8 +523,8 @@ function SignupPage() {
                                                 children: "Create Password"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 246,
-                                                columnNumber: 29
+                                                lineNumber: 236,
+                                                columnNumber: 37
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "mb-4",
@@ -585,8 +534,8 @@ function SignupPage() {
                                                         children: "Password"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 251,
-                                                        columnNumber: 33
+                                                        lineNumber: 241,
+                                                        columnNumber: 41
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "relative",
@@ -600,8 +549,8 @@ function SignupPage() {
                                                                 placeholder: "Create a strong password"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/signup/page.tsx",
-                                                                lineNumber: 253,
-                                                                columnNumber: 37
+                                                                lineNumber: 243,
+                                                                columnNumber: 45
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                                 type: "button",
@@ -618,8 +567,8 @@ function SignupPage() {
                                                                             d: "M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 263,
-                                                                            columnNumber: 150
+                                                                            lineNumber: 253,
+                                                                            columnNumber: 158
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                                             x1: "1",
@@ -628,14 +577,14 @@ function SignupPage() {
                                                                             y2: "23"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 263,
-                                                                            columnNumber: 342
+                                                                            lineNumber: 253,
+                                                                            columnNumber: 351
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/signup/page.tsx",
-                                                                    lineNumber: 263,
-                                                                    columnNumber: 45
+                                                                    lineNumber: 253,
+                                                                    columnNumber: 53
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                                                     viewBox: "0 0 24 24",
                                                                     fill: "none",
@@ -647,8 +596,8 @@ function SignupPage() {
                                                                             d: "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 265,
-                                                                            columnNumber: 150
+                                                                            lineNumber: 255,
+                                                                            columnNumber: 158
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                                                                             cx: "12",
@@ -656,25 +605,25 @@ function SignupPage() {
                                                                             r: "3"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 265,
-                                                                            columnNumber: 206
+                                                                            lineNumber: 255,
+                                                                            columnNumber: 215
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/signup/page.tsx",
-                                                                    lineNumber: 265,
-                                                                    columnNumber: 45
+                                                                    lineNumber: 255,
+                                                                    columnNumber: 53
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/signup/page.tsx",
-                                                                lineNumber: 261,
-                                                                columnNumber: 37
+                                                                lineNumber: 251,
+                                                                columnNumber: 45
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 252,
-                                                        columnNumber: 33
+                                                        lineNumber: 242,
+                                                        columnNumber: 41
                                                     }, this),
                                                     formData.password.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "mt-2",
@@ -685,33 +634,33 @@ function SignupPage() {
                                                                     className: `h-full rounded-full transition-all duration-300 ${getStrengthWidth()} ${getStrengthColorClass()}`
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/signup/page.tsx",
-                                                                    lineNumber: 272,
-                                                                    columnNumber: 45
+                                                                    lineNumber: 262,
+                                                                    columnNumber: 53
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/signup/page.tsx",
-                                                                lineNumber: 271,
-                                                                columnNumber: 41
+                                                                lineNumber: 261,
+                                                                columnNumber: 49
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-[11px] text-[var(--text-tertiary)]",
                                                                 children: getStrengthLabel()
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/signup/page.tsx",
-                                                                lineNumber: 274,
-                                                                columnNumber: 41
+                                                                lineNumber: 264,
+                                                                columnNumber: 49
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 270,
-                                                        columnNumber: 37
+                                                        lineNumber: 260,
+                                                        columnNumber: 45
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 250,
-                                                columnNumber: 29
+                                                lineNumber: 240,
+                                                columnNumber: 37
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "mb-4",
@@ -721,8 +670,8 @@ function SignupPage() {
                                                         children: "Confirm Password"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 280,
-                                                        columnNumber: 33
+                                                        lineNumber: 270,
+                                                        columnNumber: 41
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "relative",
@@ -736,8 +685,8 @@ function SignupPage() {
                                                                 placeholder: "Confirm your password"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/signup/page.tsx",
-                                                                lineNumber: 282,
-                                                                columnNumber: 37
+                                                                lineNumber: 272,
+                                                                columnNumber: 45
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                                 type: "button",
@@ -754,8 +703,8 @@ function SignupPage() {
                                                                             d: "M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 292,
-                                                                            columnNumber: 150
+                                                                            lineNumber: 282,
+                                                                            columnNumber: 158
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                                             x1: "1",
@@ -764,14 +713,14 @@ function SignupPage() {
                                                                             y2: "23"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 292,
-                                                                            columnNumber: 342
+                                                                            lineNumber: 282,
+                                                                            columnNumber: 351
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/signup/page.tsx",
-                                                                    lineNumber: 292,
-                                                                    columnNumber: 45
+                                                                    lineNumber: 282,
+                                                                    columnNumber: 53
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                                                     viewBox: "0 0 24 24",
                                                                     fill: "none",
@@ -783,8 +732,8 @@ function SignupPage() {
                                                                             d: "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 294,
-                                                                            columnNumber: 150
+                                                                            lineNumber: 284,
+                                                                            columnNumber: 158
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                                                                             cx: "12",
@@ -792,50 +741,50 @@ function SignupPage() {
                                                                             r: "3"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/signup/page.tsx",
-                                                                            lineNumber: 294,
-                                                                            columnNumber: 206
+                                                                            lineNumber: 284,
+                                                                            columnNumber: 215
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/signup/page.tsx",
-                                                                    lineNumber: 294,
-                                                                    columnNumber: 45
+                                                                    lineNumber: 284,
+                                                                    columnNumber: 53
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/signup/page.tsx",
-                                                                lineNumber: 290,
-                                                                columnNumber: 37
+                                                                lineNumber: 280,
+                                                                columnNumber: 45
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 281,
-                                                        columnNumber: 33
+                                                        lineNumber: 271,
+                                                        columnNumber: 41
                                                     }, this),
                                                     !passwordsMatch && formData.confirmPassword && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "text-[11px] text-[var(--error)] mt-1.5",
                                                         children: "Passwords do not match"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 299,
-                                                        columnNumber: 37
+                                                        lineNumber: 289,
+                                                        columnNumber: 45
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 279,
-                                                columnNumber: 29
+                                                lineNumber: 269,
+                                                columnNumber: 37
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/signup/page.tsx",
-                                        lineNumber: 245,
-                                        columnNumber: 25
+                                        lineNumber: 235,
+                                        columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 244,
-                                    columnNumber: 21
+                                    lineNumber: 234,
+                                    columnNumber: 29
                                 }, this),
                                 selectedMethod === 'passkey' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "bg-[var(--accent-bg)] border border-[rgba(35,131,226,0.3)] rounded-[var(--radius-md)] p-4 mb-5 animate-scale-in",
@@ -856,49 +805,49 @@ function SignupPage() {
                                                             r: "10"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/signup/page.tsx",
-                                                            lineNumber: 309,
-                                                            columnNumber: 124
+                                                            lineNumber: 299,
+                                                            columnNumber: 132
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                             d: "M12 16v-4"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/signup/page.tsx",
-                                                            lineNumber: 309,
-                                                            columnNumber: 156
+                                                            lineNumber: 299,
+                                                            columnNumber: 165
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                             d: "M12 8h.01"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/signup/page.tsx",
-                                                            lineNumber: 309,
-                                                            columnNumber: 177
+                                                            lineNumber: 299,
+                                                            columnNumber: 187
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/signup/page.tsx",
-                                                    lineNumber: 309,
-                                                    columnNumber: 29
+                                                    lineNumber: 299,
+                                                    columnNumber: 37
                                                 }, this),
                                                 "How Passkey Works"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 308,
-                                            columnNumber: 25
+                                            lineNumber: 298,
+                                            columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "text-[12px] text-[var(--text-secondary)] leading-relaxed",
                                             children: "After submitting, you'll be prompted to authenticate using your device's biometrics (fingerprint, Face ID) or PIN. This creates a secure cryptographic key pair - no password needed!"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 312,
-                                            columnNumber: 25
+                                            lineNumber: 302,
+                                            columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 307,
-                                    columnNumber: 21
+                                    lineNumber: 297,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     type: "submit",
@@ -915,13 +864,13 @@ function SignupPage() {
                                                     d: "M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/signup/page.tsx",
-                                                    lineNumber: 322,
-                                                    columnNumber: 33
+                                                    lineNumber: 312,
+                                                    columnNumber: 41
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 321,
-                                                columnNumber: 29
+                                                lineNumber: 311,
+                                                columnNumber: 37
                                             }, this),
                                             "Continue with Passkey"
                                         ]
@@ -938,8 +887,8 @@ function SignupPage() {
                                                         d: "M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 329,
-                                                        columnNumber: 33
+                                                        lineNumber: 319,
+                                                        columnNumber: 41
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
                                                         cx: "8.5",
@@ -947,8 +896,8 @@ function SignupPage() {
                                                         r: "4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 330,
-                                                        columnNumber: 33
+                                                        lineNumber: 320,
+                                                        columnNumber: 41
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                         x1: "20",
@@ -957,8 +906,8 @@ function SignupPage() {
                                                         y2: "14"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 331,
-                                                        columnNumber: 33
+                                                        lineNumber: 321,
+                                                        columnNumber: 41
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                         x1: "23",
@@ -967,28 +916,28 @@ function SignupPage() {
                                                         y2: "11"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/signup/page.tsx",
-                                                        lineNumber: 332,
-                                                        columnNumber: 33
+                                                        lineNumber: 322,
+                                                        columnNumber: 41
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 328,
-                                                columnNumber: 29
+                                                lineNumber: 318,
+                                                columnNumber: 37
                                             }, this),
                                             "Create Account"
                                         ]
                                     }, void 0, true)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 318,
-                                    columnNumber: 17
+                                    lineNumber: 308,
+                                    columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/signup/page.tsx",
-                            lineNumber: 220,
-                            columnNumber: 13
+                            lineNumber: 210,
+                            columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             className: "text-center text-xs text-[var(--text-tertiary)] mt-4 leading-relaxed",
@@ -996,8 +945,8 @@ function SignupPage() {
                                 "By creating an account, you agree to our",
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 341,
-                                    columnNumber: 57
+                                    lineNumber: 331,
+                                    columnNumber: 65
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                     href: "#",
@@ -1005,8 +954,8 @@ function SignupPage() {
                                     children: "Terms of Service"
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 342,
-                                    columnNumber: 17
+                                    lineNumber: 332,
+                                    columnNumber: 25
                                 }, this),
                                 " and ",
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1015,14 +964,14 @@ function SignupPage() {
                                     children: "Privacy Policy"
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 342,
-                                    columnNumber: 128
+                                    lineNumber: 332,
+                                    columnNumber: 136
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/signup/page.tsx",
-                            lineNumber: 340,
-                            columnNumber: 13
+                            lineNumber: 330,
+                            columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "text-center text-[13px] text-[var(--text-tertiary)] mt-6 pt-6 border-t border-[var(--border-primary)]",
@@ -1034,25 +983,25 @@ function SignupPage() {
                                     children: "Log in"
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 346,
-                                    columnNumber: 42
+                                    lineNumber: 336,
+                                    columnNumber: 50
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/signup/page.tsx",
-                            lineNumber: 345,
-                            columnNumber: 13
+                            lineNumber: 335,
+                            columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/signup/page.tsx",
-                    lineNumber: 170,
-                    columnNumber: 9
+                    lineNumber: 163,
+                    columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/signup/page.tsx",
-                lineNumber: 168,
-                columnNumber: 7
+                lineNumber: 162,
+                columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: `fixed inset-0 bg-[rgba(0,0,0,0.7)] flex items-center justify-center z-[1000] transition-all duration-200 ${modalOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`,
@@ -1075,34 +1024,34 @@ function SignupPage() {
                                             d: "M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 360,
-                                            columnNumber: 29
+                                            lineNumber: 348,
+                                            columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/signup/page.tsx",
-                                        lineNumber: 359,
-                                        columnNumber: 25
+                                        lineNumber: 347,
+                                        columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 358,
-                                    columnNumber: 21
+                                    lineNumber: 346,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                     className: "text-lg font-semibold mb-2 text-[var(--text-primary)]",
                                     children: "Register Your Passkey"
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 363,
-                                    columnNumber: 21
+                                    lineNumber: 351,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-[var(--text-secondary)] mb-6 leading-relaxed",
                                     children: "Please authenticate using your device's biometrics (fingerprint, Face ID) or enter your device PIN to create your passkey."
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 364,
-                                    columnNumber: 21
+                                    lineNumber: 352,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex flex-col gap-3",
@@ -1113,8 +1062,8 @@ function SignupPage() {
                                             children: "Continue"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 366,
-                                            columnNumber: 25
+                                            lineNumber: 354,
+                                            columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                             className: "w-full flex items-center justify-center gap-2 p-3 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] border border-[var(--border-primary)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--bg-hover)] transition-all",
@@ -1122,14 +1071,14 @@ function SignupPage() {
                                             children: "Cancel"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 367,
-                                            columnNumber: 25
+                                            lineNumber: 355,
+                                            columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 365,
-                                    columnNumber: 21
+                                    lineNumber: 353,
+                                    columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true),
@@ -1151,34 +1100,34 @@ function SignupPage() {
                                             strokeDashoffset: "12"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 377,
-                                            columnNumber: 29
+                                            lineNumber: 364,
+                                            columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/signup/page.tsx",
-                                        lineNumber: 376,
-                                        columnNumber: 25
+                                        lineNumber: 363,
+                                        columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 375,
-                                    columnNumber: 21
+                                    lineNumber: 362,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                     className: "text-lg font-semibold mb-2 text-[var(--text-primary)]",
                                     children: "Processing..."
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 380,
-                                    columnNumber: 21
+                                    lineNumber: 367,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-[var(--text-secondary)] mb-6 leading-relaxed",
                                     children: "Please wait while we create your account securely."
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 381,
-                                    columnNumber: 21
+                                    lineNumber: 368,
+                                    columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true),
@@ -1197,34 +1146,34 @@ function SignupPage() {
                                             d: "M20 6L9 17l-5-5"
                                         }, void 0, false, {
                                             fileName: "[project]/app/signup/page.tsx",
-                                            lineNumber: 390,
-                                            columnNumber: 29
+                                            lineNumber: 376,
+                                            columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/signup/page.tsx",
-                                        lineNumber: 389,
-                                        columnNumber: 25
+                                        lineNumber: 375,
+                                        columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 388,
-                                    columnNumber: 21
+                                    lineNumber: 374,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                     className: "text-lg font-semibold mb-2 text-[var(--text-primary)]",
                                     children: selectedMethod === 'passkey' ? 'Passkey Created!' : 'Account Created!'
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 393,
-                                    columnNumber: 21
+                                    lineNumber: 379,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-[var(--text-secondary)] mb-6 leading-relaxed",
                                     children: "Your account has been created successfully. You can now sign in."
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 394,
-                                    columnNumber: 21
+                                    lineNumber: 380,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex flex-col gap-3",
@@ -1234,13 +1183,13 @@ function SignupPage() {
                                         children: "Continue to Login"
                                     }, void 0, false, {
                                         fileName: "[project]/app/signup/page.tsx",
-                                        lineNumber: 396,
-                                        columnNumber: 25
+                                        lineNumber: 382,
+                                        columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 395,
-                                    columnNumber: 21
+                                    lineNumber: 381,
+                                    columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true),
@@ -1261,8 +1210,8 @@ function SignupPage() {
                                                 r: "10"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 406,
-                                                columnNumber: 30
+                                                lineNumber: 391,
+                                                columnNumber: 37
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                 x1: "12",
@@ -1271,8 +1220,8 @@ function SignupPage() {
                                                 y2: "12"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 406,
-                                                columnNumber: 62
+                                                lineNumber: 391,
+                                                columnNumber: 70
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                 x1: "12",
@@ -1281,35 +1230,35 @@ function SignupPage() {
                                                 y2: "16"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/signup/page.tsx",
-                                                lineNumber: 406,
-                                                columnNumber: 100
+                                                lineNumber: 391,
+                                                columnNumber: 109
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/signup/page.tsx",
-                                        lineNumber: 405,
-                                        columnNumber: 25
+                                        lineNumber: 390,
+                                        columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 404,
-                                    columnNumber: 22
+                                    lineNumber: 389,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                     className: "text-lg font-semibold mb-2 text-[var(--text-primary)]",
                                     children: "Registration Failed"
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 409,
-                                    columnNumber: 21
+                                    lineNumber: 394,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-[var(--error)] mb-6 leading-relaxed",
                                     children: errorMessage
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 410,
-                                    columnNumber: 21
+                                    lineNumber: 395,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex flex-col gap-3",
@@ -1322,32 +1271,32 @@ function SignupPage() {
                                         children: "Close"
                                     }, void 0, false, {
                                         fileName: "[project]/app/signup/page.tsx",
-                                        lineNumber: 412,
-                                        columnNumber: 25
+                                        lineNumber: 397,
+                                        columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/signup/page.tsx",
-                                    lineNumber: 411,
-                                    columnNumber: 21
+                                    lineNumber: 396,
+                                    columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/signup/page.tsx",
-                    lineNumber: 353,
-                    columnNumber: 9
+                    lineNumber: 342,
+                    columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/signup/page.tsx",
-                lineNumber: 352,
-                columnNumber: 7
+                lineNumber: 341,
+                columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/signup/page.tsx",
-        lineNumber: 167,
-        columnNumber: 5
+        lineNumber: 161,
+        columnNumber: 9
     }, this);
 }
 }),
