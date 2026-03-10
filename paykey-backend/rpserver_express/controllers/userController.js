@@ -22,6 +22,9 @@ exports.getAllUsers = async (req, res) => {
                 id: key.id.toString(),
                 name: key.deviceName || 'Unknown Device',
                 model: key.credentialId,
+                authTimestamp: key.authenticated_timestamp,
+                osName: key.deviceTelemetry.os_name,
+                osVersion: key.deviceTelemetry.os_version,
                 type: (key.deviceName && key.deviceName.toLowerCase().includes('phone')) ? 'mobile' : 'desktop',
                 status: key.status ? key.status.toLowerCase() : 'active',
                 lastUsed: new Date(key.lastActive).toLocaleDateString()

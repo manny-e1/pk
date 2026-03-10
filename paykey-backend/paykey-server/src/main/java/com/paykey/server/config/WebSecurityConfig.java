@@ -15,7 +15,7 @@ public class WebSecurityConfig {
         http
             .csrf(csrf -> csrf.ignoringAntMatchers("/api/**"))
             .authorizeRequests(auth -> auth
-                .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/actuator/health").permitAll()
+                .antMatchers("/health", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/actuator/health").permitAll()
                 .antMatchers("/api/unified/**").permitAll()
                 .antMatchers("/api/admin/tokens/**").permitAll()
                 .anyRequest().authenticated()

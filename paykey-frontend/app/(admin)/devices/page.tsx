@@ -9,6 +9,7 @@ import { DeviceIcon } from '@/components/ui/DeviceIcon';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Device } from '@/lib/types';
 import { useDevices } from '@/hooks/useDevices';
+import { getRelativeTime } from '@/services/deviceService';
 
 export default function DevicesPage() {
     const { devices, loading, refresh, actions } = useDevices();
@@ -22,6 +23,7 @@ export default function DevicesPage() {
     const [selectedDevices, setSelectedDevices] = useState<Set<string>>(new Set());
 
     const [currentDevice, setCurrentDevice] = useState<Device | null>(null);
+    const [openSlider, setOpenSlider] = useState<boolean>(false);
     const [modalType, setModalType] = useState<'suspend' | 'revoke' | null>(null);
     const [revokeReason, setRevokeReason] = useState('Device Lost');
     const [toast, setToast] = useState<{ title: string, msg: string } | null>(null);
@@ -54,6 +56,7 @@ export default function DevicesPage() {
     };
 
     const openDetail = (device: Device) => {
+        setOpenSlider(true)
         setCurrentDevice(device);
     };
 
@@ -95,24 +98,7 @@ export default function DevicesPage() {
         return 'bg-[var(--info)]';
     };
 
-    const getRelativeTime = (dateString: string | undefined) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        const now = new Date();
-        const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-        let interval = seconds / 31536000;
-        if (interval > 1) return Math.floor(interval) + " years ago";
-        interval = seconds / 2592000;
-        if (interval > 1) return Math.floor(interval) + " months ago";
-        interval = seconds / 86400;
-        if (interval > 1) return Math.floor(interval) + " days ago";
-        interval = seconds / 3600;
-        if (interval > 1) return Math.floor(interval) + " hours ago";
-        interval = seconds / 60;
-        if (interval > 1) return Math.floor(interval) + " min ago";
-        return "Just now";
-    };
 
     const formatEventName = (eventString: string | undefined) => {
         if (!eventString) return 'Unknown Activity';
@@ -141,6 +127,7 @@ export default function DevicesPage() {
         }
     };
 
+
     const columns = [
         {
             header: (
@@ -150,13 +137,14 @@ export default function DevicesPage() {
             ),
             className: 'w-10 pl-3'
         },
-        { header: 'Device', className: 'min-w-[200px]' },
-        { header: 'User', className: 'min-w-[160px]' },
-        { header: 'Status', className: 'w-[100px]' },
-        { header: 'Last Active', className: 'w-[110px]' },
-        { header: 'Approvals', className: 'w-[100px]' },
-        { header: 'Credential ID', className: 'w-[140px]' },
-        { header: 'Actions', className: 'text-right w-[130px]' },
+        { header: 'Device', className: 'min-w-[50px] xl:min-w-[100px]' },
+        { header: 'OS Version', className: 'min-w-[50px]' },
+        { header: 'User', className: 'min-w-[50px] xl:min-w-[100px]' },
+        { header: 'Status', className: 'min-w-[50-px] xl:min-w-[100px]' },
+        { header: 'Last Active', className: 'min-w-[50px] xl:min-w-[110px]' },
+        { header: 'Approvals', className: 'min-w-[50px] xl:min-w-[100px]' },
+        { header: 'Credential ID', className: 'min-w-[140px] hidden xl:block' },
+        { header: 'Actions', className: 'text-center min-w-[130px]' },
     ];
 
     if (loading) return <div className="flex h-screen items-center justify-center bg-[var(--bg-primary)] text-[var(--text-secondary)]">Loading Data...</div>;
@@ -274,10 +262,18 @@ export default function DevicesPage() {
                                     </div>
                                 </td>
                                 <td className="p-3">
+                                    <div className="flex items-center gap-3">
+                                        {/* < type={d.type} /> */}
+                                        <div>
+                                            <div className="font-medium text-[13px]">{d.osVersion}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="p-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--purple)] flex items-center justify-center text-[10px] font-semibold text-white">{d.initials}</div>
                                         <div>
-                                            <div className="text-[13px]">{d.email}</div>
+                                            <div className="text-[13px]">{d.user}</div>
                                             <div className="text-[11px] text-[var(--text-tertiary)] font-mono">{d.userId}</div>
                                         </div>
                                     </div>
@@ -288,11 +284,11 @@ export default function DevicesPage() {
                                     {d.approvals}
                                     {d.rate !== '-' && <span className="text-[var(--success)] text-[11px] ml-1">({d.rate})</span>}
                                 </td>
-                                <td className={`p-3 text-[11px] font-mono text-[var(--text-secondary)] ${d.status === 'revoked' ? 'line-through' : ''}`}>
+                                <td className={`p-3 text-[11px] font-mono text-[var(--text-secondary)] ${d.status === 'revoked' ? 'line-through' : ''} hidden xl:block`}>
                                     {d.credential.substring(0, 16)}...
                                 </td>
                                 <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
-                                    <div className="flex justify-end gap-1">
+                                    <div className="flex flex-wrap xl:flex-nowrap justify-end gap-1">
                                         {d.status === 'active' ? (
                                             <>
                                                 <button onClick={() => { setCurrentDevice(d); setModalType('suspend'); }} className="px-2 py-1 text-xs bg-[var(--warning)] text-black rounded-[var(--radius-md)] font-medium hover:bg-[#f59e0b] transition-colors">Suspend</button>
@@ -325,8 +321,8 @@ export default function DevicesPage() {
             </main>
 
             <SlideOver
-                isOpen={!!currentDevice}
-                onClose={() => setCurrentDevice(null)}
+                isOpen={openSlider}
+                onClose={() => { setOpenSlider(false); setCurrentDevice(null) }}
                 title="Device Details"
                 footer={currentDevice && currentDevice.status !== 'revoked' ? (
                     <div className="flex gap-2 w-full justify-end">
@@ -366,7 +362,7 @@ export default function DevicesPage() {
                             <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--purple)] flex items-center justify-center text-xs font-semibold text-white">{currentDevice.initials}</div>
                                 <div>
-                                    <div className="text-sm">{currentDevice.email}</div>
+                                    <div className="text-sm">{currentDevice.user}</div>
                                     <div className="text-xs text-[var(--text-tertiary)] font-mono">{currentDevice.userId}</div>
                                 </div>
                             </div>
@@ -375,7 +371,7 @@ export default function DevicesPage() {
                         <div>
                             <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Device Information</div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Registered</div><div className="text-[13px]">{currentDevice.registered}</div></div>
+                                <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Registered</div><div className="text-[13px]">{new Date(currentDevice.registered).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div></div>
                                 <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Last Active</div><div className={`text-[13px] ${currentDevice.lastActiveClass === 'recent' ? 'text-[var(--success)]' : currentDevice.lastActiveClass === 'warning' ? 'text-[var(--warning)]' : 'text-[var(--text-tertiary)]'}`}>{currentDevice.lastActive}</div></div>
                                 <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Location</div><div className="text-[13px]">{currentDevice.location}</div></div>
                                 <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Last IP</div><div className="text-[12px] font-mono">{currentDevice.ip}</div></div>
@@ -405,16 +401,16 @@ export default function DevicesPage() {
                                             <div className="flex-1">
                                                 <div className="text-[13px] text-[var(--text-primary)]">
                                                     {formatEventName(activity.event)}
-                                                    {activity.location && activity.location !== 'Unknown Location' && (
+                                                    {/* {activity.location && activity.location !== 'Unknown Location' && (
                                                         <span className="text-[var(--text-tertiary)] text-[11px] ml-1">
                                                             • {activity.location}
                                                         </span>
-                                                    )}
+                                                    )} */}
                                                 </div>
 
                                                 <div className="text-[11px] text-[var(--text-tertiary)] flex gap-2">
                                                     <span>{getRelativeTime(activity.time)}</span>
-                                                    {activity.ip && <span>• IP: {activity.ip}</span>}
+                                                    {/* {activity.ip && <span>• IP: {activity.ip}</span>} */}
                                                 </div>
                                             </div>
                                         </div>
@@ -434,7 +430,7 @@ export default function DevicesPage() {
 
             <Modal
                 isOpen={!!modalType}
-                onClose={() => setModalType(null)}
+                onClose={() => { setCurrentDevice(null); setModalType(null) }}
                 title={modalType === 'revoke' ? 'Revoke Device Credential' : 'Suspend Device'}
                 type={modalType === 'revoke' ? 'danger' : 'default'}
                 footer={

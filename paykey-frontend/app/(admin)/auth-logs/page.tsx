@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { adminService } from '@/services/adminService';
 import { useRouter } from 'next/navigation';
+import { AppWindow, AppWindowIcon, AppWindowMac, LucideAppWindow, PanelTop, Search, User } from 'lucide-react';
 
 interface RiskTag {
   label: string;
@@ -18,13 +19,15 @@ interface ReasonCode {
 interface AuthEvent {
   id: string;
   type: string;
+  userName: string;
+  email: string;
   timestamp: string;
   result: string;
   resultLabel: string;
   userId: string;
   paymentId?: string;
   isNewDevice: boolean;
-
+  authType: string;
   device: {
     type: string;
     os: string;
@@ -133,7 +136,7 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
           </div>
         </div>
 
-        <div className="overflow-auto flex-1 custom-scrollbar">
+        <div className="overflow-auto flex-1 no-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead className="sticky top-0 bg-[var(--bg-tertiary)] z-10 shadow-sm">
               <tr>{columns.map((col: any, i: number) => <th key={i} className={`p-3 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider border-b border-[var(--border-secondary)] ${col.className || ''}`}>{col.header}</th>)}</tr>
@@ -202,20 +205,20 @@ const getRiskTagStyle = (tag: RiskTag) => {
 };
 
 const countryCodeToEmoji = (code: string) => {
-    if (!code || code === 'Unknown') return '🌐';
-    const offset = 127397;
-    return code.toUpperCase().split('').map(char => String.fromCodePoint(char.charCodeAt(0) + offset)).join('');
+  if (!code || code === 'Unknown') return '🌐';
+  const offset = 127397;
+  return code.toUpperCase().split('').map(char => String.fromCodePoint(char.charCodeAt(0) + offset)).join('');
 };
 
 const getCountryName = (code: string) => {
-    if (!code || code === 'Unknown') return 'Unknown';
-    
-    try {
-        const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' });
-        return regionNamesInEnglish.of(code.toUpperCase()) || code;
-    } catch (error) {
-        return code;
-    }
+  if (!code || code === 'Unknown') return 'Unknown';
+
+  try {
+    const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' });
+    return regionNamesInEnglish.of(code.toUpperCase()) || code;
+  } catch (error) {
+    return code;
+  }
 };
 
 
@@ -249,7 +252,6 @@ const generateTimeline = (e: AuthEvent) => {
     time: new Date(t.getTime() - 5000).toLocaleTimeString('en-US', { hour12: false }),
     dotColor: 'bg-[var(--bg-tertiary)]'
   });
-
   return timeline;
 };
 
@@ -279,7 +281,6 @@ export default function AuthLogsPage() {
     setLoading(true);
     try {
       const rawLogs = await adminService.getAuthLogs();
-
       const mappedData: AuthEvent[] = rawLogs.map((log: any) => {
 
         let richData: any = {};
@@ -305,28 +306,49 @@ export default function AuthLogsPage() {
         let statusLabel = 'Success';
         if (statusRaw === 'BLOCKED' || statusRaw === 'FAILED' || statusRaw === 'REJECTED') statusLabel = 'Blocked';
         else if (statusRaw.includes('CHALLENGE') || statusRaw === 'TIMEOUT') statusLabel = 'Challenged';
-
         return {
           id: log.id.toString(),
           type: log.eventType || 'unknown',
           timestamp: log.createdAt,
           result: statusRaw,
           resultLabel: statusLabel,
-          userId: log.email || log.userName || 'Unknown',
+          email: log.email,
+          userName: log.userName,
+          userId: log.userId || log.userName || 'Unknown',
           paymentId: richData.paymentId || null,
           isNewDevice: tagsArray.some(t => t.label.toLowerCase().includes('new device')),
-
+          authType: log.authMethod || 'Unknown',
           device: {
             type: deviceInfo.type || (log.userAgent?.toLowerCase().includes('mobile') ? 'Mobile' : 'Desktop'),
             os: deviceInfo.os || log.userAgent || 'Unknown',
-            model: telemetry.device_model || log.device || 'Unknown Device',
+            model: (() => {
+              if (telemetry.device_model || log.device) {
+                return telemetry.device_model || log.device
+              }
+              if (deviceInfo.os.toLowerCase().includes('mac')) {
+                return 'Macintoshh'
+              }
+              if (deviceInfo.os.toLowerCase().includes('Windows PC')) {
+                return 'Windows'
+              }
+              if (deviceInfo.os.toLowerCase().includes('ubuntu')) {
+                return 'Ubuntu Desktop'
+              }
+            })(),
             browser: log.userAgent?.split('/')[0] || 'Unknown Browser'
           },
 
           location: {
             country: network.country || log.countryCode || 'Unknown',
             city: richData.location?.split(',')[0] || log.location?.split(',')[0] || 'Unknown',
-            ip: network.ip || log.ipAddress || '0.0.0.0',
+            ip: (() => {
+              const raw = network.ip || log.ipAddress || '0.0.0.0';
+              const parts = raw.split('.');
+              if (parts.length === 4) {
+                return `${parts[0]}.***.***.${parts[3]}`;
+              }
+              return raw;
+            })(),
             flag: (network.country || log.countryCode) === 'MY' ? '🇲🇾' : (network.country || log.countryCode) === 'ID' ? '🇮🇩' : (network.country || log.countryCode) === 'UK' || (network.country || log.countryCode) === 'GB' ? '🇬🇧' : '🌐',
             asn: network.asn || 'AS-UNKNOWN',
             isp: network.isp || 'Unknown ISP',
@@ -404,7 +426,14 @@ export default function AuthLogsPage() {
   };
 
   const toggleChip = (chip: string) => { const newSet = new Set(activeChips); newSet.has(chip) ? newSet.delete(chip) : newSet.add(chip); setActiveChips(newSet); setCurrentPage(1); };
-  const handleClearFilters = () => { setEventType(''); setResultFilter(''); setActiveChips(new Set()); setCurrentPage(1); };
+  const handleClearFilters = () => {
+    setEventType('');
+    setResultFilter('');
+    setStartDate('');
+    setEndDate('');
+    setActiveChips(new Set());
+    setCurrentPage(1);
+  };
 
   const filteredData = logs.filter(e => {
     const matchType = eventType === '' || e.type.toLowerCase().includes(eventType.toLowerCase());
@@ -427,7 +456,6 @@ export default function AuthLogsPage() {
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
   return (
     <div className="flex min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-[family-name:var(--font-inter)]">
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
@@ -458,13 +486,23 @@ export default function AuthLogsPage() {
           <div className="grid grid-cols-5 gap-4 mb-6 shrink-0">
             <StatsCard label="Total Events (24h)" value={stats.total.value} change={stats.total.text} trend={stats.total.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>} />
             <StatsCard label="Success Rate" value={stats.success.value} change={stats.success.text} trend={stats.success.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>} />
-            <StatsCard label="Failed / Blocked" value={stats.failed.value} change={stats.failed.text} trend={stats.failed.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>} />
+            <StatsCard label="Failed Attempts" value={stats.failed.value} change={stats.failed.text} trend={stats.failed.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>} />
             <StatsCard label="Risk Alerts" value={stats.risk.value} change={stats.risk.text} trend={stats.risk.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>} />
             <StatsCard label="New Passkeys" value={stats.passkey.value} change={stats.passkey.text} trend={stats.passkey.trend} icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>} />
           </div>
 
           <div className="flex items-center gap-3 mb-5 shrink-0 flex-wrap">
-            <div className="flex items-center gap-2"><label className="text-xs text-[var(--text-tertiary)]">Event Type</label><select className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[140px] cursor-pointer" value={eventType} onChange={e => setEventType(e.target.value)}><option value="">All Events</option><option value="passkey_registered">Passkey Registered</option><option value="payment_approval_requested">Approval Requested</option><option value="payment_approved">Payment Approved</option><option value="payment_denied">Payment Denied</option><option value="biometric_login">Biometric Login</option></select></div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-[var(--text-tertiary)]">Event Type</label>
+              <select className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[140px] cursor-pointer" value={eventType} onChange={e => setEventType(e.target.value)}>
+                <option value="">All Events</option>
+                <option value="passkey_registered">Passkey Registered</option>
+                <option value="payment_approval_requested">Approval Requested</option>
+                <option value="payment_approved">Payment Approved</option>
+                <option value="payment_denied">Payment Denied</option>
+                <option value="biometric_login">Biometric Login</option>
+              </select>
+            </div>
             <div className="flex items-center gap-2"><label className="text-xs text-[var(--text-tertiary)]">Result</label><select className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[120px] cursor-pointer" value={resultFilter} onChange={e => setResultFilter(e.target.value)}><option value="">All Results</option><option value="success">Success</option><option value="blocked">Blocked/Failed</option><option value="challenged">Challenged</option></select></div>
             <div className="flex items-center gap-2"><label className="text-xs text-[var(--text-tertiary)]">Date Range</label><div className="flex items-center gap-2 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-3 py-1.5"><input type="date" className="bg-transparent border-none text-[13px] outline-none text-[var(--text-primary)] w-[110px] [color-scheme:dark]" value={startDate} onChange={e => setStartDate(e.target.value)} /><span className="text-[var(--text-tertiary)]">→</span><input type="date" className="bg-transparent border-none text-[13px] outline-none text-[var(--text-primary)] w-[110px] [color-scheme:dark]" value={endDate} onChange={e => setEndDate(e.target.value)} /></div></div>
             <button onClick={() => toggleChip('new-device')} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-[20px] border text-[12px] transition-all ${activeChips.has('new-device') ? 'bg-[var(--accent)] border-[var(--accent)] text-white' : 'bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--text-primary)]'}`}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg> New Device</button>
@@ -498,9 +536,9 @@ export default function AuthLogsPage() {
                       e.type.includes('Approval') || e.type.includes('Requested') ? 'bg-[var(--warning-bg)] text-[var(--warning)]' :
                         e.type.includes('Approved') || e.type.includes('Success') ? 'bg-[var(--success-bg)] text-[var(--success)]' :
                           'bg-[var(--error-bg)] text-[var(--error)]'
-                      }`}>
+                      } text-nowrap`}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        {e.type.includes('Passkey') && <><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></>}
+                        {(e.type.includes('Passkey') || e.type.includes('Login')) && <><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></>}
                         {(e.type.includes('Approval') || e.type.includes('Requested')) && <><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></>}
                         {e.type.includes('Approved') && <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></>}
                         {(e.type.includes('Denied') || e.type.includes('Blocked')) && <><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></>}
@@ -510,8 +548,23 @@ export default function AuthLogsPage() {
                     </span>
                   </td>
                   <td className="p-3"><div className="flex flex-col gap-0.5"><span className="text-[13px] text-[var(--text-primary)]">{new Date(e.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{new Date(e.timestamp).toLocaleTimeString('en-US', { hour12: false })} UTC</span></div></td>
-                  <td className="p-3"><div className="flex flex-col gap-0.5"><span className="text-[12px] font-mono text-[var(--text-secondary)]">{e.userId}</span><span className="text-[11px] font-mono text-[var(--text-tertiary)]">{e.paymentId || '—'}</span></div></td>
-                  <td className="p-3"><div className="flex items-center gap-2"><div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] flex items-center justify-center shrink-0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-secondary)]">{e.device.type.toLowerCase().includes('mobile') || e.device.type.toLowerCase().includes('phone') ? <><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></> : <><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></>}</svg></div><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{e.device.model}</span><div className="flex items-center gap-1.5"><span className="text-[11px] text-[var(--text-tertiary)] max-w-[120px] truncate">{e.device.os}</span>{e.isNewDevice && <span className="text-[9px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">New</span>}</div></div></div></td>
+                  <td className="p-3"><div className="flex flex-col gap-0.5"><span className="text-[12px] font-mono text-[var(--text-secondary)]">{e.userName}</span><span className="text-[11px] font-mono text-[var(--text-tertiary)]">{e.paymentId || '—'}</span></div></td>
+                  <td className="p-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] flex items-center justify-center shrink-0">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-secondary)]">
+                          {e.device.type.toLowerCase().includes('mobile') || e.device.type.toLowerCase().includes('phone') ? <><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></> : <><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></>}
+                        </svg>
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[13px] text-[var(--text-primary)]">{e.device.model}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] text-[var(--text-tertiary)] max-w-[120px] truncate">{e.device.os}</span>
+                          {e.isNewDevice && <span className="text-[9px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide">New</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
                   <td className="p-3"><div className="flex items-center gap-2"><span className="text-base">{countryCodeToEmoji(e.location.country)}</span><div className="flex flex-col"><span className="text-[13px] text-[var(--text-primary)]">{getCountryName(e.location.country)}</span><span className="text-[11px] text-[var(--text-tertiary)] font-mono">{e.location.ip}</span></div></div>{e.risk.network && <div className={`mt-1 inline-block text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${e.risk.network === 'vpn' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--info-bg)] text-[var(--info)]'}`}>{e.risk.network}</div>}</td>
 
                   <td className="p-3">
@@ -550,9 +603,25 @@ export default function AuthLogsPage() {
           title="Event Details"
           footer={
             <div className="flex gap-2 w-full">
-              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">View User</button>
-              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">View Device</button>
-              <button onClick={() => { if (selectedEvent?.paymentId) router.push(`/investigation?id=${selectedEvent.paymentId}`); else alert('No ID'); }} className="flex-1 py-2 bg-[var(--accent)] text-white rounded-[6px] text-[13px] hover:bg-[var(--accent-hover)] transition-all font-medium shadow-sm">Investigate</button>
+              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
+                <div className="flex items-center justify-center gap-2">
+                  <User className='w-3.5 h-3.5' />
+                  <p>View User</p>
+                </div>
+              </button>
+              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
+                <div className="flex items-center justify-center gap-2">
+                  <PanelTop className='w-3.5 h-3.5' />
+                  <p>View Device</p>
+                </div>
+
+              </button>
+              {/* <button onClick={() => { if (selectedEvent?.paymentId) router.push(`/investigation?id=${selectedEvent.paymentId}`); else alert('No ID'); }} className="flex-1 py-2 bg-[var(--accent)] text-white rounded-[6px] text-[13px] hover:bg-[var(--accent-hover)] transition-all font-medium shadow-sm">
+                <div className="flex items-center justify-center gap-2">
+                  <Search className='w-3.5 h-3.5' />
+                  <p>Investigate</p>
+                </div>
+              </button> */}
             </div>
           }
         >
@@ -565,7 +634,7 @@ export default function AuthLogsPage() {
                 </div>
                 <div className="flex justify-between py-2 border-b border-[var(--border-secondary)]">
                   <span className="text-[13px] text-[var(--text-tertiary)]">Event Type</span>
-                  <span className={`px-2 py-0.5 rounded-[20px] text-[11px] font-medium ${selectedEvent.type.includes('Approved') ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`}>{formatType(selectedEvent.type)}</span>
+                  <span className={`px-2 py-0.5 rounded-[20px] text-[11px] font-medium ${(selectedEvent.type.includes('Approved') || selectedEvent.type.includes('Success')) ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`}>{formatType(selectedEvent.type)}</span>
                 </div>
                 <DetailRow label="Event ID" value={selectedEvent.id} valueClass="font-mono text-[12px]" />
                 <DetailRow label="Timestamp" value={new Date(selectedEvent.timestamp).toISOString()} valueClass="font-mono text-[12px]" />
@@ -585,6 +654,9 @@ export default function AuthLogsPage() {
                 <DetailRow label="Device Model" value={selectedEvent.device.model} />
                 <DetailRow label="OS & Version" value={selectedEvent.device.os} />
                 <DetailRow label="Browser / User Agent" value={selectedEvent.device.browser} />
+                <DetailRow label="Authenticator Type" value={selectedEvent.authType} />
+                <DetailRow label="Device Status" value={selectedEvent.device.browser} />
+                <DetailRow label="First Seen" value={selectedEvent.device.browser} />
                 {selectedEvent.isNewDevice && (
                   <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
                     <span className="text-[13px] text-[var(--text-tertiary)]">Flag</span>
@@ -624,19 +696,19 @@ export default function AuthLogsPage() {
                     {selectedEvent.risk.score} / 100 ({selectedEvent.risk.level})
                   </span>
                 </div>
-                {selectedEvent.risk.reasons.length > 0 && (
-                  <div className="mt-3 bg-[var(--bg-tertiary)] rounded-[8px] p-3 border border-[var(--border-primary)]">
-                    <span className="block text-[11px] text-[var(--text-tertiary)] mb-2 uppercase font-semibold">Reason Codes</span>
-                    <ul className="space-y-2">
-                      {selectedEvent.risk.reasons.map((r, i) => (
-                        <li key={i} className="flex justify-between items-start text-[12px]">
-                          <span className="text-[var(--text-secondary)]">{r.rule} {r.desc && <span className="text-[var(--text-tertiary)]">- {r.desc}</span>}</span>
-                          <span className="font-mono text-[var(--error)]">+{r.score}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
+                  <span className="block text-[11px] text-[var(--text-tertiary)] mb-2 uppercase font-semibold">Reason Codes</span>
+                  <ul className="space-y-2">
+                    {selectedEvent.risk.reasons.length ? selectedEvent.risk.reasons.map((r, i) => (
+                      <li key={r.desc} className="flex justify-between items-start text-[12px]">
+                        <span className="text-[var(--text-secondary)]">{r.rule} {r.desc && <span className="text-[var(--text-tertiary)]">- {r.desc}</span>}</span>
+                        <span className="font-mono text-[var(--error)]">+{r.score}</span>
+                      </li>
+                    )) : '—'}
+                  </ul>
+                </div>
+
+
               </div>
 
               <div>
@@ -646,7 +718,7 @@ export default function AuthLogsPage() {
                 <div className="relative border-l-2 border-[var(--border-primary)] ml-2 pl-6 space-y-5 pb-2">
                   {generateTimeline(selectedEvent).map((t, i) => (
                     <div key={i} className="relative">
-                      <div className={`absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-[var(--bg-secondary)] ${t.dotColor === 'success' ? 'bg-[var(--success)]' : t.dotColor === 'error' ? 'bg-[var(--error)]' : t.dotColor === 'warning' ? 'bg-[var(--warning)]' : 'bg-[var(--bg-tertiary)]'}`}></div>
+                      <div className={`absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-[var(--bg-secondary)] ${t.dotColor}`}></div>
                       <div className="text-[13px] text-[var(--text-primary)]">{t.label}</div>
                       <div className="text-[11px] text-[var(--text-tertiary)] font-mono mt-0.5">{t.time}</div>
                     </div>

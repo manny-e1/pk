@@ -147,7 +147,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-5 bg-[var(--bg-primary)] font-sans text-[14px]">
       <div className="w-full max-w-[400px]">
-        
+
         {/* Login Card */}
         <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-xl)] p-10 shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
 
@@ -180,7 +180,7 @@ export default function LoginPage() {
 
           {/* --- IDENTIFIER-FIRST FLOW CONTROLLER --- */}
           {!verifiedUser ? (
-            
+
             // ==========================================
             // STEP 1: INPUT EMAIL SAJA
             // ==========================================
@@ -323,7 +323,7 @@ export default function LoginPage() {
                 </svg>
                 Sign in with Passkey
               </button>
-              
+
               <button
                 type="button"
                 onClick={handleSwitchAccount}

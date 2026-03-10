@@ -7,6 +7,8 @@ export interface Device {
   type: 'mobile' | 'desktop' | 'hardware';
   status: 'active' | 'suspended' | 'revoked';
   lastUsed: string;
+  osName: string;
+  osVersion: string;
 }
 
 export interface User {

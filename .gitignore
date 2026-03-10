@@ -18,3 +18,7 @@ pm2.log
 
 # OS
 .DS_Store
+
+migrations/
+**/.next/
+**/.gradle/*

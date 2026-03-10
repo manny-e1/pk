@@ -671,7 +671,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                             children: initialData ? 'Edit Threshold' : 'Add Threshold'
                         }, void 0, false, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 52,
+                            lineNumber: 50,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -691,7 +691,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                        lineNumber: 56,
+                                        lineNumber: 54,
                                         columnNumber: 108
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -701,24 +701,24 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                        lineNumber: 56,
+                                        lineNumber: 54,
                                         columnNumber: 145
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                lineNumber: 56,
+                                lineNumber: 54,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 55,
+                            lineNumber: 53,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                    lineNumber: 51,
+                    lineNumber: 49,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -735,7 +735,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "Minimum Amount (MYR)"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 64,
+                                            lineNumber: 61,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -748,13 +748,13 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                                 })
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 65,
+                                            lineNumber: 62,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 63,
+                                    lineNumber: 60,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -765,7 +765,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "Maximum Amount (MYR)"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 68,
+                                            lineNumber: 65,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -779,19 +779,19 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                                 })
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 69,
+                                            lineNumber: 66,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 67,
+                                    lineNumber: 64,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 62,
+                            lineNumber: 59,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -802,7 +802,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                     children: "Risk Weight (0-100)"
                                 }, void 0, false, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 74,
+                                    lineNumber: 71,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -820,7 +820,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                                 })
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 76,
+                                            lineNumber: 73,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -830,19 +830,19 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             readOnly: true
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 77,
+                                            lineNumber: 74,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 75,
+                                    lineNumber: 72,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 73,
+                            lineNumber: 70,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -853,13 +853,12 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                     children: "Risk Label"
                                 }, void 0, false, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 82,
+                                    lineNumber: 79,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
                                     className: "w-full bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[6px] px-3 py-2.5 text-[13px] text-[var(--text-primary)] outline-none focus:border-[var(--accent)]",
                                     value: formData.label,
-                                    // PERBAIKAN DI SINI: Casting ke tipe spesifik, bukan any
                                     onChange: (e)=>setFormData({
                                             ...formData,
                                             label: e.target.value
@@ -870,7 +869,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "Low"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 89,
+                                            lineNumber: 85,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -878,7 +877,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "Medium"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 90,
+                                            lineNumber: 86,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -886,7 +885,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "High"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 91,
+                                            lineNumber: 87,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -894,19 +893,19 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "Critical"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 92,
+                                            lineNumber: 88,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 83,
+                                    lineNumber: 80,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 81,
+                            lineNumber: 78,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -920,7 +919,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "Require Step-Up Authentication"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 98,
+                                            lineNumber: 94,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -928,13 +927,13 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                             children: "Require additional verification for this range"
                                         }, void 0, false, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 99,
+                                            lineNumber: 95,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 97,
+                                    lineNumber: 93,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Toggle$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Toggle"], {
@@ -945,13 +944,13 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                         })
                                 }, void 0, false, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 101,
+                                    lineNumber: 97,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 96,
+                            lineNumber: 92,
                             columnNumber: 11
                         }, this),
                         formData.stepUp && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -962,7 +961,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                     children: "Allowed Step-Up Methods"
                                 }, void 0, false, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 106,
+                                    lineNumber: 102,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1002,36 +1001,36 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                                                         points: "20 6 9 17 4 12"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                                        lineNumber: 124,
+                                                        lineNumber: 120,
                                                         columnNumber: 152
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                                    lineNumber: 124,
+                                                    lineNumber: 120,
                                                     columnNumber: 57
                                                 }, this),
                                                 m.l
                                             ]
                                         }, m.k, true, {
                                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                            lineNumber: 115,
+                                            lineNumber: 111,
                                             columnNumber: 19
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                                    lineNumber: 107,
+                                    lineNumber: 103,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 105,
+                            lineNumber: 101,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                    lineNumber: 61,
+                    lineNumber: 58,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1043,7 +1042,7 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                             children: "Cancel"
                         }, void 0, false, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 135,
+                            lineNumber: 130,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1052,24 +1051,24 @@ function ThresholdModal({ isOpen, onClose, onSave, initialData }) {
                             children: "Save Threshold"
                         }, void 0, false, {
                             fileName: "[project]/components/amount/ThresholdModal.tsx",
-                            lineNumber: 136,
+                            lineNumber: 131,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/amount/ThresholdModal.tsx",
-                    lineNumber: 134,
+                    lineNumber: 129,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/amount/ThresholdModal.tsx",
-            lineNumber: 48,
+            lineNumber: 47,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/amount/ThresholdModal.tsx",
-        lineNumber: 47,
+        lineNumber: 46,
         columnNumber: 5
     }, this);
 }
@@ -1081,95 +1080,9 @@ __turbopack_context__.s([
     "adminService",
     ()=>adminService
 ]);
-// import axios from 'axios';
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
-// export const adminService = {
-//   // --- 1. AMOUNT THRESHOLDS ---
-//     getAmountLimits: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/limits`);
-//         return res.data;
-//     },
-//     updateAmountLimit: async (id: string, data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/limits/${id}`, data);
-//         return res.data;
-//     },
-//     createAmountLimit: async (data: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/limits`, data);
-//         return res.data;
-//     },
-//     deleteAmountLimit: async (id: string) => {
-//         const res = await axios.delete(`${API_URL}/api/admin/limits/${id}`);
-//         return res.data;
-//     },
-//     getRiskRules: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-rules`);
-//         return res.data;
-//     },
-//     // [POST] Simpan Rules (Batch Update) - INI YANG BARU
-//     saveRiskConfigBatch: async (rules: any[]) => {
-//         const res = await axios.post(`${API_URL}/api/admin/risk-rules/batch-update`, { rules });
-//         return res.data;
-//     },
-//     // [GET] Thresholds
-//     getRiskConfig: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-config`);
-//         return res.data;
-//     },
-//     // [PUT] Update Thresholds
-//     updateRiskConfig: async (data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/risk-config`, data);
-//         return res.data;
-//     },
-//     // --- 3. AUTH POLICIES ---
-//     getPolicies: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies`);
-//         return res.data;
-//     },
-//     upsertPolicy: async (payload: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/policies`, payload);
-//         return res.data;
-//     },
-//     getPolicyAuditLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies/audit`);
-//         return res.data;
-//     },
-//     // --- 4. INVESTIGATION & LOGS ---
-//     getTransactions: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions`);
-//         return res.data;
-//     },
-//     getTransactionDetail: async (id: string) => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions/${id}`);
-//         return res.data;
-//     }
-//     ,
-//     getAuthLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/logs`);
-//         return res.data;
-//     },
-//     getDashboardStats: async (range: string) => {
-//     const res = await axios.get(`${API_URL}/api/admin/dashboard`, { 
-//         params: { timeRange: range } 
-//     });
-//     return res.data;
-//     },
-//     // 1. Fetch Evidence (Cepat)    
-//     async getTransactionEvidence(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/evidence`);
-//         if (!res.ok) throw new Error('Failed to load evidence');
-//         return res.json();
-//     },
-//     // 2. Fetch Analysis (Lambat)
-//     async getInvestigationReport(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/investigate`);
-//         if (!res.ok) throw new Error('Failed to load analysis');
-//         return res.json();
-//     }
-// };
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/apiClient.ts [app-ssr] (ecmascript)");
 ;
 const adminService = {
-    // --- 1. AMOUNT THRESHOLDS ---
     getAmountLimits: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/limits`);
         return res.data;
@@ -1186,23 +1099,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].delete(`/api/admin/limits/${id}`);
         return res.data;
     },
-    // --- 2. RISK CONFIG & RULES ---
-    // getRiskRules: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-rules`);
-    //     return res.data;
-    // },
-    // saveRiskConfigBatch: async (rules: any[]) => {
-    //     const res = await apiClient.post(`/api/admin/risk-rules/batch-update`, { rules });
-    //     return res.data;
-    // },
-    // getRiskConfig: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-config`);
-    //     return res.data;
-    // },
-    // updateRiskConfig: async (data: any) => {
-    //     const res = await apiClient.put(`/api/admin/risk-config`, data);
-    //     return res.data;
-    // },
     getRiskRules: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/risk-rules`);
         return res.data;
@@ -1212,18 +1108,15 @@ const adminService = {
         return res.data;
     },
     saveRiskConfigBatch: async (rulesPayload)=>{
-        // Cukup kirimkan object { rules: rulesPayload } langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-rules', {
             rules: rulesPayload
         });
         return res.data;
     },
     updateRiskConfig: async (payload)=>{
-        // Cukup kirimkan variable payload langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-config', payload);
         return res.data;
     },
-    // --- 3. AUTH POLICIES ---
     getPolicies: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies`);
         return res.data;
@@ -1236,7 +1129,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies/audit`);
         return res.data;
     },
-    // --- 4. INVESTIGATION & LOGS ---
     getTransactions: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions`);
         return res.data;
@@ -1279,7 +1171,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$amount$2f$SegmentSelector$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/amount/SegmentSelector.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$amount$2f$ThresholdTable$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/amount/ThresholdTable.tsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$amount$2f$ThresholdModal$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/amount/ThresholdModal.tsx [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/adminService.ts [app-ssr] (ecmascript)"); // Pastikan file ini ada
+var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/adminService.ts [app-ssr] (ecmascript)");
 'use client';
 ;
 ;
@@ -1292,13 +1184,11 @@ function AmountThresholdsPage() {
     const [modalOpen, setModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [editingItem, setEditingItem] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
-    // State data sekarang kosong saat awal, menunggu fetch dari API
     const [data, setData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
         consumer: [],
         corporate: []
     });
     const currentData = data[segment] || [];
-    // --- 1. FETCH DATA DARI API ---
     const fetchData = async ()=>{
         try {
             setLoading(true);
@@ -1307,7 +1197,6 @@ function AmountThresholdsPage() {
                 consumer: [],
                 corporate: []
             };
-            // Mapping Data Backend -> Frontend
             apiData.forEach((item)=>{
                 const segKey = item.segment.toLowerCase();
                 if (grouped[segKey]) {
@@ -1318,28 +1207,23 @@ function AmountThresholdsPage() {
                         weight: item.weight,
                         label: item.label,
                         stepUp: item.stepUp,
-                        methods: item.methods || [] // Pastikan array
-                    }); // Casting jika ThresholdTable memaksa ID number
+                        methods: item.methods || []
+                    });
                 }
             });
-            // Sort agar rapi (low to high)
             grouped.consumer.sort((a, b)=>a.min - b.min);
             grouped.corporate.sort((a, b)=>a.min - b.min);
             setData(grouped);
         } catch (err) {
             console.error("Gagal mengambil data:", err);
-        // alert("Gagal koneksi ke server");
         } finally{
             setLoading(false);
         }
     };
-    // Load data saat halaman dibuka
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         fetchData();
     }, []);
-    // --- 2. HANDLE UPDATE (INLINE EDIT) ---
     const handleUpdate = async (id, field, val)=>{
-        // Optimistic Update (Ubah UI dulu biar cepat)
         const prevData = {
             ...data
         };
@@ -1349,7 +1233,6 @@ function AmountThresholdsPage() {
                     ...t,
                     [field]: val
                 };
-                // Auto-update label logic
                 if (field === 'weight' && typeof val === 'number') {
                     if (val <= 25) newItem.label = 'low';
                     else if (val <= 50) newItem.label = 'medium';
@@ -1364,7 +1247,6 @@ function AmountThresholdsPage() {
             ...data,
             [segment]: updatedList
         });
-        // Kirim ke Backend
         try {
             const itemToUpdate = updatedList.find((t)=>t.id === id);
             if (itemToUpdate) {
@@ -1379,11 +1261,10 @@ function AmountThresholdsPage() {
             }
         } catch (err) {
             console.error("Update gagal:", err);
-            setData(prevData); // Kembalikan jika error
+            setData(prevData);
             alert("Gagal menyimpan perubahan ke server.");
         }
     };
-    // --- 3. HANDLE DELETE ---
     const handleDelete = async (id)=>{
         if (confirm('Hapus aturan limit ini?')) {
             const prevData = {
@@ -1403,7 +1284,6 @@ function AmountThresholdsPage() {
             }
         }
     };
-    // --- 4. HANDLE MODAL (ADD & EDIT) ---
     const handleEdit = (id)=>{
         const item = currentData.find((t)=>t.id === id);
         if (item) {
@@ -1417,7 +1297,6 @@ function AmountThresholdsPage() {
     };
     const handleSaveModal = async (formData)=>{
         const isEdit = !!editingItem;
-        // Siapkan Payload Backend
         const payload = {
             segment: segment.toUpperCase(),
             minAmount: formData.min,
@@ -1429,13 +1308,10 @@ function AmountThresholdsPage() {
         };
         try {
             if (isEdit && editingItem) {
-                // Update
                 await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].updateAmountLimit(editingItem.id.toString(), payload);
             } else {
-                // Create New
                 await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].createAmountLimit(payload);
             }
-            // Refresh data dari server agar sinkron
             await fetchData();
             setModalOpen(false);
         } catch (err) {
@@ -1461,7 +1337,7 @@ function AmountThresholdsPage() {
                                             children: "Amount Risk Thresholds"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                            lineNumber: 182,
+                                            lineNumber: 165,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1469,18 +1345,18 @@ function AmountThresholdsPage() {
                                             children: "Configure risk weights based on transaction amounts"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                            lineNumber: 183,
+                                            lineNumber: 166,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                    lineNumber: 181,
+                                    lineNumber: 164,
                                     columnNumber: 14
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                lineNumber: 180,
+                                lineNumber: 163,
                                 columnNumber: 12
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1501,45 +1377,45 @@ function AmountThresholdsPage() {
                                                     d: "M23 4v6h-6"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                                    lineNumber: 189,
+                                                    lineNumber: 172,
                                                     columnNumber: 151
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M1 20v-6h6"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                                    lineNumber: 189,
+                                                    lineNumber: 172,
                                                     columnNumber: 173
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                                    lineNumber: 189,
+                                                    lineNumber: 172,
                                                     columnNumber: 195
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                            lineNumber: 189,
+                                            lineNumber: 172,
                                             columnNumber: 17
                                         }, this),
                                         loading ? 'Syncing...' : 'Refresh Data'
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                    lineNumber: 188,
+                                    lineNumber: 171,
                                     columnNumber: 14
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                lineNumber: 187,
+                                lineNumber: 170,
                                 columnNumber: 12
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                        lineNumber: 179,
+                        lineNumber: 162,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1552,7 +1428,7 @@ function AmountThresholdsPage() {
                                     onSelect: setSegment
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                    lineNumber: 198,
+                                    lineNumber: 180,
                                     columnNumber: 17
                                 }, this),
                                 loading && currentData.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1562,7 +1438,7 @@ function AmountThresholdsPage() {
                                             className: "w-6 h-6 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin mb-3"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                            lineNumber: 202,
+                                            lineNumber: 184,
                                             columnNumber: 25
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1570,13 +1446,13 @@ function AmountThresholdsPage() {
                                             children: "Loading data from server..."
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                            lineNumber: 203,
+                                            lineNumber: 185,
                                             columnNumber: 25
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                    lineNumber: 201,
+                                    lineNumber: 183,
                                     columnNumber: 21
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$amount$2f$ThresholdTable$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ThresholdTable"], {
                                     data: currentData,
@@ -1586,24 +1462,24 @@ function AmountThresholdsPage() {
                                     onAdd: handleAdd
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                                    lineNumber: 206,
+                                    lineNumber: 188,
                                     columnNumber: 21
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                            lineNumber: 197,
+                            lineNumber: 179,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                        lineNumber: 196,
+                        lineNumber: 178,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                lineNumber: 176,
+                lineNumber: 160,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$amount$2f$ThresholdModal$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ThresholdModal"], {
@@ -1613,13 +1489,13 @@ function AmountThresholdsPage() {
                 initialData: editingItem
             }, void 0, false, {
                 fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-                lineNumber: 218,
+                lineNumber: 200,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(admin)/amount-thresholds/page.tsx",
-        lineNumber: 174,
+        lineNumber: 158,
         columnNumber: 5
     }, this);
 }

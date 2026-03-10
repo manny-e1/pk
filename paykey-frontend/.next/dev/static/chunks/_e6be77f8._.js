@@ -704,65 +704,12 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 
 __turbopack_context__.s([
     "deviceService",
-    ()=>deviceService
+    ()=>deviceService,
+    "formatIp",
+    ()=>formatIp,
+    "getRelativeTime",
+    ()=>getRelativeTime
 ]);
-// // services/deviceService.ts
-// import axios from 'axios';
-// import { Device } from '@/lib/types';
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
-// // Helper untuk format tanggal
-// const formatDate = (dateString: string) => {
-//   if (!dateString) return '-';
-//   return new Date(dateString).toLocaleString('en-US', { 
-//     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-//   });
-// };
-// // Helper parse User Agent sederhana (jika backend mengirim raw string)
-// const parseDeviceType = (name: string): string => {
-//   const lower = name.toLowerCase();
-//   if (lower.includes('mobile') || lower.includes('iphone') || lower.includes('android')) return 'mobile';
-//   return 'desktop';
-// };
-// export const deviceService = {
-//   // 1. GET ALL DEVICES
-//   getAll: async (userEmail: string): Promise<Device[]> => {
-//     const { data } = await axios.get(`${API_URL}/api/devices?email=${userEmail}`);
-//     // MAPPING DATA BACKEND -> FRONTEND
-//     // Backend mengirim field: deviceName, credentialId, status, lastActive, dll.
-//     return data.map((d: any) => ({
-//       id: d.credentialId,
-//       dbId: d.id,
-//       name: d.deviceName || 'Unknown Device',
-//       type: parseDeviceType(d.deviceName || ''),
-//       model: d.deviceName || 'Unknown',
-//       user: d.user?.fullName || 'User', // Perlu join di backend atau kirim dari frontend
-//       userId: userEmail,
-//       initials: (d.user?.fullName || 'U').substring(0, 2).toUpperCase(),
-//       status: d.status.toLowerCase(),
-//       lastActive: formatDate(d.lastActive),
-//       lastActiveClass: new Date(d.lastActive).getTime() > Date.now() - 86400000 ? 'recent' : 'default',
-//       registered: formatDate(d.registeredTimestamp),
-//       location: 'Indonesia', // Bisa integrasi API GeoIP di backend
-//       ip: d.lastUsedIp || '-',
-//       approvals: d.signCounter || 0,
-//       rate: '100%', // Placeholder logic
-//       credential: d.credentialId,
-//     }));
-//   },
-//   // 2. SUSPEND / REACTIVATE
-//   toggleStatus: async (credentialId: string, newStatus: 'ACTIVE' | 'SUSPENDED') => {
-//     return await axios.put(`${API_URL}/api/devices/${credentialId}/status`, { status: newStatus });
-//   },
-//   // 3. REVOKE (HAPUS/BLOCK PERMANEN)
-//   revoke: async (credentialId: string, reason: string) => {
-//     // Revoke biasanya sama dengan status REVOKED di backend
-//     return await axios.put(`${API_URL}/api/devices/${credentialId}/status`, { status: 'REVOKED' });
-//   },
-//   // 4. RENAME
-//   rename: async (credentialId: string, newName: string) => {
-//     return await axios.put(`${API_URL}/api/devices/${credentialId}/rename`, { newName });
-//   }
-// };
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/apiClient.ts [app-client] (ecmascript)");
 ;
 const formatDate = (dateString)=>{
@@ -779,6 +726,30 @@ const parseDeviceType = (name)=>{
     if (lower.includes('mobile') || lower.includes('iphone') || lower.includes('android')) return 'mobile';
     return 'desktop';
 };
+const getRelativeTime = (dateString)=>{
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + " years ago";
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + " months ago";
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + " days ago";
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + " hours ago";
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + " min ago";
+    return "Just now";
+};
+function formatIp(ip) {
+    const parts = ip.split('.');
+    if (parts.length === 4) {
+        return `${parts[0]}.${parts[1]}.${parts[2]}.***`;
+    }
+    return ip;
+}
 const deviceService = {
     getAll: async (userEmail)=>{
         const { data } = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/devices?email=${userEmail}`);
@@ -786,23 +757,26 @@ const deviceService = {
                 id: d.credentialId,
                 dbId: d.id,
                 name: d.deviceName || 'Unknown Device',
-                type: parseDeviceType(d.deviceName || ''),
-                model: d.deviceName || 'Unknown',
+                type: d.deviceTelemetry.device_type,
+                model: d.deviceModel || 'Unknown',
                 // user: d.user?.fullName || 'User',
                 // userId: userEmail,
                 initials: (d.email || 'U').substring(0, 2).toUpperCase(),
                 status: d.status.toLowerCase(),
-                lastActive: formatDate(d.lastActive),
+                lastActive: getRelativeTime(d.lastActive),
                 lastActiveClass: new Date(d.lastActive).getTime() > Date.now() - 86400000 ? 'recent' : 'default',
-                registered: formatDate(d.registeredTimestamp),
+                registered: d.registeredTimestamp,
                 location: 'Indonesia',
-                ip: d.lastUsedIp || '-',
+                ip: formatIp(d.lastUsedIp || d.lastIp || '-'),
                 approvals: d.signCounter || 0,
                 rate: d.successRate || '100%',
                 credential: d.credentialId,
                 user: d.ownerName || 'Unknown User',
                 email: d.email || 'No Email',
-                userId: d.userId || ''
+                userId: d.userId || '',
+                osName: d.osName,
+                osVersion: d.osVersion,
+                recentActivity: d.recentActivity
             }));
     },
     toggleStatus: async (credentialId, newStatus)=>{
@@ -835,77 +809,6 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$deviceService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/deviceService.ts [app-client] (ecmascript)");
 var _s = __turbopack_context__.k.signature();
-// 'use client';
-// import { useState, useEffect, useCallback } from 'react';
-// import axios from 'axios';
-// import { Device } from '@/lib/types';
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
-// // [FIX] Parameter userEmail sekarang opsional (tanda tanya ?)
-// export function useDevices(userEmail?: string) {
-//   const [devices, setDevices] = useState<Device[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const fetchDevices = useCallback(async () => {
-//     try {
-//       setLoading(true);
-//       // [FIX] Jika userEmail ada, pakai query ?email=... jika tidak, kosongkan (Get All)
-//       const query = userEmail ? `?email=${userEmail}` : '';
-//       const res = await axios.get(`${API_URL}/api/devices${query}`);
-//       const mappedData: Device[] = res.data.map((d: any) => ({
-//         id: d.credentialId,
-//         dbId: d.id,
-//         name: d.deviceName || 'Unknown Device',
-//         type: (d.deviceName || '').toLowerCase().includes('mobile') ? 'mobile' : 'desktop',
-//         model: d.deviceName || 'Unknown Model',
-//         deviceModel: d.deviceModel || 'Unknown Model',
-//         osName: d.osName || 'Unknown OS',
-//         osVersion: d.osVersion || 'Unknown Version',
-//         // [FIX] Gunakan data owner yang dikirim backend
-//         user: d.ownerName || d.userDisplayName || 'Unknown',
-//         userId: d.ownerEmail || 'No Email',
-//         initials: (d.ownerName || 'U').charAt(0).toUpperCase(),
-//         status: (d.status || 'active').toLowerCase(),
-//         lastActive: new Date(d.lastActive).toLocaleString('en-US', {
-//             month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric'
-//         }),
-//         lastActiveClass: 'default',
-//         registered: new Date(d.registeredTimestamp).toLocaleDateString(),
-//         credential: d.credentialId,
-//         approvals: parseInt(d.signCounter) || 0,
-//         ip: d.lastIp || '-',
-//         location: d.location || 'Unknown',
-//         rate: d.successRate || '-',
-//         recentActivity: d.recentActivity || '-',
-//       }));
-//       setDevices(mappedData);
-//     } catch (err) {
-//       console.error("Failed to fetch devices:", err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   }, [userEmail]);
-//   useEffect(() => {
-//     fetchDevices();
-//   }, [fetchDevices]);
-//   const toggleStatus = async (id: string, status: 'ACTIVE' | 'SUSPENDED' | 'REVOKED') => {
-//     await axios.put(`${API_URL}/api/devices/${id}/status`, { status });
-//     await fetchDevices();
-//   };
-//   const renameDevice = async (id: string, newName: string) => {
-//     await axios.put(`${API_URL}/api/devices/${id}/rename`, { newName });
-//     await fetchDevices();
-//   };
-//   return {
-//     devices,
-//     loading,
-//     refresh: fetchDevices,
-//     actions: {
-//       suspend: (id: string) => toggleStatus(id, 'SUSPENDED'),
-//       reactivate: (id: string) => toggleStatus(id, 'ACTIVE'),
-//       revoke: (id: string) => toggleStatus(id, 'REVOKED'),
-//       rename: renameDevice
-//     }
-//   };
-// }
 'use client';
 ;
 ;
@@ -917,11 +820,8 @@ function useDevices(userEmail) {
         "useDevices.useCallback[fetchDevices]": async ()=>{
             try {
                 setLoading(true);
-                // Panggil Service secara terpusat!
                 const data = await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$deviceService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deviceService"].getAll(userEmail || '');
                 console.log("Fetched devices:", data);
-                // Jika Backend Anda di service sudah melakukan mapping, 
-                // Anda bisa langsung set array data tanpa perlu re-mapping lagi di sini.
                 setDevices(data);
             } catch (err) {
                 console.error("Failed to fetch devices:", err);
@@ -939,7 +839,6 @@ function useDevices(userEmail) {
     }["useDevices.useEffect"], [
         fetchDevices
     ]);
-    // Bungkus fungsi dari service untuk di-export ke komponen UI
     const suspendDevice = async (id)=>{
         await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$deviceService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["deviceService"].toggleStatus(id, 'SUSPENDED');
         await fetchDevices();
@@ -988,419 +887,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Modal$2e
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$SimpleStatCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/SimpleStatCard.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$DeviceIcon$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/DeviceIcon.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$StatusBadge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/StatusBadge.tsx [app-client] (ecmascript)");
-// [TAMBAH] Hook untuk koneksi ke Backend
 var __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useDevices$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hooks/useDevices.ts [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$deviceService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/deviceService.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
-// 'use client';
-// import { useState, useMemo } from 'react';
-// import Sidebar from '@/components/layout/Sidebar';
-// import { DataTable } from '@/components/ui/DataTable';
-// import { SlideOver } from '@/components/ui/SlideOver';
-// import { Modal } from '@/components/ui/Modal';
-// import { SimpleStatCard } from '@/components/ui/SimpleStatCard';
-// import { DeviceIcon } from '@/components/ui/DeviceIcon';
-// import { StatusBadge } from '@/components/ui/StatusBadge';
-// import { devicesData } from '@/lib/data'; // Menggunakan data dari lib/data.ts
-// import { Device } from '@/lib/types';
-// export default function DevicesPage() {
-//   // --- States ---
-//   const [activeTab, setActiveTab] = useState<'all' | 'active' | 'suspended' | 'revoked'>('all');
-//   const [typeFilter, setTypeFilter] = useState('');
-//   const [statusFilter, setStatusFilter] = useState('');
-//   const [searchQuery, setSearchQuery] = useState('');
-//   // Table & Selection
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [selectedDevices, setSelectedDevices] = useState<Set<string>>(new Set());
-//   // Detail & Modals
-//   const [currentDevice, setCurrentDevice] = useState<Device | null>(null);
-//   const [modalType, setModalType] = useState<'suspend' | 'revoke' | null>(null);
-//   const [revokeReason, setRevokeReason] = useState('Device Lost');
-//   const [toast, setToast] = useState<{title: string, msg: string} | null>(null);
-//   // --- Logic Filtering ---
-//   const filteredData = useMemo(() => {
-//     return devicesData.filter(d => {
-//       const matchTab = activeTab === 'all' || d.status === activeTab;
-//       const matchType = typeFilter === '' || d.type === typeFilter;
-//       const matchStatus = statusFilter === '' || d.status === statusFilter;
-//       const matchSearch = d.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-//                           d.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//                           d.userId.toLowerCase().includes(searchQuery.toLowerCase());
-//       return matchTab && matchType && matchStatus && matchSearch;
-//     });
-//   }, [activeTab, typeFilter, statusFilter, searchQuery]);
-//   // --- Pagination Config ---
-//   const itemsPerPage = 10;
-//   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-//   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-//   // --- Handlers ---
-//   const toggleRow = (id: string) => {
-//     const newSet = new Set(selectedDevices);
-//     if (newSet.has(id)) newSet.delete(id); else newSet.add(id);
-//     setSelectedDevices(newSet);
-//   };
-//   const toggleSelectAll = () => {
-//     if (selectedDevices.size === filteredData.length) setSelectedDevices(new Set());
-//     else setSelectedDevices(new Set(filteredData.map(d => d.id)));
-//   };
-//   const openDetail = (device: Device) => {
-//     setCurrentDevice(device);
-//   };
-//   const handleAction = () => {
-//     setModalType(null);
-//     setCurrentDevice(null); // Close panel if open (optional UI choice)
-//     setToast({
-//         title: modalType === 'revoke' ? 'Credential Revoked' : 'Device Suspended',
-//         msg: modalType === 'revoke' ? 'Device credential has been permanently revoked.' : 'Device has been temporarily suspended.'
-//     });
-//     setTimeout(() => setToast(null), 4000);
-//   };
-//   // --- Table Columns Definition ---
-//   const columns = [
-//     { 
-//       header: (
-//         <div onClick={toggleSelectAll} className={`w-[18px] h-[18px] border-2 rounded-[var(--radius-sm)] flex items-center justify-center cursor-pointer transition-colors ${selectedDevices.size > 0 && selectedDevices.size === filteredData.length ? 'bg-[var(--accent)] border-[var(--accent)]' : 'border-[var(--border-primary)] hover:border-[var(--accent)]'}`}>
-//              {selectedDevices.size > 0 && selectedDevices.size === filteredData.length && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3 h-3 text-white"><polyline points="20 6 9 17 4 12"/></svg>}
-//         </div>
-//       ), 
-//       className: 'w-10 pl-3' 
-//     },
-//     { header: 'Device', className: 'min-w-[200px]' },
-//     { header: 'User', className: 'min-w-[160px]' },
-//     { header: 'Status', className: 'w-[100px]' },
-//     { header: 'Last Active', className: 'w-[110px]' },
-//     { header: 'Approvals', className: 'w-[100px]' },
-//     { header: 'Credential ID', className: 'w-[140px]' },
-//     { header: 'Actions', className: 'text-right w-[130px]' },
-//   ];
-//   return (
-//     <div className="flex min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-[family-name:var(--font-inter)]">
-//       <Sidebar />
-//       <main className="flex-1 flex flex-col overflow-hidden h-screen">
-//         {/* HEADER */}
-//         <header className="px-6 py-3 border-b border-[var(--border-secondary)] flex items-center justify-between bg-[var(--bg-secondary)] shrink-0 h-[60px]">
-//             <div className="flex items-center gap-2 text-sm">
-//                 <span className="text-[var(--text-tertiary)]">Users</span>
-//                 <span className="text-[var(--text-muted)]">/</span>
-//                 <span className="text-[var(--text-primary)] font-medium">Device Management</span>
-//             </div>
-//             <div className="flex gap-3">
-//                 <button className="flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-md)] text-[13px] font-medium bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-primary)] hover:bg-[var(--bg-hover)] transition-all">
-//                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-//                     Export
-//                 </button>
-//                 <button onClick={() => window.location.reload()} className="flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-md)] text-[13px] font-medium bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-all">
-//                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4"><polyline points="23,4 23,10 17,10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-//                     Refresh
-//                 </button>
-//             </div>
-//         </header>
-//         {/* CONTENT AREA */}
-//         <div className="flex-1 overflow-auto p-6 flex flex-col">
-//             {/* STATS BAR */}
-//             <div className="grid grid-cols-4 gap-4 mb-6 shrink-0">
-//                 <SimpleStatCard 
-//                     label="Total Devices" value="4,892" 
-//                     icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/></svg>} 
-//                 />
-//                 <SimpleStatCard 
-//                     label="Active" value="4,521" valueColor="text-[var(--success)]"
-//                     icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>} 
-//                 />
-//                 <SimpleStatCard 
-//                     label="Suspended" value="127" valueColor="text-[var(--warning)]"
-//                     icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>} 
-//                 />
-//                 <SimpleStatCard 
-//                     label="Revoked" value="244" valueColor="text-[var(--error)]"
-//                     icon={<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>} 
-//                 />
-//             </div>
-//             {/* TOOLBAR */}
-//             <div className="flex items-center gap-3 mb-4 shrink-0">
-//                 <div className="flex items-center gap-2 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-3 py-2 min-w-[300px]">
-//                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4 text-[var(--text-tertiary)]"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-//                     <input 
-//                       type="text" placeholder="Search devices, users, credentials..." 
-//                       className="flex-1 bg-transparent border-none outline-none text-[13px] text-[var(--text-primary)] placeholder-[var(--text-tertiary)]"
-//                       value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-//                     />
-//                 </div>
-//                 <select className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-3 py-2 text-[13px] text-[var(--text-primary)] outline-none cursor-pointer min-w-[120px]" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-//                     <option value="">All Types</option><option value="mobile">Mobile</option><option value="desktop">Desktop</option><option value="hardware">Hardware Key</option>
-//                 </select>
-//                 <select className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-3 py-2 text-[13px] text-[var(--text-primary)] outline-none cursor-pointer min-w-[120px]" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-//                     <option value="">All Status</option><option value="active">Active</option><option value="suspended">Suspended</option><option value="revoked">Revoked</option>
-//                 </select>
-//                 <div className="flex-1"></div>
-//                 <div className="inline-flex gap-1 bg-[var(--bg-secondary)] p-1 rounded-[var(--radius-md)] border border-[var(--border-secondary)]">
-//                   {(['all', 'active', 'suspended', 'revoked'] as const).map((tab) => (
-//                     <button 
-//                         key={tab} onClick={() => setActiveTab(tab)}
-//                         className={`px-3 py-1.5 text-[13px] font-medium rounded-[var(--radius-sm)] flex items-center gap-1.5 capitalize transition-all ${activeTab === tab ? 'bg-[var(--bg-tertiary)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'}`}
-//                     >
-//                         {tab} <span className="text-[11px] px-1.5 bg-[var(--bg-tertiary)] rounded-full font-mono text-[var(--text-tertiary)]">
-//                           {tab === 'all' ? '4,892' : tab === 'active' ? '4,521' : tab === 'suspended' ? '127' : '244'}
-//                         </span>
-//                     </button>
-//                   ))}
-//                 </div>
-//             </div>
-//             {/* MAIN TABLE */}
-//             <DataTable 
-//                 columns={columns}
-//                 data={paginatedData}
-//                 currentPage={currentPage}
-//                 totalPages={totalPages}
-//                 totalItems={filteredData.length}
-//                 itemsPerPage={itemsPerPage}
-//                 onPageChange={setCurrentPage}
-//                 renderRow={(d) => (
-//                     <tr 
-//                         key={d.id} 
-//                         onClick={() => openDetail(d)}
-//                         className={`group cursor-pointer transition-colors hover:bg-[var(--bg-tertiary)] border-b border-[var(--border-secondary)] last:border-0 ${d.status === 'revoked' ? 'opacity-60' : ''} ${selectedDevices.has(d.id) ? 'bg-[rgba(35,131,226,0.15)]' : ''}`}
-//                     >
-//                         <td className="p-3 pl-3" onClick={(e) => {e.stopPropagation(); toggleRow(d.id);}}>
-//                             <div className={`w-[18px] h-[18px] border-2 rounded-[var(--radius-sm)] flex items-center justify-center ${selectedDevices.has(d.id) ? 'bg-[var(--accent)] border-[var(--accent)]' : 'border-[var(--border-primary)] group-hover:border-[var(--accent)]'}`}>
-//                                 {selectedDevices.has(d.id) && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3 h-3 text-white"><polyline points="20 6 9 17 4 12"/></svg>}
-//                             </div>
-//                         </td>
-//                         <td className="p-3">
-//                             <div className="flex items-center gap-3">
-//                                 <DeviceIcon type={d.type} />
-//                                 <div>
-//                                     <div className="font-medium text-[13px]">{d.name}</div>
-//                                     <div className="text-[11px] text-[var(--text-tertiary)]">{d.model}</div>
-//                                 </div>
-//                             </div>
-//                         </td>
-//                         <td className="p-3">
-//                             <div className="flex items-center gap-2">
-//                                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--purple)] flex items-center justify-center text-[10px] font-semibold text-white">{d.initials}</div>
-//                                 <div>
-//                                     <div className="text-[13px]">{d.user}</div>
-//                                     <div className="text-[11px] text-[var(--text-tertiary)] font-mono">{d.userId}</div>
-//                                 </div>
-//                             </div>
-//                         </td>
-//                         <td className="p-3"><StatusBadge status={d.status} /></td>
-//                         <td className={`p-3 text-xs ${d.lastActiveClass === 'recent' ? 'text-[var(--success)]' : d.lastActiveClass === 'warning' ? 'text-[var(--warning)]' : 'text-[var(--text-tertiary)]'}`}>{d.lastActive}</td>
-//                         <td className="p-3 text-[13px]">
-//                             {d.approvals}
-//                             {d.rate !== '-' && <span className="text-[var(--success)] text-[11px] ml-1">({d.rate})</span>}
-//                         </td>
-//                         <td className={`p-3 text-[11px] font-mono text-[var(--text-secondary)] ${d.status === 'revoked' ? 'line-through' : ''}`}>
-//                             {d.credential.substring(0, 16)}...
-//                         </td>
-//                         <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
-//                             <div className="flex justify-end gap-1">
-//                                 {d.status === 'active' ? (
-//                                     <>
-//                                         <button onClick={() => {setCurrentDevice(d); setModalType('suspend');}} className="px-2 py-1 text-xs bg-[var(--warning)] text-black rounded-[var(--radius-md)] font-medium hover:bg-[#f59e0b] transition-colors">Suspend</button>
-//                                         <button onClick={() => {setCurrentDevice(d); setModalType('revoke');}} className="px-2 py-1 text-xs bg-[var(--error)] text-white rounded-[var(--radius-md)] font-medium hover:bg-[#ef4444] transition-colors">Revoke</button>
-//                                     </>
-//                                 ) : d.status === 'suspended' ? (
-//                                     <>
-//                                         <button onClick={handleAction} className="px-2 py-1 text-xs bg-[var(--accent)] text-white rounded-[var(--radius-md)] font-medium hover:bg-[var(--accent-hover)] transition-colors">Reactivate</button>
-//                                         <button onClick={() => {setCurrentDevice(d); setModalType('revoke');}} className="px-2 py-1 text-xs bg-[var(--error)] text-white rounded-[var(--radius-md)] font-medium hover:bg-[#ef4444] transition-colors">Revoke</button>
-//                                     </>
-//                                 ) : (
-//                                     <button onClick={() => openDetail(d)} className="px-2 py-1 text-xs border border-[var(--border-primary)] rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-hover)] transition-colors">History</button>
-//                                 )}
-//                             </div>
-//                         </td>
-//                     </tr>
-//                 )}
-//             />
-//             {/* BULK ACTIONS BAR */}
-//             <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-lg)] p-3 flex items-center gap-4 shadow-2xl z-50 transition-all duration-300 ${selectedDevices.size > 0 ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}>
-//                 <div className="text-[13px] flex items-center gap-2">
-//                     <strong className="bg-[var(--accent)] text-white px-2 py-0.5 rounded-[10px] text-xs">{selectedDevices.size}</strong> selected
-//                 </div>
-//                 <div className="w-px h-6 bg-[var(--border-primary)]"></div>
-//                 <button onClick={() => setSelectedDevices(new Set())} className="text-xs px-2 py-1 bg-[var(--bg-tertiary)] rounded-[var(--radius-sm)] border border-[var(--border-primary)] hover:bg-[var(--bg-hover)] transition-colors text-[var(--text-primary)]">Clear</button>
-//                 <button className="text-xs px-2 py-1 bg-[var(--warning)] text-black font-medium rounded-[var(--radius-sm)] hover:bg-[#f59e0b] transition-colors">Suspend All</button>
-//                 <button className="text-xs px-2 py-1 bg-[var(--error)] text-white font-medium rounded-[var(--radius-sm)] hover:bg-[#ef4444] transition-colors">Revoke All</button>
-//             </div>
-//         </div>
-//       </main>
-//       {/* DETAIL SLIDE OVER */}
-//       <SlideOver 
-//         isOpen={!!currentDevice} 
-//         onClose={() => setCurrentDevice(null)} 
-//         title="Device Details"
-//         footer={currentDevice && currentDevice.status !== 'revoked' ? (
-//             <div className="flex gap-2 w-full justify-end">
-//                 {currentDevice.status === 'active' ? (
-//                     <>
-//                         <button onClick={() => setModalType('suspend')} className="px-3 py-2 bg-[var(--warning)] text-black text-[13px] font-medium rounded-[var(--radius-md)] hover:bg-[#f59e0b]">Suspend Device</button>
-//                         <button onClick={() => setModalType('revoke')} className="px-3 py-2 bg-[var(--error)] text-white text-[13px] font-medium rounded-[var(--radius-md)] hover:bg-[#ef4444]">Revoke Credential</button>
-//                     </>
-//                 ) : (
-//                     <>
-//                         <button onClick={handleAction} className="px-3 py-2 bg-[var(--accent)] text-white text-[13px] font-medium rounded-[var(--radius-md)] hover:bg-[#var(--accent-hover)]">Reactivate</button>
-//                         <button onClick={() => setModalType('revoke')} className="px-3 py-2 bg-[var(--error)] text-white text-[13px] font-medium rounded-[var(--radius-md)] hover:bg-[#ef4444]">Revoke Credential</button>
-//                     </>
-//                 )}
-//             </div>
-//         ) : undefined}
-//       >
-//         {currentDevice && (
-//             <div className="space-y-6">
-//                 {/* Header */}
-//                 <div className="flex items-center gap-4 p-4 bg-[var(--bg-tertiary)] rounded-[var(--radius-lg)]">
-//                     <div className="scale-125 origin-center"><DeviceIcon type={currentDevice.type} /></div>
-//                     <div>
-//                         <div className="text-lg font-semibold">{currentDevice.name}</div>
-//                         <div className="text-[13px] text-[var(--text-tertiary)]">{currentDevice.model}</div>
-//                     </div>
-//                 </div>
-//                 {/* Status */}
-//                 <div>
-//                     <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Status</div>
-//                     <StatusBadge status={currentDevice.status} className="px-3 py-1.5 text-[13px]" />
-//                     {currentDevice.reason && <span className="ml-2 text-xs text-[var(--text-tertiary)]">• {currentDevice.reason}</span>}
-//                     {currentDevice.revokedOn && <div className="mt-2 text-xs text-[var(--error)]">Revoked on {currentDevice.revokedOn}</div>}
-//                 </div>
-//                 {/* User */}
-//                 <div>
-//                     <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">User</div>
-//                     <div className="flex items-center gap-2">
-//                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--purple)] flex items-center justify-center text-xs font-semibold text-white">{currentDevice.initials}</div>
-//                         <div>
-//                             <div className="text-sm">{currentDevice.user}</div>
-//                             <div className="text-xs text-[var(--text-tertiary)] font-mono">{currentDevice.userId}</div>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 {/* Grid */}
-//                 <div>
-//                     <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Device Information</div>
-//                     <div className="grid grid-cols-2 gap-4">
-//                         <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Registered</div><div className="text-[13px]">{currentDevice.registered}</div></div>
-//                         <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Last Active</div><div className={`text-[13px] ${currentDevice.lastActiveClass === 'recent' ? 'text-[var(--success)]' : currentDevice.lastActiveClass === 'warning' ? 'text-[var(--warning)]' : 'text-[var(--text-tertiary)]'}`}>{currentDevice.lastActive}</div></div>
-//                         <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Location</div><div className="text-[13px]">{currentDevice.location}</div></div>
-//                         <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Last IP</div><div className="text-[12px] font-mono">{currentDevice.ip}</div></div>
-//                         <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Total Approvals</div><div className="text-[13px]">{currentDevice.approvals}</div></div>
-//                         <div><div className="text-[11px] text-[var(--text-tertiary)] mb-1">Success Rate</div><div className={`text-[13px] ${currentDevice.rate !== '-' ? 'text-[var(--success)]' : ''}`}>{currentDevice.rate}</div></div>
-//                     </div>
-//                 </div>
-//                 {/* Credential */}
-//                 <div>
-//                     <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">FIDO2 Credential</div>
-//                     <div className={`bg-[var(--bg-primary)] p-3 rounded-[var(--radius-md)] font-mono text-[11px] text-[var(--text-secondary)] break-all ${currentDevice.status === 'revoked' ? 'line-through opacity-60' : ''}`}>
-//                         {currentDevice.credential}8b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e
-//                     </div>
-//                 </div>
-//                 {/* Recent Activity Timeline */}
-//                 <div>
-//                     <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Recent Activity</div>
-//                     <div className="flex flex-col">
-//                         <div className="flex items-start gap-3 py-3 border-b border-[var(--border-secondary)]">
-//                             <div className="w-2 h-2 rounded-full bg-[var(--success)] mt-1.5 shrink-0"></div>
-//                             <div className="flex-1"><div className="text-[13px]">Payment approved - $245.00</div><div className="text-[11px] text-[var(--text-tertiary)]">2 min ago</div></div>
-//                         </div>
-//                         <div className="flex items-start gap-3 py-3 border-b border-[var(--border-secondary)]">
-//                             <div className="w-2 h-2 rounded-full bg-[var(--success)] mt-1.5 shrink-0"></div>
-//                             <div className="flex-1"><div className="text-[13px]">Payment approved - $89.50</div><div className="text-[11px] text-[var(--text-tertiary)]">1 hour ago</div></div>
-//                         </div>
-//                         <div className="flex items-start gap-3 py-3 border-b border-[var(--border-secondary)] last:border-0">
-//                             <div className="w-2 h-2 rounded-full bg-[var(--info)] mt-1.5 shrink-0"></div>
-//                             <div className="flex-1"><div className="text-[13px]">Authentication successful</div><div className="text-[11px] text-[var(--text-tertiary)]">3 hours ago</div></div>
-//                         </div>
-//                         {currentDevice.status === 'revoked' && (
-//                             <div className="flex items-start gap-3 py-3 border-b border-[var(--border-secondary)]">
-//                                 <div className="w-2 h-2 rounded-full bg-[var(--error)] mt-1.5 shrink-0"></div>
-//                                 <div className="flex-1"><div className="text-[13px]">Credential revoked - {currentDevice.reason}</div><div className="text-[11px] text-[var(--text-tertiary)]">{currentDevice.revokedOn}</div></div>
-//                             </div>
-//                         )}
-//                     </div>
-//                 </div>
-//             </div>
-//         )}
-//       </SlideOver>
-//       {/* MODALS */}
-//       <Modal 
-//         isOpen={!!modalType} 
-//         onClose={() => setModalType(null)} 
-//         title={modalType === 'revoke' ? 'Revoke Device Credential' : 'Suspend Device'}
-//         type={modalType === 'revoke' ? 'danger' : 'default'} // Warning handled by default style + icon override below
-//         footer={
-//             <>
-//                 <button onClick={() => setModalType(null)} className="px-4 py-2 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] text-[var(--text-primary)] text-[13px] font-medium hover:bg-[var(--bg-hover)]">Cancel</button>
-//                 <button onClick={handleAction} className={`px-4 py-2 text-white rounded-[var(--radius-md)] text-[13px] font-medium ${modalType === 'revoke' ? 'bg-[var(--error)] hover:bg-[#ef4444]' : 'bg-[var(--warning)] text-black hover:bg-[#f59e0b]'}`}>
-//                     {modalType === 'revoke' ? 'Revoke Credential' : 'Suspend Device'}
-//                 </button>
-//             </>
-//         }
-//       >
-//         <div className={`flex gap-3 p-3.5 rounded-[var(--radius-md)] border mb-4 ${modalType === 'revoke' ? 'bg-[var(--error-bg)] border-[rgba(248,113,113,0.3)]' : 'bg-[var(--warning-bg)] border-[rgba(251,191,36,0.3)]'}`}>
-//             <div className={`shrink-0 ${modalType === 'revoke' ? 'text-[var(--error)]' : 'text-[var(--warning)]'}`}>
-//                 {modalType === 'revoke' ? (
-//                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-//                 ) : (
-//                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-//                 )}
-//             </div>
-//             <div>
-//                 <div className={`text-[13px] font-semibold ${modalType === 'revoke' ? 'text-[var(--error)]' : 'text-[var(--warning)]'}`}>
-//                     {modalType === 'revoke' ? 'This action is permanent' : 'Temporary suspension'}
-//                 </div>
-//                 <div className="text-xs text-[var(--text-secondary)]">
-//                     {modalType === 'revoke' ? 'Revoking will immediately disable all payment approvals from this device.' : 'You can reactivate this device later.'}
-//                 </div>
-//             </div>
-//         </div>
-//         <div className="mb-4">
-//             <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">Reason for {modalType === 'revoke' ? 'Revocation' : 'Suspension'}</label>
-//             {modalType === 'revoke' ? (
-//                 <div className="flex flex-col gap-2">
-//                     {['Device Lost', 'Device Stolen', 'Security Concern', 'User Request'].map(r => (
-//                         <div key={r} onClick={() => setRevokeReason(r)} className={`flex items-center gap-2.5 p-3 bg-[var(--bg-tertiary)] border rounded-[var(--radius-md)] cursor-pointer transition-all ${revokeReason === r ? 'border-[var(--accent)] bg-[var(--info-bg)]' : 'border-[var(--border-primary)] hover:border-[var(--text-tertiary)]'}`}>
-//                             <div className={`w-[18px] h-[18px] border-2 rounded-full flex items-center justify-center ${revokeReason === r ? 'border-[var(--accent)]' : 'border-[var(--border-primary)]'}`}>
-//                                 {revokeReason === r && <div className="w-2.5 h-2.5 bg-[var(--accent)] rounded-full"></div>}
-//                             </div>
-//                             <div>
-//                                 <div className="text-[13px] font-medium">{r}</div>
-//                                 {r === 'Device Lost' && <div className="text-[11px] text-[var(--text-tertiary)]">User reported device as lost</div>}
-//                                 {r === 'Device Stolen' && <div className="text-[11px] text-[var(--text-tertiary)]">User reported device as stolen</div>}
-//                                 {r === 'Security Concern' && <div className="text-[11px] text-[var(--text-tertiary)]">Suspicious activity detected</div>}
-//                                 {r === 'User Request' && <div className="text-[11px] text-[var(--text-tertiary)]">User requested removal</div>}
-//                             </div>
-//                         </div>
-//                     ))}
-//                 </div>
-//             ) : (
-//                 <select className="w-full p-2.5 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] text-[13px] text-[var(--text-primary)] outline-none focus:border-[var(--accent)] transition-colors">
-//                     <option>Suspicious activity</option>
-//                     <option>Pending review</option>
-//                     <option>User request</option>
-//                     <option>Other</option>
-//                 </select>
-//             )}
-//         </div>
-//         <div>
-//             <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">Notes (Optional)</label>
-//             <textarea className="w-full p-2.5 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] text-[13px] text-[var(--text-primary)] outline-none min-h-[80px] focus:border-[var(--accent)] transition-colors" placeholder="Additional details..."></textarea>
-//         </div>
-//       </Modal>
-//       {/* TOAST */}
-//       {toast && (
-//         <div className="fixed bottom-6 right-6 bg-[var(--bg-secondary)] border border-[rgba(74,222,128,0.3)] rounded-[var(--radius-lg)] p-4 flex items-center gap-3 shadow-[0_8px_24px_rgba(0,0,0,0.4)] z-[2000] animate-[shake_0.4s_ease]">
-//             <div className="w-8 h-8 rounded-[var(--radius-md)] bg-[var(--success-bg)] text-[var(--success)] flex items-center justify-center">
-//                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-//             </div>
-//             <div>
-//                 <div className="text-[13px] font-semibold">{toast.title}</div>
-//                 <div className="text-xs text-[var(--text-tertiary)]">{toast.msg}</div>
-//             </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
 'use client';
+;
 ;
 ;
 ;
@@ -1411,22 +903,18 @@ var _s = __turbopack_context__.k.signature();
 ;
 function DevicesPage() {
     _s();
-    // --- INTEGRASI REAL DATA ---\
     const { devices, loading, refresh, actions } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useDevices$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useDevices"])();
-    // --- States ---
     const [activeTab, setActiveTab] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('all');
     const [typeFilter, setTypeFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [statusFilter, setStatusFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [searchQuery, setSearchQuery] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    // Table & Selection
     const [currentPage, setCurrentPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
     const [selectedDevices, setSelectedDevices] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(new Set());
-    // Detail & Modals
     const [currentDevice, setCurrentDevice] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [openSlider, setOpenSlider] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [modalType, setModalType] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [revokeReason, setRevokeReason] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('Device Lost');
     const [toast, setToast] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    // --- Logic Filtering (Menggunakan data 'devices' dari API) ---
     const filteredData = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "DevicesPage.useMemo[filteredData]": ()=>{
             return devices.filter({
@@ -1446,11 +934,9 @@ function DevicesPage() {
         searchQuery,
         devices
     ]);
-    // --- Pagination Config ---
     const itemsPerPage = 10;
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-    // --- Handlers ---
     const toggleRow = (id)=>{
         const newSet = new Set(selectedDevices);
         if (newSet.has(id)) newSet.delete(id);
@@ -1462,9 +948,9 @@ function DevicesPage() {
         else setSelectedDevices(new Set(filteredData.map((d)=>d.id)));
     };
     const openDetail = (device)=>{
+        setOpenSlider(true);
         setCurrentDevice(device);
     };
-    // [UPDATE] Handler Aksi Tunggal (Suspend/Revoke via API)
     const handleAction = async ()=>{
         if (!currentDevice) return;
         try {
@@ -1491,7 +977,6 @@ function DevicesPage() {
         setCurrentDevice(null);
         setTimeout(()=>setToast(null), 4000);
     };
-    // [TAMBAH] Handler Reactivate
     const handleReactivate = async (device)=>{
         try {
             await actions.reactivate(device.id);
@@ -1499,7 +984,7 @@ function DevicesPage() {
                 title: 'Device Reactivated',
                 msg: 'Device is now active.'
             });
-            if (currentDevice?.id === device.id) setCurrentDevice(null); // Tutup slideover jika sedang dibuka
+            if (currentDevice?.id === device.id) setCurrentDevice(null);
             setTimeout(()=>setToast(null), 4000);
         } catch (e) {
             setToast({
@@ -1508,51 +993,28 @@ function DevicesPage() {
             });
         }
     };
-    // 1. Helper Warna Status
     const getStatusColorClass = (status)=>{
         const s = status?.toUpperCase();
-        if (s === 'SUCCESS' || s === 'APPROVED' || s === 'ACTIVE') return 'bg-[var(--success)]'; // Hijau
-        if (s === 'FAILED' || s === 'BLOCKED' || s === 'REVOKED' || s === 'SUSPENDED') return 'bg-[var(--error)]'; // Merah
-        return 'bg-[var(--info)]'; // Biru (Info/Pending/Warning)
+        if (s === 'SUCCESS' || s === 'APPROVED' || s === 'ACTIVE') return 'bg-[var(--success)]';
+        if (s === 'FAILED' || s === 'BLOCKED' || s === 'REVOKED' || s === 'SUSPENDED') return 'bg-[var(--error)]';
+        return 'bg-[var(--info)]';
     };
-    // 2. Helper Waktu Relative (e.g., "2 min ago")
-    const getRelativeTime = (dateString)=>{
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        const now = new Date();
-        const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-        let interval = seconds / 31536000;
-        if (interval > 1) return Math.floor(interval) + " years ago";
-        interval = seconds / 2592000;
-        if (interval > 1) return Math.floor(interval) + " months ago";
-        interval = seconds / 86400;
-        if (interval > 1) return Math.floor(interval) + " days ago";
-        interval = seconds / 3600;
-        if (interval > 1) return Math.floor(interval) + " hours ago";
-        interval = seconds / 60;
-        if (interval > 1) return Math.floor(interval) + " min ago";
-        return "Just now";
-    };
-    // 3. Helper Format Teks (e.g., "LOGIN_SUCCESS" -> "Login Success")
     const formatEventName = (eventString)=>{
         if (!eventString) return 'Unknown Activity';
         return eventString.replace(/_/g, ' ').replace(/\b\w/g, (l)=>l.toUpperCase());
     };
-    // [TAMBAH] Handler Bulk Actions (Suspend All / Revoke All)
     const handleBulkAction = async (actionType)=>{
         if (selectedDevices.size === 0) return;
-        // Konfirmasi sederhana browser (opsional, bisa dibuat modal juga)
         if (!confirm(`Are you sure you want to ${actionType} ${selectedDevices.size} devices?`)) return;
         try {
-            // Jalankan aksi secara paralel
             const promises = Array.from(selectedDevices).map((id)=>actionType === 'suspend' ? actions.suspend(id) : actions.revoke(id));
             await Promise.all(promises);
             setToast({
                 title: 'Bulk Action Success',
                 msg: `Successfully ${actionType}ed ${selectedDevices.size} devices.`
             });
-            setSelectedDevices(new Set()); // Reset seleksi
-            refresh(); // Refresh data
+            setSelectedDevices(new Set());
+            refresh();
         } catch (e) {
             setToast({
                 title: 'Bulk Error',
@@ -1560,7 +1022,6 @@ function DevicesPage() {
             });
         }
     };
-    // --- Table Columns Definition ---
     const columns = [
         {
             header: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1576,48 +1037,52 @@ function DevicesPage() {
                         points: "20 6 9 17 4 12"
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 609,
+                        lineNumber: 135,
                         columnNumber: 204
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                    lineNumber: 609,
+                    lineNumber: 135,
                     columnNumber: 98
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                lineNumber: 608,
+                lineNumber: 134,
                 columnNumber: 17
             }, this),
             className: 'w-10 pl-3'
         },
         {
             header: 'Device',
-            className: 'min-w-[200px]'
+            className: 'min-w-[50px] xl:min-w-[100px]'
+        },
+        {
+            header: 'OS Version',
+            className: 'min-w-[50px]'
         },
         {
             header: 'User',
-            className: 'min-w-[160px]'
+            className: 'min-w-[50px] xl:min-w-[100px]'
         },
         {
             header: 'Status',
-            className: 'w-[100px]'
+            className: 'min-w-[50-px] xl:min-w-[100px]'
         },
         {
             header: 'Last Active',
-            className: 'w-[110px]'
+            className: 'min-w-[50px] xl:min-w-[110px]'
         },
         {
             header: 'Approvals',
-            className: 'w-[100px]'
+            className: 'min-w-[50px] xl:min-w-[100px]'
         },
         {
             header: 'Credential ID',
-            className: 'w-[140px]'
+            className: 'min-w-[140px] hidden xl:block'
         },
         {
             header: 'Actions',
-            className: 'text-right w-[130px]'
+            className: 'text-center min-w-[130px]'
         }
     ];
     if (loading) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1625,7 +1090,7 @@ function DevicesPage() {
         children: "Loading Data..."
     }, void 0, false, {
         fileName: "[project]/app/(admin)/devices/page.tsx",
-        lineNumber: 623,
+        lineNumber: 150,
         columnNumber: 25
     }, this);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1645,7 +1110,7 @@ function DevicesPage() {
                                         children: "Users"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 633,
+                                        lineNumber: 159,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1653,7 +1118,7 @@ function DevicesPage() {
                                         children: "/"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 634,
+                                        lineNumber: 160,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1661,13 +1126,13 @@ function DevicesPage() {
                                         children: "Device Management"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 635,
+                                        lineNumber: 161,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 632,
+                                lineNumber: 158,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1687,14 +1152,14 @@ function DevicesPage() {
                                                         d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 639,
+                                                        lineNumber: 165,
                                                         columnNumber: 124
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                         points: "7,10 12,15 17,10"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 639,
+                                                        lineNumber: 165,
                                                         columnNumber: 178
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1704,20 +1169,20 @@ function DevicesPage() {
                                                         y2: "3"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 639,
+                                                        lineNumber: 165,
                                                         columnNumber: 216
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 639,
+                                                lineNumber: 165,
                                                 columnNumber: 29
                                             }, this),
                                             "Export"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 638,
+                                        lineNumber: 164,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1735,39 +1200,39 @@ function DevicesPage() {
                                                         points: "23,4 23,10 17,10"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 644,
+                                                        lineNumber: 169,
                                                         columnNumber: 124
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                         d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 644,
+                                                        lineNumber: 169,
                                                         columnNumber: 162
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 644,
+                                                lineNumber: 169,
                                                 columnNumber: 29
                                             }, this),
                                             "Refresh"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 643,
+                                        lineNumber: 168,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 637,
+                                lineNumber: 163,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 631,
+                        lineNumber: 157,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1794,17 +1259,17 @@ function DevicesPage() {
                                                 ry: "2"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 657,
+                                                lineNumber: 180,
                                                 columnNumber: 134
                                             }, void 0)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 657,
+                                            lineNumber: 180,
                                             columnNumber: 35
                                         }, void 0)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 655,
+                                        lineNumber: 178,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$SimpleStatCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SimpleStatCard"], {
@@ -1822,25 +1287,25 @@ function DevicesPage() {
                                                     d: "M22 11.08V12a10 10 0 1 1-5.93-9.14"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 661,
+                                                    lineNumber: 184,
                                                     columnNumber: 134
                                                 }, void 0),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                     points: "22 4 12 14.01 9 11.01"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 661,
+                                                    lineNumber: 184,
                                                     columnNumber: 181
                                                 }, void 0)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 661,
+                                            lineNumber: 184,
                                             columnNumber: 35
                                         }, void 0)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 659,
+                                        lineNumber: 182,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$SimpleStatCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SimpleStatCard"], {
@@ -1860,7 +1325,7 @@ function DevicesPage() {
                                                     r: "10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 665,
+                                                    lineNumber: 188,
                                                     columnNumber: 134
                                                 }, void 0),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1870,7 +1335,7 @@ function DevicesPage() {
                                                     y2: "12"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 665,
+                                                    lineNumber: 188,
                                                     columnNumber: 167
                                                 }, void 0),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1880,18 +1345,18 @@ function DevicesPage() {
                                                     y2: "16"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 665,
+                                                    lineNumber: 188,
                                                     columnNumber: 206
                                                 }, void 0)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 665,
+                                            lineNumber: 188,
                                             columnNumber: 35
                                         }, void 0)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 663,
+                                        lineNumber: 186,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$SimpleStatCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SimpleStatCard"], {
@@ -1911,7 +1376,7 @@ function DevicesPage() {
                                                     r: "10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 669,
+                                                    lineNumber: 192,
                                                     columnNumber: 134
                                                 }, void 0),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1921,7 +1386,7 @@ function DevicesPage() {
                                                     y2: "15"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 669,
+                                                    lineNumber: 192,
                                                     columnNumber: 167
                                                 }, void 0),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1931,24 +1396,24 @@ function DevicesPage() {
                                                     y2: "15"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 669,
+                                                    lineNumber: 192,
                                                     columnNumber: 205
                                                 }, void 0)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 669,
+                                            lineNumber: 192,
                                             columnNumber: 35
                                         }, void 0)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 667,
+                                        lineNumber: 190,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 654,
+                                lineNumber: 177,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1970,7 +1435,7 @@ function DevicesPage() {
                                                         r: "8"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 676,
+                                                        lineNumber: 198,
                                                         columnNumber: 152
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1980,13 +1445,13 @@ function DevicesPage() {
                                                         y2: "16.65"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 676,
+                                                        lineNumber: 198,
                                                         columnNumber: 184
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 676,
+                                                lineNumber: 198,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1997,13 +1462,13 @@ function DevicesPage() {
                                                 onChange: (e)=>setSearchQuery(e.target.value)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 677,
+                                                lineNumber: 199,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 675,
+                                        lineNumber: 197,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2016,7 +1481,7 @@ function DevicesPage() {
                                                 children: "All Types"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 685,
+                                                lineNumber: 207,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2024,7 +1489,7 @@ function DevicesPage() {
                                                 children: "Mobile"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 685,
+                                                lineNumber: 207,
                                                 columnNumber: 64
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2032,7 +1497,7 @@ function DevicesPage() {
                                                 children: "Desktop"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 685,
+                                                lineNumber: 207,
                                                 columnNumber: 102
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2040,13 +1505,13 @@ function DevicesPage() {
                                                 children: "Hardware Key"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 685,
+                                                lineNumber: 207,
                                                 columnNumber: 142
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 684,
+                                        lineNumber: 206,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -2059,7 +1524,7 @@ function DevicesPage() {
                                                 children: "All Status"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 689,
+                                                lineNumber: 211,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2067,7 +1532,7 @@ function DevicesPage() {
                                                 children: "Active"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 689,
+                                                lineNumber: 211,
                                                 columnNumber: 65
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2075,7 +1540,7 @@ function DevicesPage() {
                                                 children: "Suspended"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 689,
+                                                lineNumber: 211,
                                                 columnNumber: 103
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -2083,20 +1548,20 @@ function DevicesPage() {
                                                 children: "Revoked"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 689,
+                                                lineNumber: 211,
                                                 columnNumber: 147
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 688,
+                                        lineNumber: 210,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "flex-1"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 692,
+                                        lineNumber: 214,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2107,7 +1572,6 @@ function DevicesPage() {
                                             'suspended',
                                             'revoked'
                                         ].map((tab)=>{
-                                            // [UPDATE] Hitung data asli
                                             const count = tab === 'all' ? devices.length : devices.filter((d)=>d.status === tab).length;
                                             return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: ()=>setActiveTab(tab),
@@ -2120,25 +1584,25 @@ function DevicesPage() {
                                                         children: count
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 706,
+                                                        lineNumber: 227,
                                                         columnNumber: 47
                                                     }, this)
                                                 ]
                                             }, tab, true, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 702,
+                                                lineNumber: 223,
                                                 columnNumber: 37
                                             }, this);
                                         })
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 694,
+                                        lineNumber: 216,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 674,
+                                lineNumber: 196,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$DataTable$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DataTable"], {
@@ -2171,22 +1635,22 @@ function DevicesPage() {
                                                             points: "20 6 9 17 4 12"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                            lineNumber: 732,
+                                                            lineNumber: 252,
                                                             columnNumber: 177
                                                         }, void 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 732,
+                                                        lineNumber: 252,
                                                         columnNumber: 71
                                                     }, void 0)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 731,
+                                                    lineNumber: 251,
                                                     columnNumber: 37
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 730,
+                                                lineNumber: 250,
                                                 columnNumber: 33
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2198,7 +1662,7 @@ function DevicesPage() {
                                                             type: d.type
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                            lineNumber: 737,
+                                                            lineNumber: 257,
                                                             columnNumber: 41
                                                         }, void 0),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2208,7 +1672,7 @@ function DevicesPage() {
                                                                     children: d.name
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                    lineNumber: 739,
+                                                                    lineNumber: 259,
                                                                     columnNumber: 45
                                                                 }, void 0),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2220,24 +1684,52 @@ function DevicesPage() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                    lineNumber: 740,
+                                                                    lineNumber: 260,
                                                                     columnNumber: 45
                                                                 }, void 0)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                            lineNumber: 738,
+                                                            lineNumber: 258,
                                                             columnNumber: 41
                                                         }, void 0)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 736,
+                                                    lineNumber: 256,
                                                     columnNumber: 37
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 735,
+                                                lineNumber: 255,
+                                                columnNumber: 33
+                                            }, void 0),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
+                                                className: "p-3",
+                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex items-center gap-3",
+                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                            className: "font-medium text-[13px]",
+                                                            children: d.osVersion
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/app/(admin)/devices/page.tsx",
+                                                            lineNumber: 268,
+                                                            columnNumber: 45
+                                                        }, void 0)
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/(admin)/devices/page.tsx",
+                                                        lineNumber: 267,
+                                                        columnNumber: 41
+                                                    }, void 0)
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/(admin)/devices/page.tsx",
+                                                    lineNumber: 265,
+                                                    columnNumber: 37
+                                                }, void 0)
+                                            }, void 0, false, {
+                                                fileName: "[project]/app/(admin)/devices/page.tsx",
+                                                lineNumber: 264,
                                                 columnNumber: 33
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2250,17 +1742,17 @@ function DevicesPage() {
                                                             children: d.initials
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                            lineNumber: 746,
+                                                            lineNumber: 274,
                                                             columnNumber: 41
                                                         }, void 0),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                     className: "text-[13px]",
-                                                                    children: d.email
+                                                                    children: d.user
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                    lineNumber: 748,
+                                                                    lineNumber: 276,
                                                                     columnNumber: 45
                                                                 }, void 0),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2268,24 +1760,24 @@ function DevicesPage() {
                                                                     children: d.userId
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                    lineNumber: 749,
+                                                                    lineNumber: 277,
                                                                     columnNumber: 45
                                                                 }, void 0)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                            lineNumber: 747,
+                                                            lineNumber: 275,
                                                             columnNumber: 41
                                                         }, void 0)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 745,
+                                                    lineNumber: 273,
                                                     columnNumber: 37
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 744,
+                                                lineNumber: 272,
                                                 columnNumber: 33
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2294,12 +1786,12 @@ function DevicesPage() {
                                                     status: d.status
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 753,
+                                                    lineNumber: 281,
                                                     columnNumber: 53
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 753,
+                                                lineNumber: 281,
                                                 columnNumber: 33
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2307,7 +1799,7 @@ function DevicesPage() {
                                                 children: d.lastActive
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 754,
+                                                lineNumber: 282,
                                                 columnNumber: 33
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2323,31 +1815,31 @@ function DevicesPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 757,
+                                                        lineNumber: 285,
                                                         columnNumber: 56
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 755,
+                                                lineNumber: 283,
                                                 columnNumber: 33
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                                className: `p-3 text-[11px] font-mono text-[var(--text-secondary)] ${d.status === 'revoked' ? 'line-through' : ''}`,
+                                                className: `p-3 text-[11px] font-mono text-[var(--text-secondary)] ${d.status === 'revoked' ? 'line-through' : ''} hidden xl:block`,
                                                 children: [
                                                     d.credential.substring(0, 16),
                                                     "..."
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 759,
+                                                lineNumber: 287,
                                                 columnNumber: 33
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                 className: "p-3 text-right",
                                                 onClick: (e)=>e.stopPropagation(),
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "flex justify-end gap-1",
+                                                    className: "flex flex-wrap xl:flex-nowrap justify-end gap-1",
                                                     children: d.status === 'active' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2359,7 +1851,7 @@ function DevicesPage() {
                                                                 children: "Suspend"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                lineNumber: 766,
+                                                                lineNumber: 294,
                                                                 columnNumber: 49
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2371,7 +1863,7 @@ function DevicesPage() {
                                                                 children: "Revoke"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                lineNumber: 767,
+                                                                lineNumber: 295,
                                                                 columnNumber: 49
                                                             }, void 0)
                                                         ]
@@ -2383,7 +1875,7 @@ function DevicesPage() {
                                                                 children: "Reactivate"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                lineNumber: 772,
+                                                                lineNumber: 299,
                                                                 columnNumber: 49
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2395,7 +1887,7 @@ function DevicesPage() {
                                                                 children: "Revoke"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                lineNumber: 773,
+                                                                lineNumber: 300,
                                                                 columnNumber: 49
                                                             }, void 0)
                                                         ]
@@ -2405,28 +1897,28 @@ function DevicesPage() {
                                                         children: "History"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 776,
+                                                        lineNumber: 303,
                                                         columnNumber: 45
                                                     }, void 0)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 763,
+                                                    lineNumber: 291,
                                                     columnNumber: 37
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 762,
+                                                lineNumber: 290,
                                                 columnNumber: 33
                                             }, void 0)
                                         ]
                                     }, d.id, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 725,
+                                        lineNumber: 245,
                                         columnNumber: 29
                                     }, void 0)
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 716,
+                                lineNumber: 236,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2440,21 +1932,21 @@ function DevicesPage() {
                                                 children: selectedDevices.size
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 787,
+                                                lineNumber: 313,
                                                 columnNumber: 29
                                             }, this),
                                             " selected"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 786,
+                                        lineNumber: 312,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "w-px h-6 bg-[var(--border-primary)]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 789,
+                                        lineNumber: 315,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2463,7 +1955,7 @@ function DevicesPage() {
                                         children: "Clear"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 790,
+                                        lineNumber: 316,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2472,7 +1964,7 @@ function DevicesPage() {
                                         children: "Suspend All"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 792,
+                                        lineNumber: 317,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2481,30 +1973,33 @@ function DevicesPage() {
                                         children: "Revoke All"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 793,
+                                        lineNumber: 318,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 785,
+                                lineNumber: 311,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 651,
+                        lineNumber: 175,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                lineNumber: 628,
+                lineNumber: 155,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$SlideOver$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SlideOver"], {
-                isOpen: !!currentDevice,
-                onClose: ()=>setCurrentDevice(null),
+                isOpen: openSlider,
+                onClose: ()=>{
+                    setOpenSlider(false);
+                    setCurrentDevice(null);
+                },
                 title: "Device Details",
                 footer: currentDevice && currentDevice.status !== 'revoked' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "flex gap-2 w-full justify-end",
@@ -2516,7 +2011,7 @@ function DevicesPage() {
                                 children: "Suspend Device"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 807,
+                                lineNumber: 331,
                                 columnNumber: 33
                             }, void 0),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2525,7 +2020,7 @@ function DevicesPage() {
                                 children: "Revoke Credential"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 808,
+                                lineNumber: 332,
                                 columnNumber: 33
                             }, void 0)
                         ]
@@ -2537,7 +2032,7 @@ function DevicesPage() {
                                 children: "Reactivate"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 813,
+                                lineNumber: 336,
                                 columnNumber: 33
                             }, void 0),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2546,14 +2041,14 @@ function DevicesPage() {
                                 children: "Revoke Credential"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 814,
+                                lineNumber: 337,
                                 columnNumber: 33
                             }, void 0)
                         ]
                     }, void 0, true)
                 }, void 0, false, {
                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                    lineNumber: 804,
+                    lineNumber: 328,
                     columnNumber: 21
                 }, void 0) : undefined,
                 children: currentDevice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2568,12 +2063,12 @@ function DevicesPage() {
                                         type: currentDevice.type
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 824,
+                                        lineNumber: 346,
                                         columnNumber: 70
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 824,
+                                    lineNumber: 346,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2583,7 +2078,7 @@ function DevicesPage() {
                                             children: currentDevice.name
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 826,
+                                            lineNumber: 348,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2591,19 +2086,19 @@ function DevicesPage() {
                                             children: currentDevice.model
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 827,
+                                            lineNumber: 349,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 825,
+                                    lineNumber: 347,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 823,
+                            lineNumber: 345,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2613,7 +2108,7 @@ function DevicesPage() {
                                     children: "Status"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 833,
+                                    lineNumber: 354,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$StatusBadge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["StatusBadge"], {
@@ -2621,7 +2116,7 @@ function DevicesPage() {
                                     className: "px-3 py-1.5 text-[13px]"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 834,
+                                    lineNumber: 355,
                                     columnNumber: 29
                                 }, this),
                                 currentDevice.reason && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2632,7 +2127,7 @@ function DevicesPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 835,
+                                    lineNumber: 356,
                                     columnNumber: 54
                                 }, this),
                                 currentDevice.revokedOn && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2643,13 +2138,13 @@ function DevicesPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 836,
+                                    lineNumber: 357,
                                     columnNumber: 57
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 832,
+                            lineNumber: 353,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2659,7 +2154,7 @@ function DevicesPage() {
                                     children: "User"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 841,
+                                    lineNumber: 361,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2670,17 +2165,17 @@ function DevicesPage() {
                                             children: currentDevice.initials
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 843,
+                                            lineNumber: 363,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "text-sm",
-                                                    children: currentDevice.email
+                                                    children: currentDevice.user
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 845,
+                                                    lineNumber: 365,
                                                     columnNumber: 37
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2688,25 +2183,25 @@ function DevicesPage() {
                                                     children: currentDevice.userId
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 846,
+                                                    lineNumber: 366,
                                                     columnNumber: 37
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 844,
+                                            lineNumber: 364,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 842,
+                                    lineNumber: 362,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 840,
+                            lineNumber: 360,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2716,7 +2211,7 @@ function DevicesPage() {
                                     children: "Device Information"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 853,
+                                    lineNumber: 372,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2729,21 +2224,25 @@ function DevicesPage() {
                                                     children: "Registered"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 855,
+                                                    lineNumber: 374,
                                                     columnNumber: 38
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "text-[13px]",
-                                                    children: currentDevice.registered
+                                                    children: new Date(currentDevice.registered).toLocaleDateString('en-US', {
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                        year: 'numeric'
+                                                    })
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 855,
+                                                    lineNumber: 374,
                                                     columnNumber: 116
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 855,
+                                            lineNumber: 374,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2753,7 +2252,7 @@ function DevicesPage() {
                                                     children: "Last Active"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 856,
+                                                    lineNumber: 375,
                                                     columnNumber: 38
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2761,13 +2260,13 @@ function DevicesPage() {
                                                     children: currentDevice.lastActive
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 856,
+                                                    lineNumber: 375,
                                                     columnNumber: 117
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 856,
+                                            lineNumber: 375,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2777,7 +2276,7 @@ function DevicesPage() {
                                                     children: "Location"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 857,
+                                                    lineNumber: 376,
                                                     columnNumber: 38
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2785,13 +2284,13 @@ function DevicesPage() {
                                                     children: currentDevice.location
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 857,
+                                                    lineNumber: 376,
                                                     columnNumber: 114
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 857,
+                                            lineNumber: 376,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2801,7 +2300,7 @@ function DevicesPage() {
                                                     children: "Last IP"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 858,
+                                                    lineNumber: 377,
                                                     columnNumber: 38
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2809,13 +2308,13 @@ function DevicesPage() {
                                                     children: currentDevice.ip
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 858,
+                                                    lineNumber: 377,
                                                     columnNumber: 113
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 858,
+                                            lineNumber: 377,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2825,7 +2324,7 @@ function DevicesPage() {
                                                     children: "Total Approvals"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 859,
+                                                    lineNumber: 378,
                                                     columnNumber: 38
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2833,13 +2332,13 @@ function DevicesPage() {
                                                     children: currentDevice.approvals
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 859,
+                                                    lineNumber: 378,
                                                     columnNumber: 121
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 859,
+                                            lineNumber: 378,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2849,7 +2348,7 @@ function DevicesPage() {
                                                     children: "Success Rate"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 860,
+                                                    lineNumber: 379,
                                                     columnNumber: 38
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2857,25 +2356,25 @@ function DevicesPage() {
                                                     children: currentDevice.rate
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 860,
+                                                    lineNumber: 379,
                                                     columnNumber: 118
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 860,
+                                            lineNumber: 379,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 854,
+                                    lineNumber: 373,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 852,
+                            lineNumber: 371,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2885,7 +2384,7 @@ function DevicesPage() {
                                     children: "FIDO2 Credential"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 866,
+                                    lineNumber: 384,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2893,13 +2392,13 @@ function DevicesPage() {
                                     children: currentDevice.credential
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 867,
+                                    lineNumber: 385,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 865,
+                            lineNumber: 383,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2909,7 +2408,7 @@ function DevicesPage() {
                                     children: "Recent Activity"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 874,
+                                    lineNumber: 391,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2921,7 +2420,7 @@ function DevicesPage() {
                                                     className: `w-2 h-2 rounded-full mt-1.5 shrink-0 ${getStatusColorClass(activity.status)}`
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 884,
+                                                    lineNumber: 399,
                                                     columnNumber: 45
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2929,96 +2428,73 @@ function DevicesPage() {
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "text-[13px] text-[var(--text-primary)]",
-                                                            children: [
-                                                                formatEventName(activity.event),
-                                                                activity.location && activity.location !== 'Unknown Location' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    className: "text-[var(--text-tertiary)] text-[11px] ml-1",
-                                                                    children: [
-                                                                        "• ",
-                                                                        activity.location
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                    lineNumber: 892,
-                                                                    columnNumber: 57
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
+                                                            children: formatEventName(activity.event)
+                                                        }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                            lineNumber: 888,
+                                                            lineNumber: 402,
                                                             columnNumber: 49
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "text-[11px] text-[var(--text-tertiary)] flex gap-2",
-                                                            children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    children: getRelativeTime(activity.time)
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                    lineNumber: 900,
-                                                                    columnNumber: 53
-                                                                }, this),
-                                                                activity.ip && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                    children: [
-                                                                        "• IP: ",
-                                                                        activity.ip
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                                    lineNumber: 901,
-                                                                    columnNumber: 69
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
+                                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$deviceService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getRelativeTime"])(activity.time)
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/app/(admin)/devices/page.tsx",
+                                                                lineNumber: 412,
+                                                                columnNumber: 53
+                                                            }, this)
+                                                        }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                            lineNumber: 899,
+                                                            lineNumber: 411,
                                                             columnNumber: 49
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 886,
+                                                    lineNumber: 401,
                                                     columnNumber: 45
                                                 }, this)
                                             ]
                                         }, index, true, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 882,
+                                            lineNumber: 398,
                                             columnNumber: 41
-                                        }, this)) : // Fallback jika tidak ada activity
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "py-3 text-[13px] text-[var(--text-tertiary)] italic",
                                         children: "No recent activity recorded."
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 908,
+                                        lineNumber: 419,
                                         columnNumber: 37
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 878,
+                                    lineNumber: 395,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 873,
+                            lineNumber: 390,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                    lineNumber: 821,
+                    lineNumber: 344,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                lineNumber: 799,
+                lineNumber: 323,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Modal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Modal"], {
                 isOpen: !!modalType,
-                onClose: ()=>setModalType(null),
+                onClose: ()=>{
+                    setCurrentDevice(null);
+                    setModalType(null);
+                },
                 title: modalType === 'revoke' ? 'Revoke Device Credential' : 'Suspend Device',
                 type: modalType === 'revoke' ? 'danger' : 'default',
                 footer: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -3029,7 +2505,7 @@ function DevicesPage() {
                             children: "Cancel"
                         }, void 0, false, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 928,
+                            lineNumber: 438,
                             columnNumber: 25
                         }, void 0),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3038,7 +2514,7 @@ function DevicesPage() {
                             children: modalType === 'revoke' ? 'Revoke Credential' : 'Suspend Device'
                         }, void 0, false, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 930,
+                            lineNumber: 439,
                             columnNumber: 25
                         }, void 0)
                     ]
@@ -3060,7 +2536,7 @@ function DevicesPage() {
                                             d: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 939,
+                                            lineNumber: 448,
                                             columnNumber: 124
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -3070,7 +2546,7 @@ function DevicesPage() {
                                             y2: "13"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 939,
+                                            lineNumber: 448,
                                             columnNumber: 225
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -3080,13 +2556,13 @@ function DevicesPage() {
                                             y2: "17"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 939,
+                                            lineNumber: 448,
                                             columnNumber: 264
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 939,
+                                    lineNumber: 448,
                                     columnNumber: 29
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                     viewBox: "0 0 24 24",
@@ -3101,7 +2577,7 @@ function DevicesPage() {
                                             r: "10"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 941,
+                                            lineNumber: 450,
                                             columnNumber: 124
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -3111,7 +2587,7 @@ function DevicesPage() {
                                             y2: "12"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 941,
+                                            lineNumber: 450,
                                             columnNumber: 157
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -3121,18 +2597,18 @@ function DevicesPage() {
                                             y2: "16"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                                            lineNumber: 941,
+                                            lineNumber: 450,
                                             columnNumber: 196
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 941,
+                                    lineNumber: 450,
                                     columnNumber: 29
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 937,
+                                lineNumber: 446,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3142,7 +2618,7 @@ function DevicesPage() {
                                         children: modalType === 'revoke' ? 'This action is permanent' : 'Temporary suspension'
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 945,
+                                        lineNumber: 454,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3150,19 +2626,19 @@ function DevicesPage() {
                                         children: modalType === 'revoke' ? 'Revoking will immediately disable all payment approvals from this device.' : 'You can reactivate this device later.'
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 948,
+                                        lineNumber: 457,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 944,
+                                lineNumber: 453,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 936,
+                        lineNumber: 445,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3176,7 +2652,7 @@ function DevicesPage() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 955,
+                                lineNumber: 464,
                                 columnNumber: 21
                             }, this),
                             modalType === 'revoke' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3196,12 +2672,12 @@ function DevicesPage() {
                                                     className: "w-2.5 h-2.5 bg-[var(--accent)] rounded-full"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                    lineNumber: 961,
+                                                    lineNumber: 470,
                                                     columnNumber: 64
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 960,
+                                                lineNumber: 469,
                                                 columnNumber: 37
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3211,7 +2687,7 @@ function DevicesPage() {
                                                         children: r
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 964,
+                                                        lineNumber: 473,
                                                         columnNumber: 41
                                                     }, this),
                                                     r === 'Device Lost' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3219,7 +2695,7 @@ function DevicesPage() {
                                                         children: "User reported device as lost"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 965,
+                                                        lineNumber: 474,
                                                         columnNumber: 65
                                                     }, this),
                                                     r === 'Device Stolen' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3227,7 +2703,7 @@ function DevicesPage() {
                                                         children: "User reported device as stolen"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 966,
+                                                        lineNumber: 475,
                                                         columnNumber: 67
                                                     }, this),
                                                     r === 'Security Concern' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3235,7 +2711,7 @@ function DevicesPage() {
                                                         children: "Suspicious activity detected"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 967,
+                                                        lineNumber: 476,
                                                         columnNumber: 70
                                                     }, this),
                                                     r === 'User Request' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3243,24 +2719,24 @@ function DevicesPage() {
                                                         children: "User requested removal"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                        lineNumber: 968,
+                                                        lineNumber: 477,
                                                         columnNumber: 66
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                                lineNumber: 963,
+                                                lineNumber: 472,
                                                 columnNumber: 37
                                             }, this)
                                         ]
                                     }, r, true, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 959,
+                                        lineNumber: 468,
                                         columnNumber: 33
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 957,
+                                lineNumber: 466,
                                 columnNumber: 25
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
                                 className: "w-full p-2.5 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] text-[13px] text-[var(--text-primary)] outline-none focus:border-[var(--accent)] transition-colors",
@@ -3269,40 +2745,40 @@ function DevicesPage() {
                                         children: "Suspicious activity"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 975,
+                                        lineNumber: 484,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                         children: "Pending review"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 976,
+                                        lineNumber: 485,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                         children: "User request"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 977,
+                                        lineNumber: 486,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                         children: "Other"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                                        lineNumber: 978,
+                                        lineNumber: 487,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 974,
+                                lineNumber: 483,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 954,
+                        lineNumber: 463,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3312,7 +2788,7 @@ function DevicesPage() {
                                 children: "Notes (Optional)"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 984,
+                                lineNumber: 493,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
@@ -3320,19 +2796,19 @@ function DevicesPage() {
                                 placeholder: "Additional details..."
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 985,
+                                lineNumber: 494,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 983,
+                        lineNumber: 492,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                lineNumber: 921,
+                lineNumber: 431,
                 columnNumber: 13
             }, this),
             toast && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3351,25 +2827,25 @@ function DevicesPage() {
                                     d: "M22 11.08V12a10 10 0 1 1-5.93-9.14"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 993,
+                                    lineNumber: 501,
                                     columnNumber: 130
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                     points: "22 4 12 14.01 9 11.01"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/devices/page.tsx",
-                                    lineNumber: 993,
+                                    lineNumber: 501,
                                     columnNumber: 177
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/devices/page.tsx",
-                            lineNumber: 993,
+                            lineNumber: 501,
                             columnNumber: 25
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 992,
+                        lineNumber: 500,
                         columnNumber: 21
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3379,7 +2855,7 @@ function DevicesPage() {
                                 children: toast.title
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 996,
+                                lineNumber: 504,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3387,29 +2863,29 @@ function DevicesPage() {
                                 children: toast.msg
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                                lineNumber: 997,
+                                lineNumber: 505,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/devices/page.tsx",
-                        lineNumber: 995,
+                        lineNumber: 503,
                         columnNumber: 21
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/devices/page.tsx",
-                lineNumber: 991,
+                lineNumber: 499,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(admin)/devices/page.tsx",
-        lineNumber: 626,
+        lineNumber: 153,
         columnNumber: 9
     }, this);
 }
-_s(DevicesPage, "vUN6aplW9Y/I0BCigztWDnbxIKE=", false, function() {
+_s(DevicesPage, "lz9tJWQPaVW/q08+JPlGIjwXmro=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useDevices$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useDevices"]
     ];

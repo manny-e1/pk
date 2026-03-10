@@ -67,7 +67,7 @@ export const authService = {
     try {
       const options = await apiRequest("/reg/start", "POST", { username: email, fullName, mobile, telemetry });
       const attResp = await startRegistration({ optionsJSON: options });
-      
+
       const payload = {
         serverPublicKeyCredential: {
           id: attResp.id,

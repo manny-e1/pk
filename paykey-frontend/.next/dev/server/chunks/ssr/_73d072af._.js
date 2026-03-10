@@ -6,95 +6,9 @@ __turbopack_context__.s([
     "adminService",
     ()=>adminService
 ]);
-// import axios from 'axios';
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.authkey.my';
-// export const adminService = {
-//   // --- 1. AMOUNT THRESHOLDS ---
-//     getAmountLimits: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/limits`);
-//         return res.data;
-//     },
-//     updateAmountLimit: async (id: string, data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/limits/${id}`, data);
-//         return res.data;
-//     },
-//     createAmountLimit: async (data: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/limits`, data);
-//         return res.data;
-//     },
-//     deleteAmountLimit: async (id: string) => {
-//         const res = await axios.delete(`${API_URL}/api/admin/limits/${id}`);
-//         return res.data;
-//     },
-//     getRiskRules: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-rules`);
-//         return res.data;
-//     },
-//     // [POST] Simpan Rules (Batch Update) - INI YANG BARU
-//     saveRiskConfigBatch: async (rules: any[]) => {
-//         const res = await axios.post(`${API_URL}/api/admin/risk-rules/batch-update`, { rules });
-//         return res.data;
-//     },
-//     // [GET] Thresholds
-//     getRiskConfig: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/risk-config`);
-//         return res.data;
-//     },
-//     // [PUT] Update Thresholds
-//     updateRiskConfig: async (data: any) => {
-//         const res = await axios.put(`${API_URL}/api/admin/risk-config`, data);
-//         return res.data;
-//     },
-//     // --- 3. AUTH POLICIES ---
-//     getPolicies: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies`);
-//         return res.data;
-//     },
-//     upsertPolicy: async (payload: any) => {
-//         const res = await axios.post(`${API_URL}/api/admin/policies`, payload);
-//         return res.data;
-//     },
-//     getPolicyAuditLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/policies/audit`);
-//         return res.data;
-//     },
-//     // --- 4. INVESTIGATION & LOGS ---
-//     getTransactions: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions`);
-//         return res.data;
-//     },
-//     getTransactionDetail: async (id: string) => {
-//         const res = await axios.get(`${API_URL}/api/admin/transactions/${id}`);
-//         return res.data;
-//     }
-//     ,
-//     getAuthLogs: async () => {
-//         const res = await axios.get(`${API_URL}/api/admin/logs`);
-//         return res.data;
-//     },
-//     getDashboardStats: async (range: string) => {
-//     const res = await axios.get(`${API_URL}/api/admin/dashboard`, { 
-//         params: { timeRange: range } 
-//     });
-//     return res.data;
-//     },
-//     // 1. Fetch Evidence (Cepat)    
-//     async getTransactionEvidence(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/evidence`);
-//         if (!res.ok) throw new Error('Failed to load evidence');
-//         return res.json();
-//     },
-//     // 2. Fetch Analysis (Lambat)
-//     async getInvestigationReport(id: string) {
-//         const res = await fetch(`${API_URL}/api/admin/transactions/${id}/investigate`);
-//         if (!res.ok) throw new Error('Failed to load analysis');
-//         return res.json();
-//     }
-// };
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/apiClient.ts [app-ssr] (ecmascript)");
 ;
 const adminService = {
-    // --- 1. AMOUNT THRESHOLDS ---
     getAmountLimits: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/limits`);
         return res.data;
@@ -111,23 +25,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].delete(`/api/admin/limits/${id}`);
         return res.data;
     },
-    // --- 2. RISK CONFIG & RULES ---
-    // getRiskRules: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-rules`);
-    //     return res.data;
-    // },
-    // saveRiskConfigBatch: async (rules: any[]) => {
-    //     const res = await apiClient.post(`/api/admin/risk-rules/batch-update`, { rules });
-    //     return res.data;
-    // },
-    // getRiskConfig: async () => {
-    //     const res = await apiClient.get(`/api/admin/risk-config`);
-    //     return res.data;
-    // },
-    // updateRiskConfig: async (data: any) => {
-    //     const res = await apiClient.put(`/api/admin/risk-config`, data);
-    //     return res.data;
-    // },
     getRiskRules: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/risk-rules`);
         return res.data;
@@ -137,18 +34,15 @@ const adminService = {
         return res.data;
     },
     saveRiskConfigBatch: async (rulesPayload)=>{
-        // Cukup kirimkan object { rules: rulesPayload } langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-rules', {
             rules: rulesPayload
         });
         return res.data;
     },
     updateRiskConfig: async (payload)=>{
-        // Cukup kirimkan variable payload langsung sebagai parameter kedua
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].post('/api/admin/risk-config', payload);
         return res.data;
     },
-    // --- 3. AUTH POLICIES ---
     getPolicies: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies`);
         return res.data;
@@ -161,7 +55,6 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/policies/audit`);
         return res.data;
     },
-    // --- 4. INVESTIGATION & LOGS ---
     getTransactions: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions`);
         return res.data;
@@ -203,7 +96,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/adminService.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$panel$2d$top$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__PanelTop$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/panel-top.js [app-ssr] (ecmascript) <export default as PanelTop>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__User$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/user.js [app-ssr] (ecmascript) <export default as User>");
 'use client';
+;
 ;
 ;
 ;
@@ -219,7 +115,7 @@ const StatsCard = ({ label, value, change, trend, icon })=>/*#__PURE__*/ (0, __T
                         children: label
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 61,
+                        lineNumber: 63,
                         columnNumber: 7
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -227,13 +123,13 @@ const StatsCard = ({ label, value, change, trend, icon })=>/*#__PURE__*/ (0, __T
                         children: icon
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 62,
+                        lineNumber: 64,
                         columnNumber: 7
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                lineNumber: 60,
+                lineNumber: 62,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -243,7 +139,7 @@ const StatsCard = ({ label, value, change, trend, icon })=>/*#__PURE__*/ (0, __T
                         children: value
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 65,
+                        lineNumber: 67,
                         columnNumber: 7
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -251,19 +147,19 @@ const StatsCard = ({ label, value, change, trend, icon })=>/*#__PURE__*/ (0, __T
                         children: change
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 66,
+                        lineNumber: 68,
                         columnNumber: 7
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                lineNumber: 64,
+                lineNumber: 66,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-        lineNumber: 59,
+        lineNumber: 61,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 const DetailRow = ({ label, value, className = "", valueClass = "" })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -274,7 +170,7 @@ const DetailRow = ({ label, value, className = "", valueClass = "" })=>/*#__PURE
                 children: label
             }, void 0, false, {
                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                lineNumber: 75,
+                lineNumber: 77,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -282,13 +178,13 @@ const DetailRow = ({ label, value, className = "", valueClass = "" })=>/*#__PURE
                 children: value
             }, void 0, false, {
                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                lineNumber: 76,
+                lineNumber: 78,
                 columnNumber: 5
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-        lineNumber: 74,
+        lineNumber: 76,
         columnNumber: 3
     }, ("TURBOPACK compile-time value", void 0));
 const SlideOver = ({ isOpen, onClose, title, children, footer })=>{
@@ -301,7 +197,7 @@ const SlideOver = ({ isOpen, onClose, title, children, footer })=>{
                 onClick: onClose
             }, void 0, false, {
                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                lineNumber: 84,
+                lineNumber: 86,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -315,7 +211,7 @@ const SlideOver = ({ isOpen, onClose, title, children, footer })=>{
                                 children: title
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 87,
+                                lineNumber: 89,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -336,7 +232,7 @@ const SlideOver = ({ isOpen, onClose, title, children, footer })=>{
                                             y2: "18"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 89,
+                                            lineNumber: 91,
                                             columnNumber: 111
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -346,24 +242,24 @@ const SlideOver = ({ isOpen, onClose, title, children, footer })=>{
                                             y2: "18"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 89,
+                                            lineNumber: 91,
                                             columnNumber: 149
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 89,
+                                    lineNumber: 91,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 88,
+                                lineNumber: 90,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 86,
+                        lineNumber: 88,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -371,7 +267,7 @@ const SlideOver = ({ isOpen, onClose, title, children, footer })=>{
                         children: children
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 92,
+                        lineNumber: 94,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     footer && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -379,27 +275,25 @@ const SlideOver = ({ isOpen, onClose, title, children, footer })=>{
                         children: footer
                     }, void 0, false, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 93,
+                        lineNumber: 95,
                         columnNumber: 20
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                lineNumber: 85,
+                lineNumber: 87,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-        lineNumber: 83,
+        lineNumber: 85,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-// --- DATA TABLE DENGAN PAGINATION ANGKA ---
 const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPerPage, onPageChange, totalItems })=>{
     const start = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
     const end = Math.min(currentPage * itemsPerPage, totalItems);
-    // Logic generate nomor halaman (e.g. 1 2 3 ... 10)
     const getPageNumbers = ()=>{
         const pages = [];
         const maxVisiblePages = 5;
@@ -437,7 +331,7 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                 children: "Authentication Events"
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 135,
+                                lineNumber: 134,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -453,22 +347,22 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 136,
+                                lineNumber: 135,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 134,
+                        lineNumber: 133,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 }, void 0, false, {
                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                    lineNumber: 133,
+                    lineNumber: 132,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "overflow-auto flex-1 custom-scrollbar",
+                    className: "overflow-auto flex-1 no-scrollbar",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("table", {
                         className: "w-full text-left border-collapse",
                         children: [
@@ -480,17 +374,17 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                             children: col.header
                                         }, i, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 144,
+                                            lineNumber: 142,
                                             columnNumber: 57
                                         }, ("TURBOPACK compile-time value", void 0)))
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 144,
+                                    lineNumber: 142,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 143,
+                                lineNumber: 141,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
@@ -501,28 +395,28 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                         children: "No events found matching your filters."
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 151,
+                                        lineNumber: 149,
                                         columnNumber: 19
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 150,
+                                    lineNumber: 148,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 146,
+                                lineNumber: 144,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 142,
+                        lineNumber: 140,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 }, void 0, false, {
                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                    lineNumber: 141,
+                    lineNumber: 139,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -541,7 +435,7 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 163,
+                                    lineNumber: 160,
                                     columnNumber: 21
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 " of ",
@@ -550,14 +444,14 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                     children: totalItems.toLocaleString()
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 163,
+                                    lineNumber: 160,
                                     columnNumber: 94
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 " events"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 162,
+                            lineNumber: 159,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -578,17 +472,17 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                             points: "15 18 9 12 15 6"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 168,
+                                            lineNumber: 165,
                                             columnNumber: 113
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 168,
+                                        lineNumber: 165,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 167,
+                                    lineNumber: 164,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 getPageNumbers().map((pageNum, idx)=>pageNum === '...' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -596,7 +490,7 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                         children: "..."
                                     }, `dots-${idx}`, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 173,
+                                        lineNumber: 170,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>onPageChange(Number(pageNum)),
@@ -604,7 +498,7 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                         children: pageNum
                                     }, pageNum, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 175,
+                                        lineNumber: 172,
                                         columnNumber: 17
                                     }, ("TURBOPACK compile-time value", void 0))),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -622,29 +516,29 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
                                             points: "9 18 15 12 9 6"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 189,
+                                            lineNumber: 186,
                                             columnNumber: 113
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 189,
+                                        lineNumber: 186,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 188,
+                                    lineNumber: 185,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 166,
+                            lineNumber: 163,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                    lineNumber: 161,
+                    lineNumber: 158,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0))
             ]
@@ -659,12 +553,11 @@ const DataTable = ({ columns, data, renderRow, currentPage, totalPages, itemsPer
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-// --- LOGIC HELPER ---
 const formatType = (t)=>t ? t.replace(/_/g, ' ').replace(/\b\w/g, (l)=>l.toUpperCase()) : 'Unknown';
 const getRiskTagStyle = (tag)=>{
     const cls = tag.class?.toLowerCase() || 'default';
     if (cls === 'high' || cls === 'critical') return 'bg-red-500/15 text-red-500';
-    if (cls === 'medium' || cls === 'warning') return 'bg-yellow-500/15 text-yellow-600'; // Kuning agak gelap agar terbaca
+    if (cls === 'medium' || cls === 'warning') return 'bg-yellow-500/15 text-yellow-600';
     if (cls === 'low' || cls === 'info') return 'bg-blue-500/15 text-blue-500';
     if (cls === 'success') return 'bg-emerald-500/15 text-emerald-500';
     return 'bg-gray-500/15 text-gray-500';
@@ -687,11 +580,9 @@ const getCountryName = (code)=>{
         return code;
     }
 };
-// Timeline Generator (Visual Dinamis)
 const generateTimeline = (e)=>{
     const timeline = [];
     const t = new Date(e.timestamp);
-    // 1. Final Event (Top)
     let dotColor = 'bg-[var(--success)]';
     if (e.result === 'BLOCKED' || e.result === 'FAILED' || e.result === 'REJECTED') dotColor = 'bg-[var(--error)]';
     else if (e.result.includes('CHALLENGE') || e.result === 'TIMEOUT') dotColor = 'bg-[var(--warning)]';
@@ -702,15 +593,6 @@ const generateTimeline = (e)=>{
         }),
         dotColor: dotColor
     });
-    // 2. Risk/Auth Steps
-    // if (e.result === 'SUCCESS' || e.result.includes('CHALLENGE')) {
-    //   timeline.push({
-    //     label: 'Biometric / Risk Check',
-    //     time: new Date(t.getTime() - 2000).toLocaleTimeString('en-US', { hour12: false }),
-    //     dotColor: 'bg-[var(--bg-tertiary)]'
-    //   });
-    // }
-    // 3. Risk Context in Timeline
     if (e.risk.tags && e.risk.tags.length > 0) {
         e.risk.tags.forEach((tag, i)=>{
             timeline.push({
@@ -722,7 +604,6 @@ const generateTimeline = (e)=>{
             });
         });
     }
-    // 4. Start (Bottom)
     timeline.push({
         label: 'Request initiated',
         time: new Date(t.getTime() - 5000).toLocaleTimeString('en-US', {
@@ -736,7 +617,6 @@ function AuthLogsPage() {
     const [logs, setLogs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
-    // State Statistik
     const [stats, setStats] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({
         total: {
             value: 0,
@@ -764,24 +644,20 @@ function AuthLogsPage() {
             trend: 'neutral'
         }
     });
-    // Filters State
     const [eventType, setEventType] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [resultFilter, setResultFilter] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
-    const [startDate, setStartDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(''); // DIKOSONGKAN
-    const [endDate, setEndDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(''); // DIKOSONGKAN
+    const [startDate, setStartDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
+    const [endDate, setEndDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [activeChips, setActiveChips] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(new Set());
     const [currentPage, setCurrentPage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1);
     const [selectedEvent, setSelectedEvent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
-    // FETCH DATA (SAFE PARSING LOGIC)
     const fetchLogs = async ()=>{
         setLoading(true);
         try {
             const rawLogs = await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].getAuthLogs();
             const mappedData = rawLogs.map((log)=>{
-                // --- EXTRACTION LOGIC ---
                 let richData = {};
                 let tagsArray = [];
-                // Parse riskTags field (bisa string, bisa object)
                 if (typeof log.riskTags === 'string') {
                     try {
                         richData = JSON.parse(log.riskTags);
@@ -791,45 +667,63 @@ function AuthLogsPage() {
                 } else if (typeof log.riskTags === 'object' && log.riskTags !== null) {
                     richData = log.riskTags;
                 }
-                // 1. Ambil Tags Array
                 if (Array.isArray(richData.tags)) {
                     tagsArray = richData.tags;
                 } else if (Array.isArray(richData)) {
-                    // Fallback jika format lama (array strings/obj langsung)
                     tagsArray = richData.map((t)=>typeof t === 'string' ? {
                             label: t,
                             class: 'default'
                         } : t);
                 }
-                // 2. Ambil Telemetry & Network
                 const telemetry = richData.telemetry || {};
                 const network = richData.network || {};
                 const deviceInfo = richData.device_info || {};
-                // 3. Status Mapping
                 const statusRaw = log.status?.toUpperCase() || 'UNKNOWN';
                 let statusLabel = 'Success';
                 if (statusRaw === 'BLOCKED' || statusRaw === 'FAILED' || statusRaw === 'REJECTED') statusLabel = 'Blocked';
                 else if (statusRaw.includes('CHALLENGE') || statusRaw === 'TIMEOUT') statusLabel = 'Challenged';
-                // 4. Construct Event Object
                 return {
                     id: log.id.toString(),
                     type: log.eventType || 'unknown',
                     timestamp: log.createdAt,
                     result: statusRaw,
                     resultLabel: statusLabel,
-                    userId: log.email || log.userName || 'Unknown',
+                    email: log.email,
+                    userName: log.userName,
+                    userId: log.userId || log.userName || 'Unknown',
                     paymentId: richData.paymentId || null,
                     isNewDevice: tagsArray.some((t)=>t.label.toLowerCase().includes('new device')),
+                    authType: log.authMethod || 'Unknown',
                     device: {
                         type: deviceInfo.type || (log.userAgent?.toLowerCase().includes('mobile') ? 'Mobile' : 'Desktop'),
                         os: deviceInfo.os || log.userAgent || 'Unknown',
-                        model: telemetry.device_model || log.device || 'Unknown Device',
+                        model: (()=>{
+                            if (telemetry.device_model || log.device) {
+                                return telemetry.device_model || log.device;
+                            }
+                            if (deviceInfo.os.toLowerCase().includes('mac')) {
+                                return 'Macintoshh';
+                            }
+                            if (deviceInfo.os.toLowerCase().includes('Windows PC')) {
+                                return 'Windows';
+                            }
+                            if (deviceInfo.os.toLowerCase().includes('ubuntu')) {
+                                return 'Ubuntu Desktop';
+                            }
+                        })(),
                         browser: log.userAgent?.split('/')[0] || 'Unknown Browser'
                     },
                     location: {
                         country: network.country || log.countryCode || 'Unknown',
                         city: richData.location?.split(',')[0] || log.location?.split(',')[0] || 'Unknown',
-                        ip: network.ip || log.ipAddress || '0.0.0.0',
+                        ip: (()=>{
+                            const raw = network.ip || log.ipAddress || '0.0.0.0';
+                            const parts = raw.split('.');
+                            if (parts.length === 4) {
+                                return `${parts[0]}.***.***.${parts[3]}`;
+                            }
+                            return raw;
+                        })(),
                         flag: (network.country || log.countryCode) === 'MY' ? '🇲🇾' : (network.country || log.countryCode) === 'ID' ? '🇮🇩' : (network.country || log.countryCode) === 'UK' || (network.country || log.countryCode) === 'GB' ? '🇬🇧' : '🌐',
                         asn: network.asn || 'AS-UNKNOWN',
                         isp: network.isp || 'Unknown ISP',
@@ -860,7 +754,6 @@ function AuthLogsPage() {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         fetchLogs();
     }, []);
-    // CALC STATS
     const calculateStats = (data)=>{
         const now = new Date();
         const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -912,7 +805,6 @@ function AuthLogsPage() {
             }
         });
     };
-    // HANDLERS
     const toggleChip = (chip)=>{
         const newSet = new Set(activeChips);
         newSet.has(chip) ? newSet.delete(chip) : newSet.add(chip);
@@ -922,6 +814,8 @@ function AuthLogsPage() {
     const handleClearFilters = ()=>{
         setEventType('');
         setResultFilter('');
+        setStartDate('');
+        setEndDate('');
         setActiveChips(new Set());
         setCurrentPage(1);
     };
@@ -939,7 +833,6 @@ function AuthLogsPage() {
         let matchChips = true;
         if (activeChips.has('new-device') && !e.isNewDevice) matchChips = false;
         if (activeChips.has('vpn') && e.risk.network !== 'vpn') matchChips = false;
-        // Updated chip logic with safe String usage
         if (activeChips.has('high-risk') && e.risk.amountClass !== 'high' && !e.risk.tags?.some((t)=>t.class === 'high' || t.label.toLowerCase().includes('high'))) matchChips = false;
         return matchType && matchResult && matchDate && matchChips;
     });
@@ -964,7 +857,7 @@ function AuthLogsPage() {
                                         children: "Security"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 472,
+                                        lineNumber: 466,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -972,7 +865,7 @@ function AuthLogsPage() {
                                         children: "/"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 472,
+                                        lineNumber: 466,
                                         columnNumber: 76
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -980,18 +873,18 @@ function AuthLogsPage() {
                                         children: "Authentication Logs"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 472,
+                                        lineNumber: 466,
                                         columnNumber: 127
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 471,
+                                lineNumber: 465,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 470,
+                            lineNumber: 464,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1004,14 +897,14 @@ function AuthLogsPage() {
                                             className: "w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 476,
+                                            lineNumber: 470,
                                             columnNumber: 89
                                         }, this),
                                         " Live"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 476,
+                                    lineNumber: 470,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1032,7 +925,7 @@ function AuthLogsPage() {
                                                     r: "8"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 478,
+                                                    lineNumber: 472,
                                                     columnNumber: 153
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1042,13 +935,13 @@ function AuthLogsPage() {
                                                     y2: "16.65"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 478,
+                                                    lineNumber: 472,
                                                     columnNumber: 185
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 478,
+                                            lineNumber: 472,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1057,7 +950,7 @@ function AuthLogsPage() {
                                             className: "bg-transparent border-none outline-none text-[13px] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] flex-1"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 479,
+                                            lineNumber: 473,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1065,13 +958,13 @@ function AuthLogsPage() {
                                             children: "⌘K"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 480,
+                                            lineNumber: 474,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 477,
+                                    lineNumber: 471,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1089,14 +982,14 @@ function AuthLogsPage() {
                                                     d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 483,
+                                                    lineNumber: 477,
                                                     columnNumber: 113
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                     points: "7,10 12,15 17,10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 483,
+                                                    lineNumber: 477,
                                                     columnNumber: 167
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1106,20 +999,20 @@ function AuthLogsPage() {
                                                     y2: "3"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 483,
+                                                    lineNumber: 477,
                                                     columnNumber: 205
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 483,
+                                            lineNumber: 477,
                                             columnNumber: 15
                                         }, this),
                                         " Export"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 482,
+                                    lineNumber: 476,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1139,39 +1032,39 @@ function AuthLogsPage() {
                                                     points: "23,4 23,10 17,10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 486,
+                                                    lineNumber: 480,
                                                     columnNumber: 155
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                     d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 486,
+                                                    lineNumber: 480,
                                                     columnNumber: 193
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 486,
+                                            lineNumber: 480,
                                             columnNumber: 15
                                         }, this),
                                         " Refresh"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 485,
+                                    lineNumber: 479,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 475,
+                            lineNumber: 469,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                    lineNumber: 469,
+                    lineNumber: 463,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1196,17 +1089,17 @@ function AuthLogsPage() {
                                             points: "22 12 18 12 15 21 9 3 6 12 2 12"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 494,
+                                            lineNumber: 487,
                                             columnNumber: 233
                                         }, void 0)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 494,
+                                        lineNumber: 487,
                                         columnNumber: 135
                                     }, void 0)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 494,
+                                    lineNumber: 487,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(StatsCard, {
@@ -1226,29 +1119,29 @@ function AuthLogsPage() {
                                                 d: "M22 11.08V12a10 10 0 1 1-5.93-9.14"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 495,
+                                                lineNumber: 488,
                                                 columnNumber: 233
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                 points: "22 4 12 14.01 9 11.01"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 495,
+                                                lineNumber: 488,
                                                 columnNumber: 280
                                             }, void 0)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 495,
+                                        lineNumber: 488,
                                         columnNumber: 135
                                     }, void 0)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 495,
+                                    lineNumber: 488,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(StatsCard, {
-                                    label: "Failed / Blocked",
+                                    label: "Failed Attempts",
                                     value: stats.failed.value,
                                     change: stats.failed.text,
                                     trend: stats.failed.trend,
@@ -1266,8 +1159,8 @@ function AuthLogsPage() {
                                                 r: "10"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 496,
-                                                columnNumber: 234
+                                                lineNumber: 489,
+                                                columnNumber: 233
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                 x1: "12",
@@ -1276,8 +1169,8 @@ function AuthLogsPage() {
                                                 y2: "12"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 496,
-                                                columnNumber: 267
+                                                lineNumber: 489,
+                                                columnNumber: 266
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                 x1: "12",
@@ -1286,18 +1179,18 @@ function AuthLogsPage() {
                                                 y2: "16"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 496,
-                                                columnNumber: 306
+                                                lineNumber: 489,
+                                                columnNumber: 305
                                             }, void 0)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 496,
-                                        columnNumber: 136
+                                        lineNumber: 489,
+                                        columnNumber: 135
                                     }, void 0)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 496,
+                                    lineNumber: 489,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(StatsCard, {
@@ -1317,7 +1210,7 @@ function AuthLogsPage() {
                                                 d: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 497,
+                                                lineNumber: 490,
                                                 columnNumber: 223
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1327,7 +1220,7 @@ function AuthLogsPage() {
                                                 y2: "13"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 497,
+                                                lineNumber: 490,
                                                 columnNumber: 324
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1337,18 +1230,18 @@ function AuthLogsPage() {
                                                 y2: "17"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 497,
+                                                lineNumber: 490,
                                                 columnNumber: 363
                                             }, void 0)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 497,
+                                        lineNumber: 490,
                                         columnNumber: 125
                                     }, void 0)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 497,
+                                    lineNumber: 490,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(StatsCard, {
@@ -1373,31 +1266,31 @@ function AuthLogsPage() {
                                                 ry: "2"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 498,
+                                                lineNumber: 491,
                                                 columnNumber: 233
                                             }, void 0),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                 d: "M7 11V7a5 5 0 0 1 10 0v4"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 498,
+                                                lineNumber: 491,
                                                 columnNumber: 291
                                             }, void 0)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 498,
+                                        lineNumber: 491,
                                         columnNumber: 135
                                     }, void 0)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 498,
+                                    lineNumber: 491,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 493,
+                            lineNumber: 486,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1411,8 +1304,8 @@ function AuthLogsPage() {
                                             children: "Event Type"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 503,
-                                            columnNumber: 54
+                                            lineNumber: 496,
+                                            columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
                                             className: "bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[140px] cursor-pointer",
@@ -1424,40 +1317,40 @@ function AuthLogsPage() {
                                                     children: "All Events"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 503,
-                                                    columnNumber: 394
+                                                    lineNumber: 498,
+                                                    columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                     value: "passkey_registered",
                                                     children: "Passkey Registered"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 503,
-                                                    columnNumber: 430
+                                                    lineNumber: 499,
+                                                    columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                     value: "payment_approval_requested",
                                                     children: "Approval Requested"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 503,
-                                                    columnNumber: 492
+                                                    lineNumber: 500,
+                                                    columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                     value: "payment_approved",
                                                     children: "Payment Approved"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 503,
-                                                    columnNumber: 562
+                                                    lineNumber: 501,
+                                                    columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                     value: "payment_denied",
                                                     children: "Payment Denied"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 503,
-                                                    columnNumber: 620
+                                                    lineNumber: 502,
+                                                    columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                     value: "biometric_login",
@@ -1465,18 +1358,18 @@ function AuthLogsPage() {
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
                                                     lineNumber: 503,
-                                                    columnNumber: 674
+                                                    columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 503,
-                                            columnNumber: 127
+                                            lineNumber: 497,
+                                            columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 503,
+                                    lineNumber: 495,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1487,7 +1380,7 @@ function AuthLogsPage() {
                                             children: "Result"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 504,
+                                            lineNumber: 506,
                                             columnNumber: 54
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -1500,7 +1393,7 @@ function AuthLogsPage() {
                                                     children: "All Results"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 504,
+                                                    lineNumber: 506,
                                                     columnNumber: 396
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1508,7 +1401,7 @@ function AuthLogsPage() {
                                                     children: "Success"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 504,
+                                                    lineNumber: 506,
                                                     columnNumber: 433
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1516,7 +1409,7 @@ function AuthLogsPage() {
                                                     children: "Blocked/Failed"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 504,
+                                                    lineNumber: 506,
                                                     columnNumber: 473
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1524,19 +1417,19 @@ function AuthLogsPage() {
                                                     children: "Challenged"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 504,
+                                                    lineNumber: 506,
                                                     columnNumber: 520
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 504,
+                                            lineNumber: 506,
                                             columnNumber: 123
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 504,
+                                    lineNumber: 506,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1547,7 +1440,7 @@ function AuthLogsPage() {
                                             children: "Date Range"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 505,
+                                            lineNumber: 507,
                                             columnNumber: 54
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1560,7 +1453,7 @@ function AuthLogsPage() {
                                                     onChange: (e)=>setStartDate(e.target.value)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 505,
+                                                    lineNumber: 507,
                                                     columnNumber: 269
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1568,7 +1461,7 @@ function AuthLogsPage() {
                                                     children: "→"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 505,
+                                                    lineNumber: 507,
                                                     columnNumber: 474
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1578,19 +1471,19 @@ function AuthLogsPage() {
                                                     onChange: (e)=>setEndDate(e.target.value)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 505,
+                                                    lineNumber: 507,
                                                     columnNumber: 528
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 505,
+                                            lineNumber: 507,
                                             columnNumber: 127
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 505,
+                                    lineNumber: 507,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1614,7 +1507,7 @@ function AuthLogsPage() {
                                                     ry: "2"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 506,
+                                                    lineNumber: 508,
                                                     columnNumber: 503
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1624,20 +1517,20 @@ function AuthLogsPage() {
                                                     y2: "18"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 506,
+                                                    lineNumber: 508,
                                                     columnNumber: 560
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 506,
+                                            lineNumber: 508,
                                             columnNumber: 405
                                         }, this),
                                         " New Device"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 506,
+                                    lineNumber: 508,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1655,19 +1548,19 @@ function AuthLogsPage() {
                                                 d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 507,
+                                                lineNumber: 509,
                                                 columnNumber: 489
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 507,
+                                            lineNumber: 509,
                                             columnNumber: 391
                                         }, this),
                                         " VPN/Proxy"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 507,
+                                    lineNumber: 509,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1686,7 +1579,7 @@ function AuthLogsPage() {
                                                     d: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 508,
+                                                    lineNumber: 510,
                                                     columnNumber: 501
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1696,7 +1589,7 @@ function AuthLogsPage() {
                                                     y2: "13"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 508,
+                                                    lineNumber: 510,
                                                     columnNumber: 602
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1706,27 +1599,27 @@ function AuthLogsPage() {
                                                     y2: "17"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 508,
+                                                    lineNumber: 510,
                                                     columnNumber: 641
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 508,
+                                            lineNumber: 510,
                                             columnNumber: 403
                                         }, this),
                                         " High Risk"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 508,
+                                    lineNumber: 510,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex-1"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 509,
+                                    lineNumber: 511,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1735,13 +1628,13 @@ function AuthLogsPage() {
                                     children: "Clear Filters"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 510,
+                                    lineNumber: 512,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 502,
+                            lineNumber: 494,
                             columnNumber: 11
                         }, this),
                         loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1749,7 +1642,7 @@ function AuthLogsPage() {
                             children: "Loading logs..."
                         }, void 0, false, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 514,
+                            lineNumber: 515,
                             columnNumber: 22
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DataTable, {
                             columns: [
@@ -1790,7 +1683,7 @@ function AuthLogsPage() {
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                             className: "p-3 pl-5",
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: `inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[20px] text-xs font-medium ${e.type.includes('Passkey') ? 'bg-[var(--info-bg)] text-[var(--info)]' : e.type.includes('Approval') || e.type.includes('Requested') ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : e.type.includes('Approved') || e.type.includes('Success') ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`,
+                                                className: `inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[20px] text-xs font-medium ${e.type.includes('Passkey') ? 'bg-[var(--info-bg)] text-[var(--info)]' : e.type.includes('Approval') || e.type.includes('Requested') ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : e.type.includes('Approved') || e.type.includes('Success') ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'} text-nowrap`,
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                                         width: "14",
@@ -1800,7 +1693,7 @@ function AuthLogsPage() {
                                                         stroke: "currentColor",
                                                         strokeWidth: "2",
                                                         children: [
-                                                            e.type.includes('Passkey') && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                                                            (e.type.includes('Passkey') || e.type.includes('Login')) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("rect", {
                                                                         x: "3",
@@ -1811,15 +1704,15 @@ function AuthLogsPage() {
                                                                         ry: "2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 540,
-                                                                        columnNumber: 58
+                                                                        lineNumber: 541,
+                                                                        columnNumber: 88
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                                         d: "M7 11V7a5 5 0 0 1 10 0v4"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 540,
-                                                                        columnNumber: 116
+                                                                        lineNumber: 541,
+                                                                        columnNumber: 146
                                                                     }, void 0)
                                                                 ]
                                                             }, void 0, true),
@@ -1831,14 +1724,14 @@ function AuthLogsPage() {
                                                                         r: "10"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 541,
+                                                                        lineNumber: 542,
                                                                         columnNumber: 93
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                                         points: "12 6 12 12 16 14"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 541,
+                                                                        lineNumber: 542,
                                                                         columnNumber: 126
                                                                     }, void 0)
                                                                 ]
@@ -1849,14 +1742,14 @@ function AuthLogsPage() {
                                                                         d: "M22 11.08V12a10 10 0 1 1-5.93-9.14"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 542,
+                                                                        lineNumber: 543,
                                                                         columnNumber: 59
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                                         points: "22 4 12 14.01 9 11.01"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 542,
+                                                                        lineNumber: 543,
                                                                         columnNumber: 106
                                                                     }, void 0)
                                                                 ]
@@ -1869,7 +1762,7 @@ function AuthLogsPage() {
                                                                         r: "10"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 543,
+                                                                        lineNumber: 544,
                                                                         columnNumber: 89
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1879,7 +1772,7 @@ function AuthLogsPage() {
                                                                         y2: "15"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 543,
+                                                                        lineNumber: 544,
                                                                         columnNumber: 122
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1889,7 +1782,7 @@ function AuthLogsPage() {
                                                                         y2: "15"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 543,
+                                                                        lineNumber: 544,
                                                                         columnNumber: 160
                                                                     }, void 0)
                                                                 ]
@@ -1902,7 +1795,7 @@ function AuthLogsPage() {
                                                                         r: "10"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 544,
+                                                                        lineNumber: 545,
                                                                         columnNumber: 89
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1912,7 +1805,7 @@ function AuthLogsPage() {
                                                                         y2: "15"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 544,
+                                                                        lineNumber: 545,
                                                                         columnNumber: 122
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1922,7 +1815,7 @@ function AuthLogsPage() {
                                                                         y2: "15"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 544,
+                                                                        lineNumber: 545,
                                                                         columnNumber: 160
                                                                     }, void 0)
                                                                 ]
@@ -1930,19 +1823,19 @@ function AuthLogsPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 539,
+                                                        lineNumber: 540,
                                                         columnNumber: 23
                                                     }, void 0),
                                                     formatType(e.type)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 534,
+                                                lineNumber: 535,
                                                 columnNumber: 21
                                             }, void 0)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 533,
+                                            lineNumber: 534,
                                             columnNumber: 19
                                         }, void 0),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -1959,7 +1852,7 @@ function AuthLogsPage() {
                                                         })
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 549,
+                                                        lineNumber: 550,
                                                         columnNumber: 78
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1972,40 +1865,8 @@ function AuthLogsPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 549,
+                                                        lineNumber: 550,
                                                         columnNumber: 246
-                                                    }, void 0)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 549,
-                                                columnNumber: 39
-                                            }, void 0)
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 549,
-                                            columnNumber: 19
-                                        }, void 0),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
-                                            className: "p-3",
-                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "flex flex-col gap-0.5",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[12px] font-mono text-[var(--text-secondary)]",
-                                                        children: e.userId
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 550,
-                                                        columnNumber: 78
-                                                    }, void 0),
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "text-[11px] font-mono text-[var(--text-tertiary)]",
-                                                        children: e.paymentId || '—'
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 550,
-                                                        columnNumber: 164
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
@@ -2016,6 +1877,38 @@ function AuthLogsPage() {
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
                                             lineNumber: 550,
+                                            columnNumber: 19
+                                        }, void 0),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
+                                            className: "p-3",
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "flex flex-col gap-0.5",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "text-[12px] font-mono text-[var(--text-secondary)]",
+                                                        children: e.userName
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                                        lineNumber: 551,
+                                                        columnNumber: 78
+                                                    }, void 0),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                        className: "text-[11px] font-mono text-[var(--text-tertiary)]",
+                                                        children: e.paymentId || '—'
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                                        lineNumber: 551,
+                                                        columnNumber: 166
+                                                    }, void 0)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                                lineNumber: 551,
+                                                columnNumber: 39
+                                            }, void 0)
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                            lineNumber: 551,
                                             columnNumber: 19
                                         }, void 0),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2044,8 +1937,8 @@ function AuthLogsPage() {
                                                                         ry: "2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 551,
-                                                                        columnNumber: 438
+                                                                        lineNumber: 556,
+                                                                        columnNumber: 128
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                                         x1: "12",
@@ -2054,8 +1947,8 @@ function AuthLogsPage() {
                                                                         y2: "18"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 551,
-                                                                        columnNumber: 495
+                                                                        lineNumber: 556,
+                                                                        columnNumber: 185
                                                                     }, void 0)
                                                                 ]
                                                             }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -2069,8 +1962,8 @@ function AuthLogsPage() {
                                                                         ry: "2"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 551,
-                                                                        columnNumber: 546
+                                                                        lineNumber: 556,
+                                                                        columnNumber: 236
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                                         x1: "8",
@@ -2079,8 +1972,8 @@ function AuthLogsPage() {
                                                                         y2: "21"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 551,
-                                                                        columnNumber: 603
+                                                                        lineNumber: 556,
+                                                                        columnNumber: 293
                                                                     }, void 0),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
                                                                         x1: "12",
@@ -2089,20 +1982,20 @@ function AuthLogsPage() {
                                                                         y2: "21"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 551,
-                                                                        columnNumber: 642
+                                                                        lineNumber: 556,
+                                                                        columnNumber: 332
                                                                     }, void 0)
                                                                 ]
                                                             }, void 0, true)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                            lineNumber: 551,
-                                                            columnNumber: 198
+                                                            lineNumber: 555,
+                                                            columnNumber: 25
                                                         }, void 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 551,
-                                                        columnNumber: 80
+                                                        lineNumber: 554,
+                                                        columnNumber: 23
                                                     }, void 0),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                         className: "flex flex-col",
@@ -2112,8 +2005,8 @@ function AuthLogsPage() {
                                                                 children: e.device.model
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                lineNumber: 551,
-                                                                columnNumber: 729
+                                                                lineNumber: 560,
+                                                                columnNumber: 25
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                 className: "flex items-center gap-1.5",
@@ -2123,38 +2016,38 @@ function AuthLogsPage() {
                                                                         children: e.device.os
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 551,
-                                                                        columnNumber: 852
+                                                                        lineNumber: 562,
+                                                                        columnNumber: 27
                                                                     }, void 0),
                                                                     e.isNewDevice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                         className: "text-[9px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide",
                                                                         children: "New"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 551,
-                                                                        columnNumber: 971
+                                                                        lineNumber: 563,
+                                                                        columnNumber: 45
                                                                     }, void 0)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                lineNumber: 551,
-                                                                columnNumber: 809
+                                                                lineNumber: 561,
+                                                                columnNumber: 25
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 551,
-                                                        columnNumber: 698
+                                                        lineNumber: 559,
+                                                        columnNumber: 23
                                                     }, void 0)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 551,
-                                                columnNumber: 39
+                                                lineNumber: 553,
+                                                columnNumber: 21
                                             }, void 0)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 551,
+                                            lineNumber: 552,
                                             columnNumber: 19
                                         }, void 0),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2168,7 +2061,7 @@ function AuthLogsPage() {
                                                             children: countryCodeToEmoji(e.location.country)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                            lineNumber: 552,
+                                                            lineNumber: 568,
                                                             columnNumber: 80
                                                         }, void 0),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2179,7 +2072,7 @@ function AuthLogsPage() {
                                                                     children: getCountryName(e.location.country)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                    lineNumber: 552,
+                                                                    lineNumber: 568,
                                                                     columnNumber: 186
                                                                 }, void 0),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2187,19 +2080,19 @@ function AuthLogsPage() {
                                                                     children: e.location.ip
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                    lineNumber: 552,
+                                                                    lineNumber: 568,
                                                                     columnNumber: 286
                                                                 }, void 0)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                            lineNumber: 552,
+                                                            lineNumber: 568,
                                                             columnNumber: 155
                                                         }, void 0)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 552,
+                                                    lineNumber: 568,
                                                     columnNumber: 39
                                                 }, void 0),
                                                 e.risk.network && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2207,13 +2100,13 @@ function AuthLogsPage() {
                                                     children: e.risk.network
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 552,
+                                                    lineNumber: 568,
                                                     columnNumber: 407
                                                 }, void 0)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 552,
+                                            lineNumber: 568,
                                             columnNumber: 19
                                         }, void 0),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2225,24 +2118,24 @@ function AuthLogsPage() {
                                                         children: tag.label.replace(/_/g, ' ')
                                                     }, i, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 559,
+                                                        lineNumber: 574,
                                                         columnNumber: 27
                                                     }, void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                     className: "text-[11px] text-[var(--text-tertiary)]",
                                                     children: "-"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                    lineNumber: 564,
+                                                    lineNumber: 579,
                                                     columnNumber: 25
                                                 }, void 0)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 556,
+                                                lineNumber: 571,
                                                 columnNumber: 21
                                             }, void 0)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 555,
+                                            lineNumber: 570,
                                             columnNumber: 19
                                         }, void 0),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
@@ -2262,12 +2155,12 @@ function AuthLogsPage() {
                                                             points: "20 6 9 17 4 12"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                            lineNumber: 574,
+                                                            lineNumber: 589,
                                                             columnNumber: 153
                                                         }, void 0)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 574,
+                                                        lineNumber: 589,
                                                         columnNumber: 55
                                                     }, void 0),
                                                     e.resultLabel === 'Blocked' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
@@ -2285,7 +2178,7 @@ function AuthLogsPage() {
                                                                 y2: "18"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                lineNumber: 575,
+                                                                lineNumber: 590,
                                                                 columnNumber: 153
                                                             }, void 0),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2295,42 +2188,42 @@ function AuthLogsPage() {
                                                                 y2: "18"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                lineNumber: 575,
+                                                                lineNumber: 590,
                                                                 columnNumber: 191
                                                             }, void 0)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 575,
+                                                        lineNumber: 590,
                                                         columnNumber: 55
                                                     }, void 0),
                                                     e.resultLabel
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 570,
+                                                lineNumber: 585,
                                                 columnNumber: 21
                                             }, void 0)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                            lineNumber: 569,
+                                            lineNumber: 584,
                                             columnNumber: 19
                                         }, void 0)
                                     ]
                                 }, e.id, true, {
                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                    lineNumber: 532,
+                                    lineNumber: 533,
                                     columnNumber: 17
                                 }, void 0)
                         }, void 0, false, {
                             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                            lineNumber: 515,
+                            lineNumber: 516,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                    lineNumber: 491,
+                    lineNumber: 485,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(SlideOver, {
@@ -2342,36 +2235,68 @@ function AuthLogsPage() {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 className: "flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all",
-                                children: "View User"
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center justify-center gap-2",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__User$3e$__["User"], {
+                                            className: "w-3.5 h-3.5"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                            lineNumber: 608,
+                                            columnNumber: 19
+                                        }, void 0),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                            children: "View User"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                            lineNumber: 609,
+                                            columnNumber: 19
+                                        }, void 0)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                    lineNumber: 607,
+                                    columnNumber: 17
+                                }, void 0)
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 591,
+                                lineNumber: 606,
                                 columnNumber: 15
                             }, void 0),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 className: "flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all",
-                                children: "View Device"
+                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center justify-center gap-2",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$panel$2d$top$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__PanelTop$3e$__["PanelTop"], {
+                                            className: "w-3.5 h-3.5"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                            lineNumber: 614,
+                                            columnNumber: 19
+                                        }, void 0),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                            children: "View Device"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                            lineNumber: 615,
+                                            columnNumber: 19
+                                        }, void 0)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                    lineNumber: 613,
+                                    columnNumber: 17
+                                }, void 0)
                             }, void 0, false, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 592,
-                                columnNumber: 15
-                            }, void 0),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                onClick: ()=>{
-                                    if (selectedEvent?.paymentId) router.push(`/investigation?id=${selectedEvent.paymentId}`);
-                                    else alert('No ID');
-                                },
-                                className: "flex-1 py-2 bg-[var(--accent)] text-white rounded-[6px] text-[13px] hover:bg-[var(--accent-hover)] transition-all font-medium shadow-sm",
-                                children: "Investigate"
-                            }, void 0, false, {
-                                fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 593,
+                                lineNumber: 612,
                                 columnNumber: 15
                             }, void 0)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 590,
+                        lineNumber: 605,
                         columnNumber: 13
                     }, void 0),
                     children: selectedEvent && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2395,27 +2320,27 @@ function AuthLogsPage() {
                                                         d: "M22 11.08V12a10 10 0 1 1-5.93-9.14"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 603,
+                                                        lineNumber: 633,
                                                         columnNumber: 117
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                         points: "22 4 12 14.01 9 11.01"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 603,
+                                                        lineNumber: 633,
                                                         columnNumber: 164
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 603,
+                                                lineNumber: 633,
                                                 columnNumber: 19
                                             }, this),
                                             " Authentication Event"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 602,
+                                        lineNumber: 632,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2426,21 +2351,21 @@ function AuthLogsPage() {
                                                 children: "Event Type"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 606,
+                                                lineNumber: 636,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                className: `px-2 py-0.5 rounded-[20px] text-[11px] font-medium ${selectedEvent.type.includes('Approved') ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`,
+                                                className: `px-2 py-0.5 rounded-[20px] text-[11px] font-medium ${selectedEvent.type.includes('Approved') || selectedEvent.type.includes('Success') ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`,
                                                 children: formatType(selectedEvent.type)
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 607,
+                                                lineNumber: 637,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 605,
+                                        lineNumber: 635,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2449,7 +2374,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono text-[12px]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 609,
+                                        lineNumber: 639,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2458,7 +2383,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono text-[12px]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 610,
+                                        lineNumber: 640,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2467,7 +2392,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono text-[12px]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 611,
+                                        lineNumber: 641,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2476,7 +2401,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono text-[12px]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 612,
+                                        lineNumber: 642,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2487,7 +2412,7 @@ function AuthLogsPage() {
                                                 children: "Result"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 614,
+                                                lineNumber: 644,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2495,19 +2420,19 @@ function AuthLogsPage() {
                                                 children: selectedEvent.resultLabel
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 615,
+                                                lineNumber: 645,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 613,
+                                        lineNumber: 643,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 601,
+                                lineNumber: 631,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2533,7 +2458,7 @@ function AuthLogsPage() {
                                                         ry: "2"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 622,
+                                                        lineNumber: 651,
                                                         columnNumber: 117
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2543,20 +2468,20 @@ function AuthLogsPage() {
                                                         y2: "18"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 622,
+                                                        lineNumber: 651,
                                                         columnNumber: 174
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 622,
+                                                lineNumber: 651,
                                                 columnNumber: 19
                                             }, this),
                                             " Device & Environment"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 621,
+                                        lineNumber: 650,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2564,7 +2489,7 @@ function AuthLogsPage() {
                                         value: selectedEvent.device.type
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 624,
+                                        lineNumber: 653,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2572,7 +2497,7 @@ function AuthLogsPage() {
                                         value: selectedEvent.device.model
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 625,
+                                        lineNumber: 654,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2580,7 +2505,7 @@ function AuthLogsPage() {
                                         value: selectedEvent.device.os
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 626,
+                                        lineNumber: 655,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2588,7 +2513,31 @@ function AuthLogsPage() {
                                         value: selectedEvent.device.browser
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 627,
+                                        lineNumber: 656,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
+                                        label: "Authenticator Type",
+                                        value: selectedEvent.authType
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                        lineNumber: 657,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
+                                        label: "Device Status",
+                                        value: selectedEvent.device.browser
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                        lineNumber: 658,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
+                                        label: "First Seen",
+                                        value: selectedEvent.device.browser
+                                    }, void 0, false, {
+                                        fileName: "[project]/app/(admin)/auth-logs/page.tsx",
+                                        lineNumber: 659,
                                         columnNumber: 17
                                     }, this),
                                     selectedEvent.isNewDevice && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2599,7 +2548,7 @@ function AuthLogsPage() {
                                                 children: "Flag"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 630,
+                                                lineNumber: 662,
                                                 columnNumber: 21
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2607,19 +2556,19 @@ function AuthLogsPage() {
                                                 children: "NEW DEVICE"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 631,
+                                                lineNumber: 663,
                                                 columnNumber: 21
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 629,
+                                        lineNumber: 661,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 620,
+                                lineNumber: 649,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2642,7 +2591,7 @@ function AuthLogsPage() {
                                                         r: "10"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 639,
+                                                        lineNumber: 670,
                                                         columnNumber: 117
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2652,27 +2601,27 @@ function AuthLogsPage() {
                                                         y2: "12"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 639,
+                                                        lineNumber: 670,
                                                         columnNumber: 150
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                         d: "M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 639,
+                                                        lineNumber: 670,
                                                         columnNumber: 189
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 639,
+                                                lineNumber: 670,
                                                 columnNumber: 19
                                             }, this),
                                             " Network & Location"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 638,
+                                        lineNumber: 669,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2681,7 +2630,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono text-[12px]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 641,
+                                        lineNumber: 672,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2692,7 +2641,7 @@ function AuthLogsPage() {
                                                 children: "Location"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 643,
+                                                lineNumber: 674,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2703,7 +2652,7 @@ function AuthLogsPage() {
                                                         children: countryCodeToEmoji(selectedEvent.location.country)
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 644,
+                                                        lineNumber: 675,
                                                         columnNumber: 87
                                                     }, this),
                                                     selectedEvent.location.city,
@@ -2712,13 +2661,13 @@ function AuthLogsPage() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 644,
+                                                lineNumber: 675,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 642,
+                                        lineNumber: 673,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2726,7 +2675,7 @@ function AuthLogsPage() {
                                         value: `${selectedEvent.location.asn} - ${selectedEvent.location.isp}`
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 646,
+                                        lineNumber: 677,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2735,7 +2684,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono text-[11px]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 647,
+                                        lineNumber: 678,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2746,7 +2695,7 @@ function AuthLogsPage() {
                                                 children: "Network Signals"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 649,
+                                                lineNumber: 680,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2754,19 +2703,19 @@ function AuthLogsPage() {
                                                 children: selectedEvent.risk.network ? selectedEvent.risk.network.toUpperCase() + ' DETECTED' : 'Clean (No VPN/Proxy)'
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 650,
+                                                lineNumber: 681,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 648,
+                                        lineNumber: 679,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 637,
+                                lineNumber: 668,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2787,7 +2736,7 @@ function AuthLogsPage() {
                                                         d: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 659,
+                                                        lineNumber: 689,
                                                         columnNumber: 117
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2797,7 +2746,7 @@ function AuthLogsPage() {
                                                         y2: "13"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 659,
+                                                        lineNumber: 689,
                                                         columnNumber: 218
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2807,20 +2756,20 @@ function AuthLogsPage() {
                                                         y2: "17"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 659,
+                                                        lineNumber: 689,
                                                         columnNumber: 257
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 659,
+                                                lineNumber: 689,
                                                 columnNumber: 19
                                             }, this),
                                             " Risk Context"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 658,
+                                        lineNumber: 688,
                                         columnNumber: 17
                                     }, this),
                                     selectedEvent.risk.amount && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2829,7 +2778,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono font-medium"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 661,
+                                        lineNumber: 691,
                                         columnNumber: 47
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailRow, {
@@ -2838,7 +2787,7 @@ function AuthLogsPage() {
                                         valueClass: "font-mono text-[12px]"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 662,
+                                        lineNumber: 692,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2849,7 +2798,7 @@ function AuthLogsPage() {
                                                 children: "Risk Score"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 664,
+                                                lineNumber: 694,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2862,29 +2811,29 @@ function AuthLogsPage() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 665,
+                                                lineNumber: 695,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 663,
+                                        lineNumber: 693,
                                         columnNumber: 17
                                     }, this),
-                                    selectedEvent.risk.reasons.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "mt-3 bg-[var(--bg-tertiary)] rounded-[8px] p-3 border border-[var(--border-primary)]",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex justify-between py-2.5 border-b border-[var(--border-secondary)]",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 className: "block text-[11px] text-[var(--text-tertiary)] mb-2 uppercase font-semibold",
                                                 children: "Reason Codes"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 671,
-                                                columnNumber: 21
+                                                lineNumber: 700,
+                                                columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
                                                 className: "space-y-2",
-                                                children: selectedEvent.risk.reasons.map((r, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                children: selectedEvent.risk.reasons.length ? selectedEvent.risk.reasons.map((r, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
                                                         className: "flex justify-between items-start text-[12px]",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2900,14 +2849,14 @@ function AuthLogsPage() {
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                        lineNumber: 675,
-                                                                        columnNumber: 94
+                                                                        lineNumber: 704,
+                                                                        columnNumber: 92
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                lineNumber: 675,
-                                                                columnNumber: 27
+                                                                lineNumber: 704,
+                                                                columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "font-mono text-[var(--error)]",
@@ -2917,30 +2866,30 @@ function AuthLogsPage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                                lineNumber: 676,
-                                                                columnNumber: 27
+                                                                lineNumber: 705,
+                                                                columnNumber: 25
                                                             }, this)
                                                         ]
-                                                    }, i, true, {
+                                                    }, r.desc, true, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 674,
-                                                        columnNumber: 25
-                                                    }, this))
+                                                        lineNumber: 703,
+                                                        columnNumber: 23
+                                                    }, this)) : '—'
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 672,
-                                                columnNumber: 21
+                                                lineNumber: 701,
+                                                columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 670,
-                                        columnNumber: 19
+                                        lineNumber: 699,
+                                        columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 657,
+                                lineNumber: 687,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2962,27 +2911,27 @@ function AuthLogsPage() {
                                                         r: "10"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 687,
+                                                        lineNumber: 716,
                                                         columnNumber: 117
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                         points: "12 6 12 12 16 14"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 687,
+                                                        lineNumber: 716,
                                                         columnNumber: 150
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 687,
+                                                lineNumber: 716,
                                                 columnNumber: 19
                                             }, this),
                                             " Event Timeline"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 686,
+                                        lineNumber: 715,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2991,10 +2940,10 @@ function AuthLogsPage() {
                                                 className: "relative",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: `absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-[var(--bg-secondary)] ${t.dotColor === 'success' ? 'bg-[var(--success)]' : t.dotColor === 'error' ? 'bg-[var(--error)]' : t.dotColor === 'warning' ? 'bg-[var(--warning)]' : 'bg-[var(--bg-tertiary)]'}`
+                                                        className: `absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-[var(--bg-secondary)] ${t.dotColor}`
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 692,
+                                                        lineNumber: 721,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3002,7 +2951,7 @@ function AuthLogsPage() {
                                                         children: t.label
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 693,
+                                                        lineNumber: 722,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3010,46 +2959,46 @@ function AuthLogsPage() {
                                                         children: t.time
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                        lineNumber: 694,
+                                                        lineNumber: 723,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, i, true, {
                                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                                lineNumber: 691,
+                                                lineNumber: 720,
                                                 columnNumber: 21
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                        lineNumber: 689,
+                                        lineNumber: 718,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                                lineNumber: 685,
+                                lineNumber: 714,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                        lineNumber: 598,
+                        lineNumber: 629,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-                    lineNumber: 585,
+                    lineNumber: 600,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-            lineNumber: 466,
+            lineNumber: 461,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/(admin)/auth-logs/page.tsx",
-        lineNumber: 465,
+        lineNumber: 460,
         columnNumber: 5
     }, this);
 }
