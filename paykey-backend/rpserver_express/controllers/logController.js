@@ -2,12 +2,24 @@ const prisma = require("../config/db");
 
 exports.getAuthLogs = async (req, res) => {
 	try {
+		const { eventType } = req.query;
+		const whereClause = {};
+
+		if (eventType) {
+			if (Array.isArray(eventType)) {
+				whereClause.eventType = { in: eventType };
+			} else {
+				whereClause.eventType = eventType;
+			}
+		}
+
 		const logs = await prisma.authLog.findMany({
+			where: whereClause,
 			take: 100,
 			orderBy: { createdAt: "desc" },
 			include: {
 				user: {
-					select: { fullName: true },
+					select: { fullName: true, role: true },
 				},
 			},
 		});

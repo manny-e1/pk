@@ -3218,10 +3218,6 @@ body {
   .xl\:min-w-\[110px\] {
     min-width: 110px;
   }
-
-  .xl\:flex-nowrap {
-    flex-wrap: nowrap;
-  }
 }
 
 /*# sourceMappingURL=app_globals_71f961d1.css.map*/

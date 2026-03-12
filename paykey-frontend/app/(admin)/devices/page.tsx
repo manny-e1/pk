@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react';
+import { useState, useMemo, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect } from 'react';
 import { DataTable } from '@/components/ui/DataTable';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { Modal } from '@/components/ui/Modal';
@@ -10,10 +10,12 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Device } from '@/lib/types';
 import { useDevices } from '@/hooks/useDevices';
 import { getRelativeTime } from '@/services/deviceService';
+import { useSearchParams } from 'next/navigation';
 
 export default function DevicesPage() {
     const { devices, loading, refresh, actions } = useDevices();
-
+    const searchParams = useSearchParams();
+    const paramUserId = searchParams.get('userId');
     const [activeTab, setActiveTab] = useState<'all' | 'active' | 'suspended' | 'revoked'>('all');
     const [typeFilter, setTypeFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
@@ -126,6 +128,18 @@ export default function DevicesPage() {
             setToast({ title: 'Bulk Error', msg: 'Some devices could not be updated.' });
         }
     };
+
+    useEffect(() => {
+        if (paramUserId && devices.length > 0) {
+            const foundDevice = devices.find(device => device.userId === paramUserId);
+            queueMicrotask(() => {
+                if (foundDevice) {
+                    setCurrentDevice(foundDevice || null)
+                    setOpenSlider(true)
+                }
+            });
+        }
+    }, [paramUserId, devices])
 
 
     const columns = [
@@ -288,7 +302,7 @@ export default function DevicesPage() {
                                     {d.credential.substring(0, 16)}...
                                 </td>
                                 <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
-                                    <div className="flex flex-wrap xl:flex-nowrap justify-end gap-1">
+                                    <div className="flex justify-end gap-1">
                                         {d.status === 'active' ? (
                                             <>
                                                 <button onClick={() => { setCurrentDevice(d); setModalType('suspend'); }} className="px-2 py-1 text-xs bg-[var(--warning)] text-black rounded-[var(--radius-md)] font-medium hover:bg-[#f59e0b] transition-colors">Suspend</button>

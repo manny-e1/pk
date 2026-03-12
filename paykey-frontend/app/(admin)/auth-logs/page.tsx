@@ -280,9 +280,9 @@ export default function AuthLogsPage() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const rawLogs = await adminService.getAuthLogs();
+      const rawLogs = await adminService.getAuthLogs(eventType || undefined);
+      // const fltrdLogs = rawLogs.filter((log: any) => !(log.user?.role === 'ADMIN' && (log.eventType.toLowerCase() === "passkey logged in" || log.eventType.toLowerCase() === "login success")));
       const mappedData: AuthEvent[] = rawLogs.map((log: any) => {
-
         let richData: any = {};
         let tagsArray: RiskTag[] = [];
 
@@ -335,14 +335,14 @@ export default function AuthLogsPage() {
                 return 'Ubuntu Desktop'
               }
             })(),
-            browser: log.userAgent?.split('/')[0] || 'Unknown Browser'
+            browser: deviceInfo.browser || log.userAgent?.split('/')[0] || 'Unknown Browser'
           },
 
           location: {
             country: network.country || log.countryCode || 'Unknown',
             city: richData.location?.split(',')[0] || log.location?.split(',')[0] || 'Unknown',
             ip: (() => {
-              const raw = network.ip || log.ipAddress || '0.0.0.0';
+              const raw = (network.ipv4 || network.ip || log.ipAddress || '0.0.0.0').split(",")[0];
               const parts = raw.split('.');
               if (parts.length === 4) {
                 return `${parts[0]}.***.***.${parts[3]}`;
@@ -383,7 +383,7 @@ export default function AuthLogsPage() {
 
   useEffect(() => {
     fetchLogs();
-  }, []);
+  }, [eventType]);
 
   const calculateStats = (data: AuthEvent[]) => {
     const now = new Date();
@@ -436,7 +436,7 @@ export default function AuthLogsPage() {
   };
 
   const filteredData = logs.filter(e => {
-    const matchType = eventType === '' || e.type.toLowerCase().includes(eventType.toLowerCase());
+    // const matchType = eventType === '' || e.type.toLowerCase().includes(eventType.toLowerCase());
     const matchResult = resultFilter === '' || e.resultLabel.toLowerCase() === resultFilter.toLowerCase();
     let matchDate = true;
     if (startDate && endDate) {
@@ -450,7 +450,7 @@ export default function AuthLogsPage() {
       e.risk.amountClass !== 'high' &&
       !e.risk.tags?.some(t => t.class === 'high' || t.label.toLowerCase().includes('high'))
     )) matchChips = false;
-    return matchType && matchResult && matchDate && matchChips;
+    return matchResult && matchDate && matchChips;
   });
 
   const itemsPerPage = 10;
@@ -496,11 +496,11 @@ export default function AuthLogsPage() {
               <label className="text-xs text-[var(--text-tertiary)]">Event Type</label>
               <select className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[140px] cursor-pointer" value={eventType} onChange={e => setEventType(e.target.value)}>
                 <option value="">All Events</option>
-                <option value="passkey_registered">Passkey Registered</option>
-                <option value="payment_approval_requested">Approval Requested</option>
-                <option value="payment_approved">Payment Approved</option>
-                <option value="payment_denied">Payment Denied</option>
-                <option value="biometric_login">Biometric Login</option>
+                <option value="Passkey Registered">Passkey Registered</option>
+                <option value="Approval Requested">Approval Requested</option>
+                <option value="Payment Approved">Payment Approved</option>
+                <option value="Payment Denied">Payment Denied</option>
+                <option value="Payment Initiated">Payment Initiated</option>
               </select>
             </div>
             <div className="flex items-center gap-2"><label className="text-xs text-[var(--text-tertiary)]">Result</label><select className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-2.5 py-1.5 text-[13px] text-[var(--text-primary)] outline-none min-w-[120px] cursor-pointer" value={resultFilter} onChange={e => setResultFilter(e.target.value)}><option value="">All Results</option><option value="success">Success</option><option value="blocked">Blocked/Failed</option><option value="challenged">Challenged</option></select></div>
@@ -603,13 +603,13 @@ export default function AuthLogsPage() {
           title="Event Details"
           footer={
             <div className="flex gap-2 w-full">
-              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
+              <button onClick={() => router.push(`/users?userId=${selectedEvent?.userId}`)} className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
                 <div className="flex items-center justify-center gap-2">
                   <User className='w-3.5 h-3.5' />
                   <p>View User</p>
                 </div>
               </button>
-              <button className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
+              <button onClick={() => router.push(`/devices?userId=${selectedEvent?.userId}`)} className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
                 <div className="flex items-center justify-center gap-2">
                   <PanelTop className='w-3.5 h-3.5' />
                   <p>View Device</p>

@@ -69,8 +69,10 @@ export const adminService = {
         return res.data;
     },
 
-    getAuthLogs: async () => {
-        const res = await apiClient.get(`/api/admin/logs`);
+    getAuthLogs: async (eventType?: string) => {
+        const res = await apiClient.get(`/api/admin/logs`, {
+            params: { eventType }
+        });
         return res.data;
     },
 

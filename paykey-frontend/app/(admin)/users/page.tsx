@@ -3,11 +3,14 @@
 
 import { useState, useEffect, useMemo, Fragment } from 'react';
 import { userService, User, Device } from '@/services/userService';
+import { useSearchParams } from 'next/navigation';
 
 export default function UsersPage() {
 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const paramUserId = searchParams.get('userId');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -109,6 +112,12 @@ export default function UsersPage() {
     setModalAction(null);
     setActionUser(null);
   };
+
+  useEffect(() => {
+    if (paramUserId && users.length > 0) {
+      setSelectedUser(users.find(user => user.id === paramUserId) || null);
+    }
+  }, [paramUserId, users])
 
   return (
     <div className="flex min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans text-[14px]">

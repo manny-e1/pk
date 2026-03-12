@@ -63,8 +63,12 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/transactions/${id}`);
         return res.data;
     },
-    getAuthLogs: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/logs`);
+    getAuthLogs: async (eventType)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/logs`, {
+            params: {
+                eventType
+            }
+        });
         return res.data;
     },
     getDashboardStats: async (range)=>{
@@ -663,7 +667,8 @@ function AuthLogsPage() {
     const fetchLogs = async ()=>{
         setLoading(true);
         try {
-            const rawLogs = await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["adminService"].getAuthLogs();
+            const rawLogs = await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["adminService"].getAuthLogs(eventType || undefined);
+            // const fltrdLogs = rawLogs.filter((log: any) => !(log.user?.role === 'ADMIN' && (log.eventType.toLowerCase() === "passkey logged in" || log.eventType.toLowerCase() === "login success")));
             const mappedData = rawLogs.map((log)=>{
                 let richData = {};
                 let tagsArray = [];
@@ -720,13 +725,13 @@ function AuthLogsPage() {
                                 return 'Ubuntu Desktop';
                             }
                         })(),
-                        browser: log.userAgent?.split('/')[0] || 'Unknown Browser'
+                        browser: deviceInfo.browser || log.userAgent?.split('/')[0] || 'Unknown Browser'
                     },
                     location: {
                         country: network.country || log.countryCode || 'Unknown',
                         city: richData.location?.split(',')[0] || log.location?.split(',')[0] || 'Unknown',
                         ip: (()=>{
-                            const raw = network.ip || log.ipAddress || '0.0.0.0';
+                            const raw = (network.ipv4 || network.ip || log.ipAddress || '0.0.0.0').split(",")[0];
                             const parts = raw.split('.');
                             if (parts.length === 4) {
                                 return `${parts[0]}.***.***.${parts[3]}`;
@@ -764,7 +769,9 @@ function AuthLogsPage() {
         "AuthLogsPage.useEffect": ()=>{
             fetchLogs();
         }
-    }["AuthLogsPage.useEffect"], []);
+    }["AuthLogsPage.useEffect"], [
+        eventType
+    ]);
     const calculateStats = (data)=>{
         const now = new Date();
         const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -831,7 +838,7 @@ function AuthLogsPage() {
         setCurrentPage(1);
     };
     const filteredData = logs.filter((e)=>{
-        const matchType = eventType === '' || e.type.toLowerCase().includes(eventType.toLowerCase());
+        // const matchType = eventType === '' || e.type.toLowerCase().includes(eventType.toLowerCase());
         const matchResult = resultFilter === '' || e.resultLabel.toLowerCase() === resultFilter.toLowerCase();
         let matchDate = true;
         if (startDate && endDate) {
@@ -845,7 +852,7 @@ function AuthLogsPage() {
         if (activeChips.has('new-device') && !e.isNewDevice) matchChips = false;
         if (activeChips.has('vpn') && e.risk.network !== 'vpn') matchChips = false;
         if (activeChips.has('high-risk') && e.risk.amountClass !== 'high' && !e.risk.tags?.some((t)=>t.class === 'high' || t.label.toLowerCase().includes('high'))) matchChips = false;
-        return matchType && matchResult && matchDate && matchChips;
+        return matchResult && matchDate && matchChips;
     });
     const itemsPerPage = 10;
     const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
@@ -1332,7 +1339,7 @@ function AuthLogsPage() {
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                    value: "passkey_registered",
+                                                    value: "Passkey Registered",
                                                     children: "Passkey Registered"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
@@ -1340,7 +1347,7 @@ function AuthLogsPage() {
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                    value: "payment_approval_requested",
+                                                    value: "Approval Requested",
                                                     children: "Approval Requested"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
@@ -1348,7 +1355,7 @@ function AuthLogsPage() {
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                    value: "payment_approved",
+                                                    value: "Payment Approved",
                                                     children: "Payment Approved"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
@@ -1356,7 +1363,7 @@ function AuthLogsPage() {
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                    value: "payment_denied",
+                                                    value: "Payment Denied",
                                                     children: "Payment Denied"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
@@ -1364,8 +1371,8 @@ function AuthLogsPage() {
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                    value: "biometric_login",
-                                                    children: "Biometric Login"
+                                                    value: "Payment Initiated",
+                                                    children: "Payment Initiated"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(admin)/auth-logs/page.tsx",
                                                     lineNumber: 503,
@@ -2245,6 +2252,7 @@ function AuthLogsPage() {
                         className: "flex gap-2 w-full",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>router.push(`/users?userId=${selectedEvent?.userId}`),
                                 className: "flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex items-center justify-center gap-2",
@@ -2275,6 +2283,7 @@ function AuthLogsPage() {
                                 columnNumber: 15
                             }, void 0),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: ()=>router.push(`/devices?userId=${selectedEvent?.userId}`),
                                 className: "flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "flex items-center justify-center gap-2",
