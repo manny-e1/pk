@@ -114,18 +114,18 @@ exports.loginPassword = async (req, res) => {
         
         if (user.status === 'suspended') {
             await createRichAuthLog(req, user, {
-                eventType: 'Login Blocked - Account Suspended',
-                status: 'BLOCKED',
+                eventType: 'Login Warning - Account Suspended',
+                status: 'SUCCESS',
                 authMethod: 'PASSWORD',
                 data: {
                     tags: [
-                        { label: 'Account Suspended', class: 'error' }
+                        { label: 'Account Suspended (Login Allowed)', class: 'warning' }
                     ],
                     telemetry: telemetry || null
                 }
 
             });
-            return res.status(403).json({ error: 'Account Suspended' });
+            // return res.status(403).json({ error: 'Account Suspended' });
         }
 
         const match = await bcrypt.compare(password, user.passwordHash);

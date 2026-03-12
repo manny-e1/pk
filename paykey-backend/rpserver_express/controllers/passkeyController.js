@@ -179,7 +179,8 @@ exports.loginStart = async (req, res) => {
 		const user = await prisma.user.findUnique({ where: { email: username } });
 
 		if (user.status === "suspended") {
-			return res.status(403).json({ error: "Account Suspended" });
+			// Allow login but maybe log a warning if needed
+			// return res.status(403).json({ error: "Account Suspended" });
 		}
 
 		const result = await fidoService.initiateChallenge(
@@ -242,17 +243,18 @@ exports.loginComplete = async (req, res) => {
 
 		if (deviceStatus === "suspended" || deviceStatus === "revoked") {
 			createRichAuthLog(req, userKey.user, {
-				eventType: `Device ${deviceStatus}`,
-				status: "BLOCKED",
+				eventType: `Device ${deviceStatus} (Login Allowed)`,
+				status: "SUCCESS",
 				authMethod: "FIDO2_PASSKEY",
 				data: {
-					tags: [{ label: `Device ${deviceStatus}`, class: "error" }],
+					tags: [{ label: `Device ${deviceStatus}`, class: "warning" }],
 					telemetry: context.telemetry || req.body.telemetry || null,
 				},
 			});
-			return res.status(403).json({
-				error: `This device has been ${deviceStatus}. Please contact support.`,
-			});
+			// Allow login even if suspended/revoked (but block transaction)
+			// return res.status(403).json({
+			// 	error: `This device has been ${deviceStatus}. Please contact support.`,
+			// });
 		}
 
 		await redisClient.del(`ctx:${challenge}`);

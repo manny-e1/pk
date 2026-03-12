@@ -32,6 +32,25 @@ exports.initiateTransaction = async (req, res) => {
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) return res.status(404).json({ error: "User not found in database" });
 
+        if (user.status === 'suspended') {
+            await createRichAuthLog(req, user, {
+                eventType: 'Transaction Blocked',
+                status: 'BLOCKED',
+                authMethod: 'FIDO2_BIOMETRIC',
+                message: 'Transaction blocked due to suspended account',
+                data: {
+                    amount: parseFloat(amount),
+                    currency: currency || "MYR",
+                    merchant: merchantName || "Unknown",
+                    tags: [{ label: 'Account Suspended', class: 'error' }]
+                }
+            });
+            return res.status(403).json({ 
+                status: 'BLOCKED',
+                message: "Account Suspended: Transactions are blocked." 
+            });
+        }
+
         let detectedSegment = 'CONSUMER';
         if (user.role && (user.role.toUpperCase() === 'CORPORATE' || user.role.toUpperCase() === 'VIP')) {
             detectedSegment = 'CORPORATE';

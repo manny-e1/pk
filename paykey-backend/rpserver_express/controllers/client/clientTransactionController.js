@@ -18,6 +18,19 @@ exports.initiateTransaction = async (req, res) => {
     try {
         const user = await prisma.user.findUnique({ where: { id: userId } });
         
+        if (user.status === 'suspended') {
+             await createRichAuthLog(req, user, {
+                eventType: 'Transaction Blocked',
+                status: 'BLOCKED',
+                authMethod: 'TRANSACTION',
+                message: 'Transaction blocked due to suspended account',
+                data: {
+                    amount: Number(amount),
+                    tags: [{ label: 'Account Suspended', class: 'error' }]
+                }
+            });
+            return res.status(403).json({ error: "Account Suspended: Transactions are blocked." });
+        }
 
         const riskContext = {
             userId: user.id,
@@ -84,6 +97,33 @@ exports.executeTransaction = async (req, res) => {
     } = req.body;
     
     const userId = req.user.id;
+
+    if (deviceId) {
+        const userKey = await prisma.userKey.findFirst({ 
+            where: { 
+                OR: [
+                    { credentialId: deviceId },
+                    { id: isNaN(deviceId) ? undefined : parseInt(deviceId) }
+                ]
+            } 
+        });
+        
+        if (userKey) {
+            const status = (userKey.status || "").toLowerCase();
+            if (status === 'suspended' || status === 'revoked') {
+                await createRichAuthLog(req, { id: userId }, { 
+                    eventType: `Transaction Blocked - Device ${status}`, 
+                    status: 'BLOCKED',
+                    authMethod: authType || 'TRANSACTION',
+                    data: {
+                        amount: Number(amount),
+                        tags: [{ label: `Device ${status}`, class: 'error' }]
+                    }
+                });
+                return res.status(403).json({ error: `Transaction blocked: Device is ${status}` });
+            }
+        }
+    }
 
     try {
         const verifyRes = await javaClient.verifyUnifiedAuth({
