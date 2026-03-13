@@ -152,7 +152,6 @@ export default function DevicesPage() {
             className: 'w-10 pl-3'
         },
         { header: 'Device', className: 'min-w-[50px] xl:min-w-[100px]' },
-        { header: 'OS Version', className: 'min-w-[50px]' },
         { header: 'User', className: 'min-w-[50px] xl:min-w-[100px]' },
         { header: 'Status', className: 'min-w-[50-px] xl:min-w-[100px]' },
         { header: 'Last Active', className: 'min-w-[50px] xl:min-w-[110px]' },
@@ -271,15 +270,7 @@ export default function DevicesPage() {
                                         <DeviceIcon type={d.type} />
                                         <div>
                                             <div className="font-medium text-[13px]">{d.name}</div>
-                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.osName} {d.osVersion}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="p-3">
-                                    <div className="flex items-center gap-3">
-                                        {/* < type={d.type} /> */}
-                                        <div>
-                                            <div className="font-medium text-[13px]">{d.osVersion}</div>
+                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.osName} {d.osVersion} • {d.onboardingAuth}</div>
                                         </div>
                                     </div>
                                 </td>

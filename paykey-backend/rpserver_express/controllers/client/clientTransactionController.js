@@ -21,7 +21,7 @@ exports.initiateTransaction = async (req, res) => {
         if (user.status === 'suspended') {
              await createRichAuthLog(req, user, {
                 eventType: 'Transaction Blocked',
-                status: 'BLOCKED',
+                status: 'FAILED',
                 authMethod: 'TRANSACTION',
                 message: 'Transaction blocked due to suspended account',
                 data: {
@@ -113,7 +113,7 @@ exports.executeTransaction = async (req, res) => {
             if (status === 'suspended' || status === 'revoked') {
                 await createRichAuthLog(req, { id: userId }, { 
                     eventType: `Transaction Blocked - Device ${status}`, 
-                    status: 'BLOCKED',
+                    status: 'FAILED',
                     authMethod: authType || 'TRANSACTION',
                     data: {
                         amount: Number(amount),

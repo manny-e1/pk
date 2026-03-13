@@ -76,6 +76,7 @@ export const authService = {
             clientDataJSON: attResp.response.clientDataJSON,
             attestationObject: attResp.response.attestationObject,
           },
+          transports: attResp.response.transports,
         },
         sessionId: options.sessionId,
         origin: window.location.origin,

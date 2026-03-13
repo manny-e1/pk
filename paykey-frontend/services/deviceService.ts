@@ -51,6 +51,7 @@ export const deviceService = {
       name: d.deviceName || 'Unknown Device',
       type: d.deviceTelemetry.device_type,
       model: d.deviceModel || 'Unknown',
+      onboardingAuth: d.onboardingAuth || 'Unknown',
       // user: d.user?.fullName || 'User',
       // userId: userEmail,
       initials: (d.email || 'U').substring(0, 2).toUpperCase(),

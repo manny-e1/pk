@@ -45,6 +45,46 @@ const parseClientData = (body) => {
 	}
 };
 
+exports.determineAuthenticatorType = (transports, telemetry) => {
+	// If it's a hardware key, it typically uses USB, NFC, or BLE
+	if (transports.some((t) => ["usb", "nfc", "ble"].includes(t))) {
+		return "Hardware Security Key";
+	}
+
+	if (transports.includes("internal")) {
+		const os = (telemetry?.os_name || "").toLowerCase();
+		const device = (telemetry?.device_model || "").toLowerCase();
+
+		if (os.includes("mac") || os.includes("ios")) {
+			if (device.includes("iphone")) {
+				// iPhone 8 and earlier including se models use touch id.
+				if (/iphone\s*(x[rs]?|1[0-9]|[2-9][0-9])\b/i.test(device) && !/iphone\s*se/i.test(device)) {
+					return "Face ID";
+				}
+				return "Touch ID";
+			}
+			return "Touch ID"; 
+		}
+
+		if (os.includes("windows")) {
+			return "Hello";
+		}
+
+		if (os.includes("android")) {
+			return "Fingerprint";
+		}
+
+		return "Platform";
+	}
+
+	if (transports.includes("hybrid")) {
+		return "Cross-Platform";
+	}
+
+	return "Unknown";
+};
+
+
 exports.registerStart = async (req, res) => {
 	try {
 		const { username, fullName, displayName, mobile, telemetry } = req.body;
@@ -111,6 +151,7 @@ exports.registerComplete = async (req, res) => {
 				type: credential.type,
 				response: credential.response,
 				extensions: credential.extensions,
+				transports: credential.transports,
 			},
 			sessionId: context.sessionId,
 			rpId: RP_ID,
@@ -139,9 +180,16 @@ exports.registerComplete = async (req, res) => {
 				where: { credentialId: credential.id },
 			});
 			if (existingKey) {
+				const transports = credential.transports || [];
+				const transportStr = JSON.stringify(transports);
+
 				await prisma.userKey.update({
 					where: { credentialId: credential.id },
-					data: { deviceName: deviceName, deviceTelemetry: req.body.telemetry },
+					data: { 
+						deviceName: deviceName, 
+						deviceTelemetry: req.body.telemetry,
+						transports: transportStr
+					},
 				});
 			}
 
@@ -260,12 +308,14 @@ exports.loginComplete = async (req, res) => {
 		await redisClient.del(`ctx:${challenge}`);
 		sendTokenCookie(res, userKey.user);
 
+		const telemetry = context.telemetry || req.body.telemetry || userKey.deviceTelemetry || null;
+
 		await createRichAuthLog(req, userKey.user, {
 			eventType: "Passkey Logged In",
 			status: "SUCCESS",
 			authMethod: "FIDO2_PASSKEY",
 			data: {
-				telemetry: context.telemetry || req.body.telemetry || null,
+				telemetry: telemetry,
 				tags: [
 					{
 						label:

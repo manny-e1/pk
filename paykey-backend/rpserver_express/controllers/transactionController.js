@@ -139,6 +139,14 @@ exports.initiateTransaction = async (req, res) => {
 
         const dynamicEventType = getEventDescription(finalStatus);
 
+        // Map internal status to client-facing result (Success, Failed, Timeout/Pending)
+        let dbStatus = finalStatus;
+        if (finalStatus === 'BLOCKED') {
+            dbStatus = 'FAILED';
+        } else if (finalStatus === 'CHALLENGED') {
+            dbStatus = 'PENDING'; 
+        }
+
         const infoTag = { 
             label: `${amount} ${currency || 'MYR'}`, 
             class: 'info' 
@@ -147,7 +155,7 @@ exports.initiateTransaction = async (req, res) => {
 
         await createRichAuthLog(req, user, {
             eventType: dynamicEventType,
-            status: finalStatus,
+            status: dbStatus,
             authMethod: 'FIDO2_BIOMETRIC', 
             message: responseMessage,
             data: {
@@ -174,7 +182,7 @@ exports.initiateTransaction = async (req, res) => {
                 merchantName: targetBeneficiary,
                 userId: user.id,
                 
-                authResult: finalStatus, 
+                authResult: dbStatus, 
                 
                 riskLevel: riskResult.riskLevel,
                 riskScore: riskResult.riskScore,

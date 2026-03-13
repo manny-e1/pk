@@ -9,26 +9,27 @@ export interface Device {
   osVersion: ReactNode;
   osName: ReactNode;
   deviceModel: ReactNode;
-  id: string;              
-  dbId: string;           
-  name: string;           
-  type: string;            
-  model: string;           
-  user: string;            
-  userId: string;          
-  initials: string;        
-  status: string;          
-  lastActive: string;      
-  lastActiveClass: string; 
-  registered: string;      
-  credential: string;      
-  approvals: number;       
-  ip: string;           
+  onboardingAuth: string;
+  id: string;
+  dbId: string;
+  name: string;
+  type: string;
+  model: string;
+  user: string;
+  userId: string;
+  initials: string;
+  status: string;
+  lastActive: string;
+  lastActiveClass: string;
+  registered: string;
+  credential: string;
+  approvals: number;
+  ip: string;
   location?: string;
   rate?: string;
   revokedOn?: string;
-  reason?: string;         
-  email: string;  
+  reason?: string;
+  email: string;
 }
 
 export interface AuthEvent {

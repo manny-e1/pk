@@ -1,5 +1,6 @@
 const prisma = require('../config/db');
 const axios = require('axios');
+const { determineAuthenticatorType } = require('./passkeyController');
 
 const safeJsonParse = (str) => {
     try { return str ? JSON.parse(str) : []; } 
@@ -80,6 +81,7 @@ exports.getUserDevices = async (req, res) => {
                 credentialId: d.credentialId,
                 signCounter: approvals,
                 transports: safeJsonParse(d.transports),
+                onboardingAuth: determineAuthenticatorType(safeJsonParse(d.transports), d.deviceTelemetry),
                 userId: d.user.id ? d.user.id.toString() : 'Unknown',
                 email: d.user.email ? d.user.email : 'Unknown',
                 
