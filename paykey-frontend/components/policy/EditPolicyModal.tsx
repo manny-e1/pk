@@ -64,7 +64,6 @@ const STEP_UP_LABELS: Record<string, string> = {
   bio_legacy: 'Legacy Biometric (PKI)',
   email_otp: 'Email OTP',
   totp: 'Authenticator App (TOTP)',
-  
   callback: 'Callback Verification'
 };
 

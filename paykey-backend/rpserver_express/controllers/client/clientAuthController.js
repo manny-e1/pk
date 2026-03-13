@@ -4,6 +4,7 @@ const { sendTokenCookie } = require('../../utils/jwt');
 const { createRichAuthLog } = require('../../utils/richLogger');
 const javaClient = require('../../services/JavaAuthClient');
 const PolicyEngine = require('../../utils/authPolicies'); 
+const RiskEngine = require('../../utils/riskEngine');
 const { generateUserId } = require('../../utils/idGenerator');
 
 exports.registerUser = async (req, res) => {
@@ -47,78 +48,65 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginStep1 = async (req, res) => {
-    const { email, cifNumber } = req.body;
-    const channel = req.apiClient ? req.apiClient.type : 'WEB'; 
+    // TANGKAP TELEMETRY UNTUK RISK ENGINE LOGIN
+    const { email, cifNumber, deviceId, telemetry } = req.body;
+    const channel = req.apiClient ? req.apiClient.channel : 'MOBILE'; 
 
     try {
-        const user = await prisma.user.findUnique({ where: { email,cifNumber } });
+        const user = await prisma.user.findUnique({ where: { email, cifNumber } });
 
         if (!user || !user.cifNumber) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // const match = await bcrypt.compare(password, user.passwordHash);
-        // if (!match) {
-        //     await createRichAuthLog(req, user, { eventType: 'LOGIN_FAIL', status: 'FAILED' });
-        //     return res.status(401).json({ error: 'Invalid credentials' });
-        // }
-
         const segment = (user.companyName || user.role === 'ADMIN') ? 'CORPORATE' : 'CONSUMER';
         
+        // PERBAIKAN: Hitung risiko login (Geo-Anomaly / New Device)
+        const riskContext = {
+            userId: user.id, email: user.email, userSegment: segment, channel: channel,
+            amount: 0, currency: 'MYR', ipAddress: req.ip,
+            deviceId: deviceId || 'unknown',
+            telemetry: telemetry || {}
+        };
+
+        const riskResult = await RiskEngine.calculateRisk(riskContext);
+        console.log(`[LOGIN] User: ${user.email} | Risk Score: ${riskResult.score}`);
+
         const policyResult = await PolicyEngine.evaluateAuthPolicy({
             segment: segment,
             channel: channel,
             action: 'LOGIN',
-            riskScore: 10
+            riskScore: riskResult.score // DINAMIS DARI DATABASE!
         });
 
         const decision = policyResult.decision;
 
-        // if (decision.status === 'ALLOW') {
-        //     sendTokenCookie(res, user);
-        //     await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS' });
-        //     return res.json({ status: 'complete', userId: user.id });
-        // } 
-        // else if (decision.status === 'CHALLENGE') {
-        //     return res.json({
-        //         status: 'challenge_required',
-        //         userId: user.id,
-        //         nextStep: decision.requirements[0],
-        //         message: 'Additional verification required'
-        //     });
-        // } 
-        // else {
-        //     return res.status(403).json({ error: 'Login Denied by Policy' });
-        // }
-
         if (decision.status === 'APPROVED') {
             sendTokenCookie(res, user);
-            //await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS' });
+            await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS', riskScore: riskResult.score });
             return res.json({ status: 'complete', userId: user.id });
         } 
         else if (decision.status === 'CHALLENGED') {
-            // return res.json({
-            //     status: 'challenge_required',
-            //     userId: user.id,
-            //     nextStep: decision.requirements[0],
-            //     message: 'Additional verification required'
-            // });
+            await createRichAuthLog(req, user, { eventType: 'LOGIN_CHALLENGE', status: 'CHALLENGED', riskScore: riskResult.score });
+            
+            // ---> TAMBAHKAN 1 BARIS INI <---
+            const challengeRes = await javaClient.getUnifiedChallenge();
+
             return res.json({
                 status: 'challenge_required',
                 userId: user.id,
-                allowedMethods: decision.allowedMethods, // Array: ['FIDO2', 'OTP']
-                requirements: decision.requirements,     // Array: ['UV_REQUIRED']
+                // ---> TAMBAHKAN 1 BARIS INI <---
+                challenge: challengeRes.challenge || challengeRes, 
+                allowedMethods: decision.allowedMethods, 
+                requirements: decision.requirements,     
                 message: 'Additional verification required based on current security policy'
             });
-        } 
+        }
         else {
+            await createRichAuthLog(req, user, { eventType: 'LOGIN_BLOCKED', status: 'BLOCKED', riskScore: riskResult.score });
             return res.status(403).json({ error: 'Login Denied by Policy' });
         }
-
-    } catch (err) {
-        console.error("Login Error:", err);
-        res.status(500).json({ error: 'System Error' });
-    }
+    } catch (err) { res.status(500).json({ error: 'System Error' }); }
 };
 
 exports.verifyMfa = async (req, res) => {

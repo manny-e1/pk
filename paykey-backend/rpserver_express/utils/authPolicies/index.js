@@ -7,7 +7,8 @@ async function evaluateAuthPolicy(context) {
         const activePolicy = await resolvePolicy({
             segment: context.segment || 'CONSUMER',
             channel: context.channel || 'WEB',
-            riskScore: context.riskScore || 0
+            riskScore: context.riskScore || 0,
+            action: context.action || 'LOGIN'
         });
 
         const enforcementResult = enforcePolicyRules(activePolicy);

@@ -869,34 +869,44 @@ exports.enrollFidoComplete = async (req, res) => {
   }
 };
 
+
 // ==========================================
-// 5. APP PIN 
+// 5. APP PIN (FULL BANK-GRADE SECURITY)
 // ==========================================
 exports.enrollAppPin = async (req, res) => {
   try {
-    const { pinHash, deviceId, userId, telemetry } = req.body;
-    if (!userId || !pinHash) return res.status(400).json({ error: "Missing required fields" });
+    // Tangkap publicKey (bukan pinHash lagi) dari Android
+    const { publicKey, deviceId, userId, telemetry } = req.body;
+    if (!userId || !publicKey) return res.status(400).json({ error: "Missing required fields" });
 
-    // Tarik nama Device dari Telemetry ("Samsung Galaxy S24")
+    // 1. Daftarkan Public Key PIN ke Java Server (Mesin Kriptografi Utama)
+    await javaClient.registerCustomKey({
+        userId: userId,
+        deviceId: deviceId,
+        publicKey: publicKey,
+        type: 'PIN'
+    });
+
     const deviceName = telemetry?.device_model || 'Unknown Device';
 
-    // PERBAIKAN: Gunakan prisma.userKey agar seragam, tidak error, dan mendukung telemetry
+    // 2. Simpan referensinya di DB Node.js untuk keperluan UI / Dashboard
     await prisma.userKey.create({
       data: { 
           credentialId: `PIN_${deviceId}_${Date.now()}`,
           userId: userId, 
           deviceName: deviceName,
           transports: JSON.stringify(["PIN"]),
-          publicKey: pinHash, 
+          publicKey: publicKey, 
           status: "ACTIVE",
           signCounter: 0,
           deviceTelemetry: telemetry || {},
           aaguid: "00000000-0000-0000-0000-000000000000"
       },
     });
-    res.json({ success: true, message: "App PIN enrolled successfully" });
+
+    res.json({ success: true, message: "App PIN enrolled with Bank-Grade Security" });
   } catch (err) { 
       console.error("App PIN Enrollment Error:", err);
-      res.status(500).json({ error: "Failed to enroll App PIN" }); 
+      res.status(500).json({ error: "Failed to enroll App PIN to Java Server" }); 
   }
 };
