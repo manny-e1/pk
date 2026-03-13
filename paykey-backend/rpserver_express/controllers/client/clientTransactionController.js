@@ -5,10 +5,6 @@ const { createRichAuthLog } = require('../../utils/richLogger');
 const RiskEngine = require('../../utils/riskEngine'); 
 const PolicyEngine = require('../../utils/authPolicies');
 
-/**
- * 1. INITIATE TRANSACTION
- * Alur: Input -> Validasi -> Risk Engine -> Policy Engine -> Response
- */
 exports.initiateTransaction = async (req, res) => {
     const { amount, fromAccount, toAccount, description, type } = req.body;
     const userId = req.user.id;
@@ -18,6 +14,9 @@ exports.initiateTransaction = async (req, res) => {
     try {
         const user = await prisma.user.findUnique({ where: { id: userId } });
         
+        if (Number(user.balance) < Number(amount)) {
+            return res.status(400).json({ error: 'Insufficient Balance' });
+        }
 
         const riskContext = {
             userId: user.id,
@@ -32,18 +31,27 @@ exports.initiateTransaction = async (req, res) => {
         const riskResult = await RiskEngine.calculateRisk(riskContext);
         console.log(`[TRX] User: ${user.email} | Risk Score: ${riskResult.score}`);
 
-        const segment = user.companyName ? 'CORPORATE' : 'CONSUMER';
+        const segment = (user.companyName || user.role === 'ADMIN') ? 'CORPORATE' : 'CONSUMER';
         
-        const policyDecision = await PolicyEngine.evaluate({
+        const policyResult = await PolicyEngine.evaluateAuthPolicy({
             segment: segment,
             channel: channel,
             action: 'TRANSACTION',
             riskScore: riskResult.score
         });
 
+        const policyDecision = policyResult.decision;
+
         const transactionDraft = { amount, toAccount, description, type };
 
-        if (policyDecision.status === 'ALLOW') {
+        if (policyDecision.status === 'APPROVED') {
+            await createRichAuthLog(req, user, { 
+                eventType: 'TRANSACTION_INIT', 
+                status: 'APPROVED',
+                riskScore: riskResult.score,
+                metadata: { toAccount, amount, decision: 'AUTO_APPROVED' }
+            });
+
             return res.json({ 
                 status: 'ready_to_execute', 
                 riskScore: riskResult.score,
@@ -51,82 +59,44 @@ exports.initiateTransaction = async (req, res) => {
                 data: transactionDraft 
             });
         } 
-        else if (policyDecision.status === 'CHALLENGE') {
+        else if (policyDecision.status === 'CHALLENGED') {
             const challengeRes = await javaClient.getChallenge();
             
+            await createRichAuthLog(req, user, { 
+                eventType: 'TRANSACTION_INIT', 
+                status: 'CHALLENGED',
+                riskScore: riskResult.score,
+                metadata: { 
+                    toAccount, 
+                    amount, 
+                    requestedMethods: policyDecision.allowedMethods 
+                }
+            });
+
             return res.json({
                 status: 'challenge_required',
                 riskScore: riskResult.score,
                 transactionData: transactionDraft,
                 challenge: challengeRes.challenge,
-                nextStep: policyDecision.requirements[0]
+                allowedMethods: policyDecision.allowedMethods, 
+                requirements: policyDecision.requirements,
+                message: 'Transaction requires step-up authentication'
             });
         } 
         else {
-            return res.status(403).json({ error: 'Transaction Blocked due to High Risk' });
+            await createRichAuthLog(req, user, { 
+                eventType: 'TRANSACTION_INIT', 
+                status: 'BLOCKED',
+                failureReason: 'Blocked by Risk/Policy Engine',
+                riskScore: riskResult.score,
+                metadata: { toAccount, amount }
+            });
+
+            return res.status(403).json({ error: 'Transaction Blocked due to High Risk or Policy' });
         }
 
     } catch (err) {
         console.error("Trx Init Error:", err);
         res.status(500).json({ error: 'Transaction Initialization Failed' });
-    }
-};
-
-/**
- * 2. EXECUTE TRANSACTION
- * Verifikasi Signature -> Mutasi Saldo -> Catat Log
- */
-exports.executeTransaction = async (req, res) => {
-    const { 
-        amount, fromAccount, toAccount, description, type,
-        authType, signature, challenge, deviceId, otp,
-        riskScore, transactionNo
-    } = req.body;
-    
-    const userId = req.user.id;
-
-    try {
-        const verifyRes = await javaClient.verifyUnifiedAuth({
-            userId, deviceId, authType, challenge, signature, otp
-        });
-
-        if (verifyRes.status !== 'success') {
-            return res.status(401).json({ error: 'Invalid Transaction Signature' });
-        }
-
-        const newTrxNo = transactionNo || `TRX-${Date.now()}`;
-        
-        await prisma.$transaction([
-            prisma.user.update({
-                where: { id: userId },
-                data: { balance: { decrement: amount } }
-            }),
-            prisma.transaction.create({
-                data: {
-                    userId,
-                    transactionNo: newTrxNo,
-                    amount,
-                    toAccount,
-                    description,
-                    type: type || 'TRANSFER',
-                    status: 'SUCCESS',
-                    authMethod: authType,
-                    riskScore: Number(riskScore) || 0,
-                    createdAt: new Date()
-                }
-            })
-        ]);
-        
-        await createRichAuthLog(req, { id: userId }, { 
-            eventType: 'TRANSACTION_SUCCESS', 
-            status: 'SUCCESS',
-            metadata: { transactionNo: newTrxNo, amount }
-        });
-
-        res.json({ status: 'success', transactionNo: newTrxNo });
-
-    } catch (err) {
-        console.error("Exec TRX Error:", err);
-        res.status(500).json({ error: 'Transaction Execution Failed' });
     }
 };

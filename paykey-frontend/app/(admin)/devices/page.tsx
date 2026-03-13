@@ -269,7 +269,8 @@ export default function DevicesPage() {
                                         <DeviceIcon type={d.type} />
                                         <div>
                                             <div className="font-medium text-[13px]">{d.name}</div>
-                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.osName} {d.osVersion}</div>
+                                            {/* PERBAIKAN 1: Panggil d.model untuk memunculkan teks "Android • Passkey" di tabel */}
+                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.model}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -288,9 +289,12 @@ export default function DevicesPage() {
                                     {d.approvals}
                                     {d.rate !== '-' && <span className="text-[var(--success)] text-[11px] ml-1">({d.rate})</span>}
                                 </td>
+                                
+                                {/* PERBAIKAN 2: Gunakan safety check (d.credential ?) agar React TIDAK CRASH jika data kosong */}
                                 <td className={`p-3 text-[11px] font-mono text-[var(--text-secondary)] ${d.status === 'revoked' ? 'line-through' : ''}`}>
-                                    {d.credential.substring(0, 16)}...
+                                    {d.credential ? `${d.credential.substring(0, 16)}...` : '-'}
                                 </td>
+                                
                                 <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
                                     <div className="flex justify-end gap-1">
                                         {d.status === 'active' ? (

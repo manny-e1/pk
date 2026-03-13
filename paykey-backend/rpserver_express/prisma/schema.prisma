@@ -211,7 +211,8 @@ model ApiClient {
   apiKey    String   @unique @map("api_key")
   apiSecret String   @map("api_secret")
   name      String   
-  type      String   
+  channel      String   @default("MOBILE")                    // Tambahkan @default
+  consumerType String   @map("consumer_type") @default("CONSUMER") // Tambahkan @default
   isActive  Boolean  @default(true)
   @@map("api_clients")
 }

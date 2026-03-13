@@ -4,6 +4,7 @@ const { sendTokenCookie } = require('../../utils/jwt');
 const { createRichAuthLog } = require('../../utils/richLogger');
 const javaClient = require('../../services/JavaAuthClient');
 const PolicyEngine = require('../../utils/authPolicies'); 
+const { generateUserId } = require('../../utils/idGenerator');
 
 exports.registerUser = async (req, res) => {
     const { email, password, fullName, mobile, companyName, cifNumber } = req.body;
@@ -16,6 +17,7 @@ exports.registerUser = async (req, res) => {
         
         const user = await prisma.user.create({
             data: {
+                id: generateUserId(),
                 email,
                 passwordHash: hashedPassword,
                 fullName,
@@ -45,41 +47,68 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginStep1 = async (req, res) => {
-    const { email, password, deviceId } = req.body;
+    const { email, cifNumber } = req.body;
     const channel = req.apiClient ? req.apiClient.type : 'WEB'; 
 
     try {
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user || !user.passwordHash) {
+        const user = await prisma.user.findUnique({ where: { email,cifNumber } });
+
+        if (!user || !user.cifNumber) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        const match = await bcrypt.compare(password, user.passwordHash);
-        if (!match) {
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_FAIL', status: 'FAILED' });
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
+        // const match = await bcrypt.compare(password, user.passwordHash);
+        // if (!match) {
+        //     await createRichAuthLog(req, user, { eventType: 'LOGIN_FAIL', status: 'FAILED' });
+        //     return res.status(401).json({ error: 'Invalid credentials' });
+        // }
 
         const segment = (user.companyName || user.role === 'ADMIN') ? 'CORPORATE' : 'CONSUMER';
         
-        const decision = await PolicyEngine.evaluate({
+        const policyResult = await PolicyEngine.evaluateAuthPolicy({
             segment: segment,
             channel: channel,
             action: 'LOGIN',
             riskScore: 10
         });
 
-        if (decision.status === 'ALLOW') {
+        const decision = policyResult.decision;
+
+        // if (decision.status === 'ALLOW') {
+        //     sendTokenCookie(res, user);
+        //     await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS' });
+        //     return res.json({ status: 'complete', userId: user.id });
+        // } 
+        // else if (decision.status === 'CHALLENGE') {
+        //     return res.json({
+        //         status: 'challenge_required',
+        //         userId: user.id,
+        //         nextStep: decision.requirements[0],
+        //         message: 'Additional verification required'
+        //     });
+        // } 
+        // else {
+        //     return res.status(403).json({ error: 'Login Denied by Policy' });
+        // }
+
+        if (decision.status === 'APPROVED') {
             sendTokenCookie(res, user);
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS' });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS' });
             return res.json({ status: 'complete', userId: user.id });
         } 
-        else if (decision.status === 'CHALLENGE') {
+        else if (decision.status === 'CHALLENGED') {
+            // return res.json({
+            //     status: 'challenge_required',
+            //     userId: user.id,
+            //     nextStep: decision.requirements[0],
+            //     message: 'Additional verification required'
+            // });
             return res.json({
                 status: 'challenge_required',
                 userId: user.id,
-                nextStep: decision.requirements[0],
-                message: 'Additional verification required'
+                allowedMethods: decision.allowedMethods, // Array: ['FIDO2', 'OTP']
+                requirements: decision.requirements,     // Array: ['UV_REQUIRED']
+                message: 'Additional verification required based on current security policy'
             });
         } 
         else {
