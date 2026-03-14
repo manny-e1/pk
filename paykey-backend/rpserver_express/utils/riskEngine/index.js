@@ -91,7 +91,6 @@ const { evaluateVelocity } = require('./evaluators/velocityCheck');
 const { evaluateDormant } = require('./evaluators/dormantCheck');
 const { evaluateBeneficiary } = require('./evaluators/beneficiaryCheck');
 
-// UBAH NAMA MENJADI calculateRisk
 async function calculateRisk(context) {
     const config = await loadRiskConfig();
 
@@ -105,14 +104,7 @@ async function calculateRisk(context) {
     
     const amountRes = evaluateAmount(context, config);
 
-    let totalScore = 0;
-    totalScore += deviceRes.score;
-    totalScore += geoRes.score;
-    totalScore += velocityRes.score;
-    totalScore += dormantRes.score;
-    totalScore += amountRes.score;
-    totalScore += beneficiaryRes.score;
-
+    let totalScore = deviceRes.score + geoRes.score + velocityRes.score + dormantRes.score + amountRes.score + beneficiaryRes.score;
     totalScore = Math.min(100, totalScore);
 
     const allTags = [
@@ -126,16 +118,20 @@ async function calculateRisk(context) {
 
     const { lowScore, highScore } = config.thresholds;
     let riskLevel = 'LOW';
-    if (totalScore >= highScore || amountRes.status === 'BLOCK') riskLevel = 'CRITICAL';
+    let isAmountBlocked = amountRes.status === 'BLOCK';
+
+    // Jika skor sangat tinggi ATAU limit amount memerintahkan blokir mutlak
+    if (totalScore >= highScore || isAmountBlocked) riskLevel = 'CRITICAL';
     else if (totalScore >= lowScore) riskLevel = 'HIGH';
     else if (totalScore > 0) riskLevel = 'MEDIUM';
 
-    // KEMBALIKAN HANYA SKOR DAN ALASANNYA (Biar Policy Engine yang menentukan aksi)
     return {
         score: totalScore,
         level: riskLevel,
         factors: allTags,
-        breakdown: allBreakdown
+        breakdown: allBreakdown,
+        isBlockedByAmount: isAmountBlocked, // Teruskan status blokir
+        amountMandatedMethods: amountRes.requiredMethods || [] // Teruskan metode wajib dari tabel limit
     };
 }
 

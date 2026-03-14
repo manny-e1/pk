@@ -48,18 +48,22 @@ async function determineRiskLevel(score) {
 }
 
 async function resolvePolicy(context) {
-    // PERBAIKAN: Tangkap 'action'
     const { segment, channel, riskScore, action } = context;
 
     const riskLevel = await determineRiskLevel(riskScore);
     console.log(`[AuthPolicy] Resolving: ${segment} / ${channel} / ${riskLevel} / Action: ${action}`);
 
-    // PERBAIKAN: Oper 'action' ke loader
     let policy = await fetchPolicyConfig(segment, channel, riskLevel, action);
+
+    // KUNCI KECERDASAN: Jika Policy Transaksi belum dibuat admin, pinjam konfigurasi Login
+    if (!policy && action === 'TRANSACTION') {
+        console.warn(`[AuthPolicy] ⚠️ Policy '${action}' not found. Borrowing 'LOGIN' policy...`);
+        policy = await fetchPolicyConfig(segment, channel, riskLevel, 'LOGIN');
+    }
 
     if (!policy) {
         return {
-            name: 'fallback_secure_default', riskLevel: riskLevel,
+            name: 'system_strict_fallback', riskLevel: riskLevel,
             condition: { requireStepUp: true, userVerification: 'required', maxAttempts: 3 }
         };
     }

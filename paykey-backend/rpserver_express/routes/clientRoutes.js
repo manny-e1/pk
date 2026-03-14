@@ -46,4 +46,7 @@ router.post('/enroll/app-pin', enrollController.enrollAppPin);
 router.get('/auth/stepup-challenge', protect, stepUpController.getUnifiedChallenge);
 router.post('/auth/verify-stepup',  stepUpController.verifyStepUp);
 
+router.post('/auth/fido/start', stepUpController.fidoStartProxy); 
+router.post('/auth/fido/verify', stepUpController.fidoVerifyProxy);
+
 module.exports = router;
