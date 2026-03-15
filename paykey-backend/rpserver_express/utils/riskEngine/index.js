@@ -120,18 +120,24 @@ async function calculateRisk(context) {
     let riskLevel = 'LOW';
     let isAmountBlocked = amountRes.status === 'BLOCK';
 
-    // Jika skor sangat tinggi ATAU limit amount memerintahkan blokir mutlak
-    if (totalScore >= highScore || isAmountBlocked) riskLevel = 'CRITICAL';
-    else if (totalScore >= lowScore) riskLevel = 'HIGH';
-    else if (totalScore > 0) riskLevel = 'MEDIUM';
+    // PERBAIKAN LOGIKA: Hanya jadi MEDIUM jika skor >= 30 (lowScore di DB)
+    if (isAmountBlocked) {
+        riskLevel = 'CRITICAL';
+    } else if (totalScore >= highScore) {
+        riskLevel = 'HIGH';
+    } else if (totalScore >= lowScore) {
+        riskLevel = 'MEDIUM';
+    } else {
+        riskLevel = 'LOW';
+    }
 
     return {
         score: totalScore,
         level: riskLevel,
         factors: allTags,
         breakdown: allBreakdown,
-        isBlockedByAmount: isAmountBlocked, // Teruskan status blokir
-        amountMandatedMethods: amountRes.requiredMethods || [] // Teruskan metode wajib dari tabel limit
+        isBlockedByAmount: isAmountBlocked,
+        amountMandatedMethods: amountRes.requiredMethods || []
     };
 }
 
