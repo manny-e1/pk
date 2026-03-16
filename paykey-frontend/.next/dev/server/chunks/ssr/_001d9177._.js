@@ -426,6 +426,46 @@ function Sidebar() {
                                 fileName: "[project]/components/layout/Sidebar.tsx",
                                 lineNumber: 77,
                                 columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                href: "/totp-inventory",
+                                className: `flex items-center gap-2.5 px-2.5 py-2 rounded-[var(--radius-md)] text-[14px] cursor-pointer transition-all mb-0.5 ${isActive('/totp-inventory') ? 'bg-[var(--bg-tertiary)] text-[var(--text-primary)]' : 'text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]'}`,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                                        viewBox: "0 0 24 24",
+                                        fill: "none",
+                                        stroke: "currentColor",
+                                        strokeWidth: "2",
+                                        className: "w-[18px] h-[18px] opacity-70",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
+                                                cx: "12",
+                                                cy: "12",
+                                                r: "10"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/layout/Sidebar.tsx",
+                                                lineNumber: 82,
+                                                columnNumber: 129
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
+                                                points: "12 6 12 12 16 14"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/layout/Sidebar.tsx",
+                                                lineNumber: 82,
+                                                columnNumber: 161
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/components/layout/Sidebar.tsx",
+                                        lineNumber: 82,
+                                        columnNumber: 13
+                                    }, this),
+                                    "TOTP Tokens"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/components/layout/Sidebar.tsx",
+                                lineNumber: 81,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
@@ -456,14 +496,14 @@ function Sidebar() {
                                     d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
                                 }, void 0, false, {
                                     fileName: "[project]/components/layout/Sidebar.tsx",
-                                    lineNumber: 96,
+                                    lineNumber: 100,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                     points: "16 17 21 12 16 7"
                                 }, void 0, false, {
                                     fileName: "[project]/components/layout/Sidebar.tsx",
-                                    lineNumber: 97,
+                                    lineNumber: 101,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -473,25 +513,25 @@ function Sidebar() {
                                     y2: "12"
                                 }, void 0, false, {
                                     fileName: "[project]/components/layout/Sidebar.tsx",
-                                    lineNumber: 98,
+                                    lineNumber: 102,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/layout/Sidebar.tsx",
-                            lineNumber: 89,
+                            lineNumber: 93,
                             columnNumber: 11
                         }, this),
                         "Sign Out"
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/layout/Sidebar.tsx",
-                    lineNumber: 85,
+                    lineNumber: 89,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/layout/Sidebar.tsx",
-                lineNumber: 84,
+                lineNumber: 88,
                 columnNumber: 7
             }, this)
         ]
