@@ -24,6 +24,16 @@ const allowedOrigins = [
 	"https://console.authkey.my",
 	"https://api.authkey.my",
 	"https://e3b4-196-191-61-230.ngrok-free.app",
+  'http://localhost:3000',
+  'http://192.168.1.3:3000',
+  'http://192.168.1.3:4000',
+  'http://18.142.184.55:3000',
+  'http://18.142.184.55:4000',
+  'http://18.142.184.55',
+  'https://www.authkey.my',
+  'https://console.authkey.my',
+  'https://api.authkey.my',
+  "android:apk-key-hash-sha256:KNxFf9ASburnBecouT/TtD1G7WxWoBTFY3RzkED2FB0"
 ];
 
 app.use(

@@ -5,21 +5,19 @@ const prisma = require('../../config/db');
  * @param {string} channel - 'MOBILE' | 'WEB' | 'API'
  * @param {string} riskLevel - 'LOW' | 'MEDIUM' | 'HIGH'
  */
-async function fetchPolicyConfig(segment, channel, riskLevel) {
+async function fetchPolicyConfig(segment, channel, riskLevel, action) {
     try {
         const policy = await prisma.authPolicy.findFirst({
             where: {
                 segment: segment,
                 channel: channel,
                 riskLevel: riskLevel,
+                action: action, // Harus sama (contoh: 'LOGIN')
                 isActive: true
             }
         });
         return policy;
-    } catch (error) {
-        console.error(`[AuthPolicy] DB Error: ${error.message}`);
-        return null;
-    }
+    } catch (error) { return null; }
 }
 
 

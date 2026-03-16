@@ -27,9 +27,22 @@ export default function UsersPage() {
   const [suspendNote, setSuspendNote] = useState('');
 
   const icons = {
-    mobile: <path d="M5 2h14a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 16h.01" />,
-    desktop: <><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></>,
-    hardware: <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+    mobile: (
+      <>
+        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+        <line x1="12" y1="18" x2="12.01" y2="18" />
+      </>
+    ),
+    desktop: (
+      <>
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </>
+    ),
+    hardware: (
+      <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+    )
   };
 
   const loadUsers = async () => {
@@ -433,25 +446,44 @@ export default function UsersPage() {
 
                 <div>
                   <div className="text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-[12px] flex items-center gap-[8px]">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                    </svg>
                     Registered Devices
                   </div>
-                  <div className="flex flex-col gap-[10px]">
+
+                  {/* PERBAIKAN: Ubah 'flex flex-col' menjadi 'grid grid-cols-2' (atau lebih) agar menyamping */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px]">
                     {selectedUser.devices.map(dev => (
                       <div key={dev.id} className={`bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[6px] p-[14px] flex gap-[12px] ${dev.status === 'revoked' ? 'opacity-50' : ''}`}>
+
+                        {/* Icon Container */}
                         <div className={`w-[36px] h-[36px] rounded-[6px] flex items-center justify-center shrink-0 
-                              ${dev.type === 'mobile' ? 'bg-[var(--info-bg)] text-[var(--info)]' : dev.type === 'desktop' ? 'bg-[var(--purple-bg)] text-[var(--purple)]' : 'bg-[var(--warning-bg)] text-[var(--warning)]'}`}>
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">{icons[dev.type] || icons.mobile}</svg>
+                            ${dev.type === 'mobile' ? 'bg-[var(--info-bg)] text-[var(--info)]' :
+                            dev.type === 'desktop' ? 'bg-[var(--purple-bg)] text-[var(--purple)]' :
+                              'bg-[var(--warning-bg)] text-[var(--warning)]'}`}>
+
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            {icons[dev.type as keyof typeof icons] || icons.mobile}
+                          </svg>
                         </div>
+
+                        {/* Device Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between">
-                            <div className={`text-[13px] font-medium mb-[2px] ${dev.status === 'revoked' ? 'line-through' : ''}`}>{dev.name}</div>
-                            <span className={`text-[10px] font-medium p-[2px_8px] rounded-[10px] ${dev.status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : dev.status === 'suspended' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`}>
+                            <div className={`text-[13px] font-medium mb-[2px] truncate pr-2 ${dev.status === 'revoked' ? 'line-through' : ''}`}>
+                              {dev.name}
+                            </div>
+                            <span className={`text-[10px] font-medium p-[2px_8px] rounded-[10px] shrink-0 ${dev.status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' : dev.status === 'suspended' ? 'bg-[var(--warning-bg)] text-[var(--warning)]' : 'bg-[var(--error-bg)] text-[var(--error)]'}`}>
                               {dev.status}
                             </span>
                           </div>
-                          <div className="text-[11px] text-[var(--text-tertiary)] mb-[6px]">{dev.model}</div>
-                          <div className="text-[10px] text-[var(--text-tertiary)] mt-[1px]">Last used: {dev.lastUsed}</div>
+                          <div className="text-[11px] text-[var(--text-tertiary)] mb-[6px] truncate">
+                            {dev.model}
+                          </div>
+                          <div className="text-[10px] text-[var(--text-tertiary)] mt-[1px]">
+                            Last used: {dev.lastUsed}
+                          </div>
                         </div>
                       </div>
                     ))}

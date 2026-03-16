@@ -51,7 +51,8 @@ exports.clientGuard = async (req, res, next) => {
         req.apiClient = {
             id: client.id,
             name: client.name,
-            type: client.type
+            channel: client.channel,           
+            consumerType: client.consumerType
         };
 
         next();

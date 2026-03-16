@@ -1,20 +1,7 @@
 import { apiClient } from '@/lib/apiClient';
 import { Device } from '@/lib/types';
 
-const formatDate = (dateString: string) => {
-  if (!dateString) return '-';
-  return new Date(dateString).toLocaleString('en-US', {
-    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
-};
-
-const parseDeviceType = (name: string): string => {
-  const lower = name.toLowerCase();
-  if (lower.includes('mobile') || lower.includes('iphone') || lower.includes('android')) return 'mobile';
-  return 'desktop';
-};
-
-export const getRelativeTime = (dateString: string | undefined) => {
+export const getRelativeTime = (dateString: string | Date | undefined) => {
   if (!dateString) return '';
   const date = new Date(dateString);
   const now = new Date();
@@ -46,30 +33,30 @@ export const deviceService = {
     const { data } = await apiClient.get(`/api/devices?email=${userEmail}`);
 
     return data.map((d: any) => ({
-      id: d.credentialId,
-      dbId: d.id,
-      name: d.deviceName || 'Unknown Device',
-      type: d.deviceTelemetry.device_type,
-      model: d.deviceModel || 'Unknown',
+      id: d.credentialId || d.id || Math.random().toString(),
+      dbId: d.dbId || d.id,
+      name: d.deviceName || d.name || 'Unknown Device',
+      type: d.deviceTelemetry?.device_type || d.type || 'desktop',
+      model: d.deviceModel || d.model || 'Unknown',
       onboardingAuth: d.onboardingAuth || 'Unknown',
-      // user: d.user?.fullName || 'User',
-      // userId: userEmail,
       initials: (d.email || 'U').substring(0, 2).toUpperCase(),
-      status: d.status.toLowerCase(),
+      status: (d.status || 'active').toLowerCase(),
       lastActive: getRelativeTime(d.lastActive),
       lastActiveClass: new Date(d.lastActive).getTime() > Date.now() - 86400000 ? 'recent' : 'default',
-      registered: d.registeredTimestamp,
-      location: 'Indonesia',
-      ip: formatIp(d.lastUsedIp || d.lastIp || '-'),
-      approvals: d.signCounter || 0,
-      rate: d.successRate || '100%',
-      credential: d.credentialId,
-      user: d.ownerName || 'Unknown User',
+      registered: d.registeredTimestamp || d.registered || '-',
+      location: d.location || 'Indonesia',
+      ip: formatIp(d.lastUsedIp || d.lastIp || d.ip || '-'),
+      approvals: d.signCounter || d.approvals || 0,
+      rate: d.successRate || d.rate || '100%',
+      credential: d.credentialId || d.credential || '-',
+      user: d.ownerName || d.user || 'Unknown User',
       email: d.email || 'No Email',
       userId: d.userId || '',
       osName: d.osName,
       osVersion: d.osVersion,
-      recentActivity: d.recentActivity
+      recentActivity: d.recentActivity || [],
+      methods: d.methods || [],
+      authKeys: d.authKeys || []
     }));
   },
 

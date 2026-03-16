@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { authService } from '@/services/authService';
+import Image from "next/image";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -16,16 +17,17 @@ export default function Sidebar() {
   return (
     <aside className="w-[240px] bg-[var(--bg-secondary)] border-r border-[var(--border-secondary)] shrink-0 h-screen flex flex-col z-10 sticky top-0">
       
-      <div className="p-4 border-b border-[var(--border-secondary)]">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-[var(--radius-md)] flex items-center justify-center bg-gradient-to-br from-[var(--accent)] to-[#60a5fa]">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4 text-white">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </div>
-          <span className="font-semibold text-sm text-[var(--text-primary)]">Secure Paykey</span>
-          <span className="ml-auto text-[10px] bg-[var(--purple-bg)] text-[var(--purple)] px-1.5 py-0.5 rounded-[10px] font-medium">FIDO2</span>
-        </div>
+      <div className="h-[60px] px-4 flex items-center border-b border-[var(--border-secondary)] shrink-0">
+        <Link href="/dashboard" className="block cursor-pointer transition-opacity hover:opacity-80">
+          <Image 
+            src="/Logo.png" 
+            alt="Secure Paykey Logo" 
+            width={200} 
+            height={40} 
+            className="h-11 w-auto object-contain" 
+            priority
+          />
+        </Link>
       </div>
       
       <nav className="p-2 overflow-y-auto custom-scrollbar flex-1">

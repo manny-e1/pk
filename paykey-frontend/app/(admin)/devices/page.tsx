@@ -270,7 +270,7 @@ export default function DevicesPage() {
                                         <DeviceIcon type={d.type} />
                                         <div>
                                             <div className="font-medium text-[13px]">{d.name}</div>
-                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.osName} {d.osVersion} • {d.onboardingAuth}</div>
+                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.osName} {d.osVersion} • {d.model}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -290,8 +290,9 @@ export default function DevicesPage() {
                                     {d.rate !== '-' && <span className="text-[var(--success)] text-[11px] ml-1">({d.rate})</span>}
                                 </td>
                                 <td className={`p-3 text-[11px] font-mono text-[var(--text-secondary)] ${d.status === 'revoked' ? 'line-through' : ''} hidden xl:block`}>
-                                    {d.credential.substring(0, 16)}...
+                                    {d.credential ? `${d.credential.substring(0, 16)}...` : '-'}
                                 </td>
+
                                 <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
                                     <div className="flex justify-end gap-1">
                                         {d.status === 'active' ? (
@@ -310,10 +311,11 @@ export default function DevicesPage() {
                                     </div>
                                 </td>
                             </tr>
-                        )}
+                        )
+                        }
                     />
 
-                    <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-lg)] p-3 flex items-center gap-4 shadow-2xl z-50 transition-all duration-300 ${selectedDevices.size > 0 ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}>
+                    < div className={`fixed bottom-6 left-1/2 -translate-x-1/2 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-[var(--radius-lg)] p-3 flex items-center gap-4 shadow-2xl z-50 transition-all duration-300 ${selectedDevices.size > 0 ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}>
                         <div className="text-[13px] flex items-center gap-2">
                             <strong className="bg-[var(--accent)] text-white px-2 py-0.5 rounded-[10px] text-xs">{selectedDevices.size}</strong> selected
                         </div>
@@ -321,9 +323,9 @@ export default function DevicesPage() {
                         <button onClick={() => setSelectedDevices(new Set())} className="text-xs px-2 py-1 bg-[var(--bg-tertiary)] rounded-[var(--radius-sm)] border border-[var(--border-primary)] hover:bg-[var(--bg-hover)] transition-colors text-[var(--text-primary)]">Clear</button>
                         <button onClick={() => handleBulkAction('suspend')} className="text-xs px-2 py-1 bg-[var(--warning)] text-black font-medium rounded-[var(--radius-sm)] hover:bg-[#f59e0b] transition-colors">Suspend All</button>
                         <button onClick={() => handleBulkAction('revoke')} className="text-xs px-2 py-1 bg-[var(--error)] text-white font-medium rounded-[var(--radius-sm)] hover:bg-[#ef4444] transition-colors">Revoke All</button>
-                    </div>
-                </div>
-            </main>
+                    </div >
+                </div >
+            </main >
 
             <SlideOver
                 isOpen={openSlider}
@@ -500,17 +502,19 @@ export default function DevicesPage() {
                 </div>
             </Modal>
 
-            {toast && (
-                <div className="fixed bottom-6 right-6 bg-[var(--bg-secondary)] border border-[rgba(74,222,128,0.3)] rounded-[var(--radius-lg)] p-4 flex items-center gap-3 shadow-[0_8px_24px_rgba(0,0,0,0.4)] z-[2000] animate-[shake_0.4s_ease]">
-                    <div className="w-8 h-8 rounded-[var(--radius-md)] bg-[var(--success-bg)] text-[var(--success)] flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+            {
+                toast && (
+                    <div className="fixed bottom-6 right-6 bg-[var(--bg-secondary)] border border-[rgba(74,222,128,0.3)] rounded-[var(--radius-lg)] p-4 flex items-center gap-3 shadow-[0_8px_24px_rgba(0,0,0,0.4)] z-[2000] animate-[shake_0.4s_ease]">
+                        <div className="w-8 h-8 rounded-[var(--radius-md)] bg-[var(--success-bg)] text-[var(--success)] flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-[18px] h-[18px]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                        </div>
+                        <div>
+                            <div className="text-[13px] font-semibold">{toast.title}</div>
+                            <div className="text-xs text-[var(--text-tertiary)]">{toast.msg}</div>
+                        </div>
                     </div>
-                    <div>
-                        <div className="text-[13px] font-semibold">{toast.title}</div>
-                        <div className="text-xs text-[var(--text-tertiary)]">{toast.msg}</div>
-                    </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

@@ -57,10 +57,13 @@ const defaultValues: PolicyConfig = {
 };
 
 const STEP_UP_LABELS: Record<string, string> = {
-  hardware_totp: 'Hardware TOTP',
-  push_otp: 'Push OTP (Mobile App)',
-  sms_otp: 'SMS OTP',
+  fido2: 'FIDO2 / Passkey',
+  hardware_key: 'Security Key (USB/NFC)', 
+  push_approval: 'Push Approval',
+  pin: 'App PIN Verification',
+  bio_legacy: 'Legacy Biometric (PKI)',
   email_otp: 'Email OTP',
+  totp: 'Authenticator App (TOTP)',
   callback: 'Callback Verification'
 };
 
