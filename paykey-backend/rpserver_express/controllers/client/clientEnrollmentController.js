@@ -834,7 +834,7 @@ exports.enrollFidoComplete = async (req, res) => {
     const context = await getContext(challenge);
     if (!context) return res.status(400).json({ error: "Sesi register expired atau tidak valid" });
 
-    const RP_ID = process.env.RP_ID || "192.168.1.2";
+    const RP_ID = process.env.RP_ID  || "authkey.my"; 
     const javaPayload = {
         serverPublicKeyCredential: {
             id: passkeyPayload.id, type: passkeyPayload.type,
