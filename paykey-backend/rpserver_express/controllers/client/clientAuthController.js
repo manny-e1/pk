@@ -33,7 +33,7 @@ exports.registerUser = async (req, res) => {
 
         sendTokenCookie(res, user);
         
-        await createRichAuthLog(req, user, { eventType: 'REGISTER_SUCCESS', status: 'SUCCESS' });
+        //await createRichAuthLog(req, user, { eventType: 'REGISTER_SUCCESS', status: 'SUCCESS' });
 
         res.json({ 
             status: 'success', 
@@ -83,11 +83,11 @@ exports.loginStep1 = async (req, res) => {
 
         if (decision.status === 'APPROVED') {
             sendTokenCookie(res, user);
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS', riskScore: riskResult.score });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS', riskScore: riskResult.score });
             return res.json({ status: 'complete', userId: user.id });
         } 
         else if (decision.status === 'CHALLENGED') {
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_CHALLENGE', status: 'CHALLENGED', riskScore: riskResult.score });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_CHALLENGE', status: 'CHALLENGED', riskScore: riskResult.score });
             
             // ---> TAMBAHKAN 1 BARIS INI <---
             const challengeRes = await javaClient.getUnifiedChallenge();
@@ -123,7 +123,7 @@ exports.verifyMfa = async (req, res) => {
         if (result.status !== 'success') throw new Error('Invalid Signature/OTP');
 
         sendTokenCookie(res, user);
-        await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: authType });
+        //await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: authType });
 
         res.json({ status: 'success' });
     } catch (err) {

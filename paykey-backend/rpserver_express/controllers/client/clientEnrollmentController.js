@@ -641,6 +641,8 @@ const javaClient = require("../../services/JavaAuthClient");
 const prisma = require("../../config/db");
 const emailService = require('../../services/emailService');
 const { generateUserId } = require('../../utils/idGenerator');
+const { createRichAuthLog } = require('../../utils/richLogger');
+
 
 const { createClient } = require('redis');
 const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redispass@localhost:6379' });
@@ -822,6 +824,53 @@ exports.enrollFidoStart = async (req, res) => {
   } catch (err) { res.status(500).json({ error: "Failed to initiate FIDO2 challenge" }); }
 };
 
+// exports.enrollFidoComplete = async (req, res) => {
+//   try {
+//     const { userId, deviceId, passkeyPayload, telemetry } = req.body; 
+//     if (!passkeyPayload || !passkeyPayload.response) return res.status(400).json({ error: "Invalid FIDO2 payload" });
+
+//     const buffer = Buffer.from(passkeyPayload.response.clientDataJSON, 'base64');
+//     const clientData = JSON.parse(buffer.toString('utf-8'));
+//     const challenge = clientData.challenge;
+
+//     const context = await getContext(challenge);
+//     if (!context) return res.status(400).json({ error: "Sesi register expired atau tidak valid" });
+
+//     const RP_ID = process.env.RP_ID  || "authkey.my"; 
+//     const javaPayload = {
+//         serverPublicKeyCredential: {
+//             id: passkeyPayload.id, type: passkeyPayload.type,
+//             response: passkeyPayload.response, extensions: passkeyPayload.extensions || {}
+//         },
+//         sessionId: context.sessionId, rpId: RP_ID, origin: clientData.origin, tokenBinding: null
+//     };
+
+//     // Verifikasi ke Java Server (Java akan otomatis membuat record userKey FIDO)
+//     const javaResult = await javaClient.fidoVerifyResponse("REGISTRATION", javaPayload);
+//     await redisClient.del(`ctx:${challenge}`);
+
+//     // PERBAIKAN: Karena Java Server sudah membuat userKey, kita cukup UPDATE data nama & telemetry nya!
+//     const credentialId = passkeyPayload.id;
+//     const deviceName = telemetry?.device_model || 'Mobile Passkey';
+
+//     const existingKey = await prisma.userKey.findUnique({ where: { credentialId: credentialId } });
+//     if (existingKey) {
+//         await prisma.userKey.update({
+//             where: { credentialId: credentialId },
+//             data: {
+//                 deviceName: deviceName,
+//                 deviceTelemetry: telemetry || {}
+//             }
+//         });
+//     }
+
+//     res.json({ success: true, message: "FIDO2 Passkey enrolled successfully", data: javaResult });
+//   } catch (err) { 
+//       console.error("FIDO Complete Error:", err);
+//       res.status(400).json({ error: "FIDO2 Verification failed" }); 
+//   }
+// };
+
 exports.enrollFidoComplete = async (req, res) => {
   try {
     const { userId, deviceId, passkeyPayload, telemetry } = req.body; 
@@ -831,6 +880,7 @@ exports.enrollFidoComplete = async (req, res) => {
     const clientData = JSON.parse(buffer.toString('utf-8'));
     const challenge = clientData.challenge;
 
+    // Pastikan Anda sudah membuat fungsi getContext atau menyimpannya di file yang sama
     const context = await getContext(challenge);
     if (!context) return res.status(400).json({ error: "Sesi register expired atau tidak valid" });
 
@@ -847,7 +897,7 @@ exports.enrollFidoComplete = async (req, res) => {
     const javaResult = await javaClient.fidoVerifyResponse("REGISTRATION", javaPayload);
     await redisClient.del(`ctx:${challenge}`);
 
-    // PERBAIKAN: Karena Java Server sudah membuat userKey, kita cukup UPDATE data nama & telemetry nya!
+    // PERBAIKAN: Update data nama & telemetry
     const credentialId = passkeyPayload.id;
     const deviceName = telemetry?.device_model || 'Mobile Passkey';
 
@@ -858,6 +908,30 @@ exports.enrollFidoComplete = async (req, res) => {
             data: {
                 deviceName: deviceName,
                 deviceTelemetry: telemetry || {}
+            }
+        });
+    }
+
+    // =========================================================================
+    // 1. AMBIL DATA USER DARI DATABASE UNTUK LOGGING
+    // =========================================================================
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    // =========================================================================
+    // 2. CATAT LOG PASSKEY REGISTERED
+    // =========================================================================
+    if (user) {
+        await createRichAuthLog(req, user, { 
+            eventType: 'Passkey Registered', 
+            status: 'SUCCESS',
+            authMethod: 'FIDO2_PASSKEY',
+            data: { 
+                telemetry: telemetry || {},
+                // Labeling otomatis: Jika dari Android/Mobile -> "Platform", selain itu -> "Hardware Key"
+                tags: [{ 
+                    label: (telemetry && (telemetry.device_type === 'mobile' || telemetry.device_type === 'android')) ? 'Platform' : 'Hardware Key', 
+                    class: 'success' 
+                }] 
             }
         });
     }

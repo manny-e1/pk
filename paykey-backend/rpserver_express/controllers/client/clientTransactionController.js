@@ -325,8 +325,8 @@ exports.initiateTransaction = async (req, res) => {
   } = req.body;
 
   const channel = req.apiClient ? req.apiClient.channel : "MOBILE";
-  const ipAddress =
-    req.headers["x-forwarded-for"] || req.socket.remoteAddress || req.ip;
+  const rawIp = req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.socket.remoteAddress || req.ip;
+  const ipAddress = rawIp ? rawIp.split(',')[0].trim() : '127.0.0.1';
 
   try {
     // --- 1. VALIDASI DASAR ---
@@ -344,7 +344,7 @@ exports.initiateTransaction = async (req, res) => {
     const segment =
       user.companyName || user.role === "ADMIN" ? "CORPORATE" : "CONSUMER";
     const netInfo = getNetworkInfo(ipAddress);
-    const countryCode = netInfo.country || "UN";
+    let countryCode = netInfo.country || "UN";
 
     const riskContext = {
       userId: user.id,

@@ -67,7 +67,7 @@ exports.verifyStepUp = async (req, res) => {
             await javaClient.fidoVerifyResponse('AUTHENTICATION', payload);
             
             if (!req.user) sendTokenCookie(res, user);
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: method });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: method });
             return res.json({ success: true, message: 'FIDO2 Verified' });
         } 
         
@@ -89,7 +89,7 @@ exports.verifyStepUp = async (req, res) => {
             });
             
             if (!req.user) sendTokenCookie(res, user);
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: method });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: method });
             return res.json({ success: true, message: `${method} Verified via PKI Signature` });
         }
 
@@ -109,7 +109,7 @@ exports.verifyStepUp = async (req, res) => {
             await prisma.authTotpToken.delete({ where: { id: tokenRecord.id } });
 
             if (!req.user) sendTokenCookie(res, user);
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: method });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: method });
 
             return res.json({ success: true, message: 'Email OTP Verified' });
         }
