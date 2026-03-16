@@ -812,7 +812,7 @@ exports.enrollFidoStart = async (req, res) => {
   try {
     const { userId } = req.body;
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    const RP_ID = process.env.RP_ID || "192.168.1.2"; 
+    const RP_ID = process.env.RP_ID || "authkey.my"; 
 
     const challengeData = await javaClient.fidoInitiateChallenge("REGISTRATION", user, RP_ID);
     if (challengeData && challengeData.challenge) {
