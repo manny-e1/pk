@@ -6,6 +6,7 @@
   "/(admin)/devices/page": "app/(admin)/devices/page.js",
   "/(admin)/investigation/page": "app/(admin)/investigation/page.js",
   "/(admin)/risk-config/page": "app/(admin)/risk-config/page.js",
+  "/(admin)/totp-inventory/page": "app/(admin)/totp-inventory/page.js",
   "/(admin)/users/page": "app/(admin)/users/page.js",
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",

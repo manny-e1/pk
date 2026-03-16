@@ -6,6 +6,7 @@
   "/(admin)/devices/page": "/devices",
   "/(admin)/investigation/page": "/investigation",
   "/(admin)/risk-config/page": "/risk-config",
+  "/(admin)/totp-inventory/page": "/totp-inventory",
   "/(admin)/users/page": "/users",
   "/_global-error/page": "/_global-error",
   "/_not-found/page": "/_not-found",

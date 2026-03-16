@@ -101,6 +101,12 @@
       "namedRegex": "^/signup(?:/)?$"
     },
     {
+      "page": "/totp-inventory",
+      "regex": "^/totp\\-inventory(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/totp\\-inventory(?:/)?$"
+    },
+    {
       "page": "/users",
       "regex": "^/users(?:/)?$",
       "routeKeys": {},
