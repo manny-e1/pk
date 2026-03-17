@@ -2,5 +2,9 @@
   "/(admin)/auth-logs/page": "app/(admin)/auth-logs/page.js",
   "/(admin)/auth-policies/page": "app/(admin)/auth-policies/page.js",
   "/(admin)/dashboard/page": "app/(admin)/dashboard/page.js",
-  "/(admin)/totp-inventory/page": "app/(admin)/totp-inventory/page.js"
+  "/(admin)/devices/page": "app/(admin)/devices/page.js",
+  "/(admin)/risk-config/page": "app/(admin)/risk-config/page.js",
+  "/(admin)/totp-inventory/page": "app/(admin)/totp-inventory/page.js",
+  "/(admin)/users/page": "app/(admin)/users/page.js",
+  "/login/page": "app/login/page.js"
 }
