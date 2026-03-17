@@ -1,8 +1,3 @@
-/**
- * @file clientStepUpController.js
- * @description Universal Endpoint Verifikasi.
- * Mengelola pembuktian dari Client (melalui Cryptographic Signature atau OTP).
- */
 
 const javaClient = require('../../services/JavaAuthClient');
 const prisma = require('../../config/db');

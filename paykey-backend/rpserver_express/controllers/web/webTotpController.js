@@ -1,4 +1,4 @@
-const speakeasy = require('speakeasy'); // Library pengganti yang super stabil
+const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const { createClient } = require('redis');
 const prisma = require('../../config/db');
@@ -8,9 +8,7 @@ const { generateUserId } = require('../../utils/idGenerator');
 const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redispass@localhost:6379' });
 redisClient.connect().catch(console.error);
 
-/**
- * 1. SETUP: Tangkap Email & CIF, Auto-Register, Generate QR
- */
+
 exports.setupSoftToken = async (req, res) => {
     try {
         const { email, cifNumber, name, mobile } = req.body;
@@ -21,7 +19,6 @@ exports.setupSoftToken = async (req, res) => {
 
         const normalizedEmail = email.toLowerCase().trim();
 
-        // Auto-Register User
         let user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
 
         if (!user) {
@@ -38,21 +35,15 @@ exports.setupSoftToken = async (req, res) => {
             console.log(`[TOTP Setup] Auto-registered new user: ${user.id}`);
         }
 
-        // =========================================================
-        // GENERATE SECRET MENGGUNAKAN SPEAKEASY
-        // =========================================================
         const secretData = speakeasy.generateSecret({
-            name: `PayKey Secure (${user.email})` // Nama yang akan muncul di Google Auth HP User
+            name: `PayKey Secure (${user.email})`
         });
 
-        // Ambil Base32 dan URL-nya
         const secretBase32 = secretData.base32;
         const otpauthUrl = secretData.otpauth_url;
         
-        // Buat QR Code
         const qrCodeImageUrl = await qrcode.toDataURL(otpauthUrl);
 
-        // Simpan Base32 secret sementara di Redis (5 Menit)
         await redisClient.set(`soft_totp_setup:${user.id}`, secretBase32, { EX: 300 });
 
         res.json({
@@ -68,9 +59,7 @@ exports.setupSoftToken = async (req, res) => {
     }
 };
 
-/**
- * 2. ACTIVATE: Validasi OTP, Simpan ke DB
- */
+
 exports.activateSoftToken = async (req, res) => {
     try {
         const { userId, code, deviceId, telemetry } = req.body; 
@@ -82,22 +71,17 @@ exports.activateSoftToken = async (req, res) => {
         const tempSecret = await redisClient.get(`soft_totp_setup:${userId}`);
         if (!tempSecret) return res.status(400).json({ error: 'Setup session expired. Please restart.' });
 
-        // =========================================================
-        // VALIDASI OTP MENGGUNAKAN SPEAKEASY
-        // =========================================================
         const isValid = speakeasy.totp.verify({
             secret: tempSecret,
             encoding: 'base32',
             token: code,
-            window: 1 // Memberikan toleransi waktu +/- 30 detik (menghindari gagal jika jam HP user tidak akurat)
+            window: 1
         });
 
         if (!isValid) return res.status(400).json({ error: 'Invalid OTP Code.' });
 
-        // Enkripsi Secret Base32 agar aman dan bisa dibaca oleh Java Server
         const encryptedSeed = encryptSeedForJava(tempSecret);
 
-        // A. Simpan ke tabel auth_totp_tokens
         await prisma.authTotpToken.create({
             data: {
                 serialNumber: `SOFT_${userId}_${Date.now()}`,
@@ -112,7 +96,6 @@ exports.activateSoftToken = async (req, res) => {
             }
         });
 
-        // B. Simpan ke tabel userKey untuk UI
         const deviceName = telemetry?.device_model || 'Google Authenticator (Web)';
         const safeDeviceId = deviceId || `WEB_${Date.now()}`;
 
