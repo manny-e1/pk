@@ -62,21 +62,22 @@ exports.loginStep1 = async (req, res) => {
         const segment = (user.companyName || user.role === 'ADMIN') ? 'CORPORATE' : 'CONSUMER';
         
         // PERBAIKAN: Hitung risiko login (Geo-Anomaly / New Device)
-        const riskContext = {
-            userId: user.id, email: user.email, userSegment: segment, channel: channel,
-            amount: 0, currency: 'MYR', ipAddress: req.ip,
-            deviceId: deviceId || 'unknown',
-            telemetry: telemetry || {}
-        };
+        // const riskContext = {
+        //     userId: user.id, email: user.email, userSegment: segment, channel: channel,
+        //     amount: 0, currency: 'MYR', ipAddress: req.ip,
+        //     deviceId: deviceId || 'unknown',
+        //     telemetry: telemetry || {}
+        // };
 
-        const riskResult = await RiskEngine.calculateRisk(riskContext);
-        console.log(`[LOGIN] User: ${user.email} | Risk Score: ${riskResult.score}`);
+        // const riskResult = await RiskEngine.calculateRisk(riskContext);
+        // console.log(`[LOGIN] User: ${user.email} | Risk Score: ${riskResult.score}`);
 
         const policyResult = await PolicyEngine.evaluateAuthPolicy({
             segment: segment,
             channel: channel,
             action: 'LOGIN',
-            riskScore: riskResult.score // DINAMIS DARI DATABASE!
+            // riskScore: riskResult.score // DINAMIS DARI DATABASE!
+            riskScore: 10
         });
 
         const decision = policyResult.decision;
