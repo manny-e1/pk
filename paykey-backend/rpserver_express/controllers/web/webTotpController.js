@@ -5,7 +5,7 @@ const prisma = require('../../config/db');
 const { encryptSeedForJava } = require('../../utils/cryptoHelper'); 
 const { generateUserId } = require('../../utils/idGenerator'); 
 
-const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6379' });
+const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redispass@localhost:6379' });
 redisClient.connect().catch(console.error);
 
 /**
