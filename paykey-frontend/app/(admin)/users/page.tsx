@@ -4,6 +4,7 @@
 import { useState, useEffect, useMemo, Fragment } from 'react';
 import { userService, User, Device } from '@/services/userService';
 import { useSearchParams } from 'next/navigation';
+import { getRelativeTime } from '@/services/deviceService';
 
 export default function UsersPage() {
 
@@ -340,7 +341,7 @@ export default function UsersPage() {
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <div className={`text-[13px] font-medium mb-[2px] ${dev.status === 'revoked' ? 'line-through' : ''}`}>{dev.name}</div>
-                                    <div className="text-[11px] text-[var(--text-tertiary)] mb-[6px]">{dev.osName} - {dev.osVersion}</div>
+                                    <div className="text-[11px] text-[var(--text-tertiary)] mb-[6px]">{dev.model}</div>
                                     <div className="flex items-center gap-[12px] text-[11px] text-[var(--text-tertiary)]">
                                       <span className={`p-[2px_8px] rounded-[10px] text-[10px] font-medium 
                                         ${dev.status === 'active' ? 'bg-[var(--success-bg)] text-[var(--success)]' :
@@ -348,7 +349,7 @@ export default function UsersPage() {
                                             'bg-[var(--error-bg)] text-[var(--error)]'}`}>
                                         {dev.status.charAt(0).toUpperCase() + dev.status.slice(1)}
                                       </span>
-                                      <span>Last: {dev.lastUsed}</span>
+                                      <span>Last: {getRelativeTime(dev.lastUsed)}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -439,7 +440,7 @@ export default function UsersPage() {
                     <div><div className="text-[11px] text-[var(--text-tertiary)] mb-[4px]">Joined</div><div className="text-[13px] text-[var(--text-primary)]">{selectedUser.joined}</div></div>
                     <div><div className="text-[11px] text-[var(--text-tertiary)] mb-[4px]">Email</div><div className="text-[13px] text-[var(--text-primary)]">{selectedUser.email}</div></div>
                     <div><div className="text-[11px] text-[var(--text-tertiary)] mb-[4px]">Mobile</div><div className="text-[13px] text-[var(--text-primary)]">{selectedUser.mobile}</div></div>
-                    <div><div className="text-[11px] text-[var(--text-tertiary)] mb-[4px]">Last Active</div><div className="text-[13px] text-[var(--text-primary)]">{selectedUser.lastActive}</div></div>
+                    <div><div className="text-[11px] text-[var(--text-tertiary)] mb-[4px]">Last Active</div><div className="text-[13px] text-[var(--text-primary)]">{getRelativeTime(selectedUser.lastActive)}</div></div>
                     <div><div className="text-[11px] text-[var(--text-tertiary)] mb-[4px]">Total Devices</div><div className="text-[13px] text-[var(--text-primary)]">{selectedUser.devices.length}</div></div>
                   </div>
                 </div>
@@ -453,7 +454,7 @@ export default function UsersPage() {
                   </div>
 
                   {/* PERBAIKAN: Ubah 'flex flex-col' menjadi 'grid grid-cols-2' (atau lebih) agar menyamping */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[10px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2  gap-[10px]">
                     {selectedUser.devices.map(dev => (
                       <div key={dev.id} className={`bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[6px] p-[14px] flex gap-[12px] ${dev.status === 'revoked' ? 'opacity-50' : ''}`}>
 
@@ -482,7 +483,7 @@ export default function UsersPage() {
                             {dev.model}
                           </div>
                           <div className="text-[10px] text-[var(--text-tertiary)] mt-[1px]">
-                            Last used: {dev.lastUsed}
+                            Last used: {getRelativeTime(dev.lastUsed)}
                           </div>
                         </div>
                       </div>

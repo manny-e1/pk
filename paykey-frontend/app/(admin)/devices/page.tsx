@@ -13,9 +13,9 @@ import { getRelativeTime } from '@/services/deviceService';
 import { useSearchParams } from 'next/navigation';
 
 export default function DevicesPage() {
-    const { devices, loading, refresh, actions } = useDevices();
     const searchParams = useSearchParams();
-    const paramUserId = searchParams.get('userId');
+    const paramEmail = searchParams.get('email') || undefined;
+    const { devices, loading, refresh, actions } = useDevices(paramEmail);
     const [activeTab, setActiveTab] = useState<'all' | 'active' | 'suspended' | 'revoked'>('all');
     const [typeFilter, setTypeFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
@@ -130,8 +130,8 @@ export default function DevicesPage() {
     };
 
     useEffect(() => {
-        if (paramUserId && devices.length > 0) {
-            const foundDevice = devices.find(device => device.userId === paramUserId);
+        if (paramEmail && devices.length > 0) {
+            const foundDevice = devices.find(device => device.email === paramEmail);
             queueMicrotask(() => {
                 if (foundDevice) {
                     setCurrentDevice(foundDevice || null)
@@ -139,7 +139,7 @@ export default function DevicesPage() {
                 }
             });
         }
-    }, [paramUserId, devices])
+    }, [paramEmail, devices])
 
 
     const columns = [
@@ -270,7 +270,7 @@ export default function DevicesPage() {
                                         <DeviceIcon type={d.type} />
                                         <div>
                                             <div className="font-medium text-[13px]">{d.name}</div>
-                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.osName} {d.osVersion} • {d.model}</div>
+                                            <div className="text-[11px] text-[var(--text-tertiary)]">{d.modelAndOnboardingAuth.toLocaleLowerCase().includes('unknown') ? d.model : d.modelAndOnboardingAuth}</div>
                                         </div>
                                     </div>
                                 </td>

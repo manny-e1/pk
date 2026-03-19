@@ -384,6 +384,9 @@ exports.getUserDevices = async (req, res) => {
                     deviceName: dName, osBase: osBase, deviceType: deviceType, userId: uId.toString(),
                     email: k.user?.email || 'Unknown', ownerName: k.user?.fullName || k.userDisplayName || 'Unknown User',
                     status: k.status || 'ACTIVE', 
+                    transports: k.transports ?? JSON.stringify([]),
+                    deviceTelemetry: k.deviceTelemetry,
+                    registered: k.registeredTimestamp,
                     // Simpan sementara tanggal registrasi sebagai default
                     lastActive: k.lastActive || k.createdAt || new Date(), 
                     location: tel.device_address || tel.timezone || 'Unknown Location', osName: osBase ? osBase.split(' ')[0] : 'desktop',
@@ -402,7 +405,6 @@ exports.getUserDevices = async (req, res) => {
 
         const formatted = await Promise.all(Object.values(deviceMap).map(async (d) => {
             const logFilter = { email: d.email, device: d.deviceName };
-            
             // ==============================================================
             // PERBAIKAN: Ambil createdAt dari authLog untuk mengetahui waktu 
             // penggunaan ("Last Active") yang SEBENARNYA!
@@ -439,17 +441,15 @@ exports.getUserDevices = async (req, res) => {
             }));
 
             return {
-                ...d,
-                id: d.id.toString(),
-                credentialId: d.credentialId,
-                signCounter: approvals,
-                transports: safeJsonParse(d.transports),
-                onboardingAuth: determineAuthenticatorType(safeJsonParse(d.transports), d.deviceTelemetry),
-                userId: d.user.id ? d.user.id.toString() : 'Unknown',
-                email: d.user.email ? d.user.email : 'Unknown',
-                id: d.credentialId, dbId: d.dbId, name: d.deviceName, type: d.deviceType, model: deviceDetailsText, initials: initials,
+                modelAndOnboardingAuth: `${d.osBase} • ${determineAuthenticatorType(safeJsonParse(d.transports), d.deviceTelemetry)}`,
+                id: d.credentialId, 
+                dbId: d.dbId, name: 
+                d.deviceName, type: 
+                d.deviceType, 
+                model: deviceDetailsText, 
+                initials: initials,
                 status: (d.status || "active").toLowerCase(), 
-                
+                registeredTimestamp: d.registered,
                 // PERBAIKAN: Kirim waktu real (mentah) dari log ke Frontend
                 lastActive: realLastActive, 
                 
@@ -458,7 +458,9 @@ exports.getUserDevices = async (req, res) => {
             };
         }));
         res.json(formatted);
-    } catch (err) { res.status(500).json({ error: "Failed to fetch devices" }); }
+    } catch (err) { 
+        console.log(err)
+        res.status(500).json({ error: "Failed to fetch devices" }); }
 };
 
 exports.toggleDeviceStatus = async (req, res) => {

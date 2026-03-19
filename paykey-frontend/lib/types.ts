@@ -9,7 +9,7 @@ export interface Device {
   osVersion: ReactNode;
   osName: ReactNode;
   deviceModel: ReactNode;
-  onboardingAuth: string;
+  modelAndOnboardingAuth: string;
   id: string;
   dbId: string;
   name: string;

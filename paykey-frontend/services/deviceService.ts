@@ -38,7 +38,7 @@ export const deviceService = {
       name: d.deviceName || d.name || 'Unknown Device',
       type: d.deviceTelemetry?.device_type || d.type || 'desktop',
       model: d.deviceModel || d.model || 'Unknown',
-      onboardingAuth: d.onboardingAuth || 'Unknown',
+      modelAndOnboardingAuth: d.modelAndOnboardingAuth,
       initials: (d.email || 'U').substring(0, 2).toUpperCase(),
       status: (d.status || 'active').toLowerCase(),
       lastActive: getRelativeTime(d.lastActive),

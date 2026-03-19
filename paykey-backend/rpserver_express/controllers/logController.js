@@ -19,8 +19,9 @@ exports.getAuthLogs = async (req, res) => {
 			orderBy: { createdAt: "desc" },
 			include: {
 				user: {
-					select: { fullName: true, role: true },
+					select: { fullName: true, role: true,  keys: { select: { deviceName: true, status: true, registeredTimestamp: true } } },
 				},
+				
 			},
 		});
 		const formattedLogs = logs.map((log) => {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { adminService } from '@/services/adminService';
 import { useRouter } from 'next/navigation';
 import { AppWindow, AppWindowIcon, AppWindowMac, LucideAppWindow, PanelTop, Search, User } from 'lucide-react';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 
 interface RiskTag {
   label: string;
@@ -28,6 +29,8 @@ interface AuthEvent {
   paymentId?: string;
   isNewDevice: boolean;
   authType: string;
+  deviceStatus: string;
+  firstSeen: string;
   device: {
     type: string;
     os: string;
@@ -75,7 +78,10 @@ const StatsCard = ({ label, value, change, trend, icon }: any) => (
 const DetailRow = ({ label, value, className = "", valueClass = "" }: any) => (
   <div className={`flex justify-between py-2.5 border-b border-[var(--border-secondary)] last:border-0 ${className}`}>
     <span className="text-[13px] text-[var(--text-tertiary)]">{label}</span>
-    <span className={`text-[13px] text-[var(--text-primary)] text-right max-w-[250px] break-words ${valueClass}`}>{value}</span>
+    {(label.toLowerCase().includes('status') && value !== '—') ?
+      <StatusBadge status={value} /> :
+      <span className={`text-[13px] text-[var(--text-primary)] text-right max-w-[250px] break-words ${valueClass}`}>{value}</span>
+    }
   </div>
 );
 
@@ -281,8 +287,8 @@ export default function AuthLogsPage() {
     setLoading(true);
     try {
       const rawLogs = await adminService.getAuthLogs(eventType || undefined);
-      // const fltrdLogs = rawLogs.filter((log: any) => !(log.user?.role === 'ADMIN' && (log.eventType.toLowerCase() === "passkey logged in" || log.eventType.toLowerCase() === "login success")));
-      const mappedData: AuthEvent[] = rawLogs.map((log: any) => {
+      const fltrdLogs = rawLogs.filter((log: any) => !(log.user?.role === 'ADMIN' && (log.eventType.toLowerCase() === "passkey logged in" || log.eventType.toLowerCase() === "login success")));
+      const mappedData: AuthEvent[] = fltrdLogs.map((log: any) => {
         let richData: any = {};
         let tagsArray: RiskTag[] = [];
 
@@ -318,6 +324,7 @@ export default function AuthLogsPage() {
           paymentId: richData.paymentId || null,
           isNewDevice: tagsArray.some(t => t.label.toLowerCase().includes('new device')),
           authType: log.authMethod || 'Unknown',
+          firstSeen: log.user?.keys?.[0]?.registeredTimestamp ? new Date(log.user.keys[0].registeredTimestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—',
           device: {
             type: deviceInfo.type || (log.userAgent?.toLowerCase().includes('mobile') ? 'Mobile' : 'Desktop'),
             os: deviceInfo.os || log.userAgent || 'Unknown',
@@ -326,16 +333,16 @@ export default function AuthLogsPage() {
                 return telemetry.device_model || log.device
               }
               if (deviceInfo.os.toLowerCase().includes('mac')) {
-                return 'Macintoshh'
+                return 'Macintosh'
               }
-              if (deviceInfo.os.toLowerCase().includes('Windows PC')) {
+              if (deviceInfo.os.toLowerCase().includes('windows pc')) {
                 return 'Windows'
               }
               if (deviceInfo.os.toLowerCase().includes('ubuntu')) {
                 return 'Ubuntu Desktop'
               }
             })(),
-            browser: deviceInfo.browser || log.userAgent?.split('/')[0] || 'Unknown Browser'
+            browser: deviceInfo.browser || log.userAgent?.split('/')[0] || 'Unknown Browser',
           },
 
           location: {
@@ -355,7 +362,7 @@ export default function AuthLogsPage() {
             lat: telemetry.gps_latitude,
             long: telemetry.gps_longitude
           },
-
+          deviceStatus: log.user?.keys.length > 0 ? log.user.keys[0].status : '—',
           risk: {
             score: richData.riskScore || log.riskScore || 0,
             level: richData.riskLevel || 'UNKNOWN',
@@ -363,7 +370,7 @@ export default function AuthLogsPage() {
             amountClass: (richData.amount > 1000) ? 'high' : 'low',
             network: telemetry.is_vpn_active ? 'vpn' : richData.isVpn ? 'vpn' : undefined,
             tags: tagsArray,
-            reasons: richData.reasonCodes || [],
+            reasons: richData.factors || [],
             beneficiary: richData.beneficiaryAccount
           }
         };
@@ -609,7 +616,7 @@ export default function AuthLogsPage() {
                   <p>View User</p>
                 </div>
               </button>
-              <button onClick={() => router.push(`/devices?userId=${selectedEvent?.userId}`)} className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
+              <button onClick={() => router.push(`/devices?email=${selectedEvent?.email}`)} className="flex-1 py-2 border border-[var(--border-primary)] rounded-[6px] text-[13px] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all">
                 <div className="flex items-center justify-center gap-2">
                   <PanelTop className='w-3.5 h-3.5' />
                   <p>View Device</p>
@@ -655,8 +662,8 @@ export default function AuthLogsPage() {
                 <DetailRow label="OS & Version" value={selectedEvent.device.os} />
                 <DetailRow label="Browser / User Agent" value={selectedEvent.device.browser} />
                 <DetailRow label="Authenticator Type" value={selectedEvent.authType} />
-                <DetailRow label="Device Status" value={selectedEvent.device.browser} />
-                <DetailRow label="First Seen" value={selectedEvent.device.browser} />
+                <DetailRow label="Device Status" value={selectedEvent.deviceStatus} />
+                <DetailRow label="First Seen" value={selectedEvent.firstSeen} />
                 {selectedEvent.isNewDevice && (
                   <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
                     <span className="text-[13px] text-[var(--text-tertiary)]">Flag</span>
@@ -688,7 +695,7 @@ export default function AuthLogsPage() {
                 <div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--text-tertiary)] uppercase tracking-[0.5px] mb-2">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg> Risk Context
                 </div>
-                {selectedEvent.risk.amount && <DetailRow label="Transaction Amount" value={selectedEvent.risk.amount} valueClass="font-mono font-medium" />}
+                {selectedEvent.risk.amount && <DetailRow label="Transaction Amount" value={selectedEvent.risk.amount} valueClass="amount-badge medium" />}
                 <DetailRow label="Beneficiary" value={selectedEvent.risk.beneficiary || '—'} valueClass="font-mono text-[12px]" />
                 <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
                   <span className="text-[13px] text-[var(--text-tertiary)]">Risk Score</span>
@@ -696,16 +703,17 @@ export default function AuthLogsPage() {
                     {selectedEvent.risk.score} / 100 ({selectedEvent.risk.level})
                   </span>
                 </div>
-                <div className="flex justify-between py-2.5 border-b border-[var(--border-secondary)]">
+                <div className={`${selectedEvent.risk.reasons.length ? 'block' : 'flex justify-between'} py-2.5 border-b border-[var(--border-secondary)]`}>
                   <span className="block text-[11px] text-[var(--text-tertiary)] mb-2 uppercase font-semibold">Reason Codes</span>
-                  <ul className="space-y-2">
-                    {selectedEvent.risk.reasons.length ? selectedEvent.risk.reasons.map((r, i) => (
-                      <li key={r.desc} className="flex justify-between items-start text-[12px]">
-                        <span className="text-[var(--text-secondary)]">{r.rule} {r.desc && <span className="text-[var(--text-tertiary)]">- {r.desc}</span>}</span>
-                        <span className="font-mono text-[var(--error)]">+{r.score}</span>
-                      </li>
-                    )) : '—'}
-                  </ul>
+                  {selectedEvent.risk.reasons.length ?
+                    <ul className="space-y-2 pl-2 py-1">
+                      {selectedEvent.risk.reasons.map((r, i) => (
+                        <li key={r.desc} className="flex justify-between items-start text-[12px]">
+                          <span className="text-[var(--text-secondary)]">{r.rule} {r.desc && <span className="text-[var(--text-tertiary)]">- {r.desc}</span>}</span>
+                          <span className="font-mono text-[var(--error)]">+{r.score}</span>
+                        </li>
+                      ))}
+                    </ul> : '—'}
                 </div>
 
 

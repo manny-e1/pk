@@ -85,6 +85,14 @@ body {
   background: var(--text-muted);
 }
 
+.amount-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 2px 8px; border-radius: var(--radius-sm); font-weight: 500;
+}
+.amount-badge.low { background: var(--bg-tertiary); color: var(--text-secondary); }
+.amount-badge.medium { background: var(--warning-bg); color: var(--warning); }
+.amount-badge.high { background: var(--error-bg); color: var(--error); }
+
 /* Custom Animation Classes */
 @layer utilities {
   .animate-spin-slow {
