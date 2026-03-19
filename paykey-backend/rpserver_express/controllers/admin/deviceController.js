@@ -320,7 +320,7 @@
 /**
  * @file controllers/deviceController.js
  */
-const prisma = require('../config/db');
+const prisma = require('../../config/db');
 const { determineAuthenticatorType } = require('./passkeyController');
 
 const formatMethods = (methods) => {
