@@ -24,36 +24,37 @@ enum KeyStatus {
 // ==========================================
 
 model User {
-  id            String    @id @default(uuid()) @db.VarChar(128)
-  email         String    @unique
-  fullName      String    @map("full_name")
-  passwordHash  String?   @map("password_hash")
-  role          Role      @default(USER)
-  companyName   String?   @map("company_name")
-  mobile        String?   
-  
-  // [PENTING] Field Balance untuk fitur Transaksi
-  balance       Decimal   @default(0) @db.Decimal(15, 2) 
+  id           String  @id @default(uuid()) @db.VarChar(128)
+  email        String  @unique
+  fullName     String  @map("full_name")
+  passwordHash String? @map("password_hash")
+  role         Role    @default(USER)
+  companyName  String? @map("company_name")
+  mobile       String?
 
-  cifNumber     String?   @unique @map("cif_number") @db.VarChar(20)
-  
-  createdAt     DateTime  @default(now()) @map("created_at")
-  status        String    @default("active")
-  suspendNote   String?   @map("suspend_note") @db.Text
-  suspendReason String?   @map("suspend_reason") @db.Text
-  
+  // [PENTING] Field Balance untuk fitur Transaksi
+  balance Decimal @default(0) @db.Decimal(15, 2)
+
+  cifNumber String? @unique @map("cif_number") @db.VarChar(20)
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  status        String   @default("active")
+  suspendNote   String?  @map("suspend_note") @db.Text
+  suspendReason String?  @map("suspend_reason") @db.Text
+
   // --- RELATIONS (Fix Error P1012 & Logic App) ---
   keys           UserKey[]
   authLogs       AuthLog[]
   knownDevices   UserKnownDevice[]
   knownLocations UserKnownLocation[]
   transactions   Transaction[]
-  
+
   // Relasi ke Security Entities (Wajib ada)
-  userDevices    UserDevice[]      
-  deviceKeys     AuthDeviceKey[]   
-  totpTokens     AuthTotpToken[]   
-  pushRequests   AuthPushRequest[] 
+  userDevices    UserDevice[]
+  deviceKeys     AuthDeviceKey[]
+  totpTokens     AuthTotpToken[]
+  pushRequests   AuthPushRequest[]
+  hardwareTokens TotpHardwareInventory[]
 
   @@map("users")
 }
@@ -63,75 +64,104 @@ model User {
 // ==========================================
 
 model UserKey {
-  id                  BigInt    @id @default(autoincrement())
-  aaguid              String    @map("aaguid") @db.VarChar(36)
-  attestationType     Int?      @map("attestation_type")
-  credentialId        String    @unique @map("credential_id") @db.VarChar(256)
-  publicKey           String    @map("public_key") @db.Text
-  registeredTimestamp DateTime? @default(now()) @map("registered_timestamp")
-  signCounter         BigInt?   @map("sign_counter")
-  signatureAlgorithm  Int?      @map("signature_algorithm")
-  userDisplayName     String?   @map("user_display_name") @db.VarChar(64)
-  userId              String    @map("user_id") @db.VarChar(128)
-  username            String?   @db.VarChar(64)
-  deviceName          String?   @map("device_name")
-  deviceTelemetry     Json?     @map("device_telemetry")
-  lastActive          DateTime  @default(now()) @updatedAt @map("last_active")
-  lastStatusChange    DateTime  @default(now()) @map("last_status_change")
-  lastUsedIp          String?   @map("last_used_ip")
-  status              KeyStatus @default(ACTIVE)
-  transports          String?
-  rpEntityId          String?   @map("rp_entity_id") @db.VarChar(255)
+  id                      BigInt    @id @default(autoincrement())
+  aaguid                  String    @map("aaguid") @db.VarChar(36)
+  attestationType         Int?      @map("attestation_type")
+  credentialId            String    @unique @map("credential_id") @db.VarChar(256)
+  publicKey               String    @map("public_key") @db.Text
+  registeredTimestamp     DateTime? @default(now()) @map("registered_timestamp")
+  signCounter             BigInt?   @map("sign_counter")
+  signatureAlgorithm      Int?      @map("signature_algorithm")
+  userDisplayName         String?   @map("user_display_name") @db.VarChar(64)
+  userId                  String    @map("user_id") @db.VarChar(128)
+  username                String?   @db.VarChar(64)
+  deviceName              String?   @map("device_name")
+  deviceTelemetry         Json?     @map("device_telemetry")
+  lastActive              DateTime  @default(now()) @updatedAt @map("last_active")
+  lastStatusChange        DateTime  @default(now()) @map("last_status_change")
+  lastUsedIp              String?   @map("last_used_ip")
+  status                  KeyStatus @default(ACTIVE)
+  transports              String?
+  rpEntityId              String?   @map("rp_entity_id") @db.VarChar(255)
   authenticated_timestamp DateTime? @db.DateTime(6)
-  cred_protect        Int?
-  rk                  Boolean?  @db.Bit(1)
-  user_icon           String?   @db.VarChar(128)
-  
-  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cred_protect            Int?
+  rk                      Boolean?  @db.Bit(1)
+  user_icon               String?   @db.VarChar(128)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("user_key")
 }
 
 model AuthDeviceKey {
-  id            String    @id @default(uuid())
-  userId        String    @map("user_id")
-  deviceId      String    @map("device_id")
-  
+  id       String @id @default(uuid())
+  userId   String @map("user_id")
+  deviceId String @map("device_id")
+
   // SINKRONISASI JAVA (JANGAN DIHAPUS)
-  publicKey     String    @map("public_key") @db.Text
-  publicKeyHash String?   @map("public_key_hash") @db.VarChar(64)
-  algorithm     String?   @db.VarChar(20)
+  publicKey     String  @map("public_key") @db.Text
+  publicKeyHash String? @map("public_key_hash") @db.VarChar(64)
+  algorithm     String? @db.VarChar(20)
 
-  authType      String    @map("auth_type")
-  status        String?   
-  createdAt     DateTime  @default(now()) @map("created_at")
-  lastUsedAt    DateTime? @map("last_used_at")
+  authType   String    @map("auth_type")
+  status     String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+  lastUsedAt DateTime? @map("last_used_at")
 
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("auth_device_keys")
 }
 
 model AuthTotpToken {
-  id            String    @id @default(uuid())
-  serialNumber  String    @unique @map("serial_number")
-  
-  // SINKRONISASI JAVA (JANGAN DIHAPUS)
-  encryptedSeed String    @map("encrypted_seed") @db.VarChar(512)
-  timeStep      Int       @default(30) @map("time_step")
-  digits        Int       @default(6)
-  importedAt    DateTime  @default(now()) @map("imported_at")
-  
-  userId        String?   @map("user_id")
-  tokenType     String?   @map("token_type") 
-  status        String?   
-  assignedAt    DateTime? @map("assigned_at")
-  lastUsedAt    DateTime? @map("last_used_at")
+  id           String @id @default(uuid())
+  serialNumber String @unique @map("serial_number")
 
-  user          User?     @relation(fields: [userId], references: [id])
+  // SINKRONISASI JAVA (JANGAN DIHAPUS)
+  encryptedSeed String   @map("encrypted_seed") @db.VarChar(512)
+  timeStep      Int      @default(30) @map("time_step")
+  digits        Int      @default(6)
+  importedAt    DateTime @default(now()) @map("imported_at")
+
+  userId     String?   @map("user_id")
+  tokenType  String?   @map("token_type")
+  status     String?
+  assignedAt DateTime? @map("assigned_at")
+  lastUsedAt DateTime? @map("last_used_at")
+
+  user User? @relation(fields: [userId], references: [id])
 
   @@map("auth_totp_tokens")
+}
+
+// ==========================================
+// INVENTORY MANAGEMENT (HARDWARE TOKENS)
+// ==========================================
+model TotpHardwareInventory {
+  id           String @id @default(uuid())
+  serialNumber String @unique @map("serial_number")
+  status       String @default("available") // available, assigned, suspended, revoked, expired
+  vendor       String @db.VarChar(50) // yubico, feitian, safenet
+  batchId      String @map("batch_id") @db.VarChar(100)
+
+  // Seed/Secret Key dari pabrik (Wajib dienkripsi AES-256 di database)
+  secretKey  String   @map("secret_key") @db.VarChar(512)
+  expiryDate DateTime @map("expiry_date")
+
+  // Relasi ke User (Jika statusnya 'assigned')
+  userId String? @map("user_id") @db.VarChar(128)
+  user   User?   @relation(fields: [userId], references: [id])
+
+  lastUsedAt DateTime? @map("last_used_at")
+  assignedAt DateTime? @map("assigned_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([batchId])
+  @@index([vendor])
+  @@map("totp_hardware_inventory")
 }
 
 // ==========================================
@@ -139,38 +169,38 @@ model AuthTotpToken {
 // ==========================================
 
 model Transaction {
-  id               String   @id @default(uuid())
-  timestamp        DateTime @default(now())
-  amount           Decimal  @db.Decimal(15, 2)
-  currency         String   @default("MYR")
-  
+  id        String   @id @default(uuid())
+  timestamp DateTime @default(now())
+  amount    Decimal  @db.Decimal(15, 2)
+  currency  String   @default("MYR")
+
   // [PENTING] Field Tambahan untuk Controller Transaksi Baru
-  transactionNo    String   @unique
-  toAccount        String?
-  description      String?
-  type             String   @default("TRANSFER")
-  status           String   @default("PENDING") // PENDING, SUCCESS, FAILED
+  transactionNo String  @unique
+  toAccount     String?
+  description   String?
+  type          String  @default("TRANSFER")
+  status        String  @default("PENDING") // PENDING, SUCCESS, FAILED
 
-  merchantName     String?  @default("Unknown Merchant")
-  merchantCategory String? 
-  merchantCountry  String?  
+  merchantName     String? @default("Unknown Merchant")
+  merchantCategory String?
+  merchantCountry  String?
 
-  authMethod       String?  
-  authResult       String?  
-  ipAddress        String?
-  locationCity     String?
-  locationCountry  String?
-  
-  userId           String
-  user             User     @relation(fields: [userId], references: [id])
-  
-  deviceInfo       Json?    
-  riskLevel        String   @default("LOW")
-  riskScore        Int?     @default(0)
-  riskReason       String?  @db.Text  
+  authMethod      String?
+  authResult      String?
+  ipAddress       String?
+  locationCity    String?
+  locationCountry String?
 
-  appliedPolicyId  String?
-  appliedLimitId   String?
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  deviceInfo Json?
+  riskLevel  String  @default("LOW")
+  riskScore  Int?    @default(0)
+  riskReason String? @db.Text
+
+  appliedPolicyId String?
+  appliedLimitId  String?
 
   riskAnalysisLogs RiskAnalysisLog[]
 
@@ -180,14 +210,14 @@ model Transaction {
 }
 
 model RiskAnalysisLog {
-  id               String      @id @default(uuid())
-  transactionId    String
-  transaction      Transaction @relation(fields: [transactionId], references: [id])
-  
-  ruleCode         String   
-  scoreContributed Int      
-  
-  createdAt        DateTime @default(now())
+  id            String      @id @default(uuid())
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+
+  ruleCode         String
+  scoreContributed Int
+
+  createdAt DateTime @default(now())
 
   @@map("transaction_analysis_logs")
 }
@@ -195,43 +225,45 @@ model RiskAnalysisLog {
 model UserDevice {
   id          String   @id @default(uuid())
   userId      String   @map("user_id")
-  deviceId    String   @map("device_id") 
+  deviceId    String   @map("device_id")
   deviceModel String?
-  fcmToken    String?  @map("fcm_token") @db.Text 
+  fcmToken    String?  @map("fcm_token") @db.Text
   lastActive  DateTime @default(now())
-  
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, deviceId])
   @@map("user_devices")
 }
 
 model ApiClient {
-  id        String   @id @default(uuid())
-  apiKey    String   @unique @map("api_key")
-  apiSecret String   @map("api_secret")
-  name      String   
-  channel      String   @default("MOBILE")                    // Tambahkan @default
-  consumerType String   @map("consumer_type") @default("CONSUMER") // Tambahkan @default
-  isActive  Boolean  @default(true)
+  id           String  @id @default(uuid())
+  apiKey       String  @unique @map("api_key")
+  apiSecret    String  @map("api_secret")
+  name         String
+  channel      String  @default("MOBILE") // Tambahkan @default
+  consumerType String  @default("CONSUMER") @map("consumer_type") // Tambahkan @default
+  isActive     Boolean @default(true)
+
   @@map("api_clients")
 }
 
 model AuthPushRequest {
   id        String   @id @default(uuid())
   userId    String   @map("user_id")
-  status    String   
-  challenge String   
+  status    String
+  challenge String
   expiresAt DateTime
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+
   @@map("auth_push_requests")
 }
 
 model AuthLog {
   id            String   @id @default(uuid())
-  email         String?  
-  userId        String?  @map("user_id") 
+  email         String?
+  userId        String?  @map("user_id")
   eventType     String   @map("event_type")
   authMethod    String?  @map("auth_method")
   status        String
@@ -245,10 +277,10 @@ model AuthLog {
   riskScore     Int      @default(0) @map("risk_score")
   riskTags      Json?    @map("risk_tags")
   duration      Int?     @default(0)
-  metadata      Json?    
+  metadata      Json?
   createdAt     DateTime @default(now()) @map("created_at")
-  
-  user          User?    @relation(fields: [userId], references: [id])
+
+  user User? @relation(fields: [userId], references: [id])
 
   @@map("auth_logs")
 }
@@ -257,16 +289,17 @@ model AuthLog {
 
 model AmountLimit {
   id        String   @id @default(uuid())
-  segment   String   
+  segment   String
   currency  String   @default("MYR")
   minAmount Float    @default(0)
-  maxAmount Float?   
+  maxAmount Float?
   weight    Int      @default(0)
-  label     String   @default("low") 
+  label     String   @default("low")
   stepUp    Boolean  @default(false)
-  methods   Json?    
+  methods   Json?
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt
+
   @@map("config_amount_limits")
 }
 
@@ -276,6 +309,7 @@ model RiskThreshold {
   lowScore  Int      @default(30)
   highScore Int      @default(70)
   updatedAt DateTime @updatedAt
+
   @@unique([segment])
   @@map("config_risk_thresholds")
 }
@@ -284,12 +318,13 @@ model RiskRule {
   id         String   @id @default(uuid())
   segment    String   @default("consumer")
   ruleCode   String?
-  ruleType   String?  // Deprecated, use ruleCode
-  name       String   
+  ruleType   String? // Deprecated, use ruleCode
+  name       String
   isActive   Boolean  @default(false)
-  weight     Int      @default(0) 
-  parameters String?  @db.LongText 
+  weight     Int      @default(0)
+  parameters String?  @db.LongText
   updatedAt  DateTime @updatedAt
+
   @@unique([segment, ruleCode])
   @@map("config_risk_rules")
 }
@@ -297,12 +332,12 @@ model RiskRule {
 model AuthPolicy {
   id        String   @id @default(uuid())
   name      String?
-  segment   String   
-  channel   String   
-  riskLevel String   
+  segment   String
+  channel   String
+  riskLevel String
   action    String   @default("LOGIN")
-  condition String?  @db.LongText 
-  config    String?  @db.LongText 
+  condition String?  @db.LongText
+  config    String?  @db.LongText
   priority  Int      @default(1)
   isActive  Boolean  @default(true)
   updatedAt DateTime @updatedAt

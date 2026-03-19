@@ -91,5 +91,27 @@ export const adminService = {
     getInvestigationReport: async (id: string) => {
         const res = await apiClient.get(`/api/admin/transactions/${id}/investigate`);
         return res.data;
-    }
+    },
+
+    getTotpInventory: async () => {
+        const res = await apiClient.get(`/api/admin/totp-inventory`);
+        return res.data;
+    },
+
+    importTotpBatch: async (formData: FormData) => {
+        const res = await apiClient.post(`/api/admin/totp-inventory/import`, formData);
+        return res.data;
+    },
+    updateTotpStatus: async (serial: string, status: string) => {
+        const res = await apiClient.put(`/api/admin/totp-inventory/${serial}/status`, { status });
+        return res.data;
+    },
+    assignTotpToken: async (serial: string, userId: string) => {
+        const res = await apiClient.post(`/api/admin/totp-inventory/${serial}/assign`, { userId });
+        return res.data;
+    },
+    unassignTotpToken: async (serial: string) => {
+        const res = await apiClient.post(`/api/admin/totp-inventory/${serial}/unassign`);
+        return res.data;
+    },
 };

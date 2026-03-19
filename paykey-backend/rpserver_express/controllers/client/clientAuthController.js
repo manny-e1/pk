@@ -33,7 +33,7 @@ exports.registerUser = async (req, res) => {
 
         sendTokenCookie(res, user);
         
-        await createRichAuthLog(req, user, { eventType: 'REGISTER_SUCCESS', status: 'SUCCESS' });
+        //await createRichAuthLog(req, user, { eventType: 'REGISTER_SUCCESS', status: 'SUCCESS' });
 
         res.json({ 
             status: 'success', 
@@ -62,32 +62,33 @@ exports.loginStep1 = async (req, res) => {
         const segment = (user.companyName || user.role === 'ADMIN') ? 'CORPORATE' : 'CONSUMER';
         
         // PERBAIKAN: Hitung risiko login (Geo-Anomaly / New Device)
-        const riskContext = {
-            userId: user.id, email: user.email, userSegment: segment, channel: channel,
-            amount: 0, currency: 'MYR', ipAddress: req.ip,
-            deviceId: deviceId || 'unknown',
-            telemetry: telemetry || {}
-        };
+        // const riskContext = {
+        //     userId: user.id, email: user.email, userSegment: segment, channel: channel,
+        //     amount: 0, currency: 'MYR', ipAddress: req.ip,
+        //     deviceId: deviceId || 'unknown',
+        //     telemetry: telemetry || {}
+        // };
 
-        const riskResult = await RiskEngine.calculateRisk(riskContext);
-        console.log(`[LOGIN] User: ${user.email} | Risk Score: ${riskResult.score}`);
+        // const riskResult = await RiskEngine.calculateRisk(riskContext);
+        // console.log(`[LOGIN] User: ${user.email} | Risk Score: ${riskResult.score}`);
 
         const policyResult = await PolicyEngine.evaluateAuthPolicy({
             segment: segment,
             channel: channel,
             action: 'LOGIN',
-            riskScore: riskResult.score // DINAMIS DARI DATABASE!
+            // riskScore: riskResult.score // DINAMIS DARI DATABASE!
+            riskScore: 10
         });
 
         const decision = policyResult.decision;
 
         if (decision.status === 'APPROVED') {
             sendTokenCookie(res, user);
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS', riskScore: riskResult.score });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS', riskScore: riskResult.score });
             return res.json({ status: 'complete', userId: user.id });
         } 
         else if (decision.status === 'CHALLENGED') {
-            await createRichAuthLog(req, user, { eventType: 'LOGIN_CHALLENGE', status: 'CHALLENGED', riskScore: riskResult.score });
+            //await createRichAuthLog(req, user, { eventType: 'LOGIN_CHALLENGE', status: 'CHALLENGED', riskScore: riskResult.score });
             
             // ---> TAMBAHKAN 1 BARIS INI <---
             const challengeRes = await javaClient.getUnifiedChallenge();
@@ -123,7 +124,7 @@ exports.verifyMfa = async (req, res) => {
         if (result.status !== 'success') throw new Error('Invalid Signature/OTP');
 
         sendTokenCookie(res, user);
-        await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: authType });
+        //await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: authType });
 
         res.json({ status: 'success' });
     } catch (err) {

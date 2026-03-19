@@ -348,15 +348,15 @@ exports.initiateTransaction = async (req, res) => {
             return res.status(403).json({ error: "Account Suspended: Transactions are blocked." });
         }
   const channel = req.apiClient ? req.apiClient.channel : "MOBILE";
-  const ipAddress =
-    req.headers["x-forwarded-for"] || req.socket.remoteAddress || req.ip;
+  const rawIp = req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.socket.remoteAddress || req.ip;
+  const ipAddress = rawIp ? rawIp.split(',')[0].trim() : '127.0.0.1';
 
     
 
     const segment =
       user.companyName || user.role === "ADMIN" ? "CORPORATE" : "CONSUMER";
     const netInfo = getNetworkInfo(ipAddress);
-    const countryCode = netInfo.country || "UN";
+    let countryCode = netInfo.country || "UN";
 
     const riskContext = {
       userId: user.id,

@@ -13,6 +13,8 @@ const clientDevice = require('../controllers/client/clientDeviceController');
 const enrollController = require('../controllers/client/clientEnrollmentController');
 const stepUpController = require('../controllers/client/clientStepUpController');
 
+const webTotpController = require('../controllers/web/webTotpController');
+
 router.use(clientGuard);
 
 
@@ -48,5 +50,8 @@ router.post('/auth/verify-stepup',  stepUpController.verifyStepUp);
 
 router.post('/auth/fido/start', stepUpController.fidoStartProxy); 
 router.post('/auth/fido/verify', stepUpController.fidoVerifyProxy);
+
+router.post('/totp/setup', webTotpController.setupSoftToken);
+router.post('/totp/activate', webTotpController.activateSoftToken);
 
 module.exports = router;
