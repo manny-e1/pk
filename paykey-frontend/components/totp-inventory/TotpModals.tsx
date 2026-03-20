@@ -535,13 +535,13 @@ export function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignS
     };
 
     const handleAssign = async () => {
-        if (!userId) return showToast('warning', 'Validasi', 'Mohon pilih User terlebih dahulu');
-        if (!verificationCode || verificationCode.length < 6) return showToast('warning', 'Validasi', 'Kode Verifikasi 6 digit wajib diisi');
+        if (!userId) return showToast('warning', 'Validasi', 'Select a user to assign the token');
+        if (!verificationCode || verificationCode.length < 6) return showToast('warning', 'Validasi', '6-digit verification code is required');
         
         setIsAssigning(true);
         try {
             await adminService.assignTotpToken(tokenSerial, userId, verificationCode);
-            showToast('success', 'Token Assigned', `${tokenSerial} berhasil ditautkan`);
+            showToast('success', 'Token Assigned', `${tokenSerial} has been assigned to ${searchQuery}`);
             onAssignSuccess();
             onClose();
             setUserId('');
@@ -581,7 +581,7 @@ export function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignS
                             <input 
                                 type="text" 
                                 className={`w-full py-2.5 pl-10 pr-4 bg-[var(--bg-tertiary)] border ${userId ? 'border-[var(--success)] shadow-[0_0_0_1px_var(--success)]' : 'border-[var(--border-secondary)] focus:border-[var(--accent)]'} rounded-lg text-sm outline-none text-[var(--text-primary)] placeholder-[var(--text-tertiary)] transition-all`}
-                                placeholder="Ketik nama atau email..." 
+                                placeholder="Type name or email..." 
                                 value={searchQuery} 
                                 onChange={(e) => {
                                     setSearchQuery(e.target.value);
@@ -611,7 +611,7 @@ export function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignS
                                 {searchResults.length === 0 && !isSearching ? (
                                     <div className="p-4 text-[13px] text-[var(--text-tertiary)] text-center flex flex-col items-center gap-2">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                                        User tidak ditemukan
+                                        User not found
                                     </div>
                                 ) : (
                                     <div className="py-1">
@@ -641,7 +641,7 @@ export function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignS
                         <input type="text" className="w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm font-mono tracking-[0.25em] outline-none focus:border-[var(--accent)] text-[var(--text-primary)] placeholder-[var(--text-tertiary)]" placeholder="123456" maxLength={6} value={verificationCode} onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ''))} disabled={isAssigning} />
                         <div className="text-[11px] text-[var(--text-tertiary)] mt-2 flex items-start gap-1.5">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5 shrink-0 mt-0.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                            Validasi fisik token dengan memasukkan 6 angka yang tampil di layar token nasabah saat ini.
+                            Validate the 6-digit code from the user&apos;s authenticator app to confirm assignment.
                         </div>
                     </div>
                 </div>
