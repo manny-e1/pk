@@ -14,18 +14,8 @@ const app = express();
 const PORT = 4000;
 
 const allowedOrigins = [
-	"http://localhost:3000",
-	"http://192.168.1.3:3000",
-	"http://192.168.1.3:4000",
-	"http://18.142.184.55:3000",
-	"http://18.142.184.55:4000",
-	"http://18.142.184.55",
-	"https://www.authkey.my",
-	"https://console.authkey.my",
-	"https://api.authkey.my",
-	"https://e3b4-196-191-61-230.ngrok-free.app",
   'http://localhost:3000',
-   'http://localhost:3001',
+  'http://localhost:3001',
   'http://127.0.0.1:3001',
   'http://192.168.1.3:3000',
   'http://192.168.1.3:4000',
