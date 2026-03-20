@@ -48,16 +48,16 @@ exports.importTokenBatch = async (req, res) => {
         const { vendor, batchId, decryptionKey, period, algorithm } = req.body;
         const file = req.file;
 
-        if (!file) return res.status(400).json({ error: 'File Seed (.xlsx / .csv) tidak ditemukan' });
+        if (!file) return res.status(400).json({ error: 'File Seed (.xlsx / .csv) not found' });
         if (!vendor || !batchId || !decryptionKey) {
-            return res.status(400).json({ error: 'Vendor, Batch ID, dan Decryption Key wajib diisi' });
+            return res.status(400).json({ error: 'Vendor, Batch ID, and Decryption Key are required' });
         }
 
         const workbook = xlsx.read(file.buffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
         const rawData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-        if (rawData.length === 0) return res.status(400).json({ error: 'File Excel/CSV kosong' });
+        if (rawData.length === 0) return res.status(400).json({ error: 'Excel/CSV file is empty' });
 
         let importedCount = 0;
         let failedCount = 0;
@@ -96,13 +96,13 @@ exports.importTokenBatch = async (req, res) => {
 
         return res.status(200).json({ 
             success: true, 
-            message: `Import selesai. Berhasil: ${importedCount}, Gagal/Duplikat: ${failedCount}`,
+            message: `Import completed. Successful: ${importedCount}, Failed/Duplicate: ${failedCount}`,
             importedCount 
         });
 
     } catch (error) {
         console.error("[Inventory] Import Error:", error);
-        return res.status(500).json({ success: false, error: 'Terjadi kesalahan saat memproses file import' });
+        return res.status(500).json({ success: false, error: 'An error occurred while processing the import file' });
     }
 };
 
