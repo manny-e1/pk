@@ -1,0 +1,3 @@
+{
+  "/(admin)/auth-policies/page": "app/(admin)/auth-policies/page.js"
+}

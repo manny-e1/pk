@@ -20,5 +20,4 @@ pm2.log
 .DS_Store
 
 migrations/
-**/.next/
 **/.gradle/*

@@ -1,0 +1,6 @@
+{
+  "/(admin)/auth-logs/page": "app/(admin)/auth-logs/page.js",
+  "/(admin)/auth-policies/page": "app/(admin)/auth-policies/page.js",
+  "/(admin)/dashboard/page": "app/(admin)/dashboard/page.js",
+  "/(admin)/devices/page": "app/(admin)/devices/page.js"
+}
