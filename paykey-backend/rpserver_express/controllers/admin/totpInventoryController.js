@@ -133,10 +133,10 @@ exports.assignToken = async (req, res) => {
         const { userId, verificationCode } = req.body;
 
         if (!userId || typeof userId !== 'string') {
-            return res.status(400).json({ success: false, error: 'User ID tidak valid atau kosong.' });
+            return res.status(400).json({ success: false, error: 'User ID not valid' });
         }
         if (!verificationCode || typeof verificationCode !== 'string' || verificationCode.length < 6) {
-            return res.status(400).json({ success: false, error: 'Kode Verifikasi 6 digit wajib diisi.' });
+            return res.status(400).json({ success: false, error: 'Verification code not valid' });
         }
 
         const [user, tokenData] = await Promise.all([
@@ -145,17 +145,17 @@ exports.assignToken = async (req, res) => {
         ]);
 
         if (!user) {
-            return res.status(404).json({ success: false, error: 'User tidak ditemukan di database.' });
+            return res.status(404).json({ success: false, error: 'User not found in database.' });
         }
         if (!tokenData || tokenData.status !== 'available') {
-            return res.status(400).json({ success: false, error: 'Token fisik tidak ditemukan atau sudah digunakan.' });
+            return res.status(400).json({ success: false, error: 'Token not available for assignment.' });
         }
 
         const bytes = CryptoJS.AES.decrypt(tokenData.secretKey, ENCRYPTION_SECRET);
         const decryptedSeed = bytes.toString(CryptoJS.enc.Utf8);
 
         if (!decryptedSeed) {
-            throw new Error('Dekripsi Seed gagal. Kunci master (APP_SECRET_KEY) mungkin tidak cocok.');
+            throw new Error('Failed to decrypt token seed. Data may be corrupted.');
         }
 
         const encodingType = /^[0-9A-Fa-f]+$/.test(decryptedSeed) ? 'hex' : 'base32';
@@ -174,7 +174,7 @@ exports.assignToken = async (req, res) => {
         if (!isValidOTP) {
             return res.status(400).json({ 
                 success: false,
-                error: `Kode Verifikasi Salah. Pastikan Anda memasukkan angka yang sedang menyala di token saat ini.` 
+                error: `Verification code is incorrect. Please ensure you are entering the current code displayed on the token.` 
             });
         }
 
@@ -191,7 +191,7 @@ exports.assignToken = async (req, res) => {
             console.error('[KDC Integration Error]:', kdcError.message);
             return res.status(502).json({
                 success: false,
-                error: 'Gagal menyinkronkan kunci dengan Java Security Vault. Proses Assign dibatalkan.'
+                error: 'Failed to register token with Key Distribution Center. Please try again later or contact support if the issue persists.'
             });
         }
         
@@ -240,14 +240,14 @@ exports.assignToken = async (req, res) => {
 
         return res.status(200).json({ 
             success: true, 
-            message: `Token Fisik berhasil ditautkan ke pengguna ${user.fullName}` 
+            message: `Token successfully assigned to ${user.fullName}` 
         });
 
     } catch (error) {
         console.error("[Assign Token Fatal Error]:", error);
         return res.status(500).json({ 
             success: false, 
-            error: 'Terjadi kesalahan sistem internal saat mencoba menautkan token.' 
+            error: 'An internal system error occurred while trying to assign the token.' 
         });
     }
 };
