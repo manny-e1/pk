@@ -33,10 +33,10 @@ services:
 
   paykey-server:
     container_name: paykey-server
-    # build:
-    #   context: .
-    #   dockerfile: paykey-server/Dockerfile
-    image: very271391/paykey-server:latest
+    build:
+      context: .
+      dockerfile: paykey-server/Dockerfile
+    # image: very271391/paykey-server:latest
     ports:
       - "8080:8081"
     depends_on:
@@ -56,6 +56,7 @@ services:
       SPRING_SECURITY_USER_PASSWORD: adminpass
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRINGDOC_SWAGGER_UI_PATH: /swagger-ui.html
+      PAYKEY_SECURITY_AES_SECRET: "PayKeySuperSecretMasterKey2026"
 
 volumes:
   mysql_data:

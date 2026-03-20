@@ -30,18 +30,52 @@ exports.setupAuthMethod = async (req, res) => {
 
 
 exports.updateFcmToken = async (req, res) => {
-    const { deviceId, fcmToken, deviceModel } = req.body;
-    const userId = req.user.id;
-
     try {
-        await prisma.userDevice.upsert({
-            where: { userId_deviceId: { userId, deviceId } },
-            update: { fcmToken, lastActive: new Date() },
-            create: { userId, deviceId, fcmToken, deviceModel }
+        const { userId, deviceId, fcmToken } = req.body;
+
+        if (!userId || !deviceId || !fcmToken) {
+            return res.status(400).json({ error: 'Missing userId, deviceId, or fcmToken' });
+        }
+
+        let device = await prisma.userDevice.findFirst({
+            where: { 
+                userId: userId, 
+                deviceId: deviceId 
+            }
         });
-        res.json({ status: 'success' });
+
+        // Tangkap nama/model perangkat dari Header
+        const capturedDeviceModel = req.headers['x-device-name'] || 'Unknown Android';
+
+        if (device) {
+            // Gunakan deviceModel (bukan deviceName)
+            device = await prisma.userDevice.update({
+                where: { id: device.id },
+                data: { 
+                    fcmToken: fcmToken, 
+                    deviceModel: capturedDeviceModel, // <-- PERBAIKAN
+                    lastActive: new Date() 
+                }
+            });
+        } else {
+            // Gunakan deviceModel (bukan deviceName)
+            device = await prisma.userDevice.create({
+                data: {
+                    userId: userId,
+                    deviceId: deviceId,
+                    deviceModel: capturedDeviceModel, // <-- PERBAIKAN
+                    fcmToken: fcmToken,
+                    lastActive: new Date()
+                }
+            });
+        }
+
+        console.log(`[FCM Setup] Token updated for User: ${userId} | Device: ${deviceId}`);
+        res.json({ success: true, message: 'FCM Token updated successfully' });
+
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("[DeviceController] FCM Update Error:", error);
+        res.status(500).json({ error: 'Failed to update FCM token' });
     }
 };
 

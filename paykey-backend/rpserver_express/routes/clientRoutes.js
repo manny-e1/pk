@@ -29,9 +29,9 @@ router.get('/auth/me', protect, async (req, res) => {
 });
 
 
-router.get('/device/list', protect, clientDevice.getMyDevices);
-router.post('/device/setup', protect, clientDevice.setupAuthMethod);
-router.post('/device/fcm', protect, clientDevice.updateFcmToken);
+router.get('/device/list', clientDevice.getMyDevices);
+router.post('/device/setup',  clientDevice.setupAuthMethod);
+router.post('/device/fcm',  clientDevice.updateFcmToken);
 
 router.post('/transaction/initiate', clientTx.initiateTransaction);
 router.post('/transaction/execute', clientTx.executeTransaction);
@@ -53,5 +53,8 @@ router.post('/auth/fido/verify', stepUpController.fidoVerifyProxy);
 
 router.post('/totp/setup', webTotpController.setupSoftToken);
 router.post('/totp/activate', webTotpController.activateSoftToken);
+
+router.post('/auth/push/start', stepUpController.startPushApproval);
+router.get('/auth/push/status', stepUpController.checkPushStatus);
 
 module.exports = router;

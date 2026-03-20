@@ -99,19 +99,30 @@ export const adminService = {
     },
 
     importTotpBatch: async (formData: FormData) => {
-        const res = await apiClient.post(`/api/admin/totp-inventory/import`, formData);
+        const res = await apiClient.post(`/api/admin/totp-inventory/import`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data' 
+            }
+        });
         return res.data;
     },
     updateTotpStatus: async (serial: string, status: string) => {
         const res = await apiClient.put(`/api/admin/totp-inventory/${serial}/status`, { status });
         return res.data;
     },
-    assignTotpToken: async (serial: string, userId: string) => {
-        const res = await apiClient.post(`/api/admin/totp-inventory/${serial}/assign`, { userId });
+    assignTotpToken: async (serial: string, userId: string, verificationCode: string) => {
+        const res = await apiClient.post(`/api/admin/totp-inventory/${serial}/assign`, { 
+            userId, 
+            verificationCode // <-- Kirimkan ke Backend
+        });
         return res.data;
     },
     unassignTotpToken: async (serial: string) => {
         const res = await apiClient.post(`/api/admin/totp-inventory/${serial}/unassign`);
+        return res.data;
+    },
+    searchUsers: async (query: string) => {
+        const res = await apiClient.get(`/api/users`, { params: { search: query } });
         return res.data;
     },
 };

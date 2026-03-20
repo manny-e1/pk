@@ -25,6 +25,8 @@ const allowedOrigins = [
 	"https://api.authkey.my",
 	"https://e3b4-196-191-61-230.ngrok-free.app",
   'http://localhost:3000',
+   'http://localhost:3001',
+  'http://127.0.0.1:3001',
   'http://192.168.1.3:3000',
   'http://192.168.1.3:4000',
   'http://18.142.184.55:3000',
@@ -36,27 +38,29 @@ const allowedOrigins = [
   "android:apk-key-hash-sha256:KNxFf9ASburnBecouT/TtD1G7WxWoBTFY3RzkED2FB0"
 ];
 
-app.use(
-	cors({
-		origin: function (origin, callback) {
-			if (!origin || allowedOrigins.includes(origin)) {
-				callback(null, true);
-			} else {
-				callback(new Error("Not allowed by CORS"));
-			}
-		},
-		credentials: true,
-		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-		allowedHeaders: [
-			"Content-Type",
-			"Authorization",
-			"x-client-type",
-			"x-api-key",
-			"x-signature",
-			"x-timestamp",
-		],
-	}),
-);
+    
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'x-client-type',
+        'x-api-key',
+        'x-signature',
+        'x-timestamp',
+        'x-device-name',
+        'X-Device-Name'
+    ]
+}));
+
 
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: "100mb" }));

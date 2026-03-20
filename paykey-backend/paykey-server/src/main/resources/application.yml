@@ -40,6 +40,7 @@ app:
     - "https://api.authkey.my"
     - "https://console.authkey.my"
     - "http://localhost:3000"
+    - "http://localhost:3001"
 
 paykey:
   security:
