@@ -15,6 +15,8 @@ const PORT = 4000;
 
 const allowedOrigins = [
   'http://localhost:3000',
+   'http://localhost:3001',
+  'http://127.0.0.1:3001',
   'http://192.168.1.3:3000',
   'http://192.168.1.3:4000',
   'http://18.142.184.55:3000',
@@ -43,7 +45,9 @@ app.use(cors({
         'x-client-type',
         'x-api-key',
         'x-signature',
-        'x-timestamp'
+        'x-timestamp',
+        'x-device-name',
+        'X-Device-Name'
     ]
 }));
 

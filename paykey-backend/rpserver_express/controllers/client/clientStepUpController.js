@@ -5,6 +5,7 @@ const { sendTokenCookie } = require('../../utils/jwt');
 const { createRichAuthLog } = require('../../utils/richLogger');
 const fidoService = require('../../services/fidoService');
 const { createClient } = require('redis');
+const fcmService = require('../../services/fcmService');
 
 const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redispass@localhost:6379' });
 (async () => { 
@@ -62,23 +63,52 @@ exports.verifyStepUp = async (req, res) => {
             return res.json({ success: true, message: 'FIDO2 Verified' });
         } 
         
+        // else if (['PIN', 'BIO_LEGACY', 'PUSH_APPROVAL'].includes(method)) {
+        //     const { challenge, signature } = payload; 
+            
+        //     if (!challenge || !signature || !deviceId) {
+        //         return res.status(400).json({ error: 'Challenge, signature, and deviceId are required' });
+        //     }
+
+        //     await javaClient.verifyUnifiedAuth({ 
+        //         userId: finalUserId, 
+        //         deviceId: deviceId, 
+        //         authType: method, 
+        //         challenge: challenge, 
+        //         signature: signature 
+        //     });
+            
+        //     if (!req.user) sendTokenCookie(res, user);
+        //     return res.json({ success: true, message: `${method} Verified via PKI Signature` });
+        // }
+
         else if (['PIN', 'BIO_LEGACY', 'PUSH_APPROVAL'].includes(method)) {
-            const { challenge, signature } = payload; 
+            const { challenge, signature, txId } = payload; 
             
             if (!challenge || !signature || !deviceId) {
                 return res.status(400).json({ error: 'Challenge, signature, and deviceId are required' });
             }
 
+            // Java Server menggunakan kunci BIO_LEGACY untuk memvalidasi Push Approval
+            const javaAuthType = method === 'PUSH_APPROVAL' ? 'BIO_LEGACY' : method;
+
             await javaClient.verifyUnifiedAuth({ 
-                userId: finalUserId, 
-                deviceId: deviceId, 
-                authType: method, 
-                challenge: challenge, 
-                signature: signature 
+                userId: finalUserId, deviceId: deviceId, authType: javaAuthType, challenge, signature 
             });
             
+            // JIKA INI BALASAN PUSH APPROVAL DARI HP
+            if (method === 'PUSH_APPROVAL' && txId) {
+                const sessionStr = await redisClient.get(`push_tx:${txId}`);
+                if (sessionStr) {
+                    const sessionData = JSON.parse(sessionStr);
+                    sessionData.status = 'APPROVED'; // Ubah state untuk Web
+                    await redisClient.set(`push_tx:${txId}`, JSON.stringify(sessionData), { EX: 60 });
+                }
+                return res.json({ success: true, message: 'Approval sent to Web Browser' });
+            }
+
             if (!req.user) sendTokenCookie(res, user);
-            return res.json({ success: true, message: `${method} Verified via PKI Signature` });
+            return res.json({ success: true, message: `${method} Verified` });
         }
 
         else if (method === 'HARDWARE_TOTP' || method === 'TOTP_SOFT') {
@@ -181,4 +211,54 @@ exports.fidoVerifyProxy = async (req, res) => {
         console.error("FIDO2 Verify Error:", error.message);
         res.status(500).json({ error: error.message });
     }
+};
+
+
+exports.startPushApproval = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        const challengeData = await javaClient.getUnifiedChallenge();
+        const challenge = challengeData.challenge || challengeData;
+        
+        const txId = require('crypto').randomUUID();
+
+        const sessionData = { status: 'PENDING', userId: user.id, challenge };
+        await redisClient.set(`push_tx:${txId}`, JSON.stringify(sessionData), { EX: 120 });
+
+        const device = await prisma.userDevice.findFirst({ 
+            where: { userId: user.id, fcmToken: { not: '' } },
+            orderBy: { lastActive: 'desc' }
+        });
+
+        if (device) {
+            await fcmService.sendPushNotification(device.fcmToken, "Approval Request", "Tap for approval", {
+                authType: "PUSH_APPROVAL",
+                challenge: challenge,
+                txId: txId
+            });
+        }
+
+        res.json({ success: true, txId: txId });
+    } catch (err) { res.status(500).json({ error: 'Failed to start Push Approval' }); }
+};
+
+exports.checkPushStatus = async (req, res) => {
+    try {
+        const { txId } = req.query;
+        const dataStr = await redisClient.get(`push_tx:${txId}`);
+        if (!dataStr) return res.status(400).json({ status: 'EXPIRED' });
+
+        const sessionData = JSON.parse(dataStr);
+
+        if (sessionData.status === 'APPROVED') {
+            const user = await prisma.user.findUnique({ where: { id: sessionData.userId } });
+            sendTokenCookie(res, user);
+            await redisClient.del(`push_tx:${txId}`);
+            return res.json({ success: true, status: 'APPROVED' });
+        }
+        res.json({ success: true, status: 'PENDING' });
+    } catch (err) { res.status(500).json({ error: 'Status check failed' }); }
 };

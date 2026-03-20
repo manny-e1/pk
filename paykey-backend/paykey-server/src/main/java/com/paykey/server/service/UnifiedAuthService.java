@@ -26,27 +26,70 @@ public class UnifiedAuthService {
 
     // --- 1. MANAJEMEN KUNCI DIGITAL (PIN/BIO - Client Setup) ---
 
+    // @Transactional
+    // public void registerDeviceKey(String userId, String deviceId, String publicKey, String authType) {
+    //     // Bersihkan key lama jika user setup ulang di device yang sama
+    //     deviceKeyRepo.findByUserIdAndDeviceIdAndAuthType(userId, deviceId, authType)
+    //             .ifPresent(existing -> {
+    //                 log.info("Overwriting existing {} key for user {}", authType, userId);
+    //                 deviceKeyRepo.delete(existing);
+    //             });
+
+    //     AuthDeviceKeyEntity key = AuthDeviceKeyEntity.builder()
+    //             .userId(userId)
+    //             .deviceId(deviceId)
+    //             .publicKey(publicKey) // PEM format dari Mobile
+    //             .authType(authType)   // "PIN" atau "BIO_LEGACY"
+    //             .algorithm("RSA")     // Default RSA, Mobile App harus generate RSA Keypair
+    //             .status("ACTIVE")
+    //             .build();
+
+    //     deviceKeyRepo.save(key);
+    //     log.info("Registered new {} key for User: {}", authType, userId);
+    // }
+
     @Transactional
-    public void registerDeviceKey(String userId, String deviceId, String publicKey, String authType) {
-        // Bersihkan key lama jika user setup ulang di device yang sama
+public void registerDeviceKey(String userId, String deviceId, String publicKey, String authType) {
+    // 1. CEK: Jika tipe adalah TOTP, simpan ke tabel auth_totp_tokens
+    if (authType != null && authType.contains("TOTP")) {
+        log.info("Processing TOTP Registration for User: {}", userId);
+        
+        // Hapus data lama dengan serial yang sama jika ada
+        totpRepo.findBySerialNumber(deviceId).ifPresent(totpRepo::delete);
+
+        AuthTotpTokenEntity totp = AuthTotpTokenEntity.builder()
+                .serialNumber(deviceId)
+                .userId(userId)
+                .tokenType(authType.contains("HARDWARE") ? "HARDWARE" : "SOFT")
+                // WAJIB: Enkripsi seed (publicKey) sebelum simpan ke DB Java
+                .encryptedSeed(EncryptionUtil.encrypt(publicKey)) 
+                .status("ASSIGNED")
+                .timeStep(60) // Gunakan 60 untuk Hardware Token
+                .digits(6)
+                .assignedAt(LocalDateTime.now())
+                .build();
+        
+        totpRepo.save(totp);
+        log.info("Successfully registered & encrypted TOTP in Security Vault for User: {}", userId);
+        
+    } else {
+        // 2. Jika tipe PIN/BIO, gunakan logika asli Anda (simpan ke auth_device_keys)
         deviceKeyRepo.findByUserIdAndDeviceIdAndAuthType(userId, deviceId, authType)
-                .ifPresent(existing -> {
-                    log.info("Overwriting existing {} key for user {}", authType, userId);
-                    deviceKeyRepo.delete(existing);
-                });
+                .ifPresent(deviceKeyRepo::delete);
 
         AuthDeviceKeyEntity key = AuthDeviceKeyEntity.builder()
                 .userId(userId)
                 .deviceId(deviceId)
-                .publicKey(publicKey) // PEM format dari Mobile
-                .authType(authType)   // "PIN" atau "BIO_LEGACY"
-                .algorithm("RSA")     // Default RSA, Mobile App harus generate RSA Keypair
+                .publicKey(publicKey) // PEM format
+                .authType(authType)
+                .algorithm("RSA")
                 .status("ACTIVE")
                 .build();
 
         deviceKeyRepo.save(key);
-        log.info("Registered new {} key for User: {}", authType, userId);
+        log.info("Registered new {} key in Device Vault for User: {}", authType, userId);
     }
+}
 
     // --- 2. MANAJEMEN HARDWARE TOKEN (Admin Import) ---
 
@@ -112,29 +155,62 @@ public class UnifiedAuthService {
         return isValid;
     }
 
-    // Untuk Hardware Token & Soft Token (OTP Based)
-    @Transactional
-    public boolean verifyTotp(String userId, String inputOtp) {
-        // Cari semua token yang ASSIGNED ke user ini
-        List<AuthTotpTokenEntity> tokens = totpRepo.findByUserIdAndStatus(userId, "ASSIGNED");
+    // // Untuk Hardware Token & Soft Token (OTP Based)
+    // @Transactional
+    // public boolean verifyTotp(String userId, String inputOtp) {
+    //     // Cari semua token yang ASSIGNED ke user ini
+    //     List<AuthTotpTokenEntity> tokens = totpRepo.findByUserIdAndStatus(userId, "ASSIGNED");
         
-        for (AuthTotpTokenEntity token : tokens) {
-            try {
-                // DEKRIPSI SEED
-                String plainSeed = EncryptionUtil.decrypt(token.getEncryptedSeed());
+    //     for (AuthTotpTokenEntity token : tokens) {
+    //         try {
+    //             // DEKRIPSI SEED
+    //             String plainSeed = EncryptionUtil.decrypt(token.getEncryptedSeed());
                 
-                // Validasi (Window=1 artinya toleransi +/- 30 detik)
-                boolean isValid = UnifiedCryptoUtil.validateTotp(plainSeed, inputOtp, token.getTimeStep(), token.getDigits(), 1);
+    //             // Validasi (Window=1 artinya toleransi +/- 30 detik)
+    //             boolean isValid = UnifiedCryptoUtil.validateTotp(plainSeed, inputOtp, token.getTimeStep(), token.getDigits(), 1);
                 
-                if (isValid) {
-                    token.setLastUsedAt(LocalDateTime.now());
-                    totpRepo.save(token);
-                    return true; 
-                }
-            } catch (Exception e) {
-                log.error("Error verifying token {}: {}", token.getSerialNumber(), e.getMessage());
+    //             if (isValid) {
+    //                 token.setLastUsedAt(LocalDateTime.now());
+    //                 totpRepo.save(token);
+    //                 return true; 
+    //             }
+    //         } catch (Exception e) {
+    //             log.error("Error verifying token {}: {}", token.getSerialNumber(), e.getMessage());
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    @Transactional
+public boolean verifyTotp(String userId, String inputOtp) {
+    List<AuthTotpTokenEntity> tokens = totpRepo.findByUserIdAndStatus(userId, "ASSIGNED");
+    
+    for (AuthTotpTokenEntity token : tokens) {
+        try {
+            String plainSeed = EncryptionUtil.decrypt(token.getEncryptedSeed());
+            
+            // PERBAIKAN: Gunakan Window=2 agar lebih toleran terhadap perbedaan waktu
+            // Sertakan juga token.getAlgorithm() yang sudah disimpan saat Assign
+            String algo = (token.getTokenType() != null) ? "SHA1" : "SHA1"; // Bisa ambil dari field entity jika ada
+            
+            boolean isValid = UnifiedCryptoUtil.validateTotp(
+                plainSeed, 
+                inputOtp, 
+                token.getTimeStep(), 
+                token.getDigits(), 
+                2, // Window disamakan dengan Node.js
+                "SHA1" // Pastikan entity AuthTotpTokenEntity punya field algorithm jika ingin dinamis
+            );
+            
+            if (isValid) {
+                token.setLastUsedAt(LocalDateTime.now());
+                totpRepo.save(token);
+                return true; 
             }
+        } catch (Exception e) {
+            log.error("Error verifying token {}: {}", token.getSerialNumber(), e.getMessage());
         }
-        return false;
     }
+    return false;
+}
 }

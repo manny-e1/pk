@@ -2451,7 +2451,11 @@ const adminService = {
         return res.data;
     },
     importTotpBatch: async (formData)=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post(`/api/admin/totp-inventory/import`, formData);
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post(`/api/admin/totp-inventory/import`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
         return res.data;
     },
     updateTotpStatus: async (serial, status)=>{
@@ -2460,14 +2464,23 @@ const adminService = {
         });
         return res.data;
     },
-    assignTotpToken: async (serial, userId)=>{
+    assignTotpToken: async (serial, userId, verificationCode)=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post(`/api/admin/totp-inventory/${serial}/assign`, {
-            userId
+            userId,
+            verificationCode
         });
         return res.data;
     },
     unassignTotpToken: async (serial)=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].post(`/api/admin/totp-inventory/${serial}/unassign`);
+        return res.data;
+    },
+    searchUsers: async (query)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/users`, {
+            params: {
+                search: query
+            }
+        });
         return res.data;
     }
 };
