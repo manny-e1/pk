@@ -13,7 +13,7 @@ const redisClient = createClient({ url: process.env.REDIS_URL || 'redis://:redis
     catch (e) { console.error("[Redis] Error:", e.message); }
 })();
 
-const RP_ID = process.env.RP_ID || 'authkey.my';
+const RP_ID = process.env.RP_ID_WEB || 'demo.authkey.my';
 
 const saveContext = async (challenge, sessionId, context) => {
     await redisClient.set(`ctx:${challenge}`, JSON.stringify({ sessionId, ...context }), { EX: 300 });
