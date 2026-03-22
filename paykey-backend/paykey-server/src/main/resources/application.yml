@@ -39,6 +39,7 @@ app:
     - "https://authkey.my"
     - "https://api.authkey.my"
     - "https://console.authkey.my"
+    - "https://demo.authkey.my"
     - "http://localhost:3000"
     - "http://localhost:3001"
     - "https://paykey-web-demo.vercel.app"

@@ -27,7 +27,7 @@ const allowedOrigins = [
   'https://api.authkey.my',
   "android:apk-key-hash-sha256:KNxFf9ASburnBecouT/TtD1G7WxWoBTFY3RzkED2FB0",
   "http://18.141.138.67:3000",
-  "https://paykey-web-demo.vercel.app"
+  "https://demo.authkey.my"
 ];
 
     
