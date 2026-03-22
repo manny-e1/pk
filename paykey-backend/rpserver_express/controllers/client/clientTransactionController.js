@@ -322,36 +322,53 @@ exports.initiateTransaction = async (req, res) => {
     description,
     type,
     telemetry,
+    userId,
   } = req.body;
 
-    try {
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        
-    if (!user || user.cifNumber !== cifNumber) {
-      return res.status(401).json({ error: "User not found or CIF mismatch" });
-    }
-// --- 1. VALIDASI DASAR ---
+  try {
     if (!email || !cifNumber || !amount || !currency) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-        if (user.status === 'suspended') {
-             await createRichAuthLog(req, user, {
-                eventType: 'Transaction Blocked',
-                status: 'FAILED',
-                authMethod: 'TRANSACTION',
-                message: 'Transaction blocked due to suspended account',
-                data: {
-                    amount: Number(amount),
-                    tags: [{ label: 'Account Suspended', class: 'error' }]
-                }
-            });
-            return res.status(403).json({ error: "Account Suspended: Transactions are blocked." });
-        }
-  const channel = req.apiClient ? req.apiClient.channel : "MOBILE";
-  const rawIp = req.headers["cf-connecting-ip"] || req.headers["x-forwarded-for"] || req.socket.remoteAddress || req.ip;
-  const ipAddress = rawIp ? rawIp.split(',')[0].trim() : '127.0.0.1';
 
-    
+    // 👉 PERBAIKAN: Cek via userId (Web) ATAU via email (Android)
+    let user = null;
+    if (userId) {
+      user = await prisma.user.findUnique({ where: { id: userId } });
+    } else {
+      user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+    }
+
+    if (!user || user.cifNumber !== cifNumber) {
+      return res.status(401).json({ error: "User not found or CIF mismatch" });
+    }
+    // --- 1. VALIDASI DASAR ---
+    if (!email || !cifNumber || !amount || !currency) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    if (user.status === "suspended") {
+      await createRichAuthLog(req, user, {
+        eventType: "Transaction Blocked",
+        status: "FAILED",
+        authMethod: "TRANSACTION",
+        message: "Transaction blocked due to suspended account",
+        data: {
+          amount: Number(amount),
+          tags: [{ label: "Account Suspended", class: "error" }],
+        },
+      });
+      return res
+        .status(403)
+        .json({ error: "Account Suspended: Transactions are blocked." });
+    }
+    const channel = req.apiClient ? req.apiClient.channel : "MOBILE";
+    const rawIp =
+      req.headers["cf-connecting-ip"] ||
+      req.headers["x-forwarded-for"] ||
+      req.socket.remoteAddress ||
+      req.ip;
+    const ipAddress = rawIp ? rawIp.split(",")[0].trim() : "127.0.0.1";
 
     const segment =
       user.companyName || user.role === "ADMIN" ? "CORPORATE" : "CONSUMER";
@@ -569,10 +586,176 @@ exports.initiateTransaction = async (req, res) => {
     console.error("Init Trx Error:", err);
     res.status(500).json({ error: "Transaction Initialization Failed" });
   }
-}
+};
+// /**
+//  * @description Dipanggil SDK SETELAH transaksi sukses di sisi klien.
+//  * Menggabungkan log 'Challenged' menjadi 'Success' dan mencatat riwayat finansial.
+//  */
+// exports.executeTransaction = async (req, res) => {
+//   const {
+//     email,
+//     cifNumber,
+//     amount,
+//     currency,
+//     beneficiaryAccount,
+//     merchantName,
+//     description,
+//     type,
+//     status,
+//     riskScore,
+//     riskLevel,
+//     deviceId,
+//     userId,
+//     authType
+//   } = req.body;
+
+//     if (deviceId) {
+//         const userKey = await prisma.userKey.findFirst({
+//             where: {
+//                 OR: [
+//                     { credentialId: deviceId },
+//                     { id: isNaN(deviceId) ? undefined : parseInt(deviceId) }
+//                 ]
+//             }
+//         });
+
+//         if (userKey) {
+//             const status = (userKey.status || "").toLowerCase();
+//             if (status === 'suspended' || status === 'revoked') {
+//                 await createRichAuthLog(req, { id: userId }, {
+//                     eventType: `Transaction Blocked - Device ${status}`,
+//                     status: 'FAILED',
+//                     authMethod: authType || 'TRANSACTION',
+//                     data: {
+//                         amount: Number(amount),
+//                         tags: [{ label: `Device ${status}`, class: 'error' }]
+//                     }
+//                 });
+//                 return res.status(403).json({ error: `Transaction blocked: Device is ${status}` });
+//             }
+//         }
+//     }
+
+//     try {
+//         const verifyRes = await javaClient.verifyUnifiedAuth({
+//             userId, deviceId, authType, challenge, signature, otp
+//         });
+
+//     const user = await prisma.user.findUnique({
+//       where: { email: email.toLowerCase() },
+//     });
+//     if (!user || user.cifNumber !== cifNumber)
+//       return res.status(401).json({ error: "User not found or CIF mismatch" });
+
+//     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+//     const recentLogs = await prisma.authLog.findMany({
+//       where: {
+//         email: user.email,
+//         status: "CHALLENGED",
+//         createdAt: { gte: fiveMinutesAgo },
+//       },
+//       orderBy: { createdAt: "desc" },
+//       take: 1,
+//     });
+
+//     let finalTransactionId = generatePaymentId();
+
+//     const newTrx = await prisma.transaction.create({
+//       data: {
+//         id: finalTransactionId,
+//         transactionNo: finalTransactionId,
+//         userId: user.id,
+//         type: type || "TRANSFER",
+//         amount: Number(amount),
+//         currency: currency || "IDR",
+//         toAccount: beneficiaryAccount || merchantName || "Unknown",
+//         merchantName: merchantName || null,
+//         description:
+//           description || `Trx to ${beneficiaryAccount || merchantName}`,
+//         status: status || "SUCCESS",
+//         authResult: "SUCCESS",
+//         riskScore: riskScore || 0,
+//         riskLevel: riskLevel || "LOW",
+//         timestamp: new Date(),
+//       },
+//     });
+
+//     if (recentLogs.length > 0) {
+//       const targetLog = recentLogs[0];
+//       let jsonColumn = "data";
+//       if (targetLog.riskTags !== undefined) jsonColumn = "riskTags";
+//       else if (targetLog.metadata !== undefined) jsonColumn = "metadata";
+
+//       const existingJson =
+//         typeof targetLog[jsonColumn] === "object" ? targetLog[jsonColumn] : {};
+//       const oldTags = existingJson.tags || [];
+
+//       // Pertahankan semua label, hanya ubah warna 'warning' menjadi 'info' (abu-abu/biru)
+//       // karena ancamannya sudah diverifikasi oleh user melalui FIDO2/PIN
+//       const newTags = [
+//         ...oldTags.map((t) =>
+//           t.class === "warning" ? { ...t, class: "info" } : t,
+//         ),
+//         { label: "Step-Up Verified", class: "success" },
+//       ];
+
+//       await prisma.authLog.update({
+//         where: { id: targetLog.id },
+//         data: {
+//           status: status === "SUCCESS" ? "SUCCESS" : "FAILED",
+//           eventType: "Payment Risk Approved",
+//           [jsonColumn]: {
+//             ...existingJson,
+//             paymentId: finalTransactionId,
+//             transactionNo: finalTransactionId,
+//             tags: newTags,
+//             message: "Transaction executed and verified successfully",
+//             riskScore: riskScore || existingJson.riskScore || 0,
+//           },
+//         },
+//       });
+//     } else {
+//       // Transaksi LOW RISK yang tidak melewati proses CHALLENGE
+//       const tagColor =
+//         riskScore >= 70 ? "critical" : riskScore >= 30 ? "warning" : "info";
+
+//       await createRichAuthLog(req, user, {
+//         eventType: "Payment Risk Approved",
+//         status: status || "SUCCESS",
+//         message: "Transaction executed smoothly",
+//         data: {
+//           paymentId: newTrx.id,
+//           transactionNo: newTrx.transactionNo,
+//           merchant: merchantName || beneficiaryAccount,
+//           amount: Number(amount),
+//           currency: currency,
+//           riskScore: riskScore || 0,
+//           tags: [
+//             { label: `${amount} ${currency.toUpperCase()}`, class: "success" },
+//             { label: `Score: ${riskScore || 0}`, class: tagColor },
+//           ],
+//         },
+//       });
+//     }
+
+//     res.json({
+//       success: true,
+//       message: "Transaction Record Saved and Log Updated",
+//       data: {
+//         transactionId: newTrx.id,
+//         transactionNo: newTrx.transactionNo,
+//         recordedStatus: newTrx.status,
+//       },
+//     });
+//   } catch (err) {
+//     console.error("Execute Transaction Error:", err);
+//     res.status(500).json({ error: "Failed to record transaction history" });
+//   }
+// };
+
 /**
- * @description Dipanggil SDK SETELAH transaksi sukses di sisi klien.
- * Menggabungkan log 'Challenged' menjadi 'Success' dan mencatat riwayat finansial.
+ * @description Tahap 2 (Finalisasi). Dipanggil SETELAH verifyStepUp sukses di klien.
+ * Murni untuk mencatat riwayat finansial dan mengubah status log menjadi SUCCESS.
  */
 exports.executeTransaction = async (req, res) => {
   const {
@@ -587,46 +770,44 @@ exports.executeTransaction = async (req, res) => {
     status,
     riskScore,
     riskLevel,
+    deviceId,
+    userId,
   } = req.body;
 
-    if (deviceId) {
-        const userKey = await prisma.userKey.findFirst({ 
-            where: { 
-                OR: [
-                    { credentialId: deviceId },
-                    { id: isNaN(deviceId) ? undefined : parseInt(deviceId) }
-                ]
-            } 
-        });
-        
-        if (userKey) {
-            const status = (userKey.status || "").toLowerCase();
-            if (status === 'suspended' || status === 'revoked') {
-                await createRichAuthLog(req, { id: userId }, { 
-                    eventType: `Transaction Blocked - Device ${status}`, 
-                    status: 'FAILED',
-                    authMethod: authType || 'TRANSACTION',
-                    data: {
-                        amount: Number(amount),
-                        tags: [{ label: `Device ${status}`, class: 'error' }]
-                    }
-                });
-                return res.status(403).json({ error: `Transaction blocked: Device is ${status}` });
-            }
-        }
-    }
+  // 1. Pengecekan Final Status Device (Sanity Check)
+  if (deviceId) {
+    const userKey = await prisma.userKey.findFirst({
+      where: {
+        OR: [
+          { credentialId: deviceId },
+          { id: isNaN(deviceId) ? undefined : parseInt(deviceId) },
+        ],
+      },
+    });
 
-    try {
-        const verifyRes = await javaClient.verifyUnifiedAuth({
-            userId, deviceId, authType, challenge, signature, otp
-        });
+    if (userKey) {
+      const keyStatus = (userKey.status || "").toLowerCase();
+      if (keyStatus === "suspended" || keyStatus === "revoked") {
+        return res
+          .status(403)
+          .json({ error: `Transaction blocked: Device is ${keyStatus}` });
+      }
+    }
+  }
+
+  try {
+    // KITA TIDAK MELAKUKAN VERIFIKASI KRIPTOGRAFI DI SINI LAGI.
+    // Karena request ini hanya dikirim oleh Frontend JIKA /auth/verify-stepup sebelumnya SUKSES.
 
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
     });
-    if (!user || user.cifNumber !== cifNumber)
-      return res.status(401).json({ error: "User not found or CIF mismatch" });
 
+    if (!user || user.cifNumber !== cifNumber) {
+      return res.status(401).json({ error: "User not found or CIF mismatch" });
+    }
+
+    // 2. Cari Log CHALLENGED terakhir untuk di-update menjadi SUCCESS
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
     const recentLogs = await prisma.authLog.findMany({
       where: {
@@ -640,6 +821,7 @@ exports.executeTransaction = async (req, res) => {
 
     let finalTransactionId = generatePaymentId();
 
+    // 3. Catat Transaksi Finansial ke Database
     const newTrx = await prisma.transaction.create({
       data: {
         id: finalTransactionId,
@@ -647,7 +829,7 @@ exports.executeTransaction = async (req, res) => {
         userId: user.id,
         type: type || "TRANSFER",
         amount: Number(amount),
-        currency: currency || "IDR",
+        currency: currency || "MYR",
         toAccount: beneficiaryAccount || merchantName || "Unknown",
         merchantName: merchantName || null,
         description:
@@ -660,6 +842,7 @@ exports.executeTransaction = async (req, res) => {
       },
     });
 
+    // 4. Update Auth Log
     if (recentLogs.length > 0) {
       const targetLog = recentLogs[0];
       let jsonColumn = "data";
@@ -670,8 +853,6 @@ exports.executeTransaction = async (req, res) => {
         typeof targetLog[jsonColumn] === "object" ? targetLog[jsonColumn] : {};
       const oldTags = existingJson.tags || [];
 
-      // Pertahankan semua label, hanya ubah warna 'warning' menjadi 'info' (abu-abu/biru)
-      // karena ancamannya sudah diverifikasi oleh user melalui FIDO2/PIN
       const newTags = [
         ...oldTags.map((t) =>
           t.class === "warning" ? { ...t, class: "info" } : t,
@@ -695,10 +876,8 @@ exports.executeTransaction = async (req, res) => {
         },
       });
     } else {
-      // Transaksi LOW RISK yang tidak melewati proses CHALLENGE
       const tagColor =
         riskScore >= 70 ? "critical" : riskScore >= 30 ? "warning" : "info";
-
       await createRichAuthLog(req, user, {
         eventType: "Payment Risk Approved",
         status: status || "SUCCESS",

@@ -1,0 +1,3 @@
+{
+  "/(admin)/totp-inventory/page": "app/(admin)/totp-inventory/page.js"
+}
