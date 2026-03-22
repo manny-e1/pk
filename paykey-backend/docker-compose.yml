@@ -33,10 +33,10 @@ services:
 
   paykey-server:
     container_name: paykey-server
-    build:
-      context: .
-      dockerfile: paykey-server/Dockerfile
-    # image: very271391/paykey-server:latest
+    # build:
+    #   context: .
+    #   dockerfile: paykey-server/Dockerfile
+    image: very271391/paykey-server:latest
     ports:
       - "8080:8081"
     depends_on:
