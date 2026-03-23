@@ -814,7 +814,7 @@ exports.enrollFidoStart = async (req, res) => {
   try {
     const { userId } = req.body;
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    const RP_ID = process.env.RP_ID_WEB || "localhost"; 
+    const RP_ID = process.env.RP_ID_WEB || "demo.authkey.my"; 
 
     const challengeData = await javaClient.fidoInitiateChallenge("REGISTRATION", user, RP_ID);
     if (challengeData && challengeData.challenge) {
@@ -884,7 +884,7 @@ exports.enrollFidoComplete = async (req, res) => {
     const context = await getContext(challenge);
     if (!context) return res.status(400).json({ error: "Sesi register expired atau tidak valid" });
 
-    const RP_ID = process.env.RP_ID_WEB  || "localhost"; 
+    const RP_ID = process.env.RP_ID_WEB  || "demo.authkey.my"; 
     const javaPayload = {
         serverPublicKeyCredential: {
             id: passkeyPayload.id, type: passkeyPayload.type,
