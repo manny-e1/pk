@@ -1,26 +1,21 @@
 const nodemailer = require('nodemailer');
+const { renderOtpEmailHtml } = require('../utils/emailTemplate');
 
-exports.sendOtpEmail = async (toEmail, otpCode) => {
-    console.log(`[EmailService] Preparing to send OTP via Gmail to ${toEmail} , otpCode: ${otpCode}`);
-    
-    // Bypass untuk environment dev tanpa email
+exports.sendOtpEmail = async (toEmail, otpCode, options = {}) => {
+    console.log(`[EmailService] Preparing to send OTP via Gmail to ${toEmail}`);
+
     if (process.env.NODE_ENV === 'development' && !process.env.GMAIL_USER) {
         console.log(`\n[DEV-EMAIL] To: ${toEmail} | OTP: ${otpCode}\n`);
         return true;
     }
 
-    const htmlContent = `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-            <h2>Login Verification</h2>
-            <p>Your authentication code is:</p>
-            <h1 style="color: #2563EB; letter-spacing: 5px;">${otpCode}</h1>
-            <p>This code expires in 5 minutes.</p>
-            <p style="color: gray; font-size: 12px;">If you did not request this, please ignore this email.</p>
-        </div>
-    `;
+    // Render HTML dari template
+    const htmlContent = renderOtpEmailHtml(otpCode, {
+        ipAddress: options.ipAddress,
+        account: options.account
+    });
 
     try {
-        // Setup Transporter menggunakan Gmail
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -29,19 +24,18 @@ exports.sendOtpEmail = async (toEmail, otpCode) => {
             }
         });
 
-        // Kirim Email
         const info = await transporter.sendMail({
-            from: `"Secure PayKey" <${process.env.GMAIL_USER}>`,
+            from: `"AuthKey" <${process.env.GMAIL_USER}>`,
             to: toEmail,
-            subject: "Authentication Code - PayKey",
+            subject: "Your AuthKey Verification Code",
             html: htmlContent,
         });
 
-        console.log(`[EmailService] OTP sent successfully to ${toEmail} (Message ID: ${info.messageId})`);
+        console.log(`[EmailService] OTP sent to ${toEmail} (ID: ${info.messageId})`);
         return true;
 
     } catch (error) {
-        console.error('[EmailService] Failed to send email via Gmail:', error.message);
+        console.error('[EmailService] Failed to send email:', error.message);
         throw new Error('Failed to send OTP email');
     }
 };

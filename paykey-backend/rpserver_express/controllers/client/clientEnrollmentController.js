@@ -700,7 +700,8 @@ exports.enrollOtpStart = async (req, res) => {
     try {
         const { authType, userId } = req.body;
         const user = await prisma.user.findUnique({ where: { id: userId } });
-        
+        const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const account = userId;
         if (authType === 'EMAIL_OTP' && user) {
             await prisma.authTotpToken.updateMany({
                 where: { userId: user.id, tokenType: 'EMAIL_OTP', status: 'PENDING' },
@@ -715,7 +716,7 @@ exports.enrollOtpStart = async (req, res) => {
                     status: 'PENDING', assignedAt: new Date(), importedAt: new Date()
                 }
             });
-            await emailService.sendOtpEmail(user.email, otpCode);
+            await emailService.sendOtpEmail(user.email, otpCode,{ipAddress,account});
             return res.json({ success: true, message: "OTP sent to your email" });
         } 
         return res.status(400).json({ error: "Unsupported auth type" });
