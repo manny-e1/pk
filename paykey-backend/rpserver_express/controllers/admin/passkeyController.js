@@ -204,7 +204,7 @@ exports.registerComplete = async (req, res) => {
 							label:
 								context.telemetry && context.telemetry.device_type === "mobile"
 									? "Platform"
-									: "Hardware Key",
+									: "FIDO2 Key",
 							class: "success",
 						},
 					],
@@ -321,7 +321,7 @@ exports.loginComplete = async (req, res) => {
 						label:
 							req.headers["x-client-type"] === "MOBILE"
 								? "Platform"
-								: "Hardware Key",
+								: "Platform",
 						class: "success",
 					},
 				],
