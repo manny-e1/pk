@@ -813,13 +813,13 @@ exports.enrollPKIMethod = async (req, res) => {
 // ==========================================
 exports.enrollFidoStart = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId , authenticatorType} = req.body;
     const user = await prisma.user.findUnique({ where: { id: userId } });
     const RP_ID = process.env.RP_ID_WEB || "demo.authkey.my"; 
 
-    const challengeData = await javaClient.fidoInitiateChallenge("REGISTRATION", user, RP_ID);
+    const challengeData = await javaClient.fidoInitiateChallenge("REGISTRATION", user, RP_ID, authenticatorType);
     if (challengeData && challengeData.challenge) {
-        await saveContext(challengeData.challenge, challengeData.sessionId, { userId: user.id });
+        await saveContext(challengeData.challenge, challengeData.sessionId, { userId: user.id, authenticatorType });
     }
     res.json(challengeData); 
   } catch (err) { res.status(500).json({ error: "Failed to initiate FIDO2 challenge" }); }

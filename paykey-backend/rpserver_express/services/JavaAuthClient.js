@@ -43,7 +43,7 @@ class JavaAuthClient {
     }
 
 
-    async fidoInitiateChallenge(type, user, rpId) {
+    async fidoInitiateChallenge(type, user, rpId, authenticatorType) {
         let endpoint = '';
         let payload = {};
 
@@ -54,7 +54,7 @@ class JavaAuthClient {
                 user: { id: user.id, name: user.email, displayName: user.fullName || user.email },
                 attestation: 'none',
                 authenticatorSelection: { 
-                    authenticatorAttachment: 'platform', 
+                    authenticatorAttachment: authenticatorType, 
                     userVerification: 'preferred', 
                     requireResidentKey: true 
                 }
