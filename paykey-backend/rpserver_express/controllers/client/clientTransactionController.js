@@ -313,7 +313,7 @@ function getEventDescription(status) {
 
 exports.initiateTransaction = async (req, res) => {
   const {
-    email,
+    mobile,
     cifNumber,
     amount,
     currency,
@@ -326,17 +326,17 @@ exports.initiateTransaction = async (req, res) => {
   } = req.body;
 
   try {
-    if (!email || !cifNumber || !amount || !currency) {
+    if (!mobile || !cifNumber || !amount || !currency) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // 👉 PERBAIKAN: Cek via userId (Web) ATAU via email (Android)
+    // 👉 PERBAIKAN: Cek via userId (Web) ATAU via mobile (Android)
     let user = null;
     if (userId) {
       user = await prisma.user.findUnique({ where: { id: userId } });
     } else {
       user = await prisma.user.findUnique({
-        where: { email: email.toLowerCase() },
+        where: { mobile: mobile.toLowerCase() },
       });
     }
 
@@ -344,7 +344,7 @@ exports.initiateTransaction = async (req, res) => {
       return res.status(401).json({ error: "User not found or CIF mismatch" });
     }
     // --- 1. VALIDASI DASAR ---
-    if (!email || !cifNumber || !amount || !currency) {
+    if (!mobile || !cifNumber || !amount || !currency) {
       return res.status(400).json({ error: "Missing required fields" });
     }
     if (user.status === "suspended") {
@@ -759,7 +759,7 @@ exports.initiateTransaction = async (req, res) => {
  */
 exports.executeTransaction = async (req, res) => {
   const {
-    email,
+    mobile,
     cifNumber,
     amount,
     currency,
@@ -800,7 +800,7 @@ exports.executeTransaction = async (req, res) => {
     // Karena request ini hanya dikirim oleh Frontend JIKA /auth/verify-stepup sebelumnya SUKSES.
 
     const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { id: userId }, 
     });
 
     if (!user || user.cifNumber !== cifNumber) {

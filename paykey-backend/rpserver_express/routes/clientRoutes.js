@@ -57,4 +57,6 @@ router.post('/totp/activate', webTotpController.activateSoftToken);
 router.post('/auth/push/start', stepUpController.startPushApproval);
 router.get('/auth/push/status', stepUpController.checkPushStatus);
 
+router.get('/auth/available-methods', clientAuth.getAvailableEnrollmentMethods);
+
 module.exports = router;

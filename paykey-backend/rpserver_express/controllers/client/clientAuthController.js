@@ -33,7 +33,6 @@ exports.registerUser = async (req, res) => {
 
         sendTokenCookie(res, user);
         
-        //await createRichAuthLog(req, user, { eventType: 'REGISTER_SUCCESS', status: 'SUCCESS' });
 
         res.json({ 
             status: 'success', 
@@ -48,12 +47,11 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginStep1 = async (req, res) => {
-    // TANGKAP TELEMETRY UNTUK RISK ENGINE LOGIN
-    const { email, cifNumber, deviceId, telemetry } = req.body;
+    const { mobile, cifNumber, deviceId, telemetry } = req.body;
     const channel = req.apiClient ? req.apiClient.channel : 'MOBILE'; 
 
     try {
-        const user = await prisma.user.findUnique({ where: { email, cifNumber } });
+        const user = await prisma.user.findUnique({ where: { mobile, cifNumber } });
 
         if (!user || !user.cifNumber) {
             return res.status(401).json({ error: 'Invalid credentials' });
@@ -61,22 +59,12 @@ exports.loginStep1 = async (req, res) => {
 
         const segment = (user.companyName || user.role === 'ADMIN') ? 'CORPORATE' : 'CONSUMER';
         
-        // PERBAIKAN: Hitung risiko login (Geo-Anomaly / New Device)
-        // const riskContext = {
-        //     userId: user.id, email: user.email, userSegment: segment, channel: channel,
-        //     amount: 0, currency: 'MYR', ipAddress: req.ip,
-        //     deviceId: deviceId || 'unknown',
-        //     telemetry: telemetry || {}
-        // };
 
-        // const riskResult = await RiskEngine.calculateRisk(riskContext);
-        // console.log(`[LOGIN] User: ${user.email} | Risk Score: ${riskResult.score}`);
 
         const policyResult = await PolicyEngine.evaluateAuthPolicy({
             segment: segment,
             channel: channel,
             action: 'LOGIN',
-            // riskScore: riskResult.score // DINAMIS DARI DATABASE!
             riskScore: 10
         });
 
@@ -84,19 +72,15 @@ exports.loginStep1 = async (req, res) => {
 
         if (decision.status === 'APPROVED') {
             sendTokenCookie(res, user);
-            //await createRichAuthLog(req, user, { eventType: 'LOGIN_SUCCESS', status: 'SUCCESS', riskScore: riskResult.score });
             return res.json({ status: 'complete', userId: user.id });
         } 
         else if (decision.status === 'CHALLENGED') {
-            //await createRichAuthLog(req, user, { eventType: 'LOGIN_CHALLENGE', status: 'CHALLENGED', riskScore: riskResult.score });
             
-            // ---> TAMBAHKAN 1 BARIS INI <---
             const challengeRes = await javaClient.getUnifiedChallenge();
 
             return res.json({
                 status: 'challenge_required',
                 userId: user.id,
-                // ---> TAMBAHKAN 1 BARIS INI <---
                 challenge: challengeRes.challenge || challengeRes, 
                 allowedMethods: decision.allowedMethods, 
                 requirements: decision.requirements,     
@@ -124,7 +108,6 @@ exports.verifyMfa = async (req, res) => {
         if (result.status !== 'success') throw new Error('Invalid Signature/OTP');
 
         sendTokenCookie(res, user);
-        //await createRichAuthLog(req, user, { eventType: 'LOGIN_MFA', status: 'SUCCESS', authMethod: authType });
 
         res.json({ status: 'success' });
     } catch (err) {
@@ -137,4 +120,68 @@ exports.getChallenge = async (req, res) => {
         const result = await javaClient.getChallenge();
         res.json(result);
     } catch (err) { res.status(500).json({ error: 'Failed' }); }
+};
+
+exports.getAvailableEnrollmentMethods = async (req, res) => {
+  try {
+    const channel = req.apiClient.channel.toUpperCase(); 
+    const segment = req.apiClient.consumerType.toUpperCase();
+
+    const policies = await prisma.authPolicy.findMany({
+      where: {
+        channel: channel,
+        segment: segment
+      }
+    });
+
+    console.log(`[Policy Fetch] Channel: ${channel}, Segment: ${segment}, Policies Found: ${policies.length}`);
+
+    console.log("Policies Detail:", policies.map(p => ({
+        id: p.id,
+        channel: p.channel,
+        segment: p.segment,
+        action: p.action,
+        condition: JSON.stringify(p.condition),
+        metadata: JSON.stringify(p.metadata)
+    })));
+
+    const methodSet = new Set();
+    
+    policies.forEach(policy => {
+      let conditions = {};
+      
+      try {
+        if (policy.condition) {
+          conditions = typeof policy.condition === 'string' ? JSON.parse(policy.condition) : policy.condition;
+          if (typeof conditions === 'string') conditions = JSON.parse(conditions);
+        } else if (policy.metadata) {
+          conditions = typeof policy.metadata === 'string' ? JSON.parse(policy.metadata) : policy.metadata;
+          if (typeof conditions === 'string') conditions = JSON.parse(conditions);
+        }
+      } catch (err) {
+        console.error("Gagal parsing JSON condition:", err);
+      }
+
+      const stepUpMethods = conditions.stepUpMethods || conditions.allowedMethods || [];
+      
+      stepUpMethods.forEach(method => methodSet.add(method.toLowerCase()));
+    });
+
+    let availableMethods = Array.from(methodSet);
+    
+    if (availableMethods.length === 0) {
+      availableMethods = ['fido2', 'email_otp', 'totp_soft']; 
+    }
+
+    res.json({ 
+        success: true, 
+        clientApp: req.apiClient.name,
+        channelDetected: channel, 
+        data: availableMethods 
+    });
+
+  } catch (error) {
+    console.error("Fetch Available Methods Error:", error);
+    res.status(500).json({ error: "Failed to fetch enrollment methods" });
+  }
 };
