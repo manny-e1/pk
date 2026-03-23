@@ -82,7 +82,8 @@ exports.loginStep1 = async (req, res) => {
                 status: 'challenge_required',
                 userId: user.id,
                 challenge: challengeRes.challenge || challengeRes, 
-                allowedMethods: decision.allowedMethods, 
+                // allowedMethods: decision.allowedMethods, 
+                allowedMethods: ['PIN'],
                 requirements: decision.requirements,     
                 message: 'Additional verification required based on current security policy'
             });

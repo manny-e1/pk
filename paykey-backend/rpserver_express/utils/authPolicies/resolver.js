@@ -1,15 +1,3 @@
-
-
-    
-
-
-
-    
-
-
-
-
-
 const { fetchPolicyConfig, fetchRiskThresholds } = require('./loader');
 
 async function determineRiskLevel(score) {
