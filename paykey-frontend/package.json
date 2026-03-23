@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@simplewebauthn/browser": "^13.2.2",
+    "@zip.js/zip.js": "^2.8.23",
     "axios": "^1.13.5",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",

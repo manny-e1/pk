@@ -1,76 +1,304 @@
+// const prisma = require('../../config/db');
+// const xlsx = require('xlsx');
+// const CryptoJS = require('crypto-js');
+// const javaClient = require('../../services/JavaAuthClient');
+// const speakeasy = require('speakeasy');
+// const ENCRYPTION_SECRET = process.env.PAYKEY_SECURITY_AES_SECRET || "PayKeySuperSecretMasterKey2026";
+
+// exports.getInventoryData = async (req, res) => {
+//     try {
+//         const tokens = await prisma.totpHardwareInventory.findMany({
+//             include: {
+//                 user: { select: { id: true, fullName: true, email: true } }
+//             },
+//             orderBy: { createdAt: 'desc' }
+//         });
+
+//         const statsAggregation = await prisma.totpHardwareInventory.groupBy({
+//             by: ['status'],
+//             _count: true
+//         });
+
+//         const stats = {
+//             available: 0, assigned: 0, suspended: 0, revoked: 0, expired: 0, total: tokens.length
+//         };
+        
+//         statsAggregation.forEach(item => {
+//             if (stats[item.status] !== undefined) {
+//                 stats[item.status] = item._count;
+//             }
+//         });
+
+//         const ninetyDaysFromNow = new Date();
+//         ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
+        
+//         stats.expiringSoon = await prisma.totpHardwareInventory.count({
+//             where: { expiryDate: { lte: ninetyDaysFromNow }, status: { not: 'revoked' } }
+//         });
+
+//         res.json({ success: true, stats, tokens });
+//     } catch (error) {
+//         console.error("[Inventory] Get Data Error:", error);
+//         res.status(500).json({ success: false, error: 'Error occurred while fetching inventory data' });
+//     }
+// };
+
+// exports.importTokenBatch = async (req, res) => {
+//     try {
+//         const { vendor, batchId, decryptionKey, period, algorithm } = req.body;
+//         const file = req.file;
+
+//         if (!file) return res.status(400).json({ error: 'File Seed (.xlsx / .csv) not found' });
+//         if (!vendor || !batchId || !decryptionKey) {
+//             return res.status(400).json({ error: 'Vendor, Batch ID, and Decryption Key are required' });
+//         }
+
+//         const workbook = xlsx.read(file.buffer, { type: 'buffer' });
+//         const sheetName = workbook.SheetNames[0];
+//         const rawData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+//         if (rawData.length === 0) return res.status(400).json({ error: 'Excel/CSV file is empty' });
+
+//         let importedCount = 0;
+//         let failedCount = 0;
+
+//         for (const row of rawData) {
+//             const serial = row.SerialNumber || row.serial;
+//             const secret = row.SecretKey || row.seed || row.secret;
+//             const expiry = row.ExpiryDate || row.expiry;
+
+//             if (!serial || !secret) {
+//                 failedCount++;
+//                 continue;
+//             }
+
+//             const encryptedSeed = CryptoJS.AES.encrypt(secret, ENCRYPTION_SECRET).toString();
+
+//             try {
+//                 await prisma.totpHardwareInventory.create({
+//                     data: {
+//                         serialNumber: String(serial),
+//                         vendor: vendor.toLowerCase(),
+//                         batchId: batchId,
+//                         secretKey: encryptedSeed,
+//                         expiryDate: expiry ? new Date(expiry) : new Date(new Date().setFullYear(new Date().getFullYear() + 5)),
+//                         status: 'available',
+                        
+//                         period: period ? parseInt(period) : 30,
+//                         algorithm: algorithm ? algorithm.toUpperCase() : 'SHA1'
+//                     }
+//                 });
+//                 importedCount++;
+//             } catch (dbErr) {
+//                 failedCount++;
+//             }
+//         }
+
+//         return res.status(200).json({ 
+//             success: true, 
+//             message: `Import completed. Successful: ${importedCount}, Failed/Duplicate: ${failedCount}`,
+//             importedCount 
+//         });
+
+//     } catch (error) {
+//         console.error("[Inventory] Import Error:", error);
+//         return res.status(500).json({ success: false, error: 'An error occurred while processing the import file' });
+//     }
+// };
+
+
+// exports.updateTokenStatus = async (req, res) => {
+//     try {
+//         const { serial } = req.params;
+//         const { status } = req.body;
+
+//         if (!['suspended', 'available', 'revoked'].includes(status)) {
+//             return res.status(400).json({ error: 'Status not valid' });
+//         }
+
+//         const updated = await prisma.totpHardwareInventory.update({
+//             where: { serialNumber: serial },
+//             data: { status }
+//         });
+
+//         res.json({ success: true, message: `Token ${serial} updated to ${status}`, data: updated });
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: 'Error updating token status' });
+//     }
+// };
+
+// exports.assignToken = async (req, res) => {
+//     try {
+//         const { serial } = req.params;
+//         const { userId, verificationCode } = req.body;
+
+//         if (!userId || typeof userId !== 'string') {
+//             return res.status(400).json({ success: false, error: 'User ID not valid' });
+//         }
+//         if (!verificationCode || typeof verificationCode !== 'string' || verificationCode.length < 6) {
+//             return res.status(400).json({ success: false, error: 'Verification code not valid' });
+//         }
+
+//         const [user, tokenData] = await Promise.all([
+//             prisma.user.findUnique({ where: { id: userId } }),
+//             prisma.totpHardwareInventory.findUnique({ where: { serialNumber: serial } })
+//         ]);
+
+//         if (!user) {
+//             return res.status(404).json({ success: false, error: 'User not found in database.' });
+//         }
+//         if (!tokenData || tokenData.status !== 'available') {
+//             return res.status(400).json({ success: false, error: 'Token not available for assignment.' });
+//         }
+
+//         const bytes = CryptoJS.AES.decrypt(tokenData.secretKey, ENCRYPTION_SECRET);
+//         const decryptedSeed = bytes.toString(CryptoJS.enc.Utf8);
+
+//         if (!decryptedSeed) {
+//             throw new Error('Failed to decrypt token seed. Data may be corrupted.');
+//         }
+
+//         const encodingType = /^[0-9A-Fa-f]+$/.test(decryptedSeed) ? 'hex' : 'base32';
+//         const tokenPeriod = tokenData.period || 30;
+//         const tokenAlgorithm = (tokenData.algorithm || 'sha1').toLowerCase();
+
+//         const isValidOTP = speakeasy.totp.verify({
+//             secret: decryptedSeed,
+//             encoding: encodingType,
+//             algorithm: tokenAlgorithm,
+//             step: tokenPeriod,
+//             token: verificationCode,
+//             window: 2
+//         });
+
+//         if (!isValidOTP) {
+//             return res.status(400).json({ 
+//                 success: false,
+//                 error: `Verification code is incorrect. Please ensure you are entering the current code displayed on the token.` 
+//             });
+//         }
+
+//         try {
+//             await javaClient.registerCustomKey({
+//                 userId: userId,
+//                 deviceId: serial, 
+//                 publicKey: decryptedSeed,
+//                 type: 'TOTP_HARDWARE',
+//                 period: tokenPeriod,
+//                 algorithm: tokenAlgorithm
+//             });
+//         } catch (kdcError) {
+//             console.error('[KDC Integration Error]:', kdcError.message);
+//             return res.status(502).json({
+//                 success: false,
+//                 error: 'Failed to register token with Key Distribution Center. Please try again later or contact support if the issue persists.'
+//             });
+//         }
+        
+
+//         await prisma.$transaction([
+//             prisma.userKey.upsert({
+//                 where: { 
+//                     credentialId: `HW_TOTP_${serial}` 
+//                 },
+//                 update: {
+//                     userId: userId,
+//                     status: "ACTIVE",
+//                     deviceTelemetry: JSON.stringify({ 
+//                         device_type: "hardware", 
+//                         device_vendor: tokenData.vendor,
+//                         otp_period: tokenPeriod,
+//                         otp_algorithm: tokenAlgorithm
+//                     })
+//                 },
+//                 create: {
+//                     credentialId: `HW_TOTP_${serial}`,
+//                     userId: userId,
+//                     deviceName: `Hardware Token (${tokenData.vendor.toUpperCase()})`,
+//                     transports: JSON.stringify(["HARDWARE_TOTP"]), 
+//                     publicKey: "STORED_IN_JAVA_VAULT", 
+//                     status: "ACTIVE",
+//                     signCounter: 0,
+//                     deviceTelemetry: JSON.stringify({ 
+//                         device_type: "hardware", 
+//                         device_vendor: tokenData.vendor,
+//                         otp_period: tokenPeriod,
+//                         otp_algorithm: tokenAlgorithm
+//                     }),
+//                     aaguid: "00000000-0000-0000-0000-000000000000"
+//                 }
+//             }),
+//             prisma.totpHardwareInventory.update({
+//                 where: { serialNumber: serial },
+//                 data: { 
+//                     status: 'assigned', 
+//                     userId: userId, 
+//                     assignedAt: new Date() 
+//                 }
+//             })
+//         ]);
+
+//         return res.status(200).json({ 
+//             success: true, 
+//             message: `Token successfully assigned to ${user.fullName}` 
+//         });
+
+//     } catch (error) {
+//         console.error("[Assign Token Fatal Error]:", error);
+//         return res.status(500).json({ 
+//             success: false, 
+//             error: 'An internal system error occurred while trying to assign the token.' 
+//         });
+//     }
+// };
+
+// exports.unassignToken = async (req, res) => {
+//     try {
+//         const { serial } = req.params;
+
+//         await prisma.totpHardwareInventory.update({
+//             where: { serialNumber: serial },
+//             data: { 
+//                 status: 'available', 
+//                 userId: null, 
+//                 assignedAt: null 
+//             }
+//         });
+//         await prisma.userKey.deleteMany({
+//             where: { credentialId: `HW_TOTP_${serial}` }
+//         });
+
+//         res.json({ success: true, message: `Hardware token successfully unassigned` });
+//     } catch (error) {
+//         console.error("Unassign Token Error:", error);
+//         res.status(500).json({ success: false, error: 'Error unassigning hardware token' });
+//     }
+// };
+
 const prisma = require('../../config/db');
-const xlsx = require('xlsx');
 const CryptoJS = require('crypto-js');
 const javaClient = require('../../services/JavaAuthClient');
 const speakeasy = require('speakeasy');
+
+// 👉 Wajib Import dari @zip.js/zip.js untuk Node.js
+const { ZipReader, Uint8ArrayReader, TextWriter } = require('@zip.js/zip.js');
+
 const ENCRYPTION_SECRET = process.env.PAYKEY_SECURITY_AES_SECRET || "PayKeySuperSecretMasterKey2026";
 
-exports.getInventoryData = async (req, res) => {
-    try {
-        const tokens = await prisma.totpHardwareInventory.findMany({
-            include: {
-                user: { select: { id: true, fullName: true, email: true } }
-            },
-            orderBy: { createdAt: 'desc' }
-        });
+// Helper untuk memproses isi teks (Serial & Seed)
+async function processTxtContent(content, vendor, batchId, period, algorithm) {
+    const lines = content.split(/\r?\n/);
+    let importedCount = 0;
+    let failedCount = 0;
 
-        const statsAggregation = await prisma.totpHardwareInventory.groupBy({
-            by: ['status'],
-            _count: true
-        });
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) continue;
 
-        const stats = {
-            available: 0, assigned: 0, suspended: 0, revoked: 0, expired: 0, total: tokens.length
-        };
-        
-        statsAggregation.forEach(item => {
-            if (stats[item.status] !== undefined) {
-                stats[item.status] = item._count;
-            }
-        });
-
-        const ninetyDaysFromNow = new Date();
-        ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
-        
-        stats.expiringSoon = await prisma.totpHardwareInventory.count({
-            where: { expiryDate: { lte: ninetyDaysFromNow }, status: { not: 'revoked' } }
-        });
-
-        res.json({ success: true, stats, tokens });
-    } catch (error) {
-        console.error("[Inventory] Get Data Error:", error);
-        res.status(500).json({ success: false, error: 'Error occurred while fetching inventory data' });
-    }
-};
-
-exports.importTokenBatch = async (req, res) => {
-    try {
-        const { vendor, batchId, decryptionKey, period, algorithm } = req.body;
-        const file = req.file;
-
-        if (!file) return res.status(400).json({ error: 'File Seed (.xlsx / .csv) not found' });
-        if (!vendor || !batchId || !decryptionKey) {
-            return res.status(400).json({ error: 'Vendor, Batch ID, and Decryption Key are required' });
-        }
-
-        const workbook = xlsx.read(file.buffer, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0];
-        const rawData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
-        if (rawData.length === 0) return res.status(400).json({ error: 'Excel/CSV file is empty' });
-
-        let importedCount = 0;
-        let failedCount = 0;
-
-        for (const row of rawData) {
-            const serial = row.SerialNumber || row.serial;
-            const secret = row.SecretKey || row.seed || row.secret;
-            const expiry = row.ExpiryDate || row.expiry;
-
-            if (!serial || !secret) {
-                failedCount++;
-                continue;
-            }
+        const parts = trimmedLine.split(/\s+/);
+        if (parts.length >= 2) {
+            const serial = parts[0];
+            const secret = parts[1];
 
             const encryptedSeed = CryptoJS.AES.encrypt(secret, ENCRYPTION_SECRET).toString();
 
@@ -81,50 +309,125 @@ exports.importTokenBatch = async (req, res) => {
                         vendor: vendor.toLowerCase(),
                         batchId: batchId,
                         secretKey: encryptedSeed,
-                        expiryDate: expiry ? new Date(expiry) : new Date(new Date().setFullYear(new Date().getFullYear() + 5)),
+                        expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 5)),
                         status: 'available',
-                        
                         period: period ? parseInt(period) : 30,
                         algorithm: algorithm ? algorithm.toUpperCase() : 'SHA1'
                     }
                 });
                 importedCount++;
             } catch (dbErr) {
-                failedCount++;
+                failedCount++; // Masuk ke sini jika serial duplicate
             }
+        }
+    }
+    return { importedCount, failedCount };
+}
+
+exports.getInventoryData = async (req, res) => {
+    try {
+        const tokens = await prisma.totpHardwareInventory.findMany({
+            include: { user: { select: { id: true, fullName: true, email: true } } },
+            orderBy: { createdAt: 'desc' }
+        });
+        const statsAggregation = await prisma.totpHardwareInventory.groupBy({ by: ['status'], _count: true });
+        const stats = { available: 0, assigned: 0, suspended: 0, revoked: 0, expired: 0, total: tokens.length };
+        statsAggregation.forEach(item => { if (stats[item.status] !== undefined) stats[item.status] = item._count; });
+        
+        const ninetyDaysFromNow = new Date();
+        ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
+        stats.expiringSoon = await prisma.totpHardwareInventory.count({
+            where: { expiryDate: { lte: ninetyDaysFromNow }, status: { not: 'revoked' } }
+        });
+
+        res.json({ success: true, stats, tokens });
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Error fetching inventory data' });
+    }
+};
+
+exports.importTokenBatch = async (req, res) => {
+    try {
+        const { vendor, batchId, decryptionKey, period, algorithm } = req.body;
+        const file = req.file; // File ditangkap oleh Multer
+
+        if (!file) return res.status(400).json({ error: 'File import is required' });
+        if (!vendor || !batchId) return res.status(400).json({ error: 'Vendor & Batch ID are required' });
+
+        let importedCount = 0;
+        let failedCount = 0;
+        const fileName = file.originalname.toLowerCase();
+
+        // 👉 JALUR 1: Jika upload file TXT / CSV biasa
+        if (fileName.endsWith('.txt') || fileName.endsWith('.csv')) {
+            const content = file.buffer.toString('utf8');
+            const result = await processTxtContent(content, vendor, batchId, period, algorithm);
+            importedCount = result.importedCount;
+            failedCount = result.failedCount;
+
+        // 👉 JALUR 2: Jika upload ZIP (Didekripsi menggunakan @zip.js/zip.js)
+        } else if (fileName.endsWith('.zip')) {
+            if (!decryptionKey) return res.status(400).json({ error: 'Passcode ZIP is required' });
+
+            try {
+                // Ubah Buffer Node.js menjadi Uint8Array untuk zip.js
+                const uint8Array = new Uint8Array(file.buffer);
+                const zipReader = new ZipReader(new Uint8ArrayReader(uint8Array), { password: decryptionKey });
+                
+                const entries = await zipReader.getEntries();
+                
+                // Cari file .txt dan pastikan itu bukan folder
+                const txtEntry = entries.find(e => !e.directory && e.filename.toLowerCase().endsWith('.txt'));
+                
+                if (!txtEntry) {
+                    await zipReader.close();
+                    return res.status(400).json({ error: 'File .txt not found in ZIP' });
+                }
+
+                // Ekstrak isi teks menggunakan Passcode (Mendukung AES-256!)
+                const content = await txtEntry.getData(new TextWriter(), { password: decryptionKey });
+                await zipReader.close();
+
+                // Proses data teks ke Database
+                const result = await processTxtContent(content, vendor, batchId, period, algorithm);
+                importedCount += result.importedCount;
+                failedCount += result.failedCount;
+
+            } catch (zipErr) {
+                const errMsg = zipErr.message || "";
+                if (errMsg.toLowerCase().includes('password')) {
+                    return res.status(400).json({ error: 'Passcode ZIP is incorrect.' });
+                }
+                return res.status(400).json({ error: 'ZIP Error: ' + errMsg });
+            }
+        } else {
+            return res.status(400).json({ error: 'File format not supported. Please use .zip or .txt' });
+        }
+
+        if (importedCount === 0 && failedCount === 0) {
+            return res.status(400).json({ error: 'No valid token data found.' });
         }
 
         return res.status(200).json({ 
             success: true, 
-            message: `Import completed. Successful: ${importedCount}, Failed/Duplicate: ${failedCount}`,
+            message: `Import complete. Success: ${importedCount}, Duplicate: ${failedCount}`,
             importedCount 
         });
 
     } catch (error) {
         console.error("[Inventory] Import Error:", error);
-        return res.status(500).json({ success: false, error: 'An error occurred while processing the import file' });
+        return res.status(500).json({ success: false, error: 'Sistem Error: ' + error.message });
     }
 };
 
-
 exports.updateTokenStatus = async (req, res) => {
     try {
-        const { serial } = req.params;
         const { status } = req.body;
-
-        if (!['suspended', 'available', 'revoked'].includes(status)) {
-            return res.status(400).json({ error: 'Status not valid' });
-        }
-
         const updated = await prisma.totpHardwareInventory.update({
-            where: { serialNumber: serial },
-            data: { status }
+            where: { serialNumber: req.params.serial }, data: { status }
         });
-
-        res.json({ success: true, message: `Token ${serial} updated to ${status}`, data: updated });
-    } catch (error) {
-        res.status(500).json({ success: false, error: 'Error updating token status' });
-    }
+        res.json({ success: true, data: updated });
+    } catch (error) { res.status(500).json({ success: false, error: 'Error update status' }); }
 };
 
 exports.assignToken = async (req, res) => {
@@ -132,145 +435,58 @@ exports.assignToken = async (req, res) => {
         const { serial } = req.params;
         const { userId, verificationCode } = req.body;
 
-        if (!userId || typeof userId !== 'string') {
-            return res.status(400).json({ success: false, error: 'User ID not valid' });
-        }
-        if (!verificationCode || typeof verificationCode !== 'string' || verificationCode.length < 6) {
-            return res.status(400).json({ success: false, error: 'Verification code not valid' });
-        }
-
         const [user, tokenData] = await Promise.all([
             prisma.user.findUnique({ where: { id: userId } }),
             prisma.totpHardwareInventory.findUnique({ where: { serialNumber: serial } })
         ]);
 
-        if (!user) {
-            return res.status(404).json({ success: false, error: 'User not found in database.' });
-        }
-        if (!tokenData || tokenData.status !== 'available') {
-            return res.status(400).json({ success: false, error: 'Token not available for assignment.' });
-        }
+        if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+        if (!tokenData || tokenData.status !== 'available') return res.status(400).json({ success: false, error: 'Token not available' });
 
         const bytes = CryptoJS.AES.decrypt(tokenData.secretKey, ENCRYPTION_SECRET);
         const decryptedSeed = bytes.toString(CryptoJS.enc.Utf8);
-
-        if (!decryptedSeed) {
-            throw new Error('Failed to decrypt token seed. Data may be corrupted.');
-        }
-
         const encodingType = /^[0-9A-Fa-f]+$/.test(decryptedSeed) ? 'hex' : 'base32';
         const tokenPeriod = tokenData.period || 30;
         const tokenAlgorithm = (tokenData.algorithm || 'sha1').toLowerCase();
 
         const isValidOTP = speakeasy.totp.verify({
-            secret: decryptedSeed,
-            encoding: encodingType,
-            algorithm: tokenAlgorithm,
-            step: tokenPeriod,
-            token: verificationCode,
-            window: 2
+            secret: decryptedSeed, encoding: encodingType, algorithm: tokenAlgorithm,
+            step: tokenPeriod, token: verificationCode, window: 2
         });
 
-        if (!isValidOTP) {
-            return res.status(400).json({ 
-                success: false,
-                error: `Verification code is incorrect. Please ensure you are entering the current code displayed on the token.` 
-            });
-        }
+        if (!isValidOTP) return res.status(400).json({ success: false, error: `Verification code is incorrect.` });
 
-        try {
-            await javaClient.registerCustomKey({
-                userId: userId,
-                deviceId: serial, 
-                publicKey: decryptedSeed,
-                type: 'TOTP_HARDWARE',
-                period: tokenPeriod,
-                algorithm: tokenAlgorithm
-            });
-        } catch (kdcError) {
-            console.error('[KDC Integration Error]:', kdcError.message);
-            return res.status(502).json({
-                success: false,
-                error: 'Failed to register token with Key Distribution Center. Please try again later or contact support if the issue persists.'
-            });
-        }
+        await javaClient.registerCustomKey({
+            userId: userId, deviceId: serial, publicKey: decryptedSeed,
+            type: 'TOTP_HARDWARE', period: tokenPeriod, algorithm: tokenAlgorithm
+        });
         
-
         await prisma.$transaction([
             prisma.userKey.upsert({
-                where: { 
-                    credentialId: `HW_TOTP_${serial}` 
-                },
-                update: {
-                    userId: userId,
-                    status: "ACTIVE",
-                    deviceTelemetry: JSON.stringify({ 
-                        device_type: "hardware", 
-                        device_vendor: tokenData.vendor,
-                        otp_period: tokenPeriod,
-                        otp_algorithm: tokenAlgorithm
-                    })
-                },
+                where: { credentialId: `HW_TOTP_${serial}` },
+                update: { userId: userId, status: "ACTIVE" },
                 create: {
-                    credentialId: `HW_TOTP_${serial}`,
-                    userId: userId,
-                    deviceName: `Hardware Token (${tokenData.vendor.toUpperCase()})`,
-                    transports: JSON.stringify(["HARDWARE_TOTP"]), 
-                    publicKey: "STORED_IN_JAVA_VAULT", 
-                    status: "ACTIVE",
-                    signCounter: 0,
-                    deviceTelemetry: JSON.stringify({ 
-                        device_type: "hardware", 
-                        device_vendor: tokenData.vendor,
-                        otp_period: tokenPeriod,
-                        otp_algorithm: tokenAlgorithm
-                    }),
-                    aaguid: "00000000-0000-0000-0000-000000000000"
+                    credentialId: `HW_TOTP_${serial}`, userId: userId, deviceName: `Hardware Token`,
+                    transports: JSON.stringify(["HARDWARE_TOTP"]), publicKey: "STORED_IN_JAVA", 
+                    status: "ACTIVE", signCounter: 0, aaguid: "00000000-0000-0000-0000-000000000000"
                 }
             }),
             prisma.totpHardwareInventory.update({
-                where: { serialNumber: serial },
-                data: { 
-                    status: 'assigned', 
-                    userId: userId, 
-                    assignedAt: new Date() 
-                }
+                where: { serialNumber: serial }, data: { status: 'assigned', userId: userId, assignedAt: new Date() }
             })
         ]);
+        return res.status(200).json({ success: true, message: `Assigned to ${user.fullName}` });
 
-        return res.status(200).json({ 
-            success: true, 
-            message: `Token successfully assigned to ${user.fullName}` 
-        });
-
-    } catch (error) {
-        console.error("[Assign Token Fatal Error]:", error);
-        return res.status(500).json({ 
-            success: false, 
-            error: 'An internal system error occurred while trying to assign the token.' 
-        });
-    }
+    } catch (error) { return res.status(500).json({ success: false, error: error.message }); }
 };
 
 exports.unassignToken = async (req, res) => {
     try {
         const { serial } = req.params;
-
         await prisma.totpHardwareInventory.update({
-            where: { serialNumber: serial },
-            data: { 
-                status: 'available', 
-                userId: null, 
-                assignedAt: null 
-            }
+            where: { serialNumber: serial }, data: { status: 'available', userId: null, assignedAt: null }
         });
-        await prisma.userKey.deleteMany({
-            where: { credentialId: `HW_TOTP_${serial}` }
-        });
-
-        res.json({ success: true, message: `Hardware token successfully unassigned` });
-    } catch (error) {
-        console.error("Unassign Token Error:", error);
-        res.status(500).json({ success: false, error: 'Error unassigning hardware token' });
-    }
+        await prisma.userKey.deleteMany({ where: { credentialId: `HW_TOTP_${serial}` } });
+        res.json({ success: true, message: `Unassigned` });
+    } catch (error) { res.status(500).json({ success: false, error: error.message }); }
 };

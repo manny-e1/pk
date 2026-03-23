@@ -216,8 +216,9 @@ exports.fidoVerifyProxy = async (req, res) => {
 
 exports.startPushApproval = async (req, res) => {
     try {
-        const { email } = req.body;
-        const user = await prisma.user.findUnique({ where: { email } });
+        const { userId } = req.body;
+        console.log("Start Push Approval for userId:", userId);
+        const user = await prisma.user.findUnique({ where: { userId } });
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         const challengeData = await javaClient.getUnifiedChallenge();
@@ -239,7 +240,9 @@ exports.startPushApproval = async (req, res) => {
                 challenge: challenge,
                 txId: txId
             });
-        }
+        }else {
+            console.warn(`[Push Approval] No device with FCM token found for user ${user.id}`);
+        }   
 
         res.json({ success: true, txId: txId });
     } catch (err) { res.status(500).json({ error: 'Failed to start Push Approval' }); }

@@ -23,6 +23,7 @@ function TotpCharts({ tokens }) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "TotpCharts.useEffect": ()=>{
             if (!tokens || tokens.length === 0) return;
+            // 1. OLAH DATA VENDOR
             const vendorCounts = {
                 yubico: 0,
                 feitian: 0,
@@ -31,10 +32,52 @@ function TotpCharts({ tokens }) {
             };
             tokens.forEach({
                 "TotpCharts.useEffect": (t)=>{
-                    if (vendorCounts[t.vendor] !== undefined) vendorCounts[t.vendor]++;
+                    const v = (t.vendor || '').toLowerCase();
+                    if (v === 'yubico') vendorCounts.yubico++;
+                    else if (v === 'feitian') vendorCounts.feitian++;
+                    else if (v === 'safenet' || v === 'thales') vendorCounts.safenet++;
                     else vendorCounts.other++;
                 }
             }["TotpCharts.useEffect"]);
+            // 2. OLAH DATA EXPIRY (Logika Kuartal Korporat)
+            const expiryCounts = [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]; // Q1, Q2, Q3, Q4, Next Year, Future
+            const expiryLabels = [
+                'Q1',
+                'Q2',
+                'Q3',
+                'Q4',
+                'Next Year',
+                'Future'
+            ];
+            const currentYear = new Date().getFullYear();
+            tokens.forEach({
+                "TotpCharts.useEffect": (t)=>{
+                    if (!t.expiryDate) return;
+                    const expDate = new Date(t.expiryDate);
+                    const expYear = expDate.getFullYear();
+                    const expMonth = expDate.getMonth(); // 0 = Jan, 11 = Dec
+                    // Hitung hanya untuk tahun ini dan ke depan
+                    if (expYear === currentYear) {
+                        if (expMonth <= 2) expiryCounts[0]++; // Jan - Mar (Q1)
+                        else if (expMonth <= 5) expiryCounts[1]++; // Apr - Jun (Q2)
+                        else if (expMonth <= 8) expiryCounts[2]++; // Jul - Sep (Q3)
+                        else expiryCounts[3]++; // Oct - Dec (Q4)
+                    } else if (expYear === currentYear + 1) {
+                        expiryCounts[4]++; // Next Year
+                    } else if (expYear > currentYear + 1) {
+                        expiryCounts[5]++; // Future
+                    }
+                }
+            }["TotpCharts.useEffect"]);
+            // ================= RENDER CHARTS =================
+            // Render Vendor Chart
             if (vendorChartInstance.current) vendorChartInstance.current.destroy();
             if (vendorChartRef.current) {
                 vendorChartInstance.current = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$chart$2e$js$2f$auto$2f$auto$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"](vendorChartRef.current, {
@@ -73,35 +116,29 @@ function TotpCharts({ tokens }) {
                                 labels: {
                                     color: '#94a3b8'
                                 }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: {
+                                        "TotpCharts.useEffect": (ctx)=>` ${ctx.label}: ${ctx.raw} Tokens`
+                                    }["TotpCharts.useEffect"]
+                                }
                             }
                         }
                     }
                 });
             }
+            // Render Expiry Timeline Chart
             if (expiryChartInstance.current) expiryChartInstance.current.destroy();
             if (expiryChartRef.current) {
                 expiryChartInstance.current = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$chart$2e$js$2f$auto$2f$auto$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["default"](expiryChartRef.current, {
                     type: 'bar',
                     data: {
-                        labels: [
-                            'Q1',
-                            'Q2',
-                            'Q3',
-                            'Q4',
-                            'Next Year',
-                            'Future'
-                        ],
+                        labels: expiryLabels,
                         datasets: [
                             {
                                 label: 'Tokens Expiring',
-                                data: [
-                                    12,
-                                    28,
-                                    45,
-                                    89,
-                                    234,
-                                    2959
-                                ],
+                                data: expiryCounts,
                                 backgroundColor: '#3b82f6',
                                 borderRadius: 4
                             }
@@ -113,17 +150,31 @@ function TotpCharts({ tokens }) {
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: {
+                                        "TotpCharts.useEffect": (ctx)=>`Timeline: ${ctx[0].label} ${currentYear}`
+                                    }["TotpCharts.useEffect"]
+                                }
                             }
                         },
                         scales: {
                             x: {
                                 grid: {
                                     display: false
+                                },
+                                ticks: {
+                                    color: '#94a3b8'
                                 }
                             },
                             y: {
                                 grid: {
                                     color: '#2d2d2d'
+                                },
+                                ticks: {
+                                    color: '#94a3b8',
+                                    stepSize: 1
                                 }
                             }
                         }
@@ -159,12 +210,12 @@ function TotpCharts({ tokens }) {
                                     d: "M18 20V10M12 20V4M6 20v-6"
                                 }, void 0, false, {
                                     fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                                    lineNumber: 66,
+                                    lineNumber: 118,
                                     columnNumber: 154
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                                lineNumber: 66,
+                                lineNumber: 118,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -172,13 +223,13 @@ function TotpCharts({ tokens }) {
                                 children: "Inventory by Vendor"
                             }, void 0, false, {
                                 fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                                lineNumber: 67,
+                                lineNumber: 119,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                        lineNumber: 65,
+                        lineNumber: 117,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -187,18 +238,18 @@ function TotpCharts({ tokens }) {
                             ref: vendorChartRef
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                            lineNumber: 69,
+                            lineNumber: 121,
                             columnNumber: 48
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                        lineNumber: 69,
+                        lineNumber: 121,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                lineNumber: 64,
+                lineNumber: 116,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -220,20 +271,20 @@ function TotpCharts({ tokens }) {
                                         r: "10"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                                        lineNumber: 73,
+                                        lineNumber: 125,
                                         columnNumber: 154
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                         points: "12 6 12 12 16 14"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                                        lineNumber: 73,
+                                        lineNumber: 125,
                                         columnNumber: 186
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                                lineNumber: 73,
+                                lineNumber: 125,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -241,13 +292,13 @@ function TotpCharts({ tokens }) {
                                 children: "Token Expiry Timeline"
                             }, void 0, false, {
                                 fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                                lineNumber: 74,
+                                lineNumber: 126,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                        lineNumber: 72,
+                        lineNumber: 124,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -256,24 +307,24 @@ function TotpCharts({ tokens }) {
                             ref: expiryChartRef
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                            lineNumber: 76,
+                            lineNumber: 128,
                             columnNumber: 48
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                        lineNumber: 76,
+                        lineNumber: 128,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-                lineNumber: 71,
+                lineNumber: 123,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/totp-inventory/TotpCharts.tsx",
-        lineNumber: 63,
+        lineNumber: 115,
         columnNumber: 9
     }, this);
 }
@@ -431,202 +482,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/services/adminService.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
-// "use client";
-// import React, { useState } from 'react';
-// import { adminService } from '@/services/adminService'; // Pastikan path import sesuai
-// // === IMPORT MODAL ===
-// export function ImportModal({ isOpen, onClose, onImportSuccess, showToast }: any) {
-//     const [importFile, setImportFile] = useState<File | null>(null);
-//     const [importVendor, setImportVendor] = useState('');
-//     const [importBatchId, setImportBatchId] = useState('');
-//     const [decryptionKey, setDecryptionKey] = useState('');
-//     const [progress, setProgress] = useState({ active: false, percent: 0, text: '' });
-//     if (!isOpen) return null;
-//     const handleImportSubmit = async () => {
-//         if (!importVendor || !importBatchId || !decryptionKey || !importFile) {
-//             return showToast('warning', 'Incomplete Form', 'Mohon lengkapi semua data import.');
-//         }
-//         setProgress({ active: true, percent: 30, text: 'Uploading & Decrypting file...' });
-//         const formData = new FormData();
-//         formData.append('seedFile', importFile);
-//         formData.append('vendor', importVendor);
-//         formData.append('batchId', importBatchId);
-//         formData.append('decryptionKey', decryptionKey);
-//         try {
-//             // Memanggil Service API Backend
-//             const result = await adminService.importTotpBatch(formData);
-//             setProgress({ active: true, percent: 100, text: 'Import complete!' });
-//             setTimeout(() => {
-//                 setProgress({ active: false, percent: 0, text: '' });
-//                 if (result.success || result.message) {
-//                     showToast('success', 'Import Successful', result.message || 'Token berhasil diimport');
-//                     onImportSuccess(); // Refresh Data Table
-//                 } else {
-//                     showToast('error', 'Import Failed', result.error || 'Terjadi kesalahan sistem');
-//                 }
-//                 onClose();
-//             }, 1000);
-//         } catch (err: any) {
-//             const errorMsg = err.response?.data?.error || err.message;
-//             showToast('error', 'Import Error', errorMsg);
-//             setProgress({ active: false, percent: 0, text: '' });
-//             onClose();
-//         }
-//     };
-//     return (
-//         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 transition-all">
-//             <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-2xl w-full max-w-lg shadow-2xl animate-in zoom-in-95">
-//                 <div className="p-6 border-b border-[var(--border-secondary)] flex justify-between items-center">
-//                     <h3 className="text-base font-semibold text-[var(--text-primary)] m-0">Import Token Batch</h3>
-//                     <button className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] transition-colors" onClick={onClose}>
-//                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-//                     </button>
-//                 </div>
-//                 <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-//                     <div className="bg-[var(--warning-bg)] border border-[var(--warning)]/30 p-3 rounded-lg mb-5 flex gap-3 text-sm text-[var(--text-secondary)]">
-//                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5 text-[var(--warning)] shrink-0 mt-0.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-//                         <div className="leading-relaxed">
-//                             <strong className="text-[var(--warning)]">Security Notice:</strong> Seed files contain sensitive cryptographic material. Ensure your connection is secure. All seeds are encrypted at rest using AES-256.
-//                         </div>
-//                     </div>
-//                     <div className="mb-5">
-//                         <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">Vendor</label>
-//                         <select className="w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm outline-none focus:border-blue-500 text-[var(--text-primary)]" value={importVendor} onChange={(e) => setImportVendor(e.target.value)}>
-//                             <option value="">Select vendor...</option><option value="yubico">Yubico</option><option value="feitian">Feitian</option><option value="safenet">SafeNet / Thales</option>
-//                         </select>
-//                     </div>
-//                     <div className="mb-5">
-//                         <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">Batch ID</label>
-//                         <input type="text" className="w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm outline-none focus:border-blue-500 text-[var(--text-primary)]" value={importBatchId} onChange={(e) => setImportBatchId(e.target.value)} placeholder="e.g., BATCH-2024-004" />
-//                     </div>
-//                     <div className="mb-5">
-//                         <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">Seed File</label>
-//                         <div className="border-2 border-dashed border-[var(--border-secondary)] hover:border-blue-500 rounded-xl p-10 text-center cursor-pointer transition-colors bg-[var(--bg-tertiary)]/50 hover:bg-blue-500/5" onClick={() => document.getElementById('seedFile')?.click()}>
-//                             <input type="file" id="seedFile" className="hidden" onChange={(e) => { if(e.target.files) setImportFile(e.target.files[0]) }} accept=".xlsx,.csv,.xml,.pskc" />
-//                             <div className="w-12 h-12 bg-[var(--bg-secondary)] rounded-xl flex items-center justify-center mx-auto mb-4">
-//                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6 text-blue-500"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-//                             </div>
-//                             <div className="text-sm text-[var(--text-secondary)] mb-1">
-//                                 {importFile ? <span className="text-[var(--success)]">{importFile.name}</span> : <><span className="text-blue-500 font-medium">Click to upload</span> or drag and drop</>}
-//                             </div>
-//                         </div>
-//                     </div>
-//                     <div className="mb-5">
-//                         <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">Decryption Key</label>
-//                         <input type="password" className="w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm outline-none focus:border-blue-500 text-[var(--text-primary)]" value={decryptionKey} onChange={(e) => setDecryptionKey(e.target.value)} placeholder="Enter decryption key for seed file" />
-//                     </div>
-//                     {progress.active && (
-//                         <div className="mt-5">
-//                             <div className="h-2 bg-[var(--bg-tertiary)] rounded-full overflow-hidden">
-//                                 <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300" style={{ width: `${progress.percent}%` }}></div>
-//                             </div>
-//                             <div className="flex justify-between text-xs text-[var(--text-tertiary)] mt-2">
-//                                 <span>{progress.text}</span><span>{progress.percent}%</span>
-//                             </div>
-//                         </div>
-//                     )}
-//                 </div>
-//                 <div className="p-4 border-t border-[var(--border-secondary)] flex justify-end gap-3 bg-[var(--bg-secondary)] rounded-b-2xl">
-//                     <button className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]" onClick={onClose}>Cancel</button>
-//                     <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white" onClick={handleImportSubmit}>
-//                         Import Tokens
-//                     </button>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-// // === DETAIL MODAL ===
-// export function DetailModal({ isOpen, onClose, token, showToast, onSuccess }: any) {
-//     if (!isOpen || !token) return null;
-//     const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-//     const handleRevoke = async () => {
-//         try {
-//             await adminService.updateTotpStatus(token.serial, 'revoked');
-//             showToast('success', 'Token Revoked', `${token.serial} has been permanently disabled`);
-//             onSuccess();
-//             onClose();
-//         } catch (err: any) {
-//             showToast('error', 'Action Failed', err.response?.data?.error || err.message);
-//         }
-//     };
-//     return (
-//         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 transition-all">
-//             <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-2xl w-full max-w-2xl shadow-2xl animate-in zoom-in-95">
-//                 <div className="p-6 border-b border-[var(--border-secondary)] flex justify-between items-center">
-//                     <h3 className="text-base font-semibold text-[var(--text-primary)] m-0">Token Details</h3>
-//                     <button className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] transition-colors" onClick={onClose}>
-//                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-//                     </button>
-//                 </div>
-//                 <div className="p-6">
-//                     <div className="mb-6">
-//                         <div className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)] mb-3 pb-2 border-b border-[var(--border-secondary)]">Token Information</div>
-//                         <div className="grid grid-cols-2 gap-4">
-//                             <div className="flex flex-col gap-1"><span className="text-xs text-[var(--text-tertiary)]">Serial Number</span><span className="text-sm text-[var(--text-primary)] font-mono font-medium">{token.serial}</span></div>
-//                             <div className="flex flex-col gap-1"><span className="text-xs text-[var(--text-tertiary)]">Status</span><span className="text-sm text-[var(--text-primary)]">{capitalize(token.status)}</span></div>
-//                             <div className="flex flex-col gap-1"><span className="text-xs text-[var(--text-tertiary)]">Vendor</span><span className="text-sm text-[var(--text-primary)]">{capitalize(token.vendor)}</span></div>
-//                             <div className="flex flex-col gap-1"><span className="text-xs text-[var(--text-tertiary)]">Batch ID</span><span className="text-sm text-[var(--text-primary)] font-mono">{token.batch}</span></div>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="p-4 border-t border-[var(--border-secondary)] flex justify-end gap-3 bg-[var(--bg-secondary)] rounded-b-2xl">
-//                     <button className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]" onClick={onClose}>Close</button>
-//                     {token.status !== 'revoked' && (
-//                         <button className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--error-bg)] text-[var(--error)] hover:bg-[var(--error)] hover:text-white transition-colors" onClick={handleRevoke}>Revoke Token</button>
-//                     )}
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-// // === ASSIGN MODAL ===
-// export function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess }: any) {
-//     const [userId, setUserId] = useState('');
-//     if (!isOpen) return null;
-//     const handleAssign = async () => {
-//         if (!userId) return showToast('warning', 'Empty Input', 'Mohon masukkan User ID');
-//         try {
-//             await adminService.assignTotpToken(tokenSerial, userId);
-//             showToast('success', 'Token Assigned', `${tokenSerial} has been assigned to ${userId}`);
-//             onAssignSuccess();
-//             onClose();
-//             setUserId('');
-//         } catch (err: any) {
-//             showToast('error', 'Assign Failed', err.response?.data?.error || err.message);
-//         }
-//     };
-//     return (
-//         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 transition-all">
-//             <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-2xl w-full max-w-md shadow-2xl animate-in zoom-in-95">
-//                 <div className="p-6 border-b border-[var(--border-secondary)] flex justify-between items-center">
-//                     <h3 className="text-base font-semibold text-[var(--text-primary)] m-0">Assign Token to User</h3>
-//                     <button className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] transition-colors" onClick={onClose}>
-//                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-//                     </button>
-//                 </div>
-//                 <div className="p-6">
-//                     <div className="mb-5">
-//                         <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">Serial Number</label>
-//                         <input type="text" className="w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm font-mono text-[var(--text-tertiary)]" value={tokenSerial} readOnly />
-//                     </div>
-//                     <div className="mb-5">
-//                         <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-2">User ID (UUID)</label>
-//                         <input type="text" className="w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm outline-none focus:border-blue-500 text-[var(--text-primary)]" placeholder="Enter exact User ID..." value={userId} onChange={(e) => setUserId(e.target.value)} />
-//                     </div>
-//                 </div>
-//                 <div className="p-4 border-t border-[var(--border-secondary)] flex justify-end gap-3 bg-[var(--bg-secondary)] rounded-b-2xl">
-//                     <button className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]" onClick={onClose}>Cancel</button>
-//                     <button className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition-colors" onClick={handleAssign}>Assign Token</button>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
 "use client";
 ;
 ;
-// === HELPERS UNTUK MODAL ===
 const capitalize = (s)=>s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 const getVendorName = (vendor)=>{
     const v = {
@@ -647,7 +505,6 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
     const [importVendor, setImportVendor] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [importBatchId, setImportBatchId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [decryptionKey, setDecryptionKey] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    // Konfigurasi Kriptografi Baru
     const [importPeriod, setImportPeriod] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('30');
     const [importAlgorithm, setImportAlgorithm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('SHA1');
     const [progress, setProgress] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
@@ -657,28 +514,32 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
     });
     if (!isOpen) return null;
     const handleImportSubmit = async ()=>{
-        if (!importVendor || !importBatchId || !decryptionKey || !importFile) {
-            return showToast('warning', 'Incomplete Form', 'Mohon lengkapi semua data import.');
+        if (!importVendor || !importBatchId || !importFile) {
+            return showToast('warning', 'Form not complete', 'Please fill in all required fields and select a file to import.');
+        }
+        const isZip = importFile.name.toLowerCase().endsWith('.zip');
+        if (isZip && !decryptionKey) {
+            return showToast('warning', 'Passcode Required', 'Passcode is required to extract .ZIP files');
         }
         setProgress({
             active: true,
-            percent: 30,
-            text: 'Uploading & Decrypting file...'
+            percent: 40,
+            text: 'Uploading file to Server...'
         });
-        const formData = new FormData();
-        formData.append('seedFile', importFile);
-        formData.append('vendor', importVendor);
-        formData.append('batchId', importBatchId);
-        formData.append('decryptionKey', decryptionKey);
-        // Kirim konfigurasi ke Backend
-        formData.append('period', importPeriod);
-        formData.append('algorithm', importAlgorithm);
         try {
+            // 👉 Kirim Data Murni sebagai FormData (Backend yang akan ekstrak ZIP)
+            const formData = new FormData();
+            formData.append('seedFile', importFile);
+            formData.append('vendor', importVendor);
+            formData.append('batchId', importBatchId);
+            formData.append('decryptionKey', decryptionKey);
+            formData.append('period', importPeriod);
+            formData.append('algorithm', importAlgorithm);
             const result = await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["adminService"].importTotpBatch(formData);
             setProgress({
                 active: true,
                 percent: 100,
-                text: 'Import complete!'
+                text: 'Import Complete'
             });
             setTimeout(()=>{
                 setProgress({
@@ -687,21 +548,20 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                     text: ''
                 });
                 if (result.success || result.message) {
-                    showToast('success', 'Import Successful', result.message || 'Token berhasil diimport');
+                    showToast('success', 'Import Complete', result.message);
                     onImportSuccess();
                 } else {
-                    showToast('error', 'Import Failed', result.error || 'Terjadi kesalahan sistem');
+                    showToast('error', 'Import Failed', result.error);
                 }
                 onClose();
             }, 1000);
         } catch (err) {
-            showToast('error', 'Import Error', err.response?.data?.error || err.message);
+            showToast('error', 'System Error', err.response?.data?.error || err.message);
             setProgress({
                 active: false,
                 percent: 0,
                 text: ''
             });
-            onClose();
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -714,10 +574,10 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                             className: "text-base font-semibold text-[var(--text-primary)] m-0",
-                            children: "Import Token Batch"
+                            children: "Import Secure Token Batch"
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 279,
+                            lineNumber: 190,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -738,7 +598,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 281,
+                                        lineNumber: 192,
                                         columnNumber: 123
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -748,24 +608,24 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 281,
+                                        lineNumber: 192,
                                         columnNumber: 160
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 281,
+                                lineNumber: 192,
                                 columnNumber: 25
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 280,
+                            lineNumber: 191,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                    lineNumber: 278,
+                    lineNumber: 189,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -781,7 +641,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             children: "Vendor"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 288,
+                                            lineNumber: 199,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -794,7 +654,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "Select vendor..."
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 290,
+                                                    lineNumber: 201,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -802,7 +662,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "Yubico"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 290,
+                                                    lineNumber: 201,
                                                     columnNumber: 75
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -810,7 +670,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "Feitian"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 290,
+                                                    lineNumber: 201,
                                                     columnNumber: 113
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -818,19 +678,19 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "SafeNet / Thales"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 290,
+                                                    lineNumber: 201,
                                                     columnNumber: 153
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 289,
+                                            lineNumber: 200,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 287,
+                                    lineNumber: 198,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -840,7 +700,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             children: "Batch ID"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 294,
+                                            lineNumber: 205,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -851,19 +711,19 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             placeholder: "e.g., BATCH-001"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 295,
+                                            lineNumber: 206,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 293,
+                                    lineNumber: 204,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 286,
+                            lineNumber: 197,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -876,7 +736,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             children: "Algorithm"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 302,
+                                            lineNumber: 212,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -889,7 +749,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "HMAC-SHA1"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 304,
+                                                    lineNumber: 214,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -897,27 +757,27 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "HMAC-SHA256"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 305,
-                                                    columnNumber: 33
+                                                    lineNumber: 214,
+                                                    columnNumber: 72
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                     value: "SHA512",
                                                     children: "HMAC-SHA512"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 306,
-                                                    columnNumber: 33
+                                                    lineNumber: 214,
+                                                    columnNumber: 115
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 303,
+                                            lineNumber: 213,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 301,
+                                    lineNumber: 211,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -927,7 +787,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             children: "Period"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 310,
+                                            lineNumber: 218,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -940,7 +800,7 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "30 Seconds"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 312,
+                                                    lineNumber: 220,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -948,25 +808,25 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                     children: "60 Seconds"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 313,
-                                                    columnNumber: 33
+                                                    lineNumber: 220,
+                                                    columnNumber: 71
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 311,
+                                            lineNumber: 219,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 309,
+                                    lineNumber: 217,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 300,
+                            lineNumber: 210,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -974,10 +834,10 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     className: "block text-[13px] font-medium text-[var(--text-secondary)] mb-2",
-                                    children: "Seed File"
+                                    children: "Seed File (.ZIP / .TXT)"
                                 }, void 0, false, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 319,
+                                    lineNumber: 226,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -991,10 +851,10 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             onChange: (e)=>{
                                                 if (e.target.files) setImportFile(e.target.files[0]);
                                             },
-                                            accept: ".xlsx,.csv,.xml,.pskc"
+                                            accept: ".zip,.txt,.csv"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 321,
+                                            lineNumber: 228,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1010,14 +870,14 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                         d: "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                        lineNumber: 323,
+                                                        lineNumber: 230,
                                                         columnNumber: 149
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                         points: "17 8 12 3 7 8"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                        lineNumber: 323,
+                                                        lineNumber: 230,
                                                         columnNumber: 200
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1027,18 +887,18 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                         y2: "15"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                        lineNumber: 323,
+                                                        lineNumber: 230,
                                                         columnNumber: 234
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                lineNumber: 323,
+                                                lineNumber: 230,
                                                 columnNumber: 33
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 322,
+                                            lineNumber: 229,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1048,60 +908,132 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                                 children: importFile.name
                                             }, void 0, false, {
                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                lineNumber: 326,
+                                                lineNumber: 233,
                                                 columnNumber: 47
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
-                                                children: "Click to upload CSV/Excel"
-                                            }, void 0, false)
+                                                children: [
+                                                    "Upload ",
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                        className: "text-[var(--text-primary)]",
+                                                        children: ".ZIP"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                                                        lineNumber: 233,
+                                                        columnNumber: 123
+                                                    }, this),
+                                                    " or ",
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                        className: "text-[var(--text-primary)]",
+                                                        children: ".TXT"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                                                        lineNumber: 233,
+                                                        columnNumber: 187
+                                                    }, this)
+                                                ]
+                                            }, void 0, true)
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 325,
+                                            lineNumber: 232,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 320,
+                                    lineNumber: 227,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 318,
+                            lineNumber: 225,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "mb-2",
+                            className: `mb-2 transition-all ${importFile?.name.toLowerCase().endsWith('.txt') || importFile?.name.toLowerCase().endsWith('.csv') ? 'opacity-40' : ''}`,
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
                                     className: "block text-[13px] font-medium text-[var(--text-secondary)] mb-2",
-                                    children: "Master Decryption Key"
+                                    children: "ZIP File Passcode"
                                 }, void 0, false, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 332,
+                                    lineNumber: 239,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                     type: "password",
-                                    className: "w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm outline-none focus:border-[var(--accent)] text-[var(--text-primary)]",
+                                    disabled: importFile?.name.toLowerCase().endsWith('.txt') || importFile?.name.toLowerCase().endsWith('.csv'),
+                                    className: "w-full py-2.5 px-3 bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] rounded-lg text-sm outline-none focus:border-[var(--accent)] text-[var(--text-primary)] disabled:cursor-not-allowed",
                                     value: decryptionKey,
                                     onChange: (e)=>setDecryptionKey(e.target.value),
-                                    placeholder: "Enter key to decrypt factory seeds"
+                                    placeholder: "Required if uploading .ZIP"
                                 }, void 0, false, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 333,
+                                    lineNumber: 240,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 331,
+                            lineNumber: 238,
                             columnNumber: 21
+                        }, this),
+                        progress.active && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "mt-5",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "h-2 bg-[var(--bg-tertiary)] rounded-full overflow-hidden",
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "h-full bg-[var(--accent)] transition-all duration-300",
+                                        style: {
+                                            width: `${progress.percent}%`
+                                        }
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                                        lineNumber: 246,
+                                        columnNumber: 33
+                                    }, this)
+                                }, void 0, false, {
+                                    fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                                    lineNumber: 245,
+                                    columnNumber: 29
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex justify-between text-xs text-[var(--text-tertiary)] mt-2",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: progress.text
+                                        }, void 0, false, {
+                                            fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                                            lineNumber: 249,
+                                            columnNumber: 33
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            children: [
+                                                progress.percent,
+                                                "%"
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                                            lineNumber: 249,
+                                            columnNumber: 61
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                                    lineNumber: 248,
+                                    columnNumber: 29
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/components/totp-inventory/TotpModals.tsx",
+                            lineNumber: 244,
+                            columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                    lineNumber: 284,
+                    lineNumber: 195,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1110,15 +1042,17 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                             className: "px-4 py-2 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)] border border-[var(--border-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors",
                             onClick: onClose,
+                            disabled: progress.active,
                             children: "Cancel"
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 337,
+                            lineNumber: 255,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                            className: "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition-colors",
+                            className: "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition-colors disabled:opacity-50",
                             onClick: handleImportSubmit,
+                            disabled: progress.active,
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                     viewBox: "0 0 24 24",
@@ -1131,14 +1065,14 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             d: "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 339,
+                                            lineNumber: 257,
                                             columnNumber: 120
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                             points: "17 8 12 3 7 8"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 339,
+                                            lineNumber: 257,
                                             columnNumber: 171
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1148,37 +1082,37 @@ function ImportModal({ isOpen, onClose, onImportSuccess, showToast }) {
                                             y2: "15"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 339,
+                                            lineNumber: 257,
                                             columnNumber: 205
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 339,
+                                    lineNumber: 257,
                                     columnNumber: 25
                                 }, this),
-                                "Import Tokens"
+                                "Upload & Import"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 338,
+                            lineNumber: 256,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                    lineNumber: 336,
+                    lineNumber: 254,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-            lineNumber: 277,
+            lineNumber: 188,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-        lineNumber: 276,
+        lineNumber: 187,
         columnNumber: 9
     }, this);
 }
@@ -1209,7 +1143,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                             children: "Token Details"
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 367,
+                            lineNumber: 284,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1230,7 +1164,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 369,
+                                        lineNumber: 286,
                                         columnNumber: 123
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1240,24 +1174,24 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                         y2: "18"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 369,
+                                        lineNumber: 286,
                                         columnNumber: 160
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 369,
+                                lineNumber: 286,
                                 columnNumber: 25
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 368,
+                            lineNumber: 285,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                    lineNumber: 366,
+                    lineNumber: 283,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1271,7 +1205,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                     children: "Token Information"
                                 }, void 0, false, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 377,
+                                    lineNumber: 293,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1285,7 +1219,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Serial Number"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 380,
+                                                    lineNumber: 296,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1293,13 +1227,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: token.serial
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 381,
+                                                    lineNumber: 297,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 379,
+                                            lineNumber: 295,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1310,7 +1244,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Status"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 384,
+                                                    lineNumber: 300,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1323,13 +1257,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: capitalize(token.status)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 385,
+                                                    lineNumber: 301,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 383,
+                                            lineNumber: 299,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1340,7 +1274,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Vendor"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 395,
+                                                    lineNumber: 311,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1348,13 +1282,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: getVendorName(token.vendor)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 396,
+                                                    lineNumber: 312,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 394,
+                                            lineNumber: 310,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1365,7 +1299,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Batch ID"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 399,
+                                                    lineNumber: 315,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1373,13 +1307,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: token.batch
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 400,
+                                                    lineNumber: 316,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 398,
+                                            lineNumber: 314,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1390,7 +1324,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Algorithm"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 403,
+                                                    lineNumber: 319,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1398,13 +1332,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "TOTP-SHA1"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 404,
+                                                    lineNumber: 320,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 402,
+                                            lineNumber: 318,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1415,7 +1349,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Period"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 407,
+                                                    lineNumber: 323,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1423,13 +1357,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "30 seconds"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 408,
+                                                    lineNumber: 324,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 406,
+                                            lineNumber: 322,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1440,7 +1374,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Expiry Date"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 411,
+                                                    lineNumber: 327,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1448,13 +1382,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: formatDate(token.expiry)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 412,
+                                                    lineNumber: 328,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 410,
+                                            lineNumber: 326,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1465,7 +1399,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Last Used"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 415,
+                                                    lineNumber: 331,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1473,25 +1407,25 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: token.lastUsed || 'Never'
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 416,
+                                                    lineNumber: 332,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 414,
+                                            lineNumber: 330,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 378,
+                                    lineNumber: 294,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 376,
+                            lineNumber: 292,
                             columnNumber: 21
                         }, this),
                         token.user && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1502,7 +1436,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                     children: "Assigned User"
                                 }, void 0, false, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 424,
+                                    lineNumber: 339,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1516,7 +1450,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "Name"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 427,
+                                                    lineNumber: 342,
                                                     columnNumber: 37
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1524,13 +1458,13 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: token.user.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 428,
+                                                    lineNumber: 343,
                                                     columnNumber: 37
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 426,
+                                            lineNumber: 341,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1541,7 +1475,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: "User ID"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 431,
+                                                    lineNumber: 346,
                                                     columnNumber: 37
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1549,25 +1483,25 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                     children: token.user.id
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 432,
+                                                    lineNumber: 347,
                                                     columnNumber: 37
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 430,
+                                            lineNumber: 345,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 425,
+                                    lineNumber: 340,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 423,
+                            lineNumber: 338,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1578,7 +1512,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                     children: "Audit Log"
                                 }, void 0, false, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 440,
+                                    lineNumber: 354,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1600,7 +1534,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                                 d: "M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                lineNumber: 445,
+                                                                lineNumber: 359,
                                                                 columnNumber: 140
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("circle", {
@@ -1609,7 +1543,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                                 r: "4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                lineNumber: 445,
+                                                                lineNumber: 359,
                                                                 columnNumber: 191
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1619,7 +1553,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                                 y2: "14"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                lineNumber: 445,
+                                                                lineNumber: 359,
                                                                 columnNumber: 222
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1629,18 +1563,18 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                                 y2: "11"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                lineNumber: 445,
+                                                                lineNumber: 359,
                                                                 columnNumber: 260
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                        lineNumber: 445,
+                                                        lineNumber: 359,
                                                         columnNumber: 41
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 444,
+                                                    lineNumber: 358,
                                                     columnNumber: 37
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1653,7 +1587,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 448,
+                                                            lineNumber: 362,
                                                             columnNumber: 41
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1661,19 +1595,19 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                             children: "Assigned automatically via system"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 449,
+                                                            lineNumber: 363,
                                                             columnNumber: 41
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 447,
+                                                    lineNumber: 361,
                                                     columnNumber: 37
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 443,
+                                            lineNumber: 357,
                                             columnNumber: 33
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1692,14 +1626,14 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                                 d: "M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                lineNumber: 455,
+                                                                lineNumber: 369,
                                                                 columnNumber: 136
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("polyline", {
                                                                 points: "17 8 12 3 7 8"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                lineNumber: 455,
+                                                                lineNumber: 369,
                                                                 columnNumber: 187
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1709,18 +1643,18 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                                 y2: "15"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                lineNumber: 455,
+                                                                lineNumber: 369,
                                                                 columnNumber: 221
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                        lineNumber: 455,
+                                                        lineNumber: 369,
                                                         columnNumber: 37
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 454,
+                                                    lineNumber: 368,
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1733,7 +1667,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 458,
+                                                            lineNumber: 372,
                                                             columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1741,37 +1675,37 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                                                             children: "System Administrator"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 459,
+                                                            lineNumber: 373,
                                                             columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 457,
+                                                    lineNumber: 371,
                                                     columnNumber: 33
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 453,
+                                            lineNumber: 367,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 441,
+                                    lineNumber: 355,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 439,
+                            lineNumber: 353,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                    lineNumber: 373,
+                    lineNumber: 290,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1783,7 +1717,7 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                             children: "Close"
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 468,
+                            lineNumber: 382,
                             columnNumber: 21
                         }, this),
                         token.status !== 'revoked' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1792,24 +1726,24 @@ function DetailModal({ isOpen, onClose, token, showToast, onSuccess }) {
                             children: "Revoke Token"
                         }, void 0, false, {
                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                            lineNumber: 470,
+                            lineNumber: 384,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                    lineNumber: 467,
+                    lineNumber: 381,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-            lineNumber: 365,
+            lineNumber: 282,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-        lineNumber: 364,
+        lineNumber: 281,
         columnNumber: 9
     }, this);
 }
@@ -1898,7 +1832,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                 onClick: ()=>setShowDropdown(false)
             }, void 0, false, {
                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                lineNumber: 561,
+                lineNumber: 474,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1912,7 +1846,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                 children: "Assign Token to User"
                             }, void 0, false, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 566,
+                                lineNumber: 479,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1934,7 +1868,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                             y2: "18"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 568,
+                                            lineNumber: 481,
                                             columnNumber: 123
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -1944,24 +1878,24 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                             y2: "18"
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 568,
+                                            lineNumber: 481,
                                             columnNumber: 160
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                    lineNumber: 568,
+                                    lineNumber: 481,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 567,
+                                lineNumber: 480,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                        lineNumber: 565,
+                        lineNumber: 478,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1975,7 +1909,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                         children: "Serial Number"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 574,
+                                        lineNumber: 487,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1985,13 +1919,13 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                         readOnly: true
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 575,
+                                        lineNumber: 488,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 573,
+                                lineNumber: 486,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2002,7 +1936,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                         children: "Search User"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 579,
+                                        lineNumber: 492,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2021,7 +1955,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                 disabled: isAssigning
                                             }, void 0, false, {
                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                lineNumber: 581,
+                                                lineNumber: 494,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2036,12 +1970,12 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                         points: "20 6 9 17 4 12"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                        lineNumber: 596,
+                                                        lineNumber: 509,
                                                         columnNumber: 156
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 596,
+                                                    lineNumber: 509,
                                                     columnNumber: 37
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                                                     viewBox: "0 0 24 24",
@@ -2056,7 +1990,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                             r: "8"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 598,
+                                                            lineNumber: 511,
                                                             columnNumber: 160
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2066,18 +2000,18 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                             y2: "16.65"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 598,
+                                                            lineNumber: 511,
                                                             columnNumber: 191
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 598,
+                                                    lineNumber: 511,
                                                     columnNumber: 37
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                lineNumber: 594,
+                                                lineNumber: 507,
                                                 columnNumber: 29
                                             }, this),
                                             isSearching && !userId && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2093,31 +2027,31 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                             points: "23 4 23 10 17 10"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 604,
+                                                            lineNumber: 517,
                                                             columnNumber: 166
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
                                                             d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 604,
+                                                            lineNumber: 517,
                                                             columnNumber: 203
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 604,
+                                                    lineNumber: 517,
                                                     columnNumber: 37
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                lineNumber: 603,
+                                                lineNumber: 516,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 580,
+                                        lineNumber: 493,
                                         columnNumber: 25
                                     }, this),
                                     showDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2138,7 +2072,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                             r: "10"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 613,
+                                                            lineNumber: 526,
                                                             columnNumber: 138
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2148,7 +2082,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                             y2: "12"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 613,
+                                                            lineNumber: 526,
                                                             columnNumber: 170
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -2158,20 +2092,20 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                             y2: "16"
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 613,
+                                                            lineNumber: 526,
                                                             columnNumber: 208
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 613,
+                                                    lineNumber: 526,
                                                     columnNumber: 41
                                                 }, this),
                                                 "User not found"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 612,
+                                            lineNumber: 525,
                                             columnNumber: 37
                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "py-1",
@@ -2184,7 +2118,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                             children: user.initials || user.name.charAt(0)
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 624,
+                                                            lineNumber: 537,
                                                             columnNumber: 49
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2195,7 +2129,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                                     children: user.name
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                    lineNumber: 628,
+                                                                    lineNumber: 541,
                                                                     columnNumber: 53
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2203,35 +2137,35 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                                     children: user.email
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                                    lineNumber: 629,
+                                                                    lineNumber: 542,
                                                                     columnNumber: 53
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                            lineNumber: 627,
+                                                            lineNumber: 540,
                                                             columnNumber: 49
                                                         }, this)
                                                     ]
                                                 }, user.id, true, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 619,
+                                                    lineNumber: 532,
                                                     columnNumber: 45
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                            lineNumber: 617,
+                                            lineNumber: 530,
                                             columnNumber: 37
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 610,
+                                        lineNumber: 523,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 578,
+                                lineNumber: 491,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2242,7 +2176,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                         children: "Verification Code"
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 640,
+                                        lineNumber: 553,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2255,7 +2189,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                         disabled: isAssigning
                                     }, void 0, false, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 641,
+                                        lineNumber: 554,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2271,31 +2205,31 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                                     d: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                    lineNumber: 643,
+                                                    lineNumber: 556,
                                                     columnNumber: 144
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                                lineNumber: 643,
+                                                lineNumber: 556,
                                                 columnNumber: 29
                                             }, this),
                                             "Validate the 6-digit code from the user's authenticator app to confirm assignment."
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                        lineNumber: 642,
+                                        lineNumber: 555,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 639,
+                                lineNumber: 552,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                        lineNumber: 572,
+                        lineNumber: 485,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2308,7 +2242,7 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                 children: "Cancel"
                             }, void 0, false, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 650,
+                                lineNumber: 563,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2318,25 +2252,25 @@ function AssignModal({ isOpen, onClose, tokenSerial, showToast, onAssignSuccess 
                                 children: isAssigning ? 'Assigning...' : 'Assign Token'
                             }, void 0, false, {
                                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                                lineNumber: 651,
+                                lineNumber: 564,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                        lineNumber: 649,
+                        lineNumber: 562,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-                lineNumber: 564,
+                lineNumber: 477,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/totp-inventory/TotpModals.tsx",
-        lineNumber: 558,
+        lineNumber: 471,
         columnNumber: 9
     }, this);
 }
