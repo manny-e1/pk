@@ -287,7 +287,7 @@ export default function AuthLogsPage() {
     setLoading(true);
     try {
       const rawLogs = await adminService.getAuthLogs(eventType || undefined);
-      const fltrdLogs = rawLogs.filter((log: any) => !(log.user?.role === 'ADMIN' && (log.eventType.toLowerCase() === "passkey logged in" || log.eventType.toLowerCase() === "login success")));
+      const fltrdLogs = rawLogs.filter((log: any) => !(log.user?.role === 'ADMIN' && (log.eventType.toLowerCase().includes("passkey") || log.eventType.toLowerCase().includes("registration") || log.eventType.toLowerCase().includes("login"))));
       const mappedData: AuthEvent[] = fltrdLogs.map((log: any) => {
         let richData: any = {};
         let tagsArray: RiskTag[] = [];
@@ -329,14 +329,14 @@ export default function AuthLogsPage() {
             type: deviceInfo.type || (log.userAgent?.toLowerCase().includes('mobile') ? 'Mobile' : 'Desktop'),
             os: deviceInfo.os || log.userAgent || 'Unknown',
             model: (() => {
-              if (telemetry.device_model || log.device) {
+              if ((telemetry.device_model && telemetry.device_model.includes('unknown')) || (log.device && log.device.includes('unknown'))) {
                 return telemetry.device_model || log.device
               }
               if (deviceInfo.os.toLowerCase().includes('mac')) {
                 return 'Macintosh'
               }
-              if (deviceInfo.os.toLowerCase().includes('windows pc')) {
-                return 'Windows'
+              if (deviceInfo.os.toLowerCase().includes('windows')) {
+                return 'Windows PC'
               }
               if (deviceInfo.os.toLowerCase().includes('ubuntu')) {
                 return 'Ubuntu Desktop'

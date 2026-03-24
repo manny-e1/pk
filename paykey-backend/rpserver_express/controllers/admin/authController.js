@@ -40,8 +40,7 @@ exports.registerPassword = async (req, res) => {
                 role: role === 'ADMIN' ? 'ADMIN' : 'USER'
             }
         });
-
-        await createRichAuthLog(req, { email, id: 'unknown' }, {
+        await createRichAuthLog(req, newUser, {
             eventType: 'Registration Success',
             status: 'SUCCESS',
             authMethod: 'PASSWORD',
@@ -59,7 +58,7 @@ exports.registerPassword = async (req, res) => {
     } catch (err) {
         console.error("[Register] Error:", err);
         
-        await createRichAuthLog(req, { email, id: 'unknown' }, {
+        await createRichAuthLog(req, { email, id: 'unknown', role }, {
             eventType: 'Registration Failed',
             status: 'FAILED',
             authMethod: 'PASSWORD',
@@ -194,3 +193,8 @@ exports.logout = (req, res) => {
 
     res.status(200).json({ message: 'Logged out successfully' });
 };
+
+
+
+
+
