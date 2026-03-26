@@ -412,11 +412,10 @@ exports.getUserDevices = async (req, res) => {
                 prisma.authLog.count({ where: logFilter }), 
                 prisma.authLog.count({ where: { ...logFilter, status: 'SUCCESS' } }),
                 prisma.authLog.findMany({ 
-                    where: logFilter, orderBy: { createdAt: 'desc' }, take: 1, 
-                    select: { ipAddress: true, createdAt: true } // <-- Tambahkan createdAt disini
+                    where: logFilter, orderBy: { createdAt: 'desc' }, 
+                    select: { ipAddress: true, createdAt: true, eventType: true, status: true } // <-- Tambahkan createdAt disini
                 })
             ]);
-
             const successRate = totalLogs > 0 ? Math.round((successCount / totalLogs) * 100) : 100;
             const lastIpFromLog = recentLogs.length > 0 ? (recentLogs[0].ipAddress || "-") : '-';
             
@@ -451,8 +450,12 @@ exports.getUserDevices = async (req, res) => {
                 registeredTimestamp: d.registered,
                 // PERBAIKAN: Kirim waktu real (mentah) dari log ke Frontend
                 lastActive: realLastActive, 
-                
-                location: d.location || "Indonesia", ip: lastIpFromLog, approvals: successCount, rate: `${successRate}%`, credential: d.credentialId || "-",
+                recentActivity: recentLogs,
+                location: d.location || "Indonesia", 
+                ip: lastIpFromLog, 
+                approvals: successCount, 
+                rate: `${successRate}%`, 
+                credential: d.credentialId || "-",
                 user: d.ownerName || "-", email: d.email || "-", userId: d.userId || "-", methods: d.registeredMethods, authKeys: formattedAuthKeys
             };
         }));

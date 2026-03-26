@@ -401,13 +401,13 @@ export default function DevicesPage() {
 
                             <div className="flex flex-col">
                                 {currentDevice.recentActivity && currentDevice.recentActivity.length > 0 ? (
-                                    currentDevice.recentActivity.map((activity: { status: string | undefined; event: string | undefined; location: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; time: string | undefined; ip: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, index: Key | null | undefined) => (
+                                    currentDevice.recentActivity.map((activity: { status: string | undefined; eventType: string | undefined; location: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; createdAt: string | undefined; ip: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, index: Key | null | undefined) => (
                                         <div key={index} className="flex items-start gap-3 py-3 border-b border-[var(--border-secondary)] last:border-0">
                                             <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${getStatusColorClass(activity.status)}`}></div>
 
                                             <div className="flex-1">
                                                 <div className="text-[13px] text-[var(--text-primary)]">
-                                                    {formatEventName(activity.event)}
+                                                    {formatEventName(activity.eventType)}
                                                     {/* {activity.location && activity.location !== 'Unknown Location' && (
                                                         <span className="text-[var(--text-tertiary)] text-[11px] ml-1">
                                                             • {activity.location}
@@ -416,7 +416,7 @@ export default function DevicesPage() {
                                                 </div>
 
                                                 <div className="text-[11px] text-[var(--text-tertiary)] flex gap-2">
-                                                    <span>{getRelativeTime(activity.time)}</span>
+                                                    <span>{getRelativeTime(activity.createdAt)}</span>
                                                     {/* {activity.ip && <span>• IP: {activity.ip}</span>} */}
                                                 </div>
                                             </div>

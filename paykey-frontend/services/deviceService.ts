@@ -23,7 +23,7 @@ export const getRelativeTime = (dateString: string | Date | undefined) => {
 export function formatIp(ip: string) {
   const parts = ip.split('.');
   if (parts.length === 4) {
-    return `${parts[0]}.${parts[1]}.${parts[2]}.***`;
+    return `${parts[0]}.${parts[1]}.**.**`;
   }
   return ip;
 }

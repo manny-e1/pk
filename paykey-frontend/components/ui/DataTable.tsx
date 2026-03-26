@@ -33,8 +33,8 @@ export function DataTable<T extends { id: string }>({
   };
 
   return (
-    <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-lg)] flex flex-col h-full overflow-hidden shadow-sm">
-      <div className="flex-1 overflow-hidden">
+    <div className="bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-[var(--radius-lg)] flex flex-col h-full shadow-sm">
+      <div className="flex-1">
         <table className="w-full border-collapse">
           <thead className="sticky top-0 z-10 bg-[var(--bg-secondary)] shadow-sm">
             <tr>
