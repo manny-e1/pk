@@ -6,7 +6,7 @@ export const adminService = {
         const res = await apiClient.get(`/api/admin/limits`);
         return res.data;
     },
-    
+
     updateAmountLimit: async (id: string, data: any) => {
         const res = await apiClient.put(`/api/admin/limits/${id}`, data);
         return res.data;
@@ -33,8 +33,8 @@ export const adminService = {
     },
 
     saveRiskConfigBatch: async (rulesPayload: any[]) => {
-        const res = await apiClient.post('/api/admin/risk-rules', { 
-            rules: rulesPayload 
+        const res = await apiClient.post('/api/admin/risk-rules', {
+            rules: rulesPayload
         });
         return res.data;
     },
@@ -43,7 +43,7 @@ export const adminService = {
         const res = await apiClient.post('/api/admin/risk-config', payload);
         return res.data;
     },
-    
+
     getPolicies: async () => {
         const res = await apiClient.get(`/api/admin/policies`);
         return res.data;
@@ -77,8 +77,8 @@ export const adminService = {
     },
 
     getDashboardStats: async (range: string) => {
-        const res = await apiClient.get(`/api/admin/dashboard`, { 
-            params: { timeRange: range } 
+        const res = await apiClient.get(`/api/admin/dashboard`, {
+            params: { timeRange: range }
         });
         return res.data;
     },
@@ -101,7 +101,7 @@ export const adminService = {
     importTotpBatch: async (formData: FormData) => {
         const res = await apiClient.post(`/api/admin/totp-inventory/import`, formData, {
             headers: {
-                'Content-Type': 'multipart/form-data' 
+                'Content-Type': 'multipart/form-data'
             }
         });
         return res.data;
@@ -111,8 +111,8 @@ export const adminService = {
         return res.data;
     },
     assignTotpToken: async (serial: string, userId: string, verificationCode: string) => {
-        const res = await apiClient.post(`/api/admin/totp-inventory/${serial}/assign`, { 
-            userId, 
+        const res = await apiClient.post(`/api/admin/totp-inventory/${serial}/assign`, {
+            userId,
             verificationCode // <-- Kirimkan ke Backend
         });
         return res.data;
@@ -123,6 +123,90 @@ export const adminService = {
     },
     searchUsers: async (query: string) => {
         const res = await apiClient.get(`/api/users`, { params: { search: query } });
+        return res.data;
+    },
+
+    getCompanies: async (params?: { search?: string; industry?: string; page?: number; pageSize?: number }) => {
+        const res = await apiClient.get(`/api/admin/companies`, { params });
+        return res.data;
+    },
+
+    getCompany: async (companyId: string) => {
+        const res = await apiClient.get(`/api/admin/companies/${companyId}`);
+        return res.data;
+    },
+
+    getCompanyStats: async () => {
+        const res = await apiClient.get(`/api/admin/companies/stats`);
+        return res.data;
+    },
+
+    createCompany: async (data: {
+        name: string;
+        registrationNo: string;
+        address: string;
+        industry: string;
+        status?: string;
+        personnel?: { fullName?: string; name?: string; email: string; mobile?: string; phone?: string }[];
+    }) => {
+        const res = await apiClient.post(`/api/admin/companies`, data);
+        return res.data;
+    },
+
+    updateCompany: async (
+        companyId: string,
+        data: Partial<{
+            name: string;
+            registrationNo: string;
+            address: string;
+            industry: string;
+            status: string;
+            personnel: { fullName?: string; name?: string; email: string; mobile?: string; phone?: string }[];
+        }>,
+    ) => {
+        const res = await apiClient.put(`/api/admin/companies/${companyId}`, data);
+        return res.data;
+    },
+
+    deleteCompany: async (companyId: string) => {
+        const res = await apiClient.delete(`/api/admin/companies/${companyId}`);
+        return res.data;
+    },
+
+    listCompanyWorkflows: async () => {
+        const res = await apiClient.get(`/api/admin/workflows`);
+        return res.data;
+    },
+
+    createWorkflow: async (
+        companyId: string,
+        payload: {
+            name: string;
+            levels: { mode: string; nOfM?: number | null; levelOrder?: number; userIds: string[]; authMethods?: string[] }[];
+        },
+    ) => {
+        const res = await apiClient.post(`/api/admin/companies/${companyId}/workflows`, payload);
+        return res.data;
+    },
+
+    getWorkflow: async (workflowId: string) => {
+        const res = await apiClient.get(`/api/admin/workflows/${workflowId}`);
+        return res.data;
+    },
+
+    updateWorkflow: async (
+        workflowId: string,
+        payload: {
+            name?: string;
+            levels: { mode: string; nOfM?: number | null; levelOrder?: number; userIds: string[]; authMethods?: string[] }[];
+        },
+    ) => {
+        const res = await apiClient.put(`/api/admin/workflows/${workflowId}`, payload);
+        return res.data;
+    },
+
+    deleteWorkflow: async (workflowId: string) => {
+        const res = await apiClient.delete(`/api/admin/workflows/${workflowId}`);
         return res.data;
     },
 };

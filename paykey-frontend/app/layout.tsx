@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { IdleTimerWrapper } from '@/components/IdleTimerWrapper';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: 'Secure Paykey - FIDO2 Authentication',
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <IdleTimerWrapper>
-      <body>{children}</body>
+        <Providers>
+          <body>{children}</body>
+        </Providers>
       </IdleTimerWrapper>
     </html>
   );
