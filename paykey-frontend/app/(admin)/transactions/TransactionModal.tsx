@@ -1,0 +1,800 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { adminService } from "@/services/adminService";
+
+type ApiApprover = {
+	id: string;
+	name: string;
+	role?: string;
+	status: string;
+	time?: string | null;
+};
+
+type ApiDetail = {
+	id: string;
+	transactionNo: string;
+	timestamp: string;
+	segment: string;
+	amount: number;
+	currency: string;
+	status: string;
+	riskLevel: string;
+	riskScore: number;
+	riskReason: string | null;
+	description: string | null;
+	toAccount: string | null;
+	merchantName: string | null;
+	payerBank?: string | null;
+	beneficiaryBank?: string | null;
+	authMethod?: string | null;
+	authResult?: string | null;
+	user: {
+		fullName: string;
+		email: string | null;
+		mobile: string | null;
+	} | null;
+	company: { name: string; registrationNo: string } | null;
+	approvers: ApiApprover[];
+};
+
+type RiskAlertRow = {
+	level: "low" | "medium" | "high" | "critical";
+	title: string;
+	description: string;
+	score: number;
+};
+
+type UiApprover = {
+	name: string;
+	role: string;
+	initials: string;
+	status: "approved" | "pending" | "rejected";
+	time: string | null;
+};
+
+type TimelineItem = {
+	event: string;
+	time: string;
+	type: "success" | "warning" | "error" | "info";
+};
+
+const riskColors = {
+	low: {
+		badge: "bg-emerald-500/15 text-emerald-400",
+		alert: "bg-emerald-500/10 border border-emerald-500/20",
+		icon: "bg-emerald-500/20 text-emerald-400",
+		score: "text-emerald-400",
+	},
+	medium: {
+		badge: "bg-amber-500/15 text-amber-400",
+		alert: "bg-amber-500/10 border border-amber-500/20",
+		icon: "bg-amber-500/20 text-amber-400",
+		score: "text-amber-400",
+	},
+	high: {
+		badge: "bg-orange-500/15 text-orange-400",
+		alert: "bg-orange-500/10 border border-orange-500/20",
+		icon: "bg-orange-500/20 text-orange-400",
+		score: "text-orange-400",
+	},
+	critical: {
+		badge: "bg-red-500/15 text-red-400",
+		alert: "bg-red-500/10 border border-red-500/20",
+		icon: "bg-red-500/20 text-red-400",
+		score: "text-red-400",
+	},
+};
+
+const statusUi: Record<
+	string,
+	{ label: string; class: string }
+> = {
+	pending: {
+		label: "Pending",
+		class: "bg-amber-500/15 text-amber-400",
+	},
+	approved: {
+		label: "Approved",
+		class: "bg-emerald-500/15 text-emerald-400",
+	},
+	completed: {
+		label: "Completed",
+		class: "bg-emerald-500/15 text-emerald-400",
+	},
+	rejected: {
+		label: "Rejected",
+		class: "bg-red-500/15 text-red-400",
+	},
+	processing: {
+		label: "Processing",
+		class: "bg-blue-500/15 text-blue-400",
+	},
+};
+
+const approverAvatarColors = {
+	approved: "bg-emerald-500 text-white",
+	pending:
+		"bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-2 border-dashed border-[var(--border-secondary)]",
+	rejected: "bg-red-500 text-white",
+};
+
+const approverBadgeColors = {
+	approved: "bg-emerald-500/15 text-emerald-400",
+	pending: "bg-amber-500/15 text-amber-400",
+	rejected: "bg-red-500/15 text-red-400",
+};
+
+const timelineDotColors = {
+	success: "bg-emerald-500",
+	warning: "bg-amber-500",
+	error: "bg-red-500",
+	info: "bg-blue-500",
+};
+
+function initialsFromName(name: string) {
+	return name
+		.split(" ")
+		.map((w) => w[0])
+		.join("")
+		.slice(0, 2)
+		.toUpperCase();
+}
+
+function mapApproverStatus(
+	raw: string,
+): "approved" | "pending" | "rejected" {
+	const s = (raw || "").toLowerCase();
+	if (["approved", "done", "complete", "completed", "success"].includes(s))
+		return "approved";
+	if (["rejected", "denied", "failed"].includes(s)) return "rejected";
+	return "pending";
+}
+
+function parseRiskAlerts(
+	riskLevel: string,
+	riskScore: number,
+	riskReason: string | null,
+): RiskAlertRow[] {
+	if (!riskReason?.trim()) {
+		const lvl = (riskLevel || "low").toLowerCase() as RiskAlertRow["level"];
+		const safe =
+			lvl === "medium" || lvl === "high" || lvl === "critical"
+				? lvl
+				: "low";
+		return [
+			{
+				level: safe,
+				title: "Risk summary",
+				description: `Overall ${riskLevel} risk (score ${riskScore}).`,
+				score: riskScore,
+			},
+		];
+	}
+	try {
+		const parsed = JSON.parse(riskReason);
+		if (Array.isArray(parsed)) {
+			return parsed
+				.filter((x) => x && typeof x === "object")
+				.map((x: Record<string, unknown>) => {
+					const level = String(x.level || riskLevel || "low").toLowerCase();
+					const L =
+						level === "medium" ||
+						level === "high" ||
+						level === "critical" ||
+						level === "low"
+							? level
+							: "low";
+					return {
+						level: L as RiskAlertRow["level"],
+						title: String(x.title || x.rule || "Factor"),
+						description: String(x.description || x.desc || ""),
+						score: Number(x.score) || 0,
+					};
+				});
+		}
+	} catch {
+		/* fall through */
+	}
+	const lvl = (riskLevel || "low").toLowerCase() as RiskAlertRow["level"];
+	const safe =
+		lvl === "medium" || lvl === "high" || lvl === "critical" ? lvl : "low";
+	return [
+		{
+			level: safe,
+			title: "Risk analysis",
+			description: riskReason,
+			score: riskScore,
+		},
+	];
+}
+
+function buildFromTo(d: ApiDetail) {
+	const isCorp = d.segment === "corporate";
+	const fromName = isCorp
+		? d.company?.name || d.user?.fullName || "Corporate"
+		: d.user?.fullName || "—";
+	const fromNumber = isCorp
+		? d.company?.registrationNo || "—"
+		: d.user?.email || d.user?.mobile || "—";
+	const fromBank = isCorp
+		? d.payerBank || "—"
+		: "Retail banking";
+	return {
+		from: { name: fromName, number: fromNumber, bank: fromBank },
+		to: {
+			name: d.merchantName || "Beneficiary",
+			number: d.toAccount || "—",
+			bank: d.beneficiaryBank || (isCorp ? "—" : "DuitNow / IBG"),
+		},
+	};
+}
+
+function buildTimeline(d: ApiDetail, dateStr: string): TimelineItem[] {
+	const items: TimelineItem[] = [
+		{
+			event: "Transaction recorded",
+			time: new Date(d.timestamp).toLocaleTimeString("en-MY", {
+				hour12: false,
+			}),
+			type: "info",
+		},
+	];
+	for (const a of d.approvers || []) {
+		const st = (a.status || "").toLowerCase();
+		if (st === "done" || st === "approved") {
+			items.push({
+				event: `Approved by ${a.name}`,
+				time: a.time
+					? new Date(a.time).toLocaleTimeString("en-MY", { hour12: false })
+					: "—",
+				type: "success",
+			});
+		} else if (st === "rejected") {
+			items.push({
+				event: `Rejected by ${a.name}`,
+				time: a.time
+					? new Date(a.time).toLocaleTimeString("en-MY", { hour12: false })
+					: "—",
+				type: "error",
+			});
+		}
+	}
+	if (d.description) {
+		items.push({
+			event: d.description.slice(0, 120) + (d.description.length > 120 ? "…" : ""),
+			time: dateStr,
+			type: "info",
+		});
+	}
+	return items;
+}
+
+function RiskIcon({ level }: { level: string }) {
+	if (level === "low")
+		return (
+			<svg
+				className="w-3.5 h-3.5"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="2"
+				aria-hidden
+			>
+				<title>Low risk</title>
+				<polyline points="20 6 9 17 4 12" />
+			</svg>
+		);
+	if (level === "critical")
+		return (
+			<svg
+				className="w-3.5 h-3.5"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="2"
+				aria-hidden
+			>
+				<title>Critical risk</title>
+				<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+				<line x1="12" y1="9" x2="12" y2="13" />
+				<line x1="12" y1="17" x2="12.01" y2="17" />
+			</svg>
+		);
+	return (
+		<svg
+			className="w-3.5 h-3.5"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			aria-hidden
+		>
+			<title>Risk warning</title>
+			<circle cx="12" cy="12" r="10" />
+			<line x1="12" y1="8" x2="12" y2="12" />
+			<line x1="12" y1="16" x2="12.01" y2="16" />
+		</svg>
+	);
+}
+
+export function TransactionDetailModal({
+	isOpen,
+	transactionId,
+	onClose,
+	onAuditLog,
+}: {
+	isOpen: boolean;
+	transactionId: string | null;
+	onClose: () => void;
+	onAuditLog: (id: string) => void;
+}) {
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [detail, setDetail] = useState<ApiDetail | null>(null);
+
+	const load = useCallback(async (id: string) => {
+		setLoading(true);
+		setError(null);
+		setDetail(null);
+		try {
+			const d = await adminService.getTransactionDetail(id);
+			setDetail(d as ApiDetail);
+		} catch (e) {
+			console.error(e);
+			setError("Failed to load transaction details.");
+		} finally {
+			setLoading(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!isOpen || !transactionId) {
+			setDetail(null);
+			setError(null);
+			return;
+		}
+		load(transactionId);
+	}, [isOpen, transactionId, load]);
+
+	if (!isOpen || !transactionId) return null;
+
+	const fmtMoney = (n: number, cur: string) =>
+		`${cur} ${n.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+	const dateLabel = detail
+		? new Date(detail.timestamp).toLocaleDateString("en-MY", {
+				day: "2-digit",
+				month: "short",
+				year: "numeric",
+			})
+		: "";
+	const timeLabel = detail
+		? new Date(detail.timestamp).toLocaleTimeString("en-MY", {
+				hour: "2-digit",
+				minute: "2-digit",
+				second: "2-digit",
+				hour12: false,
+			})
+		: "";
+
+	const riskLevelKey = (
+		detail?.riskLevel || "low"
+	).toLowerCase() as keyof typeof riskColors;
+	const riskKey =
+		riskLevelKey in riskColors ? riskLevelKey : ("low" as const);
+
+	const statusKey = (detail?.status || "pending").toLowerCase();
+	const statusInfo =
+		statusUi[statusKey] ||
+		({
+			label: detail?.status || "—",
+			class: "bg-[var(--bg-tertiary)] text-[var(--text-secondary)]",
+		} as const);
+
+	const uiApprovers: UiApprover[] = (detail?.approvers?.length
+		? detail.approvers
+		: [{ id: "self", name: "Payer", status: "done" }]
+	).map((a) => ({
+		name: a.name,
+		role: a.role || "Approver",
+		initials: initialsFromName(a.name),
+		status: mapApproverStatus(a.status),
+		time: a.time
+			? new Date(a.time).toLocaleString("en-MY", { hour12: false })
+			: null,
+	}));
+
+	const approvedCount = uiApprovers.filter((a) => a.status === "approved").length;
+	const rejectedCount = uiApprovers.filter((a) => a.status === "rejected").length;
+	const pendingCount = uiApprovers.filter((a) => a.status === "pending").length;
+	const totalApprovers = Math.max(uiApprovers.length, 1);
+	const requiredApprovals = totalApprovers;
+
+	const riskAlerts = detail
+		? parseRiskAlerts(detail.riskLevel, detail.riskScore, detail.riskReason)
+		: [];
+	const { from, to } = detail ? buildFromTo(detail) : { from: null, to: null };
+	const timeline = detail ? buildTimeline(detail, dateLabel) : [];
+
+	return (
+		<div className="fixed inset-0 z-[1002] flex items-center justify-center p-4">
+			<button
+				type="button"
+				className="absolute inset-0 bg-black/70 transition-all duration-200"
+				aria-label="Close dialog"
+				onClick={onClose}
+			/>
+			<div
+				className="relative z-10 bg-[var(--bg-secondary)] border border-[var(--border-secondary)] rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
+				role="dialog"
+				aria-labelledby="tx-modal-title"
+				aria-modal="true"
+			>
+				<div className="px-6 py-5 border-b border-[var(--border-secondary)] flex items-center justify-between shrink-0">
+					<h3
+						id="tx-modal-title"
+						className="text-base font-semibold flex flex-wrap items-center gap-3 text-[var(--text-primary)]"
+					>
+						<span>Transaction details</span>
+						{detail && (
+							<span className="font-mono text-sm text-[var(--accent)]">
+								{detail.transactionNo || detail.id}
+							</span>
+						)}
+					</h3>
+					<button
+						type="button"
+						onClick={onClose}
+						className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)] transition-all"
+						aria-label="Close"
+					>
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							aria-hidden
+						>
+							<title>Close</title>
+							<line x1="18" y1="6" x2="6" y2="18" />
+							<line x1="6" y1="6" x2="18" y2="18" />
+						</svg>
+					</button>
+				</div>
+
+				<div className="px-6 py-6 overflow-y-auto flex-1 space-y-6 custom-scrollbar">
+					{loading && (
+						<p className="text-sm text-[var(--text-tertiary)]">Loading…</p>
+					)}
+					{error && (
+						<div className="text-sm text-[var(--error)] border border-[var(--error)]/30 rounded-lg px-4 py-3 bg-[var(--error-bg)]">
+							{error}
+						</div>
+					)}
+					{!loading && !error && detail && from && to && (
+						<>
+							<div className="flex flex-col sm:flex-row items-stretch gap-4 p-5 bg-[var(--bg-tertiary)] rounded-xl">
+								<div className="flex-1 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-secondary)]">
+									<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-2">
+										From
+									</div>
+									<div className="text-base font-semibold text-[var(--text-primary)] mb-1">
+										{from.name}
+									</div>
+									<div className="font-mono text-[13px] text-[var(--text-secondary)]">
+										{from.number}
+									</div>
+									<div className="text-xs text-[var(--text-tertiary)] mt-1">
+										{from.bank}
+									</div>
+								</div>
+
+								<div className="flex flex-row sm:flex-col items-center justify-center gap-2 shrink-0 py-2 sm:py-0">
+									<div className="w-12 h-12 rounded-full bg-[var(--accent)] flex items-center justify-center">
+										<svg
+											className="w-6 h-6 text-white"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+											aria-hidden
+										>
+											<title>Transfer</title>
+											<line x1="5" y1="12" x2="19" y2="12" />
+											<polyline points="12 5 19 12 12 19" />
+										</svg>
+									</div>
+									<span className="font-mono text-lg font-bold text-[var(--text-primary)]">
+										{fmtMoney(detail.amount, detail.currency)}
+									</span>
+								</div>
+
+								<div className="flex-1 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-secondary)]">
+									<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-2">
+										To
+									</div>
+									<div className="text-base font-semibold text-[var(--text-primary)] mb-1">
+										{to.name}
+									</div>
+									<div className="font-mono text-[13px] text-[var(--text-secondary)]">
+										{to.number}
+									</div>
+									<div className="text-xs text-[var(--text-tertiary)] mt-1">
+										{to.bank}
+									</div>
+								</div>
+							</div>
+
+							<div>
+								<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 pb-2 border-b border-[var(--border-secondary)]">
+									Transaction information
+								</div>
+								<div className="grid grid-cols-2 gap-4">
+									<div className="flex flex-col gap-1">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Transaction ID
+										</span>
+										<span className="font-mono text-[13px] text-[var(--text-primary)] font-medium">
+											{detail.id}
+										</span>
+									</div>
+									<div className="flex flex-col gap-1">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Date &amp; time
+										</span>
+										<span className="text-[14px] text-[var(--text-primary)] font-medium">
+											{dateLabel} {timeLabel}
+										</span>
+									</div>
+									<div className="flex flex-col gap-1">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Segment
+										</span>
+										<span className="text-[13px] text-[var(--text-primary)] capitalize">
+											{detail.segment}
+										</span>
+									</div>
+									<div className="flex flex-col gap-1">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Auth result
+										</span>
+										<span className="text-[13px] text-[var(--text-secondary)] font-mono">
+											{detail.authResult || "—"}
+										</span>
+									</div>
+									<div className="flex flex-col gap-1">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Amount
+										</span>
+										<span className="font-mono text-2xl font-bold text-[var(--text-primary)]">
+											{fmtMoney(detail.amount, detail.currency)}
+										</span>
+									</div>
+									<div className="flex flex-col gap-1">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Status
+										</span>
+										<span
+											className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium w-fit ${statusInfo.class}`}
+										>
+											<span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
+											{statusInfo.label}
+										</span>
+									</div>
+									<div className="flex flex-col gap-1">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Risk level
+										</span>
+										<span
+											className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-semibold w-fit ${riskColors[riskKey].badge}`}
+										>
+											<RiskIcon level={riskKey} />
+											{detail.riskLevel.toUpperCase()} (score: {detail.riskScore}
+											)
+										</span>
+									</div>
+									<div className="flex flex-col gap-1 col-span-2">
+										<span className="text-xs text-[var(--text-tertiary)]">
+											Notes / description
+										</span>
+										<div className="bg-[var(--bg-tertiary)] rounded-lg px-4 py-3 text-[13px] text-[var(--text-secondary)] leading-relaxed border border-[var(--border-secondary)]">
+											{detail.description || "—"}
+										</div>
+									</div>
+								</div>
+							</div>
+
+							{riskAlerts.length > 0 && (
+								<div>
+									<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 pb-2 border-b border-[var(--border-secondary)]">
+										Risk assessment
+									</div>
+									<div className="flex flex-col gap-2">
+										{riskAlerts.map((alert, i) => {
+											const rk =
+												alert.level in riskColors
+													? alert.level
+													: ("low" as const);
+											return (
+												<div
+													key={`${alert.title}-${i}`}
+													className={`flex items-start gap-3 p-3 rounded-lg ${riskColors[rk].alert}`}
+												>
+													<div
+														className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${riskColors[rk].icon}`}
+													>
+														<RiskIcon level={rk} />
+													</div>
+													<div className="flex-1 min-w-0">
+														<div className="text-[13px] font-medium text-[var(--text-primary)]">
+															{alert.title}
+														</div>
+														<div className="text-xs text-[var(--text-secondary)] mt-0.5">
+															{alert.description}
+														</div>
+													</div>
+													<div
+														className={`text-xs font-semibold font-mono shrink-0 ${riskColors[rk].score}`}
+													>
+														+{alert.score}
+													</div>
+												</div>
+											);
+										})}
+									</div>
+								</div>
+							)}
+
+							<div>
+								<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 pb-2 border-b border-[var(--border-secondary)]">
+									Approval status ({approvedCount}/{requiredApprovals} tracked)
+								</div>
+								<div className="mb-4">
+									<div className="h-2 bg-[var(--bg-tertiary)] rounded-full overflow-hidden flex">
+										<div
+											className="h-full bg-emerald-500 transition-all"
+											style={{
+												width: `${(approvedCount / totalApprovers) * 100}%`,
+											}}
+										/>
+										<div
+											className="h-full bg-red-500 transition-all"
+											style={{
+												width: `${(rejectedCount / totalApprovers) * 100}%`,
+											}}
+										/>
+										<div
+											className="h-full bg-[var(--bg-secondary)] transition-all"
+											style={{
+												width: `${(pendingCount / totalApprovers) * 100}%`,
+											}}
+										/>
+									</div>
+									<div className="flex justify-between mt-2 text-xs text-[var(--text-tertiary)]">
+										<span>{approvedCount} approved</span>
+										<span>{pendingCount} pending</span>
+										{rejectedCount > 0 && (
+											<span>{rejectedCount} rejected</span>
+										)}
+									</div>
+								</div>
+								<div className="flex flex-col gap-3">
+									{uiApprovers.map((approver, i) => (
+										<div
+											key={`${approver.name}-${i}`}
+											className="flex items-center gap-3 px-4 py-3 bg-[var(--bg-tertiary)] rounded-lg border border-[var(--border-secondary)]"
+										>
+											<div
+												className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-sm font-semibold shrink-0 ${approverAvatarColors[approver.status]}`}
+											>
+												{approver.initials}
+											</div>
+											<div className="flex-1 min-w-0">
+												<div className="text-[14px] font-medium text-[var(--text-primary)] truncate">
+													{approver.name}
+												</div>
+												<div className="text-xs text-[var(--text-tertiary)]">
+													{approver.role}
+												</div>
+											</div>
+											<div className="text-right shrink-0">
+												<span
+													className={`text-xs font-medium px-2.5 py-1 rounded-full ${approverBadgeColors[approver.status]}`}
+												>
+													{approver.status.charAt(0).toUpperCase() +
+														approver.status.slice(1)}
+												</span>
+												{approver.time && (
+													<div className="text-[11px] text-[var(--text-tertiary)] mt-1">
+														{approver.time}
+													</div>
+												)}
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+
+							{timeline.length > 0 && (
+								<div>
+									<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 pb-2 border-b border-[var(--border-secondary)]">
+										Activity timeline
+									</div>
+									<div className="relative pl-6">
+										<div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-[var(--border-secondary)]" />
+										{timeline.map((item, i) => (
+											<div key={`${item.event}-${i}`} className="relative pb-4 last:pb-0">
+												<div
+													className={`absolute -left-6 top-1 w-4 h-4 rounded-full flex items-center justify-center ${timelineDotColors[item.type]}`}
+												>
+													{item.type === "success" && (
+														<svg
+															className="w-2.5 h-2.5 text-white"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															strokeWidth="3"
+															aria-hidden
+														>
+															<title>Completed</title>
+															<polyline points="20 6 9 17 4 12" />
+														</svg>
+													)}
+													{item.type === "error" && (
+														<svg
+															className="w-2.5 h-2.5 text-white"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															strokeWidth="3"
+															aria-hidden
+														>
+															<title>Failed</title>
+															<line x1="18" y1="6" x2="6" y2="18" />
+															<line x1="6" y1="6" x2="18" y2="18" />
+														</svg>
+													)}
+												</div>
+												<div className="pl-2">
+													<div className="text-[13px] font-medium text-[var(--text-primary)]">
+														{item.event}
+													</div>
+													<div className="text-[11px] text-[var(--text-tertiary)] mt-0.5">
+														{dateLabel} {item.time}
+													</div>
+												</div>
+											</div>
+										))}
+									</div>
+								</div>
+							)}
+						</>
+					)}
+				</div>
+
+				<div className="px-6 py-4 border-t border-[var(--border-secondary)] flex flex-wrap justify-end gap-3 shrink-0">
+					<button
+						type="button"
+						onClick={onClose}
+						className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-secondary)] hover:bg-[var(--bg-hover)] transition-all"
+					>
+						Close
+					</button>
+					<button
+						type="button"
+						onClick={() => {
+							onAuditLog(transactionId);
+							onClose();
+						}}
+						className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-all"
+					>
+						Open audit log
+					</button>
+				</div>
+			</div>
+		</div>
+	);
+}

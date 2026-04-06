@@ -16,7 +16,7 @@ exports.registerPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         
         const existingUser = await prisma.user.findUnique({ where: { email } });
-        if (existingUser) {
+        if (existingUser && existingUser.passwordHash) {
             await createRichAuthLog(req, { email, id: 'unknown' }, {
             eventType: 'Registration Failed',
             status: 'FAILED',
@@ -32,7 +32,20 @@ exports.registerPassword = async (req, res) => {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
-        const newUser = await prisma.user.create({
+        let newUser;
+        if (existingUser && !existingUser.passwordHash) {
+            newUser = await prisma.user.update({
+                where: { id: existingUser.id },
+                data: {
+                    fullName: fullName || existingUser.fullName,
+                    passwordHash: hashedPassword,
+                    companyName: companyName || existingUser.companyName,
+                    mobile: mobile || existingUser.mobile,
+                    role: role === 'ADMIN' ? 'ADMIN' : (existingUser.role || 'USER'),
+                },
+            });
+        } else {
+            newUser = await prisma.user.create({
             data: { 
                 id: generateUserId(),
                 email, fullName, passwordHash: hashedPassword,
@@ -40,6 +53,7 @@ exports.registerPassword = async (req, res) => {
                 role: role === 'ADMIN' ? 'ADMIN' : 'USER'
             }
         });
+        }
         await createRichAuthLog(req, newUser, {
             eventType: 'Registration Success',
             status: 'SUCCESS',

@@ -21,3 +21,8 @@ pm2.log
 
 migrations/
 **/.gradle/*
+
+newwebdemo.pdf
+authkey-company-management/
+authkey-approval-success/
+paykey-web-demo/

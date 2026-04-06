@@ -218,7 +218,7 @@ exports.startPushApproval = async (req, res) => {
     try {
         const { userId } = req.body;
         console.log("Start Push Approval for userId:", userId);
-        const user = await prisma.user.findUnique({ where: { userId } });
+        const user = await prisma.user.findUnique({ where: { id: userId } });
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         const challengeData = await javaClient.getUnifiedChallenge();
@@ -250,7 +250,7 @@ exports.startPushApproval = async (req, res) => {
 
 exports.checkPushStatus = async (req, res) => {
     try {
-        const { txId } = req.query;
+        const txId = req.query.txId || req.body.txId;
         const dataStr = await redisClient.get(`push_tx:${txId}`);
         if (!dataStr) return res.status(400).json({ status: 'EXPIRED' });
 

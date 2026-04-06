@@ -14,45 +14,49 @@ const app = express();
 const PORT = 4000;
 
 const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://127.0.0.1:3001',
-  'http://192.168.1.3:3000',
-  'http://192.168.1.3:4000',
-  'http://18.142.184.55:3000',
-  'http://18.142.184.55:4000',
-  'http://18.142.184.55',
-  'https://www.authkey.my',
-  'https://console.authkey.my',
-  'https://api.authkey.my',
-  "android:apk-key-hash-sha256:KNxFf9ASburnBecouT/TtD1G7WxWoBTFY3RzkED2FB0",
-  "http://18.141.138.67:3000",
-  "https://demo.authkey.my"
+	"http://localhost:3000",
+	"http://localhost:3001",
+	"http://localhost:3002",
+	"http://127.0.0.1:3001",
+	"http://192.168.1.3:3000",
+	"http://192.168.1.3:4000",
+	"http://18.142.184.55:3000",
+	"http://18.142.184.55:4000",
+	"http://18.142.184.55",
+	"https://www.authkey.my",
+	"https://console.authkey.my",
+	"https://api.authkey.my",
+	"android:apk-key-hash-sha256:KNxFf9ASburnBecouT/TtD1G7WxWoBTFY3RzkED2FB0",
+	"http://18.141.138.67:3000",
+	"https://demo.authkey.my",
+	"http://18.141.147.159:3000",
+	"http://18.141.147.159:3001",
+	"http://18.141.147.159:4000",
 ];
 
-    
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true, 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: [
-        'Content-Type', 
-        'Authorization', 
-        'x-client-type',
-        'x-api-key',
-        'x-signature',
-        'x-timestamp',
-        'x-device-name',
-        'X-Device-Name'
-    ]
-}));
-
+app.use(
+	cors({
+		origin: function (origin, callback) {
+			if (!origin || allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error("Not allowed by CORS"));
+			}
+		},
+		credentials: true,
+		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		allowedHeaders: [
+			"Content-Type",
+			"Authorization",
+			"x-client-type",
+			"x-api-key",
+			"x-signature",
+			"x-timestamp",
+			"x-device-name",
+			"X-Device-Name",
+		],
+	}),
+);
 
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: "100mb" }));

@@ -32,6 +32,9 @@ model User {
   companyName  String? @map("company_name")
   mobile       String?
 
+  companyId String?  @map("company_id") @db.VarChar(128)
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+
   // [PENTING] Field Balance untuk fitur Transaksi
   balance Decimal @default(0) @db.Decimal(15, 2)
 
@@ -56,7 +59,76 @@ model User {
   pushRequests   AuthPushRequest[]
   hardwareTokens TotpHardwareInventory[]
 
+  workflowLevelAssignees WorkflowLevelAssignee[]
+
+  @@index([companyId])
   @@map("users")
+}
+
+// ==========================================
+// COMPANY & APPROVAL WORKFLOWS
+// ==========================================
+
+model Company {
+  id             String   @id @default(uuid()) @db.VarChar(128)
+  name           String
+  registrationNo String   @map("registration_no") @db.VarChar(64)
+  address        String   @db.Text
+  industry       String   @db.VarChar(64)
+  /// active | pending | suspended (admin company lifecycle)
+  status         String   @default("active") @db.VarChar(32)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  users     User[]
+  workflows ApprovalWorkflow[]
+
+  @@index([industry])
+  @@index([registrationNo])
+  @@index([status])
+  @@map("companies")
+}
+
+model ApprovalWorkflow {
+  id        String   @id @default(uuid()) @db.VarChar(128)
+  companyId String   @map("company_id") @db.VarChar(128)
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  company Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  levels  WorkflowLevel[]
+
+  @@index([companyId])
+  @@map("approval_workflows")
+}
+
+model WorkflowLevel {
+  id         String @id @default(uuid()) @db.VarChar(128)
+  workflowId String @map("workflow_id") @db.VarChar(128)
+  levelOrder Int    @map("level_order")
+  mode       String @db.VarChar(32)
+  nOfM       Int?   @map("n_of_m")
+
+  workflow  ApprovalWorkflow        @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  assignees WorkflowLevelAssignee[]
+
+  @@index([workflowId])
+  @@map("workflow_levels")
+}
+
+model WorkflowLevelAssignee {
+  id         String  @id @default(uuid()) @db.VarChar(128)
+  levelId    String  @map("level_id") @db.VarChar(128)
+  userId     String  @map("user_id") @db.VarChar(128)
+  authMethod String? @map("auth_method") @db.VarChar(32)
+
+  level WorkflowLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([levelId, userId])
+  @@index([userId])
+  @@map("workflow_level_assignees")
 }
 
 // ==========================================
@@ -188,6 +260,11 @@ model Transaction {
   merchantCategory String?
   merchantCountry  String?
 
+  /// Corporate: debiting account bank label (from initiator)
+  payerBank        String? @map("payer_bank") @db.VarChar(128)
+  /// Beneficiary / recipient bank name
+  beneficiaryBank  String? @map("beneficiary_bank") @db.VarChar(128)
+
   authMethod      String?
   authResult      String?
   ipAddress       String?
@@ -205,9 +282,19 @@ model Transaction {
   appliedPolicyId String?
   appliedLimitId  String?
 
+  isCorporate     Boolean @default(false) @map("is_corporate")
+  companyId       String? @map("company_id") @db.VarChar(128)
+  workflowId      String? @map("workflow_id") @db.VarChar(128)
+  corporateStatus String? @map("corporate_status") @db.VarChar(32)
+  approvalChain   Json?   @map("approval_chain")
+  currentLevel    Int?    @map("current_level")
+  nextApproverId  String? @map("next_approver_id") @db.VarChar(128)
+
   riskAnalysisLogs RiskAnalysisLog[]
 
   @@index([userId])
+  @@index([companyId])
+  @@index([workflowId])
   @@index([timestamp])
   @@map("transactions")
 }

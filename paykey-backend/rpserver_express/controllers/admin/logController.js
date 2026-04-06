@@ -2,7 +2,7 @@ const prisma = require('../../config/db');
 
 exports.getAuthLogs = async (req, res) => {
 	try {
-		const { eventType } = req.query;
+		const { eventType, transactionId } = req.query;
 		const whereClause = {};
 
 		if (eventType) {
@@ -15,7 +15,7 @@ exports.getAuthLogs = async (req, res) => {
 
 		const logs = await prisma.authLog.findMany({
 			where: whereClause,
-			take: 100,
+			take: transactionId ? 500 : 100,
 			orderBy: { createdAt: "desc" },
 			include: {
 				user: {
@@ -24,7 +24,7 @@ exports.getAuthLogs = async (req, res) => {
 				
 			},
 		});
-		const formattedLogs = logs.map((log) => {
+		let formattedLogs = logs.map((log) => {
 			let parsedTags = [];
 
 			if (log.riskTags) {
@@ -45,6 +45,16 @@ exports.getAuthLogs = async (req, res) => {
 				userName: log.user?.fullName || "Unknown User",
 			};
 		});
+
+		if (transactionId) {
+			const tid = String(transactionId);
+			formattedLogs = formattedLogs.filter((log) => {
+				const raw = log.riskTags ?? log.metadata;
+				const str =
+					typeof raw === "string" ? raw : JSON.stringify(raw ?? {});
+				return str.includes(tid);
+			});
+		}
 
 		res.json(formattedLogs);
 	} catch (err) {

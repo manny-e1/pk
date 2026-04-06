@@ -38,9 +38,9 @@ export default function CompanyWorkflowsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [c, wfs] = await Promise.all([
+      const [c, allWfs] = await Promise.all([
         adminService.getCompany(companyId),
-        adminService.listCompanyWorkflows(companyId),
+        adminService.listCompanyWorkflows(),
       ]);
       setCompanyName(c.name);
       setUsers(
@@ -51,6 +51,7 @@ export default function CompanyWorkflowsPage() {
           mobile: p.mobile,
         })),
       );
+      const wfs = (allWfs || []).filter((w: { companyId: string }) => w.companyId === companyId);
       setWorkflows(wfs);
     } catch (e) {
       console.error(e);

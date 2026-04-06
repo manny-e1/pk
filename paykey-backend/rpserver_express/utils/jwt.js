@@ -10,15 +10,15 @@ exports.sendTokenCookie = (res, user) => {
     );
 
     const isProduction = process.env.NODE_ENV === 'production';
-
-    res.cookie('auth_token', token, {
+    const cookieOptions = {
         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
         httpOnly: true,
-        
-        secure: isProduction, 
+        secure: isProduction,
+        sameSite: 'lax'
+    };
 
-        domain: isProduction ? '.authkey.my' : 'localhost',
-        
-        sameSite: 'lax' 
-    });
+    // In local dev, don't set explicit domain; host-only cookies are more reliable on localhost.
+    if (isProduction) cookieOptions.domain = '.authkey.my';
+
+    res.cookie('auth_token', token, cookieOptions);
 };

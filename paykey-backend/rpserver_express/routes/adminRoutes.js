@@ -15,6 +15,9 @@ const { protect } = require('../middleware/authMiddleware');
 const transactionController = require('../controllers/admin/transactionController'); 
 const transactionLogs = require('../controllers/admin/transactionLogController');
 const adminConfigController = require('../controllers/admin/adminConfigController');
+const companyController = require('../controllers/admin/companyController');
+const workflowController = require('../controllers/admin/workflowController');
+const adminTransactionManagementController = require('../controllers/admin/adminTransactionManagementController');
 
 
 router.post('/auth/check', authController.checkUser);
@@ -26,8 +29,12 @@ router.post('/api/transaction/analyze', riskEngine.analyzeTransaction);
 
 
 router.post('/api/transaction/initiate', transactionController.initiateTransaction);
+
+router.get('/api/admin/transactions/metrics', adminTransactionManagementController.getTransactionMetrics);
+router.get('/api/admin/transactions', adminTransactionManagementController.listTransactions);
 router.get('/api/admin/transactions/:id/investigate', transactionLogs.getInvestigationReport);
 router.get('/api/admin/transactions/:id/evidence', transactionLogs.getTransactionEvidence);
+router.get('/api/admin/transactions/:id', adminTransactionManagementController.getTransactionDetail);
 
 
 router.get('/api/admin/limits', adminConfig.getAmountLimits);
@@ -71,6 +78,19 @@ router.put('/api/devices/:id/rename', deviceController.renameDevice);
 router.get('/api/admin/logs', logController.getAuthLogs);
 router.get('/api/users', userController.getAllUsers);
 router.put('/api/users/:id/status', userController.updateUserStatus);
+
+router.get('/api/admin/companies', companyController.listCompanies);
+router.post('/api/admin/companies', companyController.createCompany);
+router.get('/api/admin/companies/:companyId', companyController.getCompany);
+router.put('/api/admin/companies/:companyId', companyController.updateCompany);
+router.delete('/api/admin/companies/:companyId', companyController.deleteCompany);
+router.get('/api/admin/companies/:companyId/users', companyController.listCompanyUsers);
+
+router.get('/api/admin/workflows', workflowController.listWorkflows);
+router.post('/api/admin/companies/:companyId/workflows', workflowController.createWorkflow);
+router.get('/api/admin/workflows/:workflowId', workflowController.getWorkflow);
+router.put('/api/admin/workflows/:workflowId', workflowController.updateWorkflow);
+router.delete('/api/admin/workflows/:workflowId', workflowController.deleteWorkflow);
 
 
 // UBAH DARI '/totp-inventory' MENJADI '/api/admin/totp-inventory'

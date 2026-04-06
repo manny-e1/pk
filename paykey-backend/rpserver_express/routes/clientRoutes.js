@@ -12,6 +12,7 @@ const clientTx = require('../controllers/client/clientTransactionController');
 const clientDevice = require('../controllers/client/clientDeviceController');
 const enrollController = require('../controllers/client/clientEnrollmentController');
 const stepUpController = require('../controllers/client/clientStepUpController');
+const corporateController = require('../controllers/client/clientCorporateController');
 
 const webTotpController = require('../controllers/web/webTotpController');
 
@@ -56,6 +57,13 @@ router.post('/totp/activate', webTotpController.activateSoftToken);
 
 router.post('/auth/push/start', stepUpController.startPushApproval);
 router.get('/auth/push/status', stepUpController.checkPushStatus);
+router.post('/auth/push/status', stepUpController.checkPushStatus);
+
+router.get('/corporate/workflows', corporateController.getCorporateWorkflows);
+router.post('/corporate/transactions/initiate', corporateController.initiateCorporateTransaction);
+router.get('/corporate/transactions/pending', corporateController.listPendingCorporateTransactions);
+router.post('/corporate/transactions/approve', corporateController.approveCorporateTransaction);
+router.post('/corporate/transactions/reject', corporateController.rejectCorporateTransaction);
 
 router.get('/auth/available-methods', clientAuth.getAvailableEnrollmentMethods);
 
