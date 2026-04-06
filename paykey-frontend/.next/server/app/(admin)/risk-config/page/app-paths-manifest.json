@@ -1,0 +1,3 @@
+{
+  "/(admin)/risk-config/page": "app/(admin)/risk-config/page.js"
+}

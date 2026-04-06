@@ -111,18 +111,20 @@ export default function WorkflowsPage() {
 			setWorkflowName(wf.name);
 			setSelectedWorkflowId(wf.id);
 			setLevels(
-				wf.levels.map((lv) => ({
-					mode: lv.mode,
-					label:
-						MODE_OPTIONS.find((mode) => mode.value === lv.mode)?.label || "",
-					nOfM:
-						lv.mode === "MULTIPLE_N_OF_M"
-							? lv.nOfM != null
-								? lv.nOfM
-								: 1
-							: "",
-					userIds: [...lv.userIds],
-				})),
+				wf.levels.map(
+					(lv: { mode: string; nOfM: number | null; userIds: string[] }) => ({
+						mode: lv.mode,
+						label:
+							MODE_OPTIONS.find((mode) => mode.value === lv.mode)?.label || "",
+						nOfM:
+							lv.mode === "MULTIPLE_N_OF_M"
+								? lv.nOfM != null
+									? lv.nOfM
+									: 1
+								: "",
+						userIds: [...lv.userIds],
+					}),
+				),
 			);
 		} catch (e) {
 			console.error(e);

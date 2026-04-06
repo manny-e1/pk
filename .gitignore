@@ -25,6 +25,6 @@ migrations/
 newwebdemo.pdf
 authkey-company-management/
 authkey-approval-success/
-paykey-web-demo/
+# paykey-web-demo/
 
 # **/.next/

@@ -1,0 +1,21 @@
+{
+  "/(admin)/amount-thresholds/page": "/amount-thresholds",
+  "/(admin)/auth-logs/page": "/auth-logs",
+  "/(admin)/auth-policies/page": "/auth-policies",
+  "/(admin)/companies/[companyId]/workflows/page": "/companies/[companyId]/workflows",
+  "/(admin)/companies/page": "/companies",
+  "/(admin)/dashboard/page": "/dashboard",
+  "/(admin)/devices/page": "/devices",
+  "/(admin)/investigation/page": "/investigation",
+  "/(admin)/risk-config/page": "/risk-config",
+  "/(admin)/totp-inventory/page": "/totp-inventory",
+  "/(admin)/transactions/page": "/transactions",
+  "/(admin)/users/page": "/users",
+  "/(admin)/workflows/page": "/workflows",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/login/page": "/login",
+  "/page": "/",
+  "/signup/page": "/signup"
+}

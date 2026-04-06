@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(admin)/layout,_N_T_/(admin)/risk-config/layout,_N_T_/(admin)/risk-config/page,_N_T_/risk-config"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGFkbWluKQ/risk-config/__PAGE__",
+    "/!KGFkbWluKQ/risk-config",
+    "/!KGFkbWluKQ",
+    "/_index",
+    "/_head"
+  ]
+}
