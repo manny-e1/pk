@@ -828,7 +828,7 @@ export default function CompaniesPage() {
 										<div className="flex flex-col gap-3">
 											{personnel.map((p, i) => (
 												<div
-													key={`${p.email || "row"}-${i}`}
+													key={`${i}`}
 													className="bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[10px] p-4"
 												>
 													<div className="flex items-center justify-between mb-3">
