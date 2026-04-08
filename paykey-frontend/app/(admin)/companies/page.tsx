@@ -4,6 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/ui/DataTable";
 import { adminService } from "@/services/adminService";
+import Link from "next/link";
+import { ToastContainer, toast } from 'react-toastify';
+import { useQuery } from "@tanstack/react-query";
+import { ToastCard } from "@/components/ToastCard";
 
 const INDUSTRIES = [
 	{ value: "", label: "All industries" },
@@ -77,9 +81,6 @@ function formatStatus(v: string) {
 
 export default function CompaniesPage() {
 	const router = useRouter();
-	const [items, setItems] = useState<CompanyRow[]>([]);
-	const [total, setTotal] = useState(0);
-	const [loading, setLoading] = useState(true);
 	const [search, setSearch] = useState("");
 	const [industry, setIndustry] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
@@ -108,33 +109,45 @@ export default function CompaniesPage() {
 	const [formStatus, setFormStatus] = useState("active");
 	const [personnel, setPersonnel] = useState<PersonnelRow[]>([]);
 
-	const [toast, setToast] = useState<{
-		type: "ok" | "err";
-		msg: string;
-	} | null>(null);
+  const {data,isLoading, refetch} = useQuery({
+    queryKey: ['companies', currentPage, itemsPerPage, search, industry],
+    queryFn: async () => await adminService.getCompanies({
+      search: search || undefined,
+      industry: industry || undefined,
+      page: currentPage,
+      pageSize: itemsPerPage,
+    }),
+  })
+  const items = data?.items || [];
+  const total = data?.total || 0;
+	// const load = useCallback(async () => {
+	// 	setLoading(true);
+	// 	try {
+	// 		const res = 
+	// 		setItems(res.items || []);
+	// 		setTotal(res.total ?? 0);
+	// 	} catch (e) {
+	// 		console.error(e);
+  //     toast('Failed to load companies', {
+  //       position: "bottom-right",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       closeOnClick: false,
+  //       pauseOnHover: true,
+  //       draggable: true,
+  //       progress: undefined,
+  //       theme: "light",
+  //       transition: Bounce,
+  //       });
+	// 		toast({ type: "err", msg: "Failed to load companies" });
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// }, [search, industry, currentPage]);
 
-	const load = useCallback(async () => {
-		setLoading(true);
-		try {
-			const res = await adminService.getCompanies({
-				search: search || undefined,
-				industry: industry || undefined,
-				page: currentPage,
-				pageSize: itemsPerPage,
-			});
-			setItems(res.items || []);
-			setTotal(res.total ?? 0);
-		} catch (e) {
-			console.error(e);
-			setToast({ type: "err", msg: "Failed to load companies" });
-		} finally {
-			setLoading(false);
-		}
-	}, [search, industry, currentPage]);
-
-	useEffect(() => {
-		load();
-	}, [load]);
+	// useEffect(() => {
+	// 	load();
+	// }, [load]);
 
 	const totalPages = Math.max(1, Math.ceil(total / itemsPerPage) || 1);
 
@@ -178,7 +191,7 @@ export default function CompaniesPage() {
 			setDetail(null);
 			setModal("edit");
 		} catch {
-			setToast({ type: "err", msg: "Failed to load company" });
+			toast("Failed to load company", {position: 'bottom-right'});
 		}
 	};
 
@@ -193,7 +206,7 @@ export default function CompaniesPage() {
 				personnel: c.personnel || [],
 			});
 		} catch {
-			setToast({ type: "err", msg: "Failed to load details" });
+			toast("Failed to load details", {position: 'bottom-right'});
 		}
 	};
 
@@ -204,7 +217,7 @@ export default function CompaniesPage() {
 			!formAddress.trim() ||
 			!formIndustry
 		) {
-			setToast({ type: "err", msg: "Fill all required fields" });
+			toast("Fill all required fields");
 			return;
 		}
 		const payload = {
@@ -218,20 +231,20 @@ export default function CompaniesPage() {
 		try {
 			if (modal === "add") {
 				await adminService.createCompany(payload);
-				setToast({ type: "ok", msg: "Company created" });
+				toast(ToastCard, {data:{title: "Company Added", content: `${formName} has been added successfully`}});
 			} else if (modal === "edit" && selectedId) {
 				await adminService.updateCompany(selectedId, payload);
-				setToast({ type: "ok", msg: "Company updated" });
+				toast(ToastCard,{data:{title: "Company Updated", content: `${formName} has been updated successfully`}});
 			}
 			closeCompanyModal();
-			load();
+			refetch();
 		} catch (e: unknown) {
 			const msg =
 				e && typeof e === "object" && "response" in e
 					? (e as { response?: { data?: { error?: string } } }).response?.data
 							?.error
 					: null;
-			setToast({ type: "err", msg: msg || "Save failed" });
+			toast( msg || "Save failed");
 		}
 	};
 
@@ -239,12 +252,12 @@ export default function CompaniesPage() {
 		if (!selectedId) return;
 		try {
 			await adminService.deleteCompany(selectedId);
-			setToast({ type: "ok", msg: "Company deleted" });
+			toast("Company deleted");
 			setModal(null);
 			setViewRow(null);
-			load();
+			refetch()
 		} catch {
-			setToast({ type: "err", msg: "Delete failed" });
+			toast( "Delete failed");
 		}
 	};
 
@@ -291,24 +304,6 @@ export default function CompaniesPage() {
 			</header>
 
 			<div className="flex-1 overflow-auto p-6 flex flex-col gap-5">
-				{toast && (
-					<div
-						className={`text-sm px-4 py-2 rounded-[var(--radius-md)] border ${
-							toast.type === "ok"
-								? "border-[var(--success)]/30 bg-[var(--success-bg)] text-[var(--success)]"
-								: "border-[var(--error)]/30 bg-[var(--error-bg)] text-[var(--error)]"
-						}`}
-					>
-						{toast.msg}
-						<button
-							type="button"
-							className="ml-2 underline"
-							onClick={() => setToast(null)}
-						>
-							Dismiss
-						</button>
-					</div>
-				)}
 
 				<div className="flex flex-wrap items-center gap-3">
 					<div className="flex items-center gap-2 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-3 py-2 min-w-[280px] flex-1 max-w-md">
@@ -353,7 +348,7 @@ export default function CompaniesPage() {
 					</select>
 					<button
 						type="button"
-						onClick={() => load()}
+						onClick={() => refetch()}
 						className="px-3.5 py-2 rounded-[var(--radius-md)] text-[13px] font-medium bg-[var(--bg-tertiary)] border border-[var(--border-primary)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
 					>
 						Refresh
@@ -370,13 +365,13 @@ export default function CompaniesPage() {
 						{ header: "Created" },
 						{ header: "", className: "text-right pr-5" },
 					]}
-					data={items.map((c) => ({ ...c, id: c.id }))}
+					data={(items as CompanyRow[])?.map((c) => ({ ...c, id: c.id }))}
 					currentPage={currentPage}
 					totalPages={totalPages}
 					onPageChange={setCurrentPage}
 					totalItems={total}
 					itemsPerPage={itemsPerPage}
-					isLoading={loading}
+					isLoading={isLoading}
 					renderRow={(row) => (
 						<tr
 							key={row.id}
@@ -451,10 +446,10 @@ export default function CompaniesPage() {
 											<circle cx="12" cy="12" r="3" />
 										</svg>
 									</button>
-									<button
+									<Link
 										type="button"
 										title="Edit"
-										onClick={() => openEdit(row)}
+										href={`/companies/${row.id}/workflows`}
 										className="w-8 h-8 rounded-[var(--radius-sm)] bg-[var(--bg-tertiary)] border border-[var(--border-primary)] flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] hover:bg-[var(--bg-hover)]"
 									>
 										<svg
@@ -470,7 +465,7 @@ export default function CompaniesPage() {
 											<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
 											<path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
 										</svg>
-									</button>
+									</Link>
 									<button
 										type="button"
 										title="Delete"
@@ -1052,10 +1047,10 @@ export default function CompaniesPage() {
 							{selectedId && (
 								<div className="mt-4 bg-[var(--bg-tertiary)] rounded-lg px-3 py-3 text-center">
 									<div className="font-semibold text-[var(--text-primary)]">
-										{items.find((x) => x.id === selectedId)?.name ?? "—"}
+										{items.find((x:CompanyRow) => x.id === selectedId)?.name ?? "—"}
 									</div>
 									<div className="text-[12px] text-[var(--text-tertiary)] font-mono mt-1">
-										{items.find((x) => x.id === selectedId)?.registrationNo ??
+										{items.find((x:CompanyRow) => x.id === selectedId)?.registrationNo ??
 											""}
 									</div>
 								</div>
@@ -1093,6 +1088,7 @@ export default function CompaniesPage() {
 					</div>
 				</div>
 			)}
+      <ToastContainer position="bottom-right" theme="dark" hideProgressBar/>
 		</div>
 	);
 }

@@ -141,6 +141,10 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/companies/${companyId}`);
         return res.data;
     },
+    listCompanyUsers: async (companyId)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/companies/${companyId}/users`);
+        return res.data;
+    },
     getCompanyStats: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/companies/stats`);
         return res.data;
@@ -157,8 +161,8 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].delete(`/api/admin/companies/${companyId}`);
         return res.data;
     },
-    listCompanyWorkflows: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get("/api/admin/workflows");
+    listCompanyWorkflows: async (companyId)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/workflows`);
         return res.data;
     },
     createWorkflow: async (companyId, payload)=>{
@@ -190,14 +194,18 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tanstack$2f$react$2d$query$2f$build$2f$modern$2f$useQuery$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@tanstack/react-query/build/modern/useQuery.js [app-ssr] (ecmascript)");
 ;
 ;
-function useWorkflows() {
+function useWorkflows(companyId) {
     const { data, isLoading, refetch } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tanstack$2f$react$2d$query$2f$build$2f$modern$2f$useQuery$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useQuery"])({
         queryKey: [
             'workflows'
         ],
-        queryFn: ()=>__TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].listCompanyWorkflows()
+        queryFn: async ()=>await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["adminService"].listCompanyWorkflows(companyId || '')
     });
-    return data;
+    return {
+        data,
+        isLoading,
+        refetch
+    };
 }
 }),
 "[project]/components/layout/Sidebar.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
@@ -222,7 +230,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useWorkflows$2e$ts_
 ;
 function Sidebar() {
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["usePathname"])();
-    const workflows = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useWorkflows$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useWorkflows"])();
+    const { data: workflows } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useWorkflows$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useWorkflows"])();
     const selectedWorkflowId = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useSearchParams"])().get("id");
     const isActive = (path)=>pathname === path || pathname.startsWith(`${path}/`);
     const handleLogout = async ()=>{

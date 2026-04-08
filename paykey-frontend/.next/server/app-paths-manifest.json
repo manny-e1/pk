@@ -11,7 +11,6 @@
   "/(admin)/totp-inventory/page": "app/(admin)/totp-inventory/page.js",
   "/(admin)/transactions/page": "app/(admin)/transactions/page.js",
   "/(admin)/users/page": "app/(admin)/users/page.js",
-  "/(admin)/workflows/page": "app/(admin)/workflows/page.js",
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",

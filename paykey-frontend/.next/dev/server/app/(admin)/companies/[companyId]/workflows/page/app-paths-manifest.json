@@ -1,0 +1,3 @@
+{
+  "/(admin)/companies/[companyId]/workflows/page": "app/(admin)/companies/[companyId]/workflows/page.js"
+}

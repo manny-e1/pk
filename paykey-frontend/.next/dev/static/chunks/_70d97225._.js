@@ -141,6 +141,10 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/companies/${companyId}`);
         return res.data;
     },
+    listCompanyUsers: async (companyId)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/companies/${companyId}/users`);
+        return res.data;
+    },
     getCompanyStats: async ()=>{
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/companies/stats`);
         return res.data;
@@ -157,8 +161,8 @@ const adminService = {
         const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].delete(`/api/admin/companies/${companyId}`);
         return res.data;
     },
-    listCompanyWorkflows: async ()=>{
-        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get("/api/admin/workflows");
+    listCompanyWorkflows: async (companyId)=>{
+        const res = await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$apiClient$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["apiClient"].get(`/api/admin/workflows`);
         return res.data;
     },
     createWorkflow: async (companyId, payload)=>{
@@ -194,17 +198,21 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tanstack$2
 var _s = __turbopack_context__.k.signature();
 ;
 ;
-function useWorkflows() {
+function useWorkflows(companyId) {
     _s();
     const { data, isLoading, refetch } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tanstack$2f$react$2d$query$2f$build$2f$modern$2f$useQuery$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useQuery"])({
         queryKey: [
             'workflows'
         ],
         queryFn: {
-            "useWorkflows.useQuery": ()=>__TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["adminService"].listCompanyWorkflows()
+            "useWorkflows.useQuery": async ()=>await __TURBOPACK__imported__module__$5b$project$5d2f$services$2f$adminService$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["adminService"].listCompanyWorkflows(companyId || '')
         }["useWorkflows.useQuery"]
     });
-    return data;
+    return {
+        data,
+        isLoading,
+        refetch
+    };
 }
 _s(useWorkflows, "ZqyWWbDEfEkhPIJavseY165AHxc=", false, function() {
     return [
@@ -239,7 +247,7 @@ var _s = __turbopack_context__.k.signature();
 function Sidebar() {
     _s();
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
-    const workflows = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useWorkflows$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useWorkflows"])();
+    const { data: workflows } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useWorkflows$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useWorkflows"])();
     const selectedWorkflowId = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])().get("id");
     const isActive = (path)=>pathname === path || pathname.startsWith(`${path}/`);
     const handleLogout = async ()=>{
@@ -902,7 +910,7 @@ function Sidebar() {
         columnNumber: 3
     }, this);
 }
-_s(Sidebar, "A1QJVdwa/tGyECtGP91GBPEYSVw=", false, function() {
+_s(Sidebar, "8YHPqgAzxUP8r5k1kegjKx0YI7w=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"],
         __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useWorkflows$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useWorkflows"],

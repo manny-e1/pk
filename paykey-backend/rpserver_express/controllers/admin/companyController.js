@@ -326,3 +326,41 @@ exports.listCompanyUsers = async (req, res) => {
 		res.status(500).json({ error: err.message });
 	}
 };
+
+exports.listCompanyWorkflows = async (req, res) => {
+	try {
+		const { companyId } = req.params;
+		const workflows = await prisma.approvalWorkflow.findMany({
+			where: { companyId },
+			orderBy: { updatedAt: "desc" },
+			include: {
+				levels: {
+					orderBy: { levelOrder: "asc" },
+					include: {
+						assignees: { select: { userId: true } },
+					},
+				},
+			},
+		});
+
+		res.json(
+			workflows.map((w) => ({
+				id: w.id,
+				companyId: w.companyId,
+				name: w.name,
+				createdAt: w.createdAt,
+				updatedAt: w.updatedAt,
+				levels: w.levels.map((lv) => ({
+					id: lv.id,
+					levelOrder: lv.levelOrder,
+					mode: lv.mode,
+					nOfM: lv.nOfM,
+					userIds: lv.assignees.map((a) => a.userId),
+				})),
+			})),
+		);
+	} catch (err) {
+		console.error("[listCompanyWorkflows]", err);
+		res.status(500).json({ error: err.message });
+	}
+};

@@ -9,8 +9,6 @@ import { useWorkflows } from "@/hooks/useWorkflows";
 
 export default function Sidebar() {
 	const pathname = usePathname();
-	const workflows = useWorkflows();
-	const selectedWorkflowId = useSearchParams().get("id");
 
 	const isActive = (path: string) =>
 		pathname === path || pathname.startsWith(`${path}/`);
@@ -177,45 +175,6 @@ export default function Sidebar() {
 						</svg>
 						Companies
 					</Link>
-					<Link
-						href="/workflows"
-						className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[var(--radius-md)] text-[14px] cursor-pointer transition-all mb-0.5 ${isActive("/workflows") ? "bg-[var(--bg-tertiary)] text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"}`}
-					>
-						<svg
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							strokeWidth="2"
-							className="w-[18px] h-[18px] opacity-70"
-						>
-							<path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-						</svg>
-						Approval Workflows
-					</Link>
-					<div className="pl-4 space-y-1 max-h-[200px] overflow-y-auto">
-						{pathname === "/workflows" &&
-							workflows?.map((wf: any) => (
-								<Link
-									key={wf.id}
-									href={`/workflows?id=${wf.id}`}
-									className={`flex items-center gap-3 px-3 py-2 rounded cursor-pointer transition-all ${
-										selectedWorkflowId === wf.id
-											? "bg-blue-500/10 border border-blue-500/20"
-											: "hover:bg-[#1e2330]"
-									}`}
-								>
-									<div className="w-2 h-2 rounded-full bg-blue-500" />
-									<div className="flex-1 min-w-0">
-										<div className="text-[13px] font-semibold truncate">
-											{wf.name}
-										</div>
-										<div className="text-[10px] text-[#555b6e]">
-											{wf.levels.length} levels
-										</div>
-									</div>
-								</Link>
-							))}
-					</div>
 					<Link
 						href="/users"
 						className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[var(--radius-md)] text-[14px] cursor-pointer transition-all mb-0.5 ${isActive("/users") ? "bg-[var(--bg-tertiary)] text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"}`}

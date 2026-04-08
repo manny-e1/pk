@@ -85,6 +85,7 @@ router.get('/api/admin/companies/:companyId', companyController.getCompany);
 router.put('/api/admin/companies/:companyId', companyController.updateCompany);
 router.delete('/api/admin/companies/:companyId', companyController.deleteCompany);
 router.get('/api/admin/companies/:companyId/users', companyController.listCompanyUsers);
+router.get('/api/admin/companies/:companyId/workflows', companyController.listCompanyWorkflows);
 
 router.get('/api/admin/workflows', workflowController.listWorkflows);
 router.post('/api/admin/companies/:companyId/workflows', workflowController.createWorkflow);

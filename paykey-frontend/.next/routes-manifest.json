@@ -132,12 +132,6 @@
       "regex": "^/users(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/users(?:/)?$"
-    },
-    {
-      "page": "/workflows",
-      "regex": "^/workflows(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/workflows(?:/)?$"
     }
   ],
   "dataRoutes": [],

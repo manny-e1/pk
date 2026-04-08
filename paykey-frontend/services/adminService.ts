@@ -178,6 +178,11 @@ export const adminService = {
 		return res.data;
 	},
 
+	listCompanyUsers: async (companyId: string) => {
+		const res = await apiClient.get(`/api/admin/companies/${companyId}/users`);
+		return res.data;
+	},
+
 	getCompanyStats: async () => {
 		const res = await apiClient.get(`/api/admin/companies/stats`);
 		return res.data;
@@ -227,8 +232,8 @@ export const adminService = {
 		return res.data;
 	},
 
-	listCompanyWorkflows: async () => {
-		const res = await apiClient.get("/api/admin/workflows");
+	listCompanyWorkflows: async (companyId: string) => {
+		const res = await apiClient.get(`/api/admin/companies/${companyId}/workflows`);
 		return res.data;
 	},
 
