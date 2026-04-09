@@ -13,13 +13,20 @@ exports.registerUser = async (req, res) => {
 
 	try {
 		const existing = await prisma.user.findUnique({ where: { email } });
-		if (existing)
+		if (existing && existing.cifNumber)
 			return res.status(400).json({ error: "Email already exists" });
 
 		const hashedPassword = await bcrypt.hash(password, 10);
-
-		const user = await prisma.user.create({
-			data: {
+		const user = await prisma.user.upsert({
+			where: { email},
+			update: {
+				cifNumber,
+					role: 'USER',
+					balance: 0,
+					status: 'active',
+					passwordHash: hashedPassword
+			},
+			create: {
 				id: generateUserId(),
 				email,
 				passwordHash: hashedPassword,

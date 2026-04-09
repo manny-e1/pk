@@ -230,13 +230,11 @@ exports.loginStart = async (req, res) => {
 			// Allow login but maybe log a warning if needed
 			// return res.status(403).json({ error: "Account Suspended" });
 		}
-
 		const result = await fidoService.initiateChallenge(
 			"AUTH",
 			user || { id: null },
 			RP_ID,
 		);
-
 		if (result.status === 200) {
 			await saveContext(result.data.challenge, result.data.sessionId, {
 				purpose: "LOGIN",
@@ -244,6 +242,7 @@ exports.loginStart = async (req, res) => {
 				telemetry,
 			});
 		}
+		console.log(result)
 		res.status(result.status).json(result.data);
 	} catch (err) {
 		res.status(500).json({ error: err.message });

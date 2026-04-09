@@ -32,6 +32,7 @@ export const authService = {
   loginPasskey: async (email: string, telemetry?: DeviceTelemetry) => {
     try {
       const options = await apiRequest("/auth/start", "POST", { username: email, telemetry });
+      console.log({options})
       const asseResp = await startAuthentication({ optionsJSON: options });
 
       const payload = {

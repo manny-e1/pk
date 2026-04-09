@@ -392,9 +392,10 @@ export default function WorkflowsPage() {
 												type="button"
 												key={wf.id}
 												onClick={() => selectWorkflow(wf.id)}
-												className={`flex items-center gap-3 p-4 bg-[${bg}]
+												className={`flex relative items-center gap-3 p-4 bg-[${bg}]
                       border border-[${border}] rounded-lg ${hover} transition-all text-left group shadow-${boxShadow}`}
 											>
+                        <Trash className="top-2 right-2" />
 												<div
 													className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold ${getAvatarColor(
 														index,

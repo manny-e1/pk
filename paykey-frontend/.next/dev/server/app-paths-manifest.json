@@ -1,4 +1,0 @@
-{
-  "/(admin)/companies/[companyId]/workflows/page": "app/(admin)/companies/[companyId]/workflows/page.js",
-  "/(admin)/companies/page": "app/(admin)/companies/page.js"
-}
