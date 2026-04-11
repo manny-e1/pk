@@ -1,4 +1,4 @@
-spring:
+sspring:
   profiles:
     active: local
   config:
@@ -40,6 +40,7 @@ app:
     - "https://api.authkey.my"
     - "https://console.authkey.my"
     - "https://demo.authkey.my"
+    - "https://corporate-demo.authkey.my"
     - "http://localhost:3000"
     - "http://localhost:3001"
     - "https://paykey-web-demo.vercel.app"
