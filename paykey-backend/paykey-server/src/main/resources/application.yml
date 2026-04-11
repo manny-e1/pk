@@ -1,4 +1,4 @@
-sspring:
+spring:
   profiles:
     active: local
   config:
