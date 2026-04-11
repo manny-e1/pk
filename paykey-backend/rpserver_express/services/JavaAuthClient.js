@@ -7,8 +7,7 @@ const API_PASS = process.env.JAVA_API_PASS;
 if (!API_USER || !API_PASS) {
     console.error("[CRITICAL] JAVA_API_USER or JAVA_API_PASS is missing in .env");
 }
-console.log({JAVA_BASE_URL})
-const correctedUrl = 
+
 const client = axios.create({
     baseURL: JAVA_BASE_URL,
     headers: { 'Content-Type': 'application/json' },
