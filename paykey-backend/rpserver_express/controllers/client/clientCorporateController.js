@@ -180,6 +180,13 @@ exports.initiateCorporateTransaction = async (req, res) => {
 					"Only assignees on the first approval level can initiate this transfer.",
 			});
 		}
+
+		// Sole approver on level 0 must still open Approvals and confirm; do not mark them
+		// "done" on initiate or the workflow completes with no explicit approval step.
+		const initiatorSoleOnFirstLevel =
+			firstLevel.assignees.length === 1 &&
+			firstLevel.assignees[0].user.id === user.id;
+
 		const nowIso = new Date().toISOString();
 		const chain = [];
 		for (const lv of sortedLevels) {
@@ -190,8 +197,13 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				let time = null;
 				if (onFirst) {
 					if (isInitiator) {
-						status = "done";
-						time = nowIso;
+						if (initiatorSoleOnFirstLevel) {
+							status = "current";
+							time = null;
+						} else {
+							status = "done";
+							time = nowIso;
+						}
 					} else {
 						status = "current";
 					}
