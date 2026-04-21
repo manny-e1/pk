@@ -185,6 +185,12 @@
 			"description": "example1",
 			"icon": null,
 			"name": "example1"
+		},
+		{
+			"id": "corporate-demo.authkey.my",
+			"description": "corporate-demo",
+			"icon": null,
+			"name": "corporate demo"
 		}
 	],
 	"apiClients": [
