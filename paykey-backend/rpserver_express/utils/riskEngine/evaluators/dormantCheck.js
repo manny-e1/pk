@@ -1,15 +1,14 @@
 const prisma = require('../../../config/db');
 
-
 async function evaluateDormant(context, config) {
-    const { email } = context;
+    const { email, userSegment } = context; 
     const { rules } = config;
 
     let score = 0;
     let tags = [];
     let breakdown = [];
 
-    const dormantRule = rules.find(r => r.ruleType === 'DORMANT');
+    const dormantRule = rules.find(r => r.ruleType === 'DORMANT' && r.segment === userSegment);
     
     if (!dormantRule || !dormantRule.isActive) {
         return { score, tags, breakdown };
@@ -30,20 +29,14 @@ async function evaluateDormant(context, config) {
         return { score, tags, breakdown };
     }
 
-    const lastSeenTime = new Date(lastActivity.createdAt).getTime();
-    const nowTime = Date.now();
-    const diffMs = nowTime - lastSeenTime;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffDays = Math.floor((Date.now() - new Date(lastActivity.createdAt).getTime()) / (1000 * 60 * 60 * 24));
 
     console.log(`[DormantCheck] User '${email}' last seen: ${diffDays} days ago.`);
 
     if (diffDays > maxInactiveDays) {
         score += dormantRule.weight; 
         
-        tags.push({ 
-            label: `Dormant User (> ${maxInactiveDays}d)`, 
-            class: 'warning'
-        });
+        tags.push({ label: `Dormant User (> ${maxInactiveDays}d)`, class: 'warning' });
         
         breakdown.push({ 
             rule: 'DORMANT', 

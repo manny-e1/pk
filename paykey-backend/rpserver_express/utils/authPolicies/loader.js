@@ -33,4 +33,27 @@ async function fetchRiskThresholds() {
     }
 }
 
-module.exports = { fetchPolicyConfig, fetchRiskThresholds };
+async function checkMinimumDeviceAge(userId, deviceIdentifier, minAgeDays) {
+    if (!minAgeDays || minAgeDays <= 0) return true;
+    if (!userId || !deviceIdentifier) return false;
+
+    const keys = await prisma.userKey.findMany({
+        where: { 
+            userId: userId, 
+            OR: [
+                { credentialId: { contains: deviceIdentifier } }, 
+                { deviceName: deviceIdentifier },
+                { deviceName: "WEB_UNKNOWN" }
+            ] 
+        },
+        orderBy: { registeredTimestamp: 'asc' } 
+    });
+
+    if (keys.length === 0) return false;
+
+    const registeredDate = new Date(keys[0].registeredTimestamp || keys[0].registeredTimestamp || Date.now());
+    const ageInDays = (Date.now() - registeredDate.getTime()) / (1000 * 60 * 60 * 24);
+    return ageInDays >= minAgeDays;
+}
+
+module.exports = { fetchPolicyConfig, fetchRiskThresholds, checkMinimumDeviceAge };

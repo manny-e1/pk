@@ -29,7 +29,7 @@ type TxRow = {
 	riskLevel: string;
 	riskScore: number;
 	status: string;
-	approvers: { id: string; name: string; status: string }[];
+	approvers: { id: string; name: string; status: string; level: number }[];
 	approverCount: number;
 };
 
@@ -48,7 +48,7 @@ function statusLabel(s: string) {
 		completed: "Completed",
 		approved: "Approved",
 		rejected: "Rejected",
-		processing: "Processing",
+		skipped: "Skipped",
 	};
 	return m[s] || s;
 }
@@ -57,7 +57,7 @@ function statusClass(s: string) {
 	if (s === "completed" || s === "approved")
 		return "bg-[var(--success-muted)] text-[var(--success)]";
 	if (s === "rejected") return "bg-[var(--error-muted)] text-[var(--error)]";
-	if (s === "pending" || s === "processing")
+	if (s === "pending")
 		return "bg-[var(--warning-muted)] text-[var(--warning)]";
 	return "bg-[var(--bg-tertiary)] text-[var(--text-secondary)]";
 }
@@ -72,11 +72,12 @@ function riskClass(level: string) {
 
 function normalizeApproverStatus(
 	raw: string,
-): "approved" | "pending" | "rejected" {
+): "approved" | "pending" | "rejected" | "skipped" {
 	const s = (raw || "").toLowerCase();
 	if (["approved", "done", "complete", "completed", "success"].includes(s))
 		return "approved";
 	if (["rejected", "denied", "failed"].includes(s)) return "rejected";
+	if (s === "skipped") return s
 	return "pending";
 }
 
@@ -184,6 +185,11 @@ function ApproverChip({
 		chip = "border border-red-500/30 bg-red-500/10";
 		avatar = "bg-red-500 text-white";
 		iconWrap = "text-red-400";
+	}
+	if (st === "skipped") {
+		chip = "border border-slate-500/30 bg-slate-500/10";
+		avatar = "bg-slate-500 text-white";
+		iconWrap = "text-slate-400";
 	}
 	const endIcon =
 		st === "approved" ? (
@@ -498,8 +504,6 @@ export default function TransactionsPage() {
 						>
 							<option value="">All status</option>
 							<option value="pending">Pending</option>
-							<option value="processing">Processing</option>
-							<option value="completed">Completed</option>
 							<option value="approved">Approved</option>
 							<option value="rejected">Rejected</option>
 						</select>
@@ -515,7 +519,6 @@ export default function TransactionsPage() {
 							<option value="low">Low</option>
 							<option value="medium">Medium</option>
 							<option value="high">High</option>
-							<option value="critical">Critical</option>
 						</select>
 						<select
 							value={dateRange}
@@ -708,10 +711,10 @@ export default function TransactionsPage() {
 														</span>
 														{(row.approvers?.length
 															? row.approvers
-															: [{ id: "self", name: "Payer", status: "done" }]
+															: [{ id: "self", name: "Payer", status: "done", level: 0 }]
 														).map((a) => (
 															<ApproverChip
-																key={`${row.id}-${a.id}-${a.name}`}
+																key={`${row.id}-${a.id}-${a.name}-${a.level}`}
 																name={a.name}
 																status={a.status}
 															/>

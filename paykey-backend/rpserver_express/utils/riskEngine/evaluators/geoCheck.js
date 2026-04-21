@@ -14,28 +14,19 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) { return deg * (Math.PI/180); }
 
 async function evaluateGeo(context, config) {
-    const { telemetry, userId, email, countryCode } = context;
+    const { telemetry, userId, email, countryCode, userSegment } = context;
     const { rules } = config;
     
     let score = 0;
     let tags = [];
     let breakdown = [];
 
-    const geoRule = rules.find(r => r.ruleType === 'GEO_ANOMALY');
+    const geoRule = rules.find(r => r.ruleType === 'GEO_ANOMALY' && r.segment === userSegment);
 
-    if (geoRule) {
-        console.log(`[GeoCheck] Rule Found: GEO_ANOMALY | isActive: ${geoRule.isActive} (Type: ${typeof geoRule.isActive})`);
-    } else {
-        console.log(`[GeoCheck] Rule GEO_ANOMALY NOT FOUND in config!`);
-    }
-
-    const isRuleActive = geoRule && (geoRule.isActive === 1 || geoRule.isActive === true);
-
-    if (!isRuleActive) {
-        console.log("[GeoCheck] ⏹️ Rule is INACTIVE. Skipping check.");
+    if (!geoRule || !geoRule.isActive) {
+        console.log(`[GeoCheck] ⏹️ Rule INACTIVE or NOT FOUND for ${userSegment}. Skipping.`);
         return { score, tags, breakdown };
     }
-
 
     const lastLog = await prisma.authLog.findFirst({
         where: {

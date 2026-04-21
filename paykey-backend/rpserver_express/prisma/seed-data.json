@@ -186,5 +186,16 @@
 			"icon": null,
 			"name": "example1"
 		}
+	],
+	"apiClients": [
+		{
+			"id": "5411957a-1ef2-4570-bd5d-76bf217387c1",
+			"apiSecret": "super-secret-key-456-web",
+			"apiKey": "sdk-test-key-123-web",
+			"name": "web demo",
+			"channel": "WEB",
+			"consumerType": "CONSUMER",
+			"isActive": true
+		}
 	]
 }

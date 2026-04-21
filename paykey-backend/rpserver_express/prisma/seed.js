@@ -50,6 +50,14 @@ async function main() {
       });
   }
 
+  if (seedData.apiClients && seedData.apiClients.length > 0) {
+      console.log(`   - Seeding ${seedData.apiClients.length} api clients Entries...`);
+      await prisma.apiClient.createMany({
+        data: seedData.apiClients,
+        skipDuplicates: true,
+      });
+  }
+
   console.log('✅ Seeding completed.');
 }
 

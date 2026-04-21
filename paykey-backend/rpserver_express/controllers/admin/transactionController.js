@@ -4,6 +4,7 @@ const { evaluateAuthPolicy } = require('../../utils/authPolicies/index');
 const { customAlphabet } = require('nanoid');
 const { getNetworkInfo } = require('../../utils/geoIpService'); 
 const { createRichAuthLog } = require('../../utils/richLogger');
+const { deriveFromAccount } = require('../../utils/deriveFromAccount');
 
 const generatePaymentId = () => `PAY_TX_${customAlphabet('0123456789ABCDEF', 10)()}`;
 
@@ -181,6 +182,7 @@ exports.initiateTransaction = async (req, res) => {
                 currency: currency || "MYR",
                 merchantName: targetBeneficiary,
                 userId: user.id,
+                fromAccount: deriveFromAccount(req.body),
                 
                 authResult: dbStatus, 
                 

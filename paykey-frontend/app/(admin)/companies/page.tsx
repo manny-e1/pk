@@ -190,8 +190,18 @@ export default function CompaniesPage() {
 			setViewRow(null);
 			setDetail(null);
 			setModal("edit");
-		} catch {
-			toast("Failed to load company", {position: 'bottom-right'});
+		} catch (e){
+			const msg = e && typeof e === "object" && "response" in e
+			? (e as { response?: { data?: { error?: string } } }).response?.data
+					?.error
+			: null;
+			toast(ToastCard,{
+				data:{
+					title: "Company Error",
+					content: msg || 'Failed to load company',
+					error: true
+				}
+			});
 		}
 	};
 
@@ -205,8 +215,18 @@ export default function CompaniesPage() {
 			setDetail({
 				personnel: c.personnel || [],
 			});
-		} catch {
-			toast("Failed to load details", {position: 'bottom-right'});
+		} catch(e) {
+			const msg = e && typeof e === "object" && "response" in e
+			? (e as { response?: { data?: { error?: string } } }).response?.data
+					?.error
+			: null;
+			toast(ToastCard,{
+				data:{
+					title: "Company Error",
+					content: msg || 'Failed to load details',
+					error: true
+				}
+			});
 		}
 	};
 
@@ -217,7 +237,13 @@ export default function CompaniesPage() {
 			!formAddress.trim() ||
 			!formIndustry
 		) {
-			toast("Fill all required fields");
+			toast(ToastCard,{
+				data:{
+					title: "Validation Error",
+					content: 'Fill all required fields',
+					error: true
+				}
+			});
 			return;
 		}
 		const payload = {
@@ -244,7 +270,13 @@ export default function CompaniesPage() {
 					? (e as { response?: { data?: { error?: string } } }).response?.data
 							?.error
 					: null;
-			toast( msg || "Save failed");
+					toast(ToastCard,{
+						data:{
+							title: "Company Error",
+							content: msg || "Save failed",
+							error: true
+						}
+					});
 		}
 	};
 
@@ -252,12 +284,27 @@ export default function CompaniesPage() {
 		if (!selectedId) return;
 		try {
 			await adminService.deleteCompany(selectedId);
-			toast("Company deleted");
+			toast(ToastCard,{
+				data:{
+					title: "Company Deleted",
+					content: `${items.find((x:CompanyRow) => x.id === selectedId)?.name || selectedId} has been deleted successfully`,
+				}
+			});
 			setModal(null);
 			setViewRow(null);
 			refetch()
-		} catch {
-			toast( "Delete failed");
+		} catch(e) {
+			const msg = e && typeof e === "object" && "response" in e
+					? (e as { response?: { data?: { error?: string } } }).response?.data
+							?.error
+					: null;
+			toast(ToastCard,{
+				data:{
+					title: "Company Error",
+					content: msg || 'Delete failed',
+					error: true
+				}
+			});
 		}
 	};
 

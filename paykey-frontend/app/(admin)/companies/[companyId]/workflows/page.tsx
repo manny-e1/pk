@@ -14,6 +14,7 @@ import {
 import { useWorkflows } from "@/hooks/useWorkflows";
 import { useQuery } from "@tanstack/react-query";
 import { toast, ToastContainer} from 'react-toastify'
+import { ToastCard } from "@/components/ToastCard";
 
 const MODE_OPTIONS = [
 	{ value: "SINGLE", label: "Single" },
@@ -189,14 +190,24 @@ export default function WorkflowsPage() {
 
 	const save = async () => {
 		if (!workflowName.trim()) {
-			toast("Workflow name is required", {style:{color:'red'}});
+			toast(ToastCard,{
+				data:{
+					title: "Validation Error",
+					content: "Workflow name is required",
+					error: true
+				}
+			});
 			return;
 		}
 		for (const lv of levels) {
 			if (!lv.userIds.length) {
-				toast(
-					"Each level needs at least one assignee",
-          {style:{color:'red'}});
+				toast(ToastCard,{
+					data:{
+						title: "Validation Error",
+						content: "Each level needs at least one assignee",
+						error: true
+					}
+				});
 				return;
 			}
 			if (lv.mode === "MULTIPLE_N_OF_M") {
@@ -205,7 +216,13 @@ export default function WorkflowsPage() {
 						? lv.nOfM
 						: Number.parseInt(String(lv.nOfM), 10);
 				if (Number.isNaN(n) || n < 1 || n > lv.userIds.length) {
-					toast("N of M must be between 1 and number of assignees",{style:{color:'red'}});
+					toast(ToastCard,{
+						data:{
+							title: "Validation Error",
+							content: "N of M must be between 1 and number of assignees",
+							error: true
+						}
+					});
 					return;
 				}
 			}
@@ -233,11 +250,21 @@ export default function WorkflowsPage() {
 					companyId as string,
 					payload,
 				);
-				toast("Workflow created");
+				toast(ToastCard,{
+					data:{
+						title: "Workflow Created",
+						content: `${workflowName} has been created successfully`,
+					}
+				});
 				refetch();
 			} else {
 				await adminService.updateWorkflow(selectedWorkflowId, payload);
-				toast("Workflow saved");
+				toast(ToastCard,{
+					data:{
+						title: "Workflow Saved",
+						content: `${workflowName} has been updated successfully`,		
+					}
+				});
 				refetch()
 			}
       setWorkflowName("")
@@ -245,7 +272,13 @@ export default function WorkflowsPage() {
       setSelectedWorkflowId('')
 		} catch (e) {
 			const msg = e instanceof Error ? e.message : "Save failed";
-			toast(msg,{style:{color:'red'}});
+			toast(ToastCard,{
+				data:{
+					title: "Workflow Error",
+					content: msg,
+					error: true
+				}
+			});
 		} finally {
 			setSaving(false);
 		}
@@ -256,13 +289,25 @@ export default function WorkflowsPage() {
 		if (!confirm("Delete this workflow?")) return;
 		try {
 			await adminService.deleteWorkflow(selectedWorkflowId);
-			toast("Workflow deleted");
+			toast(ToastCard,{
+				data:{
+					title: "Workflow Deleted",
+					content: `${workflowName} has been deleted successfully`,
+				}
+			});
 			setSelectedWorkflowId("new");
       setWorkflowName("");
 			setLevels([]);
       refetch();
-		} catch {
-			toast("Delete failed", {style:{color:'red'}});
+		} catch(e) {
+			const msg = e instanceof Error ? e.message : "Delete failed";
+			toast(ToastCard,{
+				data:{
+					title: "Workflow Error",
+					content: msg,
+					error: true
+				}
+			});
 		}
 	};
 
@@ -352,7 +397,7 @@ export default function WorkflowsPage() {
 										stroke="currentColor"
 										strokeWidth="1.8"
 									>
-										<title>Company</title>
+										<title>Workflow</title>
 										<path
 											strokeLinecap="round"
 											strokeLinejoin="round"
@@ -364,13 +409,15 @@ export default function WorkflowsPage() {
 							>
 								
 							</WorkflowTitle>
-              <button type="button" className="flex items-center text-nowrap gap-2 text-[var(--t3)] font-[.78rem]" onClick={() => {
+              <button type="button" className="flex items-center text-nowrap gap-2 text-[var(--t3)] font-[.78rem] 
+								border justify-center w-64 py-2 border-dashed hover:border-[var(--ac)] border-[var(--bd)] rounded hover:text-[var(--ac)]" 
+							onClick={() => {
                     setSelectedWorkflowId("new");
                     setWorkflowName("");
                     setLevels([{ mode: "SINGLE", label: "SINGLE", nOfM: 1, userIds: [] }]);
                   }}>
                   <Plus className="w-3 h-3" />
-                    Add Workflow
+                   New Workflow
 									</button>
 						</WorkflowCardHeader>
 						<WorkflowCardBody>
@@ -380,7 +427,7 @@ export default function WorkflowsPage() {
 										const bg = isSelected
 											? "rgba(59,130,246,.04)"
 											: "var(--bgi)";
-										const border = isSelected ? "var(--ac)" : "var(--bd)";
+										const border = isSelected ? "border-[var(--ac)]" : "border-[var(--bd)]";
 										const hover = isSelected
 											? ""
 											: "hover:bg-[#1e2330] hover:border-[#3a4255]";
@@ -392,10 +439,9 @@ export default function WorkflowsPage() {
 												type="button"
 												key={wf.id}
 												onClick={() => selectWorkflow(wf.id)}
-												className={`flex relative items-center gap-3 p-4 bg-[${bg}]
-                      border border-[${border}] rounded-lg ${hover} transition-all text-left group shadow-${boxShadow}`}
+												className={`flex items-center gap-3 p-4 bg-[${bg}]
+                      border ${border} rounded-lg ${hover} transition-all text-left group shadow-${boxShadow}`}
 											>
-                        <Trash className="top-2 right-2" />
 												<div
 													className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold ${getAvatarColor(
 														index,
@@ -407,9 +453,9 @@ export default function WorkflowsPage() {
 													<div className="font-semibold text-sm truncate">
 														{wf.name}
 													</div>
-													{/* <div className="text-[11px] text-[#555b6e]">
-														{wf.personnelCount} users
-													</div> */}
+													<div className="text-[11px] text-[#555b6e]">
+														{wf.levels.length} {wf.levels.length > 1 ? "levels" : "level"}
+													</div>
 												</div>
 												<div
 													className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
@@ -451,6 +497,8 @@ export default function WorkflowsPage() {
 									title="Approval Levels"
 								/>
 								<div className="font-[.78rem] text-[var(--t3)] text-nowrap">{levels.length} {levels.length >1 ? "levels" :"level"}</div>
+								<Trash2 className="ml-5 hover:text-red-500 w-4 h-4 cursor-pointer" onClick={deleteWf} />
+
 							</WorkflowCardHeader>
 							<WorkflowCardBody>
 								{levels.map((level, idx) => {

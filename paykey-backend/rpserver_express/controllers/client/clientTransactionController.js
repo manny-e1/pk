@@ -6,6 +6,7 @@ const { getNetworkInfo } = require("../../utils/geoIpService");
 
 const RiskEngine = require("../../utils/riskEngine");
 const PolicyEngine = require("../../utils/authPolicies");
+const { deriveFromAccount } = require("../../utils/deriveFromAccount");
 
 const generatePaymentId = () =>
 	`PAY_TX_${customAlphabet("0123456789ABCDEF", 10)()}`;
@@ -85,6 +86,7 @@ exports.initiateTransaction = async (req, res) => {
 		const netInfo = getNetworkInfo(ipAddress);
 		let countryCode = netInfo.country || "UN";
 
+		const fromAccountLabel = deriveFromAccount(req.body);
 		const riskContext = {
 			userId: user.id,
 			email: user.email,
@@ -97,6 +99,7 @@ exports.initiateTransaction = async (req, res) => {
 			deviceId: telemetry?.device_model || "unknown",
 			beneficiaryAccount: beneficiaryAccount || null,
 			merchantName: merchantName || null,
+			fromAccount: fromAccountLabel,
 			telemetry: telemetry || {},
 		};
 
@@ -254,6 +257,7 @@ exports.initiateTransaction = async (req, res) => {
 			tags: combinedTags,
 			factors: riskResult.breakdown,
 			riskScore: riskResult.score,
+			riskLevel: riskResult.level,
 		};
 
 		const finalEventType = getEventDescription(policyDecision.status);
@@ -387,6 +391,10 @@ exports.executeTransaction = async (req, res) => {
 				amount: Number(amount),
 				currency: currency || "MYR",
 				toAccount: beneficiaryAccount || merchantName || "Unknown",
+				fromAccount: deriveFromAccount(req.body),
+				payerBank: req.body.payerBank
+					? String(req.body.payerBank).slice(0, 128)
+					: null,
 				merchantName: merchantName || null,
 				description:
 					description || `Trx to ${beneficiaryAccount || merchantName}`,
@@ -427,6 +435,7 @@ exports.executeTransaction = async (req, res) => {
 						tags: newTags,
 						message: "Transaction executed and verified successfully",
 						riskScore: riskScore || existingJson.riskScore || 0,
+						riskLevel: riskLevel || existingJson.riskScore || "LOW",
 					},
 				},
 			});
@@ -444,6 +453,7 @@ exports.executeTransaction = async (req, res) => {
 					amount: Number(amount),
 					currency: currency,
 					riskScore: riskScore || 0,
+					riskLevel: riskLevel || "LOW",
 					tags: [
 						{ label: `${amount} ${currency.toUpperCase()}`, class: "success" },
 						{ label: `Score: ${riskScore || 0}`, class: tagColor },

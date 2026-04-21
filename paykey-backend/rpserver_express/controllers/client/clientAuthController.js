@@ -13,7 +13,7 @@ exports.registerUser = async (req, res) => {
 
 	try {
 		const existing = await prisma.user.findUnique({ where: { email } });
-		if (existing && existing.cifNumber)
+		if (existing?.cifNumber)
 			return res.status(400).json({ error: "Email already exists" });
 
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -112,33 +112,33 @@ exports.loginStep1 = async (req, res) => {
 				status: "complete",
 				userId: user.id,
 				fullName: user.fullName,
+				email: user.email,
 				companyId: loginCompanyId,
 				workflows,
 			});
-		} else if (decision.status === "CHALLENGED") {
+		}if (decision.status === "CHALLENGED") {
 			const challengeRes = await javaClient.getUnifiedChallenge();
-
 			return res.json({
 				status: "challenge_required",
 				userId: user.id,
 				fullName: user.fullName,
 				companyId: loginCompanyId,
+				email: user.email,
 				workflows,
 				challenge: challengeRes.challenge || challengeRes,
-				// allowedMethods: decision.allowedMethods,
-				allowedMethods: ["PIN"],
+				allowedMethods: decision.allowedMethods,
+				// allowedMethods: ["PIN"],
 				requirements: decision.requirements,
 				message:
 					"Additional verification required based on current security policy",
 			});
-		} else {
+		}
 			await createRichAuthLog(req, user, {
 				eventType: "LOGIN_BLOCKED",
 				status: "BLOCKED",
 				riskScore: riskResult.score,
 			});
 			return res.status(403).json({ error: "Login Denied by Policy" });
-		}
 	} catch (err) {
 		res.status(500).json({ error: "System Error" });
 	}
@@ -209,7 +209,7 @@ exports.getAvailableEnrollmentMethods = async (req, res) => {
 
 		const methodSet = new Set();
 
-		policies.forEach((policy) => {
+		for (const policy of policies) {
 			let conditions = {};
 
 			try {
@@ -235,8 +235,8 @@ exports.getAvailableEnrollmentMethods = async (req, res) => {
 			const stepUpMethods =
 				conditions.stepUpMethods || conditions.allowedMethods || [];
 
-			stepUpMethods.forEach((method) => methodSet.add(method.toLowerCase()));
-		});
+			for ( const method of stepUpMethods){ methodSet.add(method.toLowerCase())}
+		}
 
 		let availableMethods = Array.from(methodSet);
 
@@ -254,4 +254,28 @@ exports.getAvailableEnrollmentMethods = async (req, res) => {
 		console.error("Fetch Available Methods Error:", error);
 		res.status(500).json({ error: "Failed to fetch enrollment methods" });
 	}
+};
+
+exports.getPinKeystore = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+        return res.status(400).json({ error: "Missing userId parameter" });
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { pinKeystore: true }
+    });
+
+    if (!user || !user.pinKeystore) {
+        return res.status(404).json({ error: "Secure Keystore not found for this user." });
+    }
+
+    res.json({ success: true, keystoreData: user.pinKeystore });
+  } catch (err) {
+    console.error("Get Keystore Error:", err);
+    res.status(500).json({ error: "Failed to fetch keystore" });
+  }
 };

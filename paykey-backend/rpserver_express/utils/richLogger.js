@@ -61,9 +61,17 @@ async function createRichAuthLog(req, user, context) {
 				finalCountryCode = extractedCountry;
 			}
 		}
+		const normalizedRiskScore = Number(
+			context.data?.riskScore ?? context.data?.score ?? context.riskScore ?? 0
+		);
+		const normalizedRiskLevel = String(
+			context.data?.riskLevel ?? context.data?.level ?? context.riskLevel ?? "LOW"
+		).toUpperCase();
 
 		const richMetadata = {
 			...context.data,
+			riskScore: normalizedRiskScore,
+			riskLevel: normalizedRiskLevel,
 			network: {
 				ip: finalIp,
 				ipv6: detectedIPv6,
@@ -104,12 +112,11 @@ async function createRichAuthLog(req, user, context) {
 
 				device: deviceModel,
 				isVpn: telemetry.is_vpn_active || false,
-				riskScore: context.data?.riskScore || 0,
+				riskScore: normalizedRiskScore,
 
 				riskTags: richMetadata,
 			},
 		});
-
 		console.log(`[RichLog] ${context.eventType} | User: ${user.email}`);
 		console.log(`          > IP Used: ${finalIp} (v6 Priority)`);
 	} catch (error) {

@@ -59,9 +59,13 @@ router.post('/auth/push/start', stepUpController.startPushApproval);
 router.get('/auth/push/status', stepUpController.checkPushStatus);
 router.post('/auth/push/status', stepUpController.checkPushStatus);
 
+router.post('/enroll/pin-keystore', enrollController.enrollPinKeystore);
+router.post('/auth/pin-keystore', clientAuth.getPinKeystore);
+
 router.get('/corporate/workflows', corporateController.getCorporateWorkflows);
 router.post('/corporate/transactions/initiate', corporateController.initiateCorporateTransaction);
 router.get('/corporate/transactions/pending', corporateController.listPendingCorporateTransactions);
+router.post('/corporate/transactions/approve/initiate', corporateController.initiateApproval);
 router.post('/corporate/transactions/approve', corporateController.approveCorporateTransaction);
 router.post('/corporate/transactions/reject', corporateController.rejectCorporateTransaction);
 

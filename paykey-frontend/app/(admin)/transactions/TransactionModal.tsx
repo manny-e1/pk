@@ -11,6 +11,16 @@ type ApiApprover = {
 	time?: string | null;
 };
 
+/** From transaction detail when risk engine persisted factors (4 keys = no description, 5 = with desc). */
+type ApiRiskFactor = {
+	rule: string;
+	class: string;
+	label: string;
+	score: number;
+	desc?: string;
+	description?: string;
+};
+
 type ApiDetail = {
 	id: string;
 	transactionNo: string;
@@ -22,8 +32,10 @@ type ApiDetail = {
 	riskLevel: string;
 	riskScore: number;
 	riskReason: string | null;
+	riskFactors?: ApiRiskFactor[] | null;
 	description: string | null;
 	toAccount: string | null;
+	fromAccount?: { name?: string | null; number?: string | null; bank?: string | null } | null;
 	merchantName: string | null;
 	payerBank?: string | null;
 	beneficiaryBank?: string | null;
@@ -43,13 +55,14 @@ type RiskAlertRow = {
 	title: string;
 	description: string;
 	score: number;
+	rule?: string;
 };
 
 type UiApprover = {
 	name: string;
 	role: string;
 	initials: string;
-	status: "approved" | "pending" | "rejected";
+	status: "approved" | "pending" | "rejected"|"skipped";
 	time: string | null;
 };
 
@@ -115,13 +128,15 @@ const statusUi: Record<
 const approverAvatarColors = {
 	approved: "bg-emerald-500 text-white",
 	pending:
-		"bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border-2 border-dashed border-[var(--border-secondary)]",
+		"bg-[var(--bg-elevated)] text-[var(--text-tertiary)]  border-2 border-[var(--border-default)] border-dotted",
 	rejected: "bg-red-500 text-white",
+	skipped: '"bg-[var(--bg-elevated)] text-[var(--text-tertiary)]  border-2 border-[var(--border-default)] border-dotted"'
 };
 
 const approverBadgeColors = {
 	approved: "bg-emerald-500/15 text-emerald-400",
 	pending: "bg-amber-500/15 text-amber-400",
+	skipped: "bg-slate-500/15 text-slate-400",
 	rejected: "bg-red-500/15 text-red-400",
 };
 
@@ -143,12 +158,45 @@ function initialsFromName(name: string) {
 
 function mapApproverStatus(
 	raw: string,
-): "approved" | "pending" | "rejected" {
+): "approved" | "pending" | "rejected" | "skipped" {
 	const s = (raw || "").toLowerCase();
 	if (["approved", "done", "complete", "completed", "success"].includes(s))
 		return "approved";
 	if (["rejected", "denied", "failed"].includes(s)) return "rejected";
+	if (s === 'skipped') return "skipped";
 	return "pending";
+}
+
+function mapFactorClassToLevel(
+	factorClass: string,
+): RiskAlertRow["level"] {
+	const c = (factorClass || "").toLowerCase();
+	if (c === "critical" || c === "error") return "critical";
+	if (c === "high") return "high";
+	if (c === "warning") return "medium";
+	return "low";
+}
+
+function riskRowsFromFactors(factors: ApiRiskFactor[]): RiskAlertRow[] {
+	return factors
+		.filter((f) => f && typeof f === "object")
+		.map((f) => {
+			const desc =
+				f.desc !== undefined && f.desc !== null && String(f.desc).trim() !== ""
+					? String(f.desc)
+					: f.description !== undefined &&
+							f.description !== null &&
+							String(f.description).trim() !== ""
+						? String(f.description)
+						: "";
+			return {
+				level: mapFactorClassToLevel(f.class),
+				title: String(f.label || "Risk factor"),
+				description: desc,
+				score: Number(f.score) || 0,
+				rule: f.rule ? String(f.rule) : undefined,
+			};
+		});
 }
 
 function parseRiskAlerts(
@@ -209,17 +257,30 @@ function parseRiskAlerts(
 	];
 }
 
+function buildRiskAssessmentRows(detail: ApiDetail): RiskAlertRow[] {
+	const factors = detail.riskFactors;
+	if (Array.isArray(factors) && factors.length > 0) {
+		return riskRowsFromFactors(factors);
+	}
+	return parseRiskAlerts(detail.riskLevel, detail.riskScore, detail.riskReason);
+}
+
 function buildFromTo(d: ApiDetail) {
 	const isCorp = d.segment === "corporate";
 	const fromName = isCorp
-		? d.company?.name || d.user?.fullName || "Corporate"
+		? d.fromAccount?.name || '-'
 		: d.user?.fullName || "—";
 	const fromNumber = isCorp
-		? d.company?.registrationNo || "—"
-		: d.user?.email || d.user?.mobile || "—";
+		? d.fromAccount?.number ||
+			d.company?.registrationNo ||
+			"—"
+		: d.fromAccount?.number ||
+			d.user?.email ||
+			d.user?.mobile ||
+			"—";
 	const fromBank = isCorp
 		? d.payerBank || "—"
-		: "Retail banking";
+		: d.payerBank || "Retail banking";
 	return {
 		from: { name: fromName, number: fromNumber, bank: fromBank },
 		to: {
@@ -233,11 +294,18 @@ function buildFromTo(d: ApiDetail) {
 function buildTimeline(d: ApiDetail, dateStr: string): TimelineItem[] {
 	const items: TimelineItem[] = [
 		{
-			event: "Transaction recorded",
+			event: "Transaction Initiated",
 			time: new Date(d.timestamp).toLocaleTimeString("en-MY", {
 				hour12: false,
 			}),
-			type: "info",
+			type: "success",
+		},
+		{
+			event: `Risk Assessment Completed (score: ${d.riskScore})`,
+			time: new Date(d.timestamp).toLocaleTimeString("en-MY", {
+				hour12: false,
+			}),
+			type: "success",
 		},
 	];
 	for (const a of d.approvers || []) {
@@ -394,7 +462,7 @@ export function TransactionDetailModal({
 
 	const uiApprovers: UiApprover[] = (detail?.approvers?.length
 		? detail.approvers
-		: [{ id: "self", name: "Payer", status: "done" }]
+		: [{ id: "self", name: "Payer", status: "done"}]
 	).map((a) => ({
 		name: a.name,
 		role: a.role || "Approver",
@@ -406,14 +474,13 @@ export function TransactionDetailModal({
 	}));
 
 	const approvedCount = uiApprovers.filter((a) => a.status === "approved").length;
+	const approvedWithSkippedCount = uiApprovers.filter((a) => a.status === "approved"|| a.status === 'skipped').length;
 	const rejectedCount = uiApprovers.filter((a) => a.status === "rejected").length;
 	const pendingCount = uiApprovers.filter((a) => a.status === "pending").length;
 	const totalApprovers = Math.max(uiApprovers.length, 1);
 	const requiredApprovals = totalApprovers;
 
-	const riskAlerts = detail
-		? parseRiskAlerts(detail.riskLevel, detail.riskScore, detail.riskReason)
-		: [];
+	const riskAlerts = detail ? buildRiskAssessmentRows(detail) : [];
 	const { from, to } = detail ? buildFromTo(detail) : { from: null, to: null };
 	const timeline = detail ? buildTimeline(detail, dateLabel) : [];
 
@@ -479,9 +546,9 @@ export function TransactionDetailModal({
 							<div className="flex flex-col sm:flex-row items-stretch gap-4 p-5 bg-[var(--bg-tertiary)] rounded-xl">
 								<div className="flex-1 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-secondary)]">
 									<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-2">
-										From
+										From Account
 									</div>
-									<div className="text-base font-semibold text-[var(--text-primary)] mb-1">
+									<div className="text-base font-semibold text-[var(--text-primary)] mb-1 text-nowrap">
 										{from.name}
 									</div>
 									<div className="font-mono text-[13px] text-[var(--text-secondary)]">
@@ -551,34 +618,10 @@ export function TransactionDetailModal({
 									</div>
 									<div className="flex flex-col gap-1">
 										<span className="text-xs text-[var(--text-tertiary)]">
-											Segment
-										</span>
-										<span className="text-[13px] text-[var(--text-primary)] capitalize">
-											{detail.segment}
-										</span>
-									</div>
-									<div className="flex flex-col gap-1">
-										<span className="text-xs text-[var(--text-tertiary)]">
-											Auth result
-										</span>
-										<span className="text-[13px] text-[var(--text-secondary)] font-mono">
-											{detail.authResult || "—"}
-										</span>
-									</div>
-									<div className="flex flex-col gap-1">
-										<span className="text-xs text-[var(--text-tertiary)]">
-											Amount
-										</span>
-										<span className="font-mono text-2xl font-bold text-[var(--text-primary)]">
-											{fmtMoney(detail.amount, detail.currency)}
-										</span>
-									</div>
-									<div className="flex flex-col gap-1">
-										<span className="text-xs text-[var(--text-tertiary)]">
 											Status
 										</span>
 										<span
-											className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium w-fit ${statusInfo.class}`}
+											className={`flex w-full items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusInfo.class}`}
 										>
 											<span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
 											{statusInfo.label}
@@ -589,19 +632,19 @@ export function TransactionDetailModal({
 											Risk level
 										</span>
 										<span
-											className={`inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-semibold w-fit ${riskColors[riskKey].badge}`}
+											className={`flex w-full items-center gap-1 px-2 py-1 rounded text-[11px] font-semibold ${riskColors[riskKey].badge}`}
 										>
 											<RiskIcon level={riskKey} />
-											{detail.riskLevel.toUpperCase()} (score: {detail.riskScore}
-											)
+											{detail.riskLevel.charAt(0).toUpperCase() + detail.riskLevel.slice(1)} (score: {detail.riskScore}/100)
+						
 										</span>
 									</div>
 									<div className="flex flex-col gap-1 col-span-2">
 										<span className="text-xs text-[var(--text-tertiary)]">
-											Notes / description
+											Notes / Reference
 										</span>
 										<div className="bg-[var(--bg-tertiary)] rounded-lg px-4 py-3 text-[13px] text-[var(--text-secondary)] leading-relaxed border border-[var(--border-secondary)]">
-											{detail.description || "—"}
+											{detail.description}
 										</div>
 									</div>
 								</div>
@@ -618,10 +661,14 @@ export function TransactionDetailModal({
 												alert.level in riskColors
 													? alert.level
 													: ("low" as const);
+											const key =
+												alert.rule != null && alert.rule !== ""
+													? `${alert.rule}-${i}`
+													: `${alert.title}-${i}`;
 											return (
 												<div
-													key={`${alert.title}-${i}`}
-													className={`flex items-start gap-3 p-3 rounded-lg ${riskColors[rk].alert}`}
+													key={key}
+													className={`flex items-center gap-3 p-3 rounded-lg ${riskColors[rk].alert}`}
 												>
 													<div
 														className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${riskColors[rk].icon}`}
@@ -632,9 +679,16 @@ export function TransactionDetailModal({
 														<div className="text-[13px] font-medium text-[var(--text-primary)]">
 															{alert.title}
 														</div>
-														<div className="text-xs text-[var(--text-secondary)] mt-0.5">
-															{alert.description}
-														</div>
+														{/* {alert.rule != null && alert.rule !== "" ? (
+															<div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-0.5">
+																{alert.rule}
+															</div>
+														) : null} */}
+														{alert.description.trim() !== "" ? (
+															<div className="text-xs text-[var(--text-secondary)] mt-0.5">
+																{alert.description}
+															</div>
+														) : null}
 													</div>
 													<div
 														className={`text-xs font-semibold font-mono shrink-0 ${riskColors[rk].score}`}
@@ -657,7 +711,7 @@ export function TransactionDetailModal({
 										<div
 											className="h-full bg-emerald-500 transition-all"
 											style={{
-												width: `${(approvedCount / totalApprovers) * 100}%`,
+												width: `${(approvedWithSkippedCount / totalApprovers) * 100}%`,
 											}}
 										/>
 										<div
@@ -704,7 +758,7 @@ export function TransactionDetailModal({
 												<span
 													className={`text-xs font-medium px-2.5 py-1 rounded-full ${approverBadgeColors[approver.status]}`}
 												>
-													{approver.status.charAt(0).toUpperCase() +
+													{approver.status.charAt(0).toUpperCase() + 
 														approver.status.slice(1)}
 												</span>
 												{approver.time && (

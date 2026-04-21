@@ -13,7 +13,15 @@ function enforcePolicyRules(policy) {
             knownDeviceRequired: rules.knownDevice === true,
             totalTimeout: rules.totalTimeout || 180,
             txnSigning: rules.txnSigning === true,
-            userVerification: rules.userVerification || 'preferred'
+            userVerification: rules.userVerification || 'preferred',
+            minDeviceAge: rules.minDeviceAge || 0,
+            deviceTypes: rules.deviceTypes || 'all',
+            lockoutAction: rules.lockoutAction || 'soft_lock',
+            baseDelay: rules.baseDelay || 3,
+            progDelay: rules.progDelay === true,
+            fido2Timeout: rules.fido2Timeout || 120,
+            stepUpTimeout: rules.stepUpTimeout || 60
+            
         }
     };
 

@@ -12,7 +12,7 @@ async function loadRiskConfig() {
 
     const [rules, thresholds, amountLimits, policies] = await Promise.all([
         prisma.riskRule.findMany({ where: { isActive: true } }),
-        prisma.riskThreshold.findFirst(),
+        prisma.riskThreshold.findMany(),
         prisma.amountLimit.findMany({ orderBy: { minAmount: 'asc' } }), 
         prisma.authPolicy.findMany({ where: { isActive: true } }) 
     ]);
@@ -36,7 +36,7 @@ async function loadRiskConfig() {
 
     cachedConfig = {
         rules: parsedRules,
-        thresholds: thresholds || { lowScore: 30, highScore: 70 },
+        thresholds: thresholds || [],
         amountLimits: parsedLimits,
         policies: parsedPolicies
     };

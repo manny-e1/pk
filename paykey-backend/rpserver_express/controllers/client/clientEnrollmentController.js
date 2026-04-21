@@ -985,3 +985,23 @@ exports.enrollAppPin = async (req, res) => {
       res.status(500).json({ error: "Failed to enroll App PIN to Java Server" }); 
   }
 };
+
+exports.enrollPinKeystore = async (req, res) => {
+  try {
+    const { userId, keystoreData } = req.body;
+    
+    if (!userId || !keystoreData) {
+        return res.status(400).json({ error: "Missing userId or keystoreData" });
+    }
+
+    await prisma.user.update({
+        where: { id: userId },
+        data: { pinKeystore: keystoreData }
+    });
+
+    res.json({ success: true, message: "Secure Keystore saved to cloud" });
+  } catch (err) {
+    console.error("Save Keystore Error:", err);
+    res.status(500).json({ error: "Failed to save keystore" });
+  }
+};

@@ -1,6 +1,11 @@
 const jwt = require("jsonwebtoken");
 const prisma = require("../../config/db");
 const { createRichAuthLog } = require("../../utils/richLogger");
+const javaClient = require("../../services/JavaAuthClient");
+const RiskEngine = require("../../utils/riskEngine");
+const PolicyEngine = require("../../utils/authPolicies");
+const { getNetworkInfo } = require("../../utils/geoIpService");
+const { deriveFromAccount } = require("../../utils/deriveFromAccount");
 
 function corporateTxLogBase(tx) {
 	return {
@@ -60,6 +65,85 @@ function promoteNextPendingLevel(chain) {
 	for (const n of chain) {
 		if (n.level === nextLevel && n.status === "pending") n.status = "current";
 	}
+}
+
+/**
+ * Mutates `chain` in place: marks the user's current node done and promotes the level if complete.
+ * @returns {{ ok: true, idx: number, finalApproved: boolean, hasCurrent: boolean } | { ok: false }}
+ */
+function mutateCorporateApprovalChain(chain, userId, methods) {
+	const idx = chain.findIndex((n) => n.id === userId && n.status === "current");
+	if (idx < 0) return { ok: false };
+	chain[idx].status = "done";
+	chain[idx].time = new Date().toISOString();
+	chain[idx].method = methods != null ? methods : "STEP_UP_OK";
+	const level = chain[idx].level;
+	const levelNodes = chain.filter((n) => n.level === level);
+	const mode = normalizeMode(chain[idx].levelMode);
+	const nOfM = chain[idx].nOfM || null;
+	if (isLevelComplete(levelNodes, mode, nOfM)) {
+		// When a level completes early (ANY / N-of-M), mark remaining approvers as skipped
+		// so they don't block completion and can be dimmed in UI.
+		if (mode === "MULTIPLE_ANY" || mode === "MULTIPLE_N_OF_M") {
+			for (const n of chain) {
+				if (n.level !== level) continue;
+				if (n.status === "done" || n.status === "rejected") continue;
+				if (n.id === userId) continue;
+				if (n.status === "current" || n.status === "pending") {
+					n.status = "skipped";
+					n.time = n.time || new Date().toISOString();
+				}
+			}
+		}
+		promoteNextPendingLevel(chain);
+	}
+	const hasCurrent = chain.some((n) => n.status === "current");
+	const hasPending = chain.some((n) => n.status === "pending");
+	const finalApproved = !hasCurrent && !hasPending;
+	return { ok: true, idx, finalApproved, hasCurrent };
+}
+
+function markOutstandingAsSkipped(chain) {
+	for (const n of chain) {
+		if (n.status === "current" || n.status === "pending") {
+			n.status = "skipped";
+			n.time = n.time || new Date().toISOString();
+		}
+	}
+}
+
+function mutateCorporateRejectionChain(chain, userId) {
+	const idx = chain.findIndex((n) => n.id === userId && n.status === "current");
+	if (idx < 0) return { ok: false };
+
+	chain[idx].status = "rejected";
+	chain[idx].time = new Date().toISOString();
+
+	const level = chain[idx].level;
+	const levelNodes = chain.filter((n) => n.level === level);
+	const mode = normalizeMode(chain[idx].levelMode);
+	const nOfM = Math.max(1, chain[idx].nOfM || 1);
+
+	const done = levelNodes.filter((n) => n.status === "done").length;
+	const rejected = levelNodes.filter((n) => n.status === "rejected").length;
+	const total = levelNodes.length;
+	const maxPossibleApprovals = total - rejected;
+
+	let finalRejected = false;
+	if (mode === "SINGLE" || mode === "MULTIPLE_ALL") {
+		finalRejected = rejected >= 1;
+	} else if (mode === "MULTIPLE_ANY") {
+		finalRejected = rejected >= total;
+	} else if (mode === "MULTIPLE_N_OF_M") {
+		finalRejected = done + (maxPossibleApprovals - done) < nOfM;
+	}
+
+	if (finalRejected) {
+		markOutstandingAsSkipped(chain);
+	}
+
+	const hasCurrent = chain.some((n) => n.status === "current");
+	return { ok: true, idx, finalRejected, hasCurrent };
 }
 
 exports.getCorporateWorkflows = async (req, res) => {
@@ -129,6 +213,8 @@ exports.initiateCorporateTransaction = async (req, res) => {
 		}
 
 		const {
+			telemetry,
+			beneficiaryAccount,
 			amount,
 			toAccount,
 			merchantName,
@@ -137,6 +223,8 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			payerBank,
 			beneficiaryBank,
 		} = req.body;
+		const currency = String(req.body.currency || "MYR").toUpperCase();
+
 		if (!amount || !toAccount || !merchantName || !workflowId) {
 			return res.status(400).json({ error: "Missing required fields" });
 		}
@@ -150,7 +238,7 @@ exports.initiateCorporateTransaction = async (req, res) => {
 						assignees: {
 							include: {
 								user: {
-									select: { id: true, fullName: true, email: true },
+									select: { id: true, fullName: true, email: true, mobile: true },
 								},
 							},
 						},
@@ -181,8 +269,126 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			});
 		}
 
-		// Sole approver on level 0 must still open Approvals and confirm; do not mark them
-		// "done" on initiate or the workflow completes with no explicit approval step.
+		// --- Risk + policy (aligned with clientTransactionController.initiateTransaction) ---
+		const channel = req.apiClient ? req.apiClient.channel : "MOBILE";
+		const rawIp =
+			req.headers["cf-connecting-ip"] ||
+			req.headers["x-forwarded-for"] ||
+			req.socket.remoteAddress ||
+			req.ip;
+		const ipAddress = rawIp ? rawIp.split(",")[0].trim() : "127.0.0.1";
+
+		const segment =
+			user.companyName || user.role === "ADMIN" ? "CORPORATE" : "CONSUMER";
+		const netInfo = getNetworkInfo(ipAddress);
+		const countryCode = netInfo.country || "UN";
+		const deviceIdentifier =
+			telemetry?.device_model || req.body.deviceId || "unknown";
+
+		const riskContext = {
+			userId: user.id,
+			email: user.email,
+			userSegment: segment,
+			channel,
+			amount: Number(amount),
+			currency,
+			ipAddress,
+			countryCode,
+			deviceId: deviceIdentifier,
+			beneficiaryAccount: beneficiaryAccount || toAccount || null,
+			merchantName: merchantName || null,
+			fromAccount: deriveFromAccount(req.body),
+			telemetry: telemetry || {},
+		};
+
+		const riskResult = await RiskEngine.calculateRisk(riskContext);
+		const riskFactors = riskResult.factors.map((f,i) => {
+			const breakdown = riskResult.breakdown[i]
+			return {
+				label: f.label,
+				class: f.class,
+				rule: breakdown?.rule,
+				score: breakdown?.score,
+				desc: breakdown?.desc
+			}
+		})
+		const policyResult = await PolicyEngine.evaluateAuthPolicy({
+			segment,
+			channel,
+			action: "TRANSACTION",
+			riskScore: riskResult.score,
+		});
+
+		const policyDecision = policyResult.decision;
+
+		const lockoutTime = new Date(
+			Date.now() - policyDecision.metadata.lockoutDuration * 1000,
+		);
+		const failedAttempts = await prisma.authLog.count({
+			where: {
+				email: user.email,
+				status: "FAILED",
+				createdAt: { gte: lockoutTime },
+			},
+		});
+		if (failedAttempts >= policyDecision.metadata.maxAttempts) {
+			policyDecision.status = "BLOCKED";
+		}
+
+		const isNewDevice = riskResult.factors.some(
+			(f) =>
+				(typeof f === "object" && f.label === "New Device") ||
+				f === "New Device",
+		);
+		if (
+			policyDecision.status !== "BLOCKED" &&
+			policyDecision.metadata.knownDeviceRequired &&
+			isNewDevice
+		) {
+			policyDecision.status = "BLOCKED";
+		}
+
+		if (policyDecision.status !== "BLOCKED") {
+			if (
+				riskResult.score >= 100 ||
+				riskResult.isBlockedByAmount ||
+				policyDecision.status === "REJECTED"
+			) {
+				policyDecision.status = "BLOCKED";
+			} else {
+				const policyMethods = policyDecision.allowedMethods || [];
+				const amountMethods = riskResult.amountMandatedMethods || [];
+				const chainedMethods = [];
+				if (amountMethods.length > 0) chainedMethods.push(...amountMethods);
+				if (policyMethods.length > 0) chainedMethods.push(...policyMethods);
+				if (chainedMethods.length > 0) {
+					policyDecision.status = "CHALLENGED";
+					policyDecision.allowedMethods = chainedMethods;
+				}
+			}
+		}
+
+		if (policyDecision.status === "BLOCKED") {
+			await createRichAuthLog(req, user, {
+				eventType: "Corporate Transfer Initiated — Blocked",
+				status: "BLOCKED",
+				authMethod: "CORPORATE_TRANSFER",
+				data: {
+					amount: Number(amount),
+					currency,
+					riskScore: riskResult.score,
+					riskLevel: riskResult.level,
+					riskFactors,
+					tags: [{ label: "Blocked by risk or policy", class: "error" }],
+				},
+			});
+			return res.status(403).json({
+				error: "Transaction blocked by risk or policy",
+				riskScore: riskResult.score,
+			});
+		}
+
+		// --- Build approval chain (only after policy allows submission) ---
 		const initiatorSoleOnFirstLevel =
 			firstLevel.assignees.length === 1 &&
 			firstLevel.assignees[0].user.id === user.id;
@@ -213,6 +419,8 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				chain.push({
 					id: a.user.id,
 					name: a.user.fullName,
+					email: a.user.email,
+					mobile: a.user.mobile,
 					role: `Level ${lv.levelOrder + 1} Approver`,
 					method: null,
 					level: lv.levelOrder,
@@ -231,9 +439,9 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			promoteNextPendingLevel(chain);
 		}
 
-		const hasCurrent = chain.some((n) => n.status === "current");
-		const hasPending = chain.some((n) => n.status === "pending");
-		const workflowComplete = !hasCurrent && !hasPending;
+		let hasCurrent = chain.some((n) => n.status === "current");
+		let hasPending = chain.some((n) => n.status === "pending");
+		let workflowComplete = !hasCurrent && !hasPending;
 
 		const txId = `CORP_TX_${Date.now()}`;
 		const created = await prisma.transaction.create({
@@ -242,15 +450,15 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				transactionNo: txId,
 				userId: user.id,
 				amount: Number(amount),
-				currency: "MYR",
+				currency: currency || "MYR",
 				toAccount,
 				merchantName,
-				description: description || `Corporate transfer to ${merchantName}`,
+				description,
 				type: "TRANSFER",
 				status: workflowComplete ? "SUCCESS" : "PENDING",
 				authResult: workflowComplete ? "APPROVED" : "PENDING",
-				riskLevel: "LOW",
-				riskScore: 25,
+				riskLevel: riskResult.level || "LOW",
+				riskScore: riskResult.score ?? 0,
 				isCorporate: true,
 				companyId: user.companyId,
 				workflowId: workflow.id,
@@ -270,6 +478,7 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				beneficiaryBank: beneficiaryBank
 					? String(beneficiaryBank).slice(0, 128)
 					: null,
+				fromAccount: deriveFromAccount(req.body),
 			},
 		});
 
@@ -283,9 +492,12 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				...corporateTxLogBase(created),
 				workflowId: workflow.id,
 				workflowComplete,
+				riskScore: riskResult.score,
+				riskLevel: riskResult.level,
+				riskFactors,
 				tags: [
 					{
-						label: `${Number(amount)} MYR → ${merchantName || toAccount}`,
+						label: `${Number(amount)} ${currency} → ${merchantName || toAccount}`,
 						class: "info",
 					},
 					{
@@ -298,11 +510,118 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			},
 		});
 
+		if (policyDecision.status === "CHALLENGED") {
+			const challengeRes = await javaClient.getUnifiedChallenge();
+			await createRichAuthLog(req, user, {
+				eventType: "Corporate Transfer — Step-up Required",
+				status: "CHALLENGED",
+				authMethod: "CORPORATE_TRANSFER",
+				data: {
+					transactionId: created.id,
+					riskScore: riskResult.score,
+					riskFactors,
+					riskLevel: riskResult.level,
+					tags: [{ label: "Awaiting strong authentication", class: "warning" }],
+				},
+			});
+			return res.json({
+				success: true,
+				status: "challenge_required",
+				transactionId: created.id,
+				workflowComplete: false,
+				challenge: challengeRes.challenge || challengeRes,
+				requirements: policyDecision.requirements,
+				amountMandatedMethods: policyDecision.allowedMethods || [],
+				riskScore: riskResult.score,
+				riskLevel: riskResult.level,
+				policySettings: {
+					userVerification:
+						policyDecision.metadata?.userVerification || "preferred",
+					txnSigning: policyDecision.metadata?.txnSigning || false,
+					knownDeviceRequired: policyDecision.metadata?.knownDevice || false,
+					maxAttempts: policyDecision.metadata?.maxAttempts || 3,
+					lockoutDuration: policyDecision.metadata?.lockoutDuration || 60,
+					totalTimeout: policyDecision.metadata?.totalTimeout || 120,
+				},
+				chain: created.approvalChain,
+				amount: Number(amount),
+				beneficiary: merchantName || toAccount,
+				ref: created.transactionNo,
+				beneficiaryBank: beneficiaryBank || null,
+			});
+		}
+
+		// APPROVED: auto-apply initiator approval (same as Approvals → Approve) when they hold the current slot
+		const chainWorking = JSON.parse(JSON.stringify(created.approvalChain || []));
+		const auto = mutateCorporateApprovalChain(
+			chainWorking,
+			user.id,
+			"POLICY_AUTO",
+		);
+		let finalDoc = created;
+		if (auto.ok) {
+			hasCurrent = chainWorking.some((n) => n.status === "current");
+			hasPending = chainWorking.some((n) => n.status === "pending");
+			workflowComplete = !hasCurrent && !hasPending;
+			finalDoc = await prisma.transaction.update({
+				where: { id: created.id },
+				data: {
+					status: workflowComplete ? "SUCCESS" : "PENDING",
+					authResult: workflowComplete ? "APPROVED" : "PENDING",
+					corporateStatus: workflowComplete ? "APPROVED" : "PENDING_APPROVAL",
+					approvalChain: chainWorking,
+					currentLevel: hasCurrent
+						? Math.min(
+								...chainWorking
+									.filter((n) => n.status === "current")
+									.map((n) => n.level),
+							)
+						: null,
+					nextApproverId: hasCurrent
+						? chainWorking.find((n) => n.status === "current")?.id || null
+						: null,
+				},
+			});
+			await createRichAuthLog(req, user, {
+				eventType: workflowComplete
+					? "Corporate Transfer Fully Approved"
+					: "Corporate Initiator Auto-Approved",
+				status: workflowComplete ? "SUCCESS" : "APPROVED",
+				authMethod: "CORPORATE_APPROVAL",
+				data: {
+					...corporateTxLogBase(finalDoc),
+					approvalAction: "auto_initiator",
+					level: chainWorking[auto.idx]?.level,
+					workflowComplete,
+					riskScore: riskResult.score,
+					riskLevel: riskResult.level,
+					riskFactors,
+					tags: [
+						{
+							label: `${Number(amount)} ${currency}`,
+							class: "info",
+						},
+						{
+							label: workflowComplete
+								? "All approvers completed"
+								: "Initiator step completed — pending next approver",
+							class: workflowComplete ? "success" : "warning",
+						},
+					],
+				},
+			});
+		}
+
 		return res.json({
 			success: true,
-			transactionId: created.id,
+			status: "complete",
+			transactionId: finalDoc.id,
 			workflowComplete,
 			redirectToSuccess: workflowComplete,
+			chain: finalDoc.approvalChain,
+			riskScore: riskResult.score,
+			riskLevel: riskResult.level,
+			autoApprovalApplied: auto.ok,
 		});
 	} catch (err) {
 		console.error("[initiateCorporateTransaction]", err);
@@ -339,7 +658,10 @@ exports.listPendingCorporateTransactions = async (req, res) => {
 				ref: t.transactionNo,
 				amount: Number(t.amount),
 				priority: Number(t.amount) >= 100000 ? "high" : "normal",
+				beneficiaryBank: t.beneficiaryBank,
+				submittedDate: t.timestamp,
 				chain,
+				fromAccount: t.fromAccount,
 			};
 		});
 
@@ -361,25 +683,30 @@ exports.rejectCorporateTransaction = async (req, res) => {
 		if (!tx || !tx.isCorporate) {
 			return res.status(404).json({ error: "Corporate transaction not found" });
 		}
-		const chain = Array.isArray(tx.approvalChain) ? tx.approvalChain : [];
-		const idx = chain.findIndex(
-			(n) => n.id === userId && n.status === "current",
-		);
-		if (idx < 0) {
+		const chain = Array.isArray(tx.approvalChain)
+			? JSON.parse(JSON.stringify(tx.approvalChain))
+			: [];
+		const mut = mutateCorporateRejectionChain(chain, userId);
+		if (!mut.ok) {
 			return res.status(403).json({ error: "Not your turn to reject" });
 		}
-
-		chain[idx].status = "rejected";
-		chain[idx].time = new Date().toISOString();
-
-		await prisma.transaction.update({
+		const updated = await prisma.transaction.update({
 			where: { id: txId },
 			data: {
-				status: "FAILED",
-				authResult: "REJECTED",
-				corporateStatus: "REJECTED",
+				status: mut.finalRejected ? "FAILED" : "PENDING",
+				authResult: mut.finalRejected ? "REJECTED" : "PENDING",
+				corporateStatus: mut.finalRejected ? "REJECTED" : "PENDING_APPROVAL",
 				approvalChain: chain,
-				nextApproverId: null,
+				currentLevel: mut.hasCurrent
+					? Math.min(
+							...chain
+								.filter((n) => n.status === "current")
+								.map((n) => n.level),
+						)
+					: null,
+				nextApproverId: mut.hasCurrent
+					? chain.find((n) => n.status === "current")?.id || null
+					: null,
 			},
 		});
 
@@ -387,24 +714,50 @@ exports.rejectCorporateTransaction = async (req, res) => {
 		if (actor) {
 			await createRichAuthLog(req, actor, {
 				eventType: "Corporate Transfer Rejected",
-				status: "FAILED",
+				status: mut.finalRejected ? "FAILED" : "REJECTED",
 				authMethod: "CORPORATE_APPROVAL",
 				data: {
 					...corporateTxLogBase(tx),
 					approvalAction: "reject",
-					level: chain[idx]?.level,
+					level: chain[mut.idx]?.level,
+					levelMode: chain[mut.idx]?.levelMode,
+					transactionRejected: mut.finalRejected,
 					tags: [
 						{
 							label: `${Number(tx.amount)} ${tx.currency || "MYR"}`,
 							class: "info",
 						},
-						{ label: "Rejected by approver", class: "error" },
+						{
+							label: mut.finalRejected
+								? "Transaction fully rejected"
+								: "Rejection vote recorded",
+							class: mut.finalRejected ? "error" : "warning",
+						},
 					],
 				},
 			});
 		}
 
-		return res.json({ success: true, status: "REJECTED", chain });
+		return res.json({
+			success: true,
+			status: updated.corporateStatus,
+			transactionRejected: mut.finalRejected,
+			chain,
+			failedReceipt: {
+				id: tx.id,
+				transactionNo: tx.transactionNo,
+				timestamp: tx.timestamp,
+				description: tx.description,
+				amount: Number(tx.amount),
+				currency: tx.currency || "MYR",
+				merchantName: tx.merchantName || tx.toAccount || "Unknown",
+				toAccount: tx.toAccount || null,
+				fromAccount: tx.fromAccount || null,
+				payerBank: tx.payerBank || null,
+				approvers: chain,
+				rejector: chain[mut.idx] || null,
+			},
+		});
 	} catch (err) {
 		console.error("[rejectCorporateTransaction]", err);
 		return res.status(500).json({ error: err.message });
@@ -414,7 +767,7 @@ exports.rejectCorporateTransaction = async (req, res) => {
 exports.approveCorporateTransaction = async (req, res) => {
 	try {
 		const userId = pickUserId(req);
-		const { txId } = req.body;
+		const { txId, methods } = req.body;
 		if (!userId || !txId) {
 			return res.status(400).json({ error: "userId and txId are required" });
 		}
@@ -422,30 +775,15 @@ exports.approveCorporateTransaction = async (req, res) => {
 		if (!tx || !tx.isCorporate) {
 			return res.status(404).json({ error: "Corporate transaction not found" });
 		}
-		const chain = Array.isArray(tx.approvalChain) ? tx.approvalChain : [];
-		const idx = chain.findIndex(
-			(n) => n.id === userId && n.status === "current",
-		);
-		if (idx < 0) {
+		const chain = Array.isArray(tx.approvalChain)
+			? JSON.parse(JSON.stringify(tx.approvalChain))
+			: [];
+		const mut = mutateCorporateApprovalChain(chain, userId, methods);
+		if (!mut.ok) {
 			return res.status(403).json({ error: "Not your turn to approve" });
 		}
 
-		chain[idx].status = "done";
-		chain[idx].time = new Date().toISOString();
-
-		const level = chain[idx].level;
-		const levelNodes = chain.filter((n) => n.level === level);
-		const mode = normalizeMode(chain[idx].levelMode);
-		const nOfM = chain[idx].nOfM || null;
-
-		if (isLevelComplete(levelNodes, mode, nOfM)) {
-			promoteNextPendingLevel(chain);
-		}
-
-		const hasCurrent = chain.some((n) => n.status === "current");
-		const hasPending = chain.some((n) => n.status === "pending");
-		const finalApproved = !hasCurrent && !hasPending;
-
+		const { finalApproved, hasCurrent } = mut;
 		const updated = await prisma.transaction.update({
 			where: { id: txId },
 			data: {
@@ -477,8 +815,8 @@ exports.approveCorporateTransaction = async (req, res) => {
 				data: {
 					...corporateTxLogBase(updated),
 					approvalAction: "approve",
-					level: chain[idx]?.level,
-					levelMode: chain[idx]?.levelMode,
+					level: chain[mut.idx]?.level,
+					levelMode: chain[mut.idx]?.levelMode,
 					workflowComplete: finalApproved,
 					nextApproverId: updated.nextApproverId,
 					tags: [
@@ -489,7 +827,7 @@ exports.approveCorporateTransaction = async (req, res) => {
 						{
 							label: finalApproved
 								? "All approvers completed"
-								: `Level ${chain[idx]?.level ?? "?"} approved — pending next`,
+								: `Level ${chain[mut.idx]?.level ?? "?"} approved — pending next`,
 							class: finalApproved ? "success" : "warning",
 						},
 					],
@@ -505,5 +843,202 @@ exports.approveCorporateTransaction = async (req, res) => {
 	} catch (err) {
 		console.error("[approveCorporateTransaction]", err);
 		return res.status(500).json({ error: err.message });
+	}
+};
+
+
+exports.initiateApproval = async (req,res) => {
+	try {
+		const userId = pickUserId(req);
+		if (!userId) return res.status(401).json({ error: "User not identified" });
+
+		const user = await prisma.user.findUnique({ where: { id: userId } });
+		if (!user || !user.companyId) {
+			return res.status(400).json({ error: "User is not linked to a company" });
+		}
+
+		const { txId, telemetry } = req.body;
+		if (!txId) return res.status(400).json({ error: "txId is required" });
+
+		const tx = await prisma.transaction.findUnique({ where: { id: txId } });
+		if (!tx || !tx.isCorporate || tx.companyId !== user.companyId) {
+			return res.status(404).json({ error: "Corporate transaction not found" });
+		}
+		if ((tx.corporateStatus || "").toUpperCase() !== "PENDING_APPROVAL") {
+			return res.status(400).json({ error: "Transaction is not pending approval" });
+		}
+
+		const chain = Array.isArray(tx.approvalChain) ? tx.approvalChain : [];
+		const myNode = chain.find((n) => n.id === user.id && n.status === "current");
+		if (!myNode) {
+			return res.status(403).json({ error: "Not your turn to approve" });
+		}
+
+		const amount = Number(tx.amount || 0);
+		const currency = String(tx.currency || "MYR").toUpperCase();
+		const channel = req.apiClient ? req.apiClient.channel : "MOBILE";
+		const rawIp =
+			req.headers["cf-connecting-ip"] ||
+			req.headers["x-forwarded-for"] ||
+			req.socket.remoteAddress ||
+			req.ip;
+		const ipAddress = rawIp ? rawIp.split(",")[0].trim() : "127.0.0.1";
+
+		const segment =
+			user.companyName || user.role === "ADMIN" ? "CORPORATE" : "CONSUMER";
+		const netInfo = getNetworkInfo(ipAddress);
+		const countryCode = netInfo.country || "UN";
+		const deviceIdentifier =
+			telemetry?.device_model || req.body.deviceId || "unknown";
+
+		const riskContext = {
+			userId: user.id,
+			email: user.email,
+			userSegment: segment,
+			channel,
+			amount,
+			currency,
+			ipAddress,
+			countryCode,
+			deviceId: deviceIdentifier,
+			beneficiaryAccount: tx.toAccount || null,
+			merchantName: tx.merchantName || null,
+			fromAccount: tx.fromAccount || null,
+			telemetry: telemetry || {},
+		};
+
+		const riskResult = await RiskEngine.calculateRisk(riskContext);
+		const riskFactors = riskResult.factors.map((f,i) => {
+			const breakdown = riskResult.breakdown[i]
+			return {
+				label: f.label,
+				class: f.class,
+				rule: breakdown.rule,
+				score: breakdown.score,
+				desc: breakdown.desc
+			}
+		})
+		const policyResult = await PolicyEngine.evaluateAuthPolicy({
+			segment,
+			channel,
+			action: "TRANSACTION",
+			riskScore: riskResult.score,
+		});
+
+		const policyDecision = policyResult.decision;
+
+		const lockoutTime = new Date(
+			Date.now() - policyDecision.metadata.lockoutDuration * 1000,
+		);
+		const failedAttempts = await prisma.authLog.count({
+			where: {
+				email: user.email,
+				status: "FAILED",
+				createdAt: { gte: lockoutTime },
+			},
+		});
+		if (failedAttempts >= policyDecision.metadata.maxAttempts) {
+			policyDecision.status = "BLOCKED";
+		}
+
+		const isNewDevice = riskResult.factors.some(
+			(f) =>
+				(typeof f === "object" && f.label === "New Device") ||
+				f === "New Device",
+		);
+		if (
+			policyDecision.status !== "BLOCKED" &&
+			policyDecision.metadata.knownDeviceRequired &&
+			isNewDevice
+		) {
+			policyDecision.status = "BLOCKED";
+		}
+
+		if (policyDecision.status !== "BLOCKED") {
+			if (
+				riskResult.score >= 100 ||
+				riskResult.isBlockedByAmount ||
+				policyDecision.status === "REJECTED"
+			) {
+				policyDecision.status = "BLOCKED";
+			} else {
+				const policyMethods = policyDecision.allowedMethods || [];
+				const amountMethods = riskResult.amountMandatedMethods || [];
+				const chainedMethods = [];
+				if (amountMethods.length > 0) chainedMethods.push(...amountMethods);
+				if (policyMethods.length > 0) chainedMethods.push(...policyMethods);
+				if (chainedMethods.length > 0) {
+					policyDecision.status = "CHALLENGED";
+					policyDecision.allowedMethods = chainedMethods;
+				}
+			}
+		}
+
+		if (policyDecision.status === "BLOCKED") {
+			await createRichAuthLog(req, user, {
+				eventType: "Corporate Approval — Blocked",
+				status: "BLOCKED",
+				authMethod: "CORPORATE_TRANSFER",
+				data: {
+					...corporateTxLogBase(tx),
+					amount,
+					currency,
+					riskScore: riskResult.score,
+					riskLevel: riskResult.level,
+					riskFactors,
+					tags: [{ label: "Blocked by risk or policy", class: "error" }],
+				},
+			});
+			return res.status(403).json({
+				error: "Transaction blocked by risk or policy",
+				status: "blocked",
+				riskScore: riskResult.score,
+				riskLevel: riskResult.level,
+			});
+		}
+
+		const challengeRes = await javaClient.getUnifiedChallenge();
+		const challenge = challengeRes.challenge || challengeRes;
+		const amountMandatedMethods = policyDecision.allowedMethods || [];
+		const assigneeAuthHint = myNode?.method || "FIDO2";
+
+		await createRichAuthLog(req, user, {
+			eventType: "Corporate Approval — Step-up Required",
+			status: "CHALLENGED",
+			authMethod: "CORPORATE_APPROVAL",
+			data: {
+				...corporateTxLogBase(tx),
+				approvalAction: "initiate",
+				level: myNode?.level,
+				riskScore: riskResult.score,
+				riskLevel: riskResult.level,
+				riskFactors,
+				amountMandatedMethods,
+				tags: [{ label: "Awaiting strong authentication", class: "warning" }],
+			},
+		});
+
+		return res.json({
+			success: true,
+			status: "challenge_required",
+			transactionId: tx.id,
+			challenge,
+			assigneeAuthHint,
+			requirements: policyDecision.requirements || [],
+			amountMandatedMethods,
+			riskScore: riskResult.score,
+			riskLevel: riskResult.level,
+			policySettings: {
+				userVerification: policyDecision.metadata?.userVerification || "required",
+				txnSigning: policyDecision.metadata?.txnSigning || false,
+				knownDeviceRequired: policyDecision.metadata?.knownDevice || false,
+				maxAttempts: policyDecision.metadata?.maxAttempts || 3,
+				lockoutDuration: policyDecision.metadata?.lockoutDuration || 60,
+				totalTimeout: policyDecision.metadata?.totalTimeout || 120,
+			},
+		});
+	}catch (e) {
+		console.error("[initiateApproval]", e);
+		return res.status(500).json({ error: e.message || "Failed to initiate approval" });
 	}
 };

@@ -1,3 +1,4 @@
+const { Prisma } = require("@prisma/client");
 const prisma = require("../../config/db");
 
 function mapDisplayStatus(t) {
@@ -169,11 +170,15 @@ exports.listTransactions = async (req, res) => {
 			const comp = t.companyId ? companyById[t.companyId] : null;
 
 			const fromName = t.isCorporate
-				? comp?.name || t.user?.fullName || "Corporate"
+				? t.fromAccount?.name || comp?.name 
 				: t.user?.fullName || "—";
-			const fromDetail = t.isCorporate
-				? comp?.registrationNo || "—"
-				: t.user?.email || "—";
+			const fromDetail =
+				(t.fromAccount &&
+				typeof t.fromAccount === "object" &&
+				(t.fromAccount.number || t.fromAccount.name)
+					? String(t.fromAccount.number)
+					: null) ||
+				(t.isCorporate ? comp?.registrationNo || "—" : t.user?.email || "—");
 			const fromBank = t.payerBank || "—";
 
 			const toBank = t.beneficiaryBank;
@@ -202,6 +207,7 @@ exports.listTransactions = async (req, res) => {
 					id: n.id,
 					name: n.name,
 					status: n.status,
+					level: n.level
 				})),
 				approverCount: chain.length || (t.isCorporate ? 0 : 1),
 			});
@@ -243,6 +249,26 @@ exports.getTransactionDetail = async (req, res) => {
 			});
 		}
 
+		const authLog = await prisma.authLog.findFirst({
+			where: {
+				AND: [
+					{
+						riskTags: {
+							path: "$.transactionId",
+							equals: t.id
+						}
+					},
+					{
+						riskTags: {
+							path: "$.riskFactors",
+							not: Prisma.AnyNull,
+						}
+					}
+				]
+			},
+		});
+		const riskFactors = authLog?.riskTags?.riskFactors ?? null;
+
 		const chain = parseChain(t.approvalChain);
 		res.json({
 			id: t.id,
@@ -258,6 +284,7 @@ exports.getTransactionDetail = async (req, res) => {
 			description: t.description,
 			type: t.type,
 			toAccount: t.toAccount,
+			fromAccount: t.fromAccount || null,
 			merchantName: t.merchantName,
 			payerBank: t.payerBank || null,
 			beneficiaryBank: t.beneficiaryBank || null,
@@ -271,6 +298,7 @@ exports.getTransactionDetail = async (req, res) => {
 			user: t.user,
 			company,
 			approvers: chain,
+			riskFactors: riskFactors
 		});
 	} catch (err) {
 		console.error("[getTransactionDetail]", err);

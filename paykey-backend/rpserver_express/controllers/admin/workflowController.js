@@ -129,7 +129,7 @@ exports.createWorkflow = async (req, res) => {
 		}
 
 		const allUserIds = [];
-		levels.forEach((lv) => {
+		for (const lv of levels) {
 			if (!MODES.includes(lv.mode)) {
 				throw Object.assign(new Error(`Invalid mode: ${lv.mode}`), {
 					statusCode: 400,
@@ -143,7 +143,7 @@ exports.createWorkflow = async (req, res) => {
 				);
 			}
 			if (lv.mode === "MULTIPLE_N_OF_M") {
-				const n = lv.nOfM != null ? parseInt(lv.nOfM, 10) : NaN;
+				const n = lv.nOfM != null ? Number.parseInt(lv.nOfM, 10) : Number.NaN;
 				if (Number.isNaN(n) || n < 1 || n > uids.length) {
 					throw Object.assign(
 						new Error("nOfM must be between 1 and number of assignees"),
@@ -152,7 +152,7 @@ exports.createWorkflow = async (req, res) => {
 				}
 			}
 			allUserIds.push(...uids);
-		});
+		}
 
 		await assertUsersBelongToCompany(companyId, [...new Set(allUserIds)]);
 
@@ -244,7 +244,7 @@ exports.updateWorkflow = async (req, res) => {
 			}
 
 			const allUserIds = [];
-			levels.forEach((lv) => {
+			for (const lv of levels) {
 				if (!MODES.includes(lv.mode)) {
 					throw Object.assign(new Error(`Invalid mode: ${lv.mode}`), {
 						statusCode: 400,
@@ -258,7 +258,7 @@ exports.updateWorkflow = async (req, res) => {
 					);
 				}
 				if (lv.mode === "MULTIPLE_N_OF_M") {
-					const n = lv.nOfM != null ? parseInt(lv.nOfM, 10) : NaN;
+					const n = lv.nOfM != null ? Number.parseInt(lv.nOfM, 10) : Number.NaN;
 					if (Number.isNaN(n) || n < 1 || n > uids.length) {
 						throw Object.assign(
 							new Error("nOfM must be between 1 and number of assignees"),
@@ -267,7 +267,7 @@ exports.updateWorkflow = async (req, res) => {
 					}
 				}
 				allUserIds.push(...uids);
-			});
+			}
 
 			await assertUsersBelongToCompany(companyId, [...new Set(allUserIds)]);
 
@@ -283,7 +283,7 @@ exports.updateWorkflow = async (req, res) => {
 							mode: lv.mode,
 							nOfM:
 								lv.mode === "MULTIPLE_N_OF_M" && lv.nOfM != null
-									? parseInt(lv.nOfM, 10)
+									? Number.parseInt(lv.nOfM, 10)
 									: null,
 						},
 					});

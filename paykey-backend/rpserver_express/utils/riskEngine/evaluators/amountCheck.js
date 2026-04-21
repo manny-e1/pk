@@ -1,127 +1,58 @@
-// function evaluateAmount(context, config) {
-//     const { amount, userSegment, currency } = context; 
-//     const { amountLimits } = config;
-
-//     let score = 0;
-//     let tags = [];
-//     let breakdown = [];
-//     let status = 'PASS';
-//     let requiredMethods = [];
-
-//     const activeLimit = amountLimits.find(limit => 
-//         limit.segment === userSegment && 
-//         limit.currency === currency &&
-//         amount >= limit.minAmount && 
-//         (limit.maxAmount === null || amount <= limit.maxAmount)
-//     );
-
-//     if (activeLimit) {
-//         score += activeLimit.weight || 0;
-        
-//         if (activeLimit.weight > 0) {
-//             tags.push({ label: activeLimit.label || 'Amount Risk', class: 'critical' });
-//             breakdown.push({ rule: 'AMOUNT_TIER', score: activeLimit.weight });
-//         }
-
-//         if (activeLimit.stepUp) {
-//             status = 'CHALLENGE';
-//             if (activeLimit.methods) {
-//                 const methods = typeof activeLimit.methods === 'string' 
-//                     ? JSON.parse(activeLimit.methods) 
-//                     : activeLimit.methods;
-//                 requiredMethods = methods;
-//             }
-//         }
-//     } 
-//     else {
-//          const maxLimit = Math.max(...amountLimits
-//             .filter(l => l.segment === userSegment && l.currency === currency && l.maxAmount !== null)
-//             .map(l => l.maxAmount));
-            
-//          if (maxLimit > 0 && amount > maxLimit) {
-//              status = 'BLOCK';
-//              score += 100;
-//              tags.push({ label: 'Exceeds Global Limit', class: 'critical' });
-//              breakdown.push({ rule: 'AMOUNT_OVER_MAX', score: 100 });
-//          }
-//     }
-
-//     return { score, tags, breakdown, status, requiredMethods };
-// }
-
-// module.exports = { evaluateAmount };
-
 function evaluateAmount(context, config) {
     const { amount, userSegment, currency } = context; 
-    const { amountLimits } = config;
+    const { rules } = config;
 
-    let score = 0;
-    let tags = [];
-    let breakdown = [];
-    let status = 'PASS';
-    let requiredMethods = [];
+    let score = 0; let tags = []; let breakdown = [];
+    let status = 'PASS'; let requiredMethods = [];
 
-    // =======================================================
-    // PERBAIKAN: BLOKIR MUTLAK NOMINAL MINUS / NOL (HACKER)
-    // =======================================================
+    console.log(`[AmountCheck] Init - Checking ${amount} ${currency} for ${userSegment}`);
+
     if (amount <= 0 || isNaN(amount)) {
-        return {
-            score: 100,
-            tags: [{ label: 'Invalid Transaction Amount', class: 'critical' }],
-            breakdown: [{ rule: 'INVALID_AMOUNT', score: 100, desc: 'Amount is zero, negative, or invalid' }],
-            status: 'BLOCK',
-            requiredMethods: []
-        };
+        return { score: 100, tags: [{ label: 'Invalid Amount', class: 'critical' }], breakdown: [{ rule: 'INVALID_AMOUNT', score: 100 }], status: 'BLOCK', requiredMethods: [] };
     }
 
-    // 1. Filter Ketat Mata Uang dan Segmen
-    const exactLimits = amountLimits.filter(l => 
-        l.segment === userSegment && 
-        l.currency === currency.toUpperCase()
-    );
+    const safeSegment = (userSegment || 'CONSUMER').toUpperCase(); 
+    const amountRule = rules.find(r => r.ruleType === 'AMOUNT' && r.segment.toUpperCase() === safeSegment);
 
-    // 2. Blokir jika mata uang tidak diatur di Database
-    if (exactLimits.length === 0) {
-        return {
-            score: 100,
-            tags: [{ label: `Unsupported Currency: ${currency}`, class: 'critical' }],
-            breakdown: [{ rule: 'UNCONFIGURED_CURRENCY', score: 100 }],
-            status: 'BLOCK',
-            requiredMethods: []
-        };
+    if (!amountRule || !amountRule.isActive) {
+        console.log('[AmountCheck] ⏭️ Skipped: AMOUNT rule is INACTIVE.');
+        return { score, tags, breakdown, status, requiredMethods };
     }
 
-    // 3. Cari Tier / Jenjang yang sesuai
-    const activeLimit = exactLimits.find(limit => 
-        amount >= limit.minAmount && 
-        (limit.maxAmount === null || amount <= limit.maxAmount)
-    );
+    const params = amountRule.parameters || {};
+    const tiers = params.tiers || [];
+    const threshold = params.amountThreshold || 99999999;
 
-    if (activeLimit) {
-        score += activeLimit.weight || 0;
-        
-        if (activeLimit.weight > 0) {
-            const tagColor = activeLimit.weight >= 50 ? 'warning' : 'info';
-            tags.push({ label: `Amount Tier: ${activeLimit.label.toUpperCase()}`, class: tagColor });
-            breakdown.push({ rule: 'AMOUNT_TIER', score: activeLimit.weight });
-        }
-
-        if (activeLimit.stepUp) {
-            status = 'CHALLENGE';
-            requiredMethods = typeof activeLimit.methods === 'string' ? JSON.parse(activeLimit.methods) : (activeLimit.methods || []);
-        }
-    } else {
-        // 4. Blokir jika melebihi batas global tertinggi
-        const limitsWithMax = exactLimits.filter(l => l.maxAmount !== null);
-        if (limitsWithMax.length > 0) {
-            const maxLimit = Math.max(...limitsWithMax.map(l => l.maxAmount));
-            if (amount > maxLimit) {
-                status = 'BLOCK';
-                score += 100;
-                tags.push({ label: `Exceeds Global Limit (${currency})`, class: 'critical' });
-                breakdown.push({ rule: 'AMOUNT_OVER_MAX', score: 100 });
+    let matchedTier = null;
+    if (tiers.length > 0) {
+        for (const tier of tiers) {
+            if (amount >= tier.min && (tier.max == null || amount <= tier.max)) {
+                matchedTier = tier; 
+                break;
             }
         }
+
+        if (matchedTier) {
+            score += matchedTier.score || 0; 
+            console.log(`[AmountCheck] ✅ Matched Tier: ${matchedTier.min} - ${matchedTier.max || 'MAX'} | Weight Applied: ${matchedTier.score}`);
+            
+            if (matchedTier.score > 0) {
+                tags.push({ label: `Amount Tier (${matchedTier.min}-${matchedTier.max || '+'})`, class: matchedTier.score >= 50 ? 'warning' : 'info' });
+                breakdown.push({ rule: 'AMOUNT_TIER', score: matchedTier.score });
+            }
+        } else {
+            const highestMax = Math.max(...tiers.map(t => t.max || 0));
+            if (amount > highestMax) {
+                status = 'BLOCK'; score += 100;
+                console.log(`[AmountCheck] 🚨 BLOCK: Exceeds Maximum JSON Tier of ${highestMax}`);
+                tags.push({ label: 'Exceeds Maximum Allowed Limit', class: 'critical' });
+            }
+        }
+    }
+
+    if (amount > threshold) {
+        status = 'CHALLENGE';
+        console.log(`[AmountCheck] ⚠️ Step-Up Triggered: Amount > Threshold (${threshold})`);
     }
 
     return { score, tags, breakdown, status, requiredMethods };
