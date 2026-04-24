@@ -6,6 +6,8 @@ const RiskEngine = require("../../utils/riskEngine");
 const PolicyEngine = require("../../utils/authPolicies");
 const { getNetworkInfo } = require("../../utils/geoIpService");
 const { deriveFromAccount } = require("../../utils/deriveFromAccount");
+const { customAlphabet } = require("nanoid");
+const { Prisma } = require("@prisma/client");
 
 function corporateTxLogBase(tx) {
 	return {
@@ -144,6 +146,32 @@ function mutateCorporateRejectionChain(chain, userId) {
 
 	const hasCurrent = chain.some((n) => n.status === "current");
 	return { ok: true, idx, finalRejected, hasCurrent };
+}
+
+function normalizeRiskLevel(level) {
+	const l = String(level || "LOW").toUpperCase();
+	if (["LOW", "MEDIUM", "HIGH", "CRITICAL"].includes(l)) return l;
+	return "LOW";
+}
+
+function maxRiskLevel(a, b) {
+	const order = { LOW: 0, MEDIUM: 1, HIGH: 2, CRITICAL: 3 };
+	const A = normalizeRiskLevel(a);
+	const B = normalizeRiskLevel(b);
+	return order[B] > order[A] ? B : A;
+}
+
+function getEventDescription(status) {
+	switch (status) {
+		case "APPROVED":
+			return "Payment Approved";
+		case "BLOCKED":
+			return "Payment Denied";
+		case "CHALLENGED":
+			return "Approval Requested";
+		default:
+			return "Payment Initiated";
+	}
 }
 
 exports.getCorporateWorkflows = async (req, res) => {
@@ -320,6 +348,8 @@ exports.initiateCorporateTransaction = async (req, res) => {
 		});
 
 		const policyDecision = policyResult.decision;
+		const txId = `CORP_TX_${customAlphabet("0123456789ABCDEF", 10)()}`;
+		let responseMessage = "Transaction Auto-Approved";
 
 		const lockoutTime = new Date(
 			Date.now() - policyDecision.metadata.lockoutDuration * 1000,
@@ -333,6 +363,12 @@ exports.initiateCorporateTransaction = async (req, res) => {
 		});
 		if (failedAttempts >= policyDecision.metadata.maxAttempts) {
 			policyDecision.status = "BLOCKED";
+			responseMessage = 'Security Lockout: Too many failed attempts. Please try again later.';
+			riskResult.score = 100;
+			riskResult.factors.push({
+				label: "Brute-Force Lockout",
+				class: "critical",
+			});
 		}
 
 		const isNewDevice = riskResult.factors.some(
@@ -346,6 +382,12 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			isNewDevice
 		) {
 			policyDecision.status = "BLOCKED";
+			responseMessage = 'Security Policy Block: Transactions are not allowed from unrecognized devices.';
+			riskResult.score = 100;
+			riskResult.factors.push({
+				label: "Untrusted Device Blocked",
+				class: "critical",
+			});
 		}
 
 		if (policyDecision.status !== "BLOCKED") {
@@ -363,28 +405,70 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				if (policyMethods.length > 0) chainedMethods.push(...policyMethods);
 				if (chainedMethods.length > 0) {
 					policyDecision.status = "CHALLENGED";
+					responseMessage = "Multi-Step Authentication Required";
 					policyDecision.allowedMethods = chainedMethods;
 				}
 			}
 		}
 
+		const factorTags = (riskResult.factors || []).map((f) => {
+			if (typeof f === "object" && f.label)
+				return { label: String(f.label), class: f.class || "warning" };
+			return { label: String(f), class: "warning" };
+		});
+
+		const policyTags = (policyDecision.tags || []).map((t) => {
+			if (typeof t === "object" && t.label)
+				return { label: String(t.label), class: t.class || "info" };
+			return { label: String(t), class: "info" };
+		});
+		const levelColor =
+			riskResult.level === "CRITICAL" || riskResult.level === "HIGH"
+				? "critical"
+				: riskResult.level === "MEDIUM"
+					? "warning"
+					: "success";
+
+		const scoreColor =
+			riskResult.score >= 70
+				? "critical"
+				: riskResult.score >= 30
+					? "warning"
+					: "success";
+
+		const combinedTags = [
+			{ label: `${amount} ${currency.toUpperCase()}`, class: "info" },
+			{ label: `Level: ${riskResult.level}`, class: levelColor },
+			{ label: `Score: ${riskResult.score}`, class: scoreColor },
+			...factorTags,
+			...policyTags,
+		];
+
+		const baseLogData = {
+			paymentId: txId,
+			telemetry: telemetry || {},
+			amount: Number(amount),
+			currency: currency.toUpperCase(),
+			merchant: merchantName || beneficiaryAccount || "Unknown",
+			tags: combinedTags,
+			factors: riskResult.breakdown,
+			riskScore: riskResult.score,
+			riskLevel: riskResult.level,
+			level: 1
+		};
+		const finalEventType = getEventDescription(policyDecision.status);
 		if (policyDecision.status === "BLOCKED") {
 			await createRichAuthLog(req, user, {
-				eventType: "Corporate Transfer Initiated — Blocked",
+				eventType: finalEventType,
 				status: "BLOCKED",
-				authMethod: "CORPORATE_TRANSFER",
-				data: {
-					amount: Number(amount),
-					currency,
-					riskScore: riskResult.score,
-					riskLevel: riskResult.level,
-					riskFactors,
-					tags: [{ label: "Blocked by risk or policy", class: "error" }],
-				},
+				message: responseMessage,
+				data: baseLogData,
 			});
 			return res.status(403).json({
-				error: "Transaction blocked by risk or policy",
+				error: responseMessage,
 				riskScore: riskResult.score,
+				riskLevel: riskResult.level,
+				riskFactors,
 			});
 		}
 
@@ -443,7 +527,6 @@ exports.initiateCorporateTransaction = async (req, res) => {
 		let hasPending = chain.some((n) => n.status === "pending");
 		let workflowComplete = !hasCurrent && !hasPending;
 
-		const txId = `CORP_TX_${Date.now()}`;
 		const created = await prisma.transaction.create({
 			data: {
 				id: txId,
@@ -483,11 +566,9 @@ exports.initiateCorporateTransaction = async (req, res) => {
 		});
 
 		await createRichAuthLog(req, user, {
-			eventType: workflowComplete
-				? "Corporate Transfer Initiated (Complete)"
-				: "Corporate Transfer Initiated",
+			eventType: getEventDescription("INITIATED"),
 			status: workflowComplete ? "SUCCESS" : "PENDING",
-			authMethod: "CORPORATE_TRANSFER",
+			message: responseMessage,
 			data: {
 				...corporateTxLogBase(created),
 				workflowId: workflow.id,
@@ -495,6 +576,7 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				riskScore: riskResult.score,
 				riskLevel: riskResult.level,
 				riskFactors,
+				level: 1,
 				tags: [
 					{
 						label: `${Number(amount)} ${currency} → ${merchantName || toAccount}`,
@@ -513,7 +595,7 @@ exports.initiateCorporateTransaction = async (req, res) => {
 		if (policyDecision.status === "CHALLENGED") {
 			const challengeRes = await javaClient.getUnifiedChallenge();
 			await createRichAuthLog(req, user, {
-				eventType: "Corporate Transfer — Step-up Required",
+				eventType: finalEventType,
 				status: "CHALLENGED",
 				authMethod: "CORPORATE_TRANSFER",
 				data: {
@@ -521,6 +603,7 @@ exports.initiateCorporateTransaction = async (req, res) => {
 					riskScore: riskResult.score,
 					riskFactors,
 					riskLevel: riskResult.level,
+					level: 1,
 					tags: [{ label: "Awaiting strong authentication", class: "warning" }],
 				},
 			});
@@ -583,15 +666,13 @@ exports.initiateCorporateTransaction = async (req, res) => {
 				},
 			});
 			await createRichAuthLog(req, user, {
-				eventType: workflowComplete
-					? "Corporate Transfer Fully Approved"
-					: "Corporate Initiator Auto-Approved",
+				eventType: finalEventType,
 				status: workflowComplete ? "SUCCESS" : "APPROVED",
 				authMethod: "CORPORATE_APPROVAL",
 				data: {
 					...corporateTxLogBase(finalDoc),
 					approvalAction: "auto_initiator",
-					level: chainWorking[auto.idx]?.level,
+					level: chainWorking[auto.idx]?.level+1, 
 					workflowComplete,
 					riskScore: riskResult.score,
 					riskLevel: riskResult.level,
@@ -713,13 +794,13 @@ exports.rejectCorporateTransaction = async (req, res) => {
 		const actor = await prisma.user.findUnique({ where: { id: userId } });
 		if (actor) {
 			await createRichAuthLog(req, actor, {
-				eventType: "Corporate Transfer Rejected",
+				eventType: "Payment Rejected",
 				status: mut.finalRejected ? "FAILED" : "REJECTED",
 				authMethod: "CORPORATE_APPROVAL",
 				data: {
 					...corporateTxLogBase(tx),
 					approvalAction: "reject",
-					level: chain[mut.idx]?.level,
+					level: chain[mut.idx]?.level+1,
 					levelMode: chain[mut.idx]?.levelMode,
 					transactionRejected: mut.finalRejected,
 					tags: [
@@ -783,6 +864,38 @@ exports.approveCorporateTransaction = async (req, res) => {
 			return res.status(403).json({ error: "Not your turn to approve" });
 		}
 
+		const actor = await prisma.user.findUnique({ where: { id: userId } });
+		let nextRiskScore = tx.riskScore ?? 0;
+		let nextRiskLevel = normalizeRiskLevel(tx.riskLevel || "LOW");
+		if (actor?.email) {
+			const actorAuthLog = await prisma.authLog.findFirst({
+				where: {
+					email: actor.email,
+					AND: [
+						{
+							riskTags: {
+								path: "$.transactionId",
+								equals: txId,
+							},
+						},
+						{
+							riskTags: {
+								path: "$.riskScore",
+								not: Prisma.AnyNull,
+							},
+						},
+					],
+				},
+				orderBy: { createdAt: "desc" },
+			});
+			const logScore = Number(actorAuthLog?.riskTags?.riskScore ?? 0);
+			const logLevel = normalizeRiskLevel(
+				actorAuthLog?.riskTags?.riskLevel || "LOW",
+			);
+			nextRiskScore = Math.max(nextRiskScore, logScore);
+			nextRiskLevel = maxRiskLevel(nextRiskLevel, logLevel);
+		}
+
 		const { finalApproved, hasCurrent } = mut;
 		const updated = await prisma.transaction.update({
 			where: { id: txId },
@@ -791,6 +904,8 @@ exports.approveCorporateTransaction = async (req, res) => {
 				authResult: finalApproved ? "APPROVED" : "PENDING",
 				corporateStatus: finalApproved ? "APPROVED" : "PENDING_APPROVAL",
 				approvalChain: chain,
+				riskScore: nextRiskScore,
+				riskLevel: nextRiskLevel,
 				currentLevel: hasCurrent
 					? Math.min(
 							...chain
@@ -804,18 +919,15 @@ exports.approveCorporateTransaction = async (req, res) => {
 			},
 		});
 
-		const actor = await prisma.user.findUnique({ where: { id: userId } });
 		if (actor) {
 			await createRichAuthLog(req, actor, {
-				eventType: finalApproved
-					? "Corporate Transfer Fully Approved"
-					: "Corporate Approval Step Completed",
-				status: finalApproved ? "SUCCESS" : "APPROVED",
+				eventType: "Payment Approved",
+				status: "SUCCESS",
 				authMethod: "CORPORATE_APPROVAL",
 				data: {
 					...corporateTxLogBase(updated),
 					approvalAction: "approve",
-					level: chain[mut.idx]?.level,
+					level: chain[mut.idx]?.level+1,
 					levelMode: chain[mut.idx]?.levelMode,
 					workflowComplete: finalApproved,
 					nextApproverId: updated.nextApproverId,
@@ -908,6 +1020,7 @@ exports.initiateApproval = async (req,res) => {
 		};
 
 		const riskResult = await RiskEngine.calculateRisk(riskContext);
+		console.log(riskResult);
 		const riskFactors = riskResult.factors.map((f,i) => {
 			const breakdown = riskResult.breakdown[i]
 			return {
@@ -976,9 +1089,9 @@ exports.initiateApproval = async (req,res) => {
 
 		if (policyDecision.status === "BLOCKED") {
 			await createRichAuthLog(req, user, {
-				eventType: "Corporate Approval — Blocked",
+				eventType: getEventDescription(policyDecision.status),
 				status: "BLOCKED",
-				authMethod: "CORPORATE_TRANSFER",
+				authMethod: policyDecision.allowedMethods.join(","),
 				data: {
 					...corporateTxLogBase(tx),
 					amount,
@@ -1003,13 +1116,13 @@ exports.initiateApproval = async (req,res) => {
 		const assigneeAuthHint = myNode?.method || "FIDO2";
 
 		await createRichAuthLog(req, user, {
-			eventType: "Corporate Approval — Step-up Required",
+			eventType: getEventDescription(policyDecision.status),
 			status: "CHALLENGED",
-			authMethod: "CORPORATE_APPROVAL",
+			authMethod: policyDecision.allowedMethods.join(","),
 			data: {
 				...corporateTxLogBase(tx),
 				approvalAction: "initiate",
-				level: myNode?.level,
+				level: myNode?.level+1,
 				riskScore: riskResult.score,
 				riskLevel: riskResult.level,
 				riskFactors,

@@ -282,9 +282,11 @@ exports.initiateTransaction = async (req, res) => {
 				eventType: finalEventType,
 				status: "CHALLENGED",
 				message: responseMessage,
+				authMethod: policyDecision.allowedMethods.join(","),
 				data: {
 					...baseLogData,
 					requestedMethods: policyDecision.allowedMethods,
+					requireStepUp: true,
 				},
 			});
 			return res.json({

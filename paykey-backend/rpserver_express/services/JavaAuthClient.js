@@ -32,7 +32,7 @@ class JavaAuthClient {
         try {
             const res = await client.post('/api/unified/verify', payload);
             return res.data;
-        } catch (err) { throw this._handleError(err); }
+        } catch (err) { console.log(err); throw this._handleError(err); }
     }
 
     async registerCustomKey(payload) {

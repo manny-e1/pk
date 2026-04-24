@@ -200,7 +200,7 @@
 			"apiKey": "sdk-test-key-123-web",
 			"name": "web demo",
 			"channel": "WEB",
-			"consumerType": "CONSUMER",
+			"consumerType": "CORPORATE",
 			"isActive": true
 		}
 	]

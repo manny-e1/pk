@@ -62,11 +62,11 @@ async function createRichAuthLog(req, user, context) {
 			}
 		}
 		const normalizedRiskScore = Number(
-			context.data?.riskScore ?? context.data?.score ?? context.riskScore ?? 0
-		);
+			context.data?.riskScore ?? context.data?.score ?? context.riskScore ?? 0 
+		) ;
 		const normalizedRiskLevel = String(
-			context.data?.riskLevel ?? context.data?.level ?? context.riskLevel ?? "LOW"
-		).toUpperCase();
+			context.data?.riskLevel ?? context.riskLevel ?? ''
+		).toUpperCase() || undefined;
 
 		const richMetadata = {
 			...context.data,
@@ -117,7 +117,7 @@ async function createRichAuthLog(req, user, context) {
 				riskTags: richMetadata,
 			},
 		});
-		console.log(`[RichLog] ${context.eventType} | User: ${user.email}`);
+		console.log(`[RichLog] ${context.eventType} | User: ${user.email} ${user.id}`);
 		console.log(`          > IP Used: ${finalIp} (v6 Priority)`);
 	} catch (error) {
 		console.error("[RichLog] Failed to create log:", error.message);

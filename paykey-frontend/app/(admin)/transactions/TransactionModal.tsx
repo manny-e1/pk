@@ -31,6 +31,7 @@ type ApiDetail = {
 	status: string;
 	riskLevel: string;
 	riskScore: number;
+	level: number;
 	riskReason: string | null;
 	riskFactors?: ApiRiskFactor[] | null;
 	description: string | null;
@@ -48,6 +49,16 @@ type ApiDetail = {
 	} | null;
 	company: { name: string; registrationNo: string } | null;
 	approvers: ApiApprover[];
+	approverRiskAssessments?: Array<{
+		approverId?: string | null;
+		approverName?: string | null;
+		email?: string | null;
+		timestamp?: string | null;
+		riskScore?: number;
+		riskLevel?: string;
+		riskFactors?: ApiRiskFactor[];
+		level?: number | null;
+	}> | null;
 };
 
 type RiskAlertRow = {
@@ -175,6 +186,20 @@ function mapFactorClassToLevel(
 	if (c === "high") return "high";
 	if (c === "warning") return "medium";
 	return "low";
+}
+
+function normalizeRiskLevel(level?: string | null): keyof typeof riskColors {
+	const l = String(level || "low").toLowerCase();
+	if (l === "critical" || l === "high" || l === "medium" || l === "low") return l;
+	return "low";
+}
+
+function highestRiskLevel(
+	a: keyof typeof riskColors,
+	b: keyof typeof riskColors,
+): keyof typeof riskColors {
+	const order = { low: 0, medium: 1, high: 2, critical: 3 } as const;
+	return order[b] > order[a] ? b : a;
 }
 
 function riskRowsFromFactors(factors: ApiRiskFactor[]): RiskAlertRow[] {
@@ -480,7 +505,68 @@ export function TransactionDetailModal({
 	const totalApprovers = Math.max(uiApprovers.length, 1);
 	const requiredApprovals = totalApprovers;
 
-	const riskAlerts = detail ? buildRiskAssessmentRows(detail) : [];
+	const approverRiskAssessments =
+		detail?.approverRiskAssessments || [];
+	const groupedApproverRiskAssessments = approverRiskAssessments.reduce(
+		(acc, assessment) => {
+			const key =
+				String(assessment?.approverId || "").trim() ||
+				String(assessment?.approverName || "unknown").trim();
+			const existing = acc.get(key);
+			const curScore = Number(assessment?.riskScore ?? 0);
+			const curLevel = normalizeRiskLevel(assessment?.riskLevel);
+			const curFactors = Array.isArray(assessment?.riskFactors)
+				? assessment.riskFactors
+				: [];
+			if (!existing) {
+				acc.set(key, {
+					approverName: assessment?.approverName || "Unknown approver",
+					timestamp: assessment?.timestamp || null,
+					riskScore: curScore,
+					riskLevel: curLevel,
+					riskFactors: curFactors,
+					level: assessment?.level || null,
+					approverId: assessment.approverId || null,
+				});
+				return acc;
+			}
+			existing.riskScore = Math.max(Number(existing.riskScore || 0), curScore);
+			existing.riskLevel = highestRiskLevel(
+				normalizeRiskLevel(existing.riskLevel),
+				curLevel,
+			);
+			if (assessment?.timestamp) {
+				const prevTs = existing.timestamp ? new Date(existing.timestamp).getTime() : 0;
+				const nextTs = new Date(assessment.timestamp).getTime();
+				if (nextTs > prevTs) existing.timestamp = assessment.timestamp;
+			}
+			const dedupe = new Set(
+				(existing.riskFactors || []).map(
+					(f) => `${f.rule || ""}|${f.label || ""}|${f.desc || f.description || ""}|${f.score || 0}`,
+				),
+			);
+			for (const f of curFactors) {
+				const sig = `${f.rule || ""}|${f.label || ""}|${f.desc || f.description || ""}|${f.score || 0}`;
+				if (!dedupe.has(sig)) {
+					dedupe.add(sig);
+					existing.riskFactors.push(f);
+				}
+			}
+			return acc;
+		},
+		new Map<
+			string,
+			{
+				approverId: string | null;
+				approverName: string;
+				timestamp: string | null;
+				riskScore: number;
+				riskLevel: keyof typeof riskColors;
+				riskFactors: ApiRiskFactor[];
+				level: number | null;
+			}
+		>(),
+	);
 	const { from, to } = detail ? buildFromTo(detail) : { from: null, to: null };
 	const timeline = detail ? buildTimeline(detail, dateLabel) : [];
 
@@ -581,7 +667,7 @@ export function TransactionDetailModal({
 
 								<div className="flex-1 p-4 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-secondary)]">
 									<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-2">
-										To
+										To Account
 									</div>
 									<div className="text-base font-semibold text-[var(--text-primary)] mb-1">
 										{to.name}
@@ -650,50 +736,74 @@ export function TransactionDetailModal({
 								</div>
 							</div>
 
-							{riskAlerts.length > 0 && (
+							{groupedApproverRiskAssessments.size > 0 && (
 								<div>
 									<div className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] mb-3 pb-2 border-b border-[var(--border-secondary)]">
-										Risk assessment
+										Risk assessment by approver
 									</div>
-									<div className="flex flex-col gap-2">
-										{riskAlerts.map((alert, i) => {
-											const rk =
-												alert.level in riskColors
-													? alert.level
-													: ("low" as const);
-											const key =
-												alert.rule != null && alert.rule !== ""
-													? `${alert.rule}-${i}`
-													: `${alert.title}-${i}`;
+									<div className="flex flex-col gap-4">
+										{Array.from(groupedApproverRiskAssessments.values()).map(
+											(assessment, idx) => {
+											const score = Number(assessment.riskScore ?? 0);
+											const safeLvl = normalizeRiskLevel(assessment.riskLevel);
+											const alerts = riskRowsFromFactors(
+												Array.isArray(assessment.riskFactors)
+													? assessment.riskFactors
+													: [],
+											);
 											return (
 												<div
-													key={key}
-													className={`flex items-center gap-3 p-3 rounded-lg ${riskColors[rk].alert}`}
+													key={`${assessment.approverId || assessment.approverName || "risk"}-${idx}`}
+													className="rounded-lg border border-[var(--border-secondary)] p-3 bg-[var(--bg-tertiary)]/40"
 												>
-													<div
-														className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${riskColors[rk].icon}`}
-													>
-														<RiskIcon level={rk} />
-													</div>
-													<div className="flex-1 min-w-0">
-														<div className="text-[13px] font-medium text-[var(--text-primary)]">
-															{alert.title}
+													<div className="flex items-center justify-between mb-2">
+														<div className="text-sm font-semibold text-[var(--text-primary)]">
+															{assessment.approverName || "Unknown approver"} (Level {assessment.level} approver)
 														</div>
-														{/* {alert.rule != null && alert.rule !== "" ? (
-															<div className="font-mono text-[11px] text-[var(--text-tertiary)] mt-0.5">
-																{alert.rule}
-															</div>
-														) : null} */}
-														{alert.description.trim() !== "" ? (
-															<div className="text-xs text-[var(--text-secondary)] mt-0.5">
-																{alert.description}
-															</div>
-														) : null}
+														<div
+															className={`text-xs font-semibold px-2 py-0.5 rounded ${riskColors[safeLvl].badge}`}
+														>
+															{String(safeLvl).toUpperCase()} ({score})
+														</div>
 													</div>
-													<div
-														className={`text-xs font-semibold font-mono shrink-0 ${riskColors[rk].score}`}
-													>
-														+{alert.score}
+													<div className="flex flex-col gap-2">
+														{alerts.length > 0 ? (
+															alerts.map((alert, i) => {
+																const rk =
+																	alert.level in riskColors ? alert.level : "low";
+																return (
+																	<div
+																		key={`${assessment.approverName || "a"}-${i}`}
+																		className={`flex items-center gap-3 p-2 rounded-lg ${riskColors[rk].alert}`}
+																	>
+																		<div
+																			className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${riskColors[rk].icon}`}
+																		>
+																			<RiskIcon level={rk} />
+																		</div>
+																		<div className="flex-1 min-w-0">
+																			<div className="text-[13px] font-medium text-[var(--text-primary)]">
+																				{alert.title}
+																			</div>
+																			{alert.description.trim() !== "" ? (
+																				<div className="text-xs text-[var(--text-secondary)] mt-0.5">
+																					{alert.description}
+																				</div>
+																			) : null}
+																		</div>
+																		<div
+																			className={`text-xs font-semibold font-mono shrink-0 ${riskColors[rk].score}`}
+																		>
+																			+{alert.score}
+																		</div>
+																	</div>
+																);
+															})
+														) : (
+															<div className="text-xs text-[var(--text-tertiary)]">
+																No detailed risk factors captured.
+															</div>
+														)}
 													</div>
 												</div>
 											);

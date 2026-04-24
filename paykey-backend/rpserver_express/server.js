@@ -36,7 +36,7 @@ const allowedOrigins = [
 
 app.use(
 	cors({
-		origin: function (origin, callback) {
+		origin: (origin, callback) => {
 			if (!origin || allowedOrigins.includes(origin)) {
 				callback(null, true);
 			} else {
@@ -79,6 +79,6 @@ app.use("/", routes);
 initGeoDb().then(() => {
 	app.listen(PORT, "0.0.0.0", () => {
 		console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
-		console.log(`Ready to process secure transactions.`);
+		console.log("Ready to process secure transactions.");
 	});
 });

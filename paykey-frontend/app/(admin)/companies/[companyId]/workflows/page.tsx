@@ -83,6 +83,8 @@ export default function WorkflowsPage() {
 	const [selectedUsersForLevel, setSelectedUsersForLevel] = useState<string[]>(
 		[],
 	);
+	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
 
 
 	const selectWorkflow = (id: string) => {
@@ -284,31 +286,41 @@ export default function WorkflowsPage() {
 		}
 	};
 
-	const deleteWf = async () => {
-		if (selectedWorkflowId === "new") return;
-		if (!confirm("Delete this workflow?")) return;
+
+	const handleDeleteConfirmed = async () => {
+		if (selectedWorkflowId === "new") {
+			setShowDeleteConfirm(false);
+			return;
+		}
 		try {
 			await adminService.deleteWorkflow(selectedWorkflowId);
-			toast(ToastCard,{
-				data:{
+			toast(ToastCard, {
+				data: {
 					title: "Workflow Deleted",
 					content: `${workflowName} has been deleted successfully`,
 				}
 			});
 			setSelectedWorkflowId("new");
-      setWorkflowName("");
+			setWorkflowName("");
 			setLevels([]);
-      refetch();
-		} catch(e) {
+			refetch();
+		} catch (e) {
 			const msg = e instanceof Error ? e.message : "Delete failed";
-			toast(ToastCard,{
-				data:{
+			toast(ToastCard, {
+				data: {
 					title: "Workflow Error",
 					content: msg,
 					error: true
 				}
 			});
+		} finally {
+			setShowDeleteConfirm(false);
 		}
+	};
+
+	const deleteWf = () => {
+		if (selectedWorkflowId === "new") return;
+		setShowDeleteConfirm(true);
 	};
 
 	return (
@@ -634,8 +646,8 @@ export default function WorkflowsPage() {
 
 				{/* User Picker Modal */}
 				{showUserPicker && (
-					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm">
-						<div className="w-full max-w-md bg-[#12151c] border border-[#252a36] rounded-xl shadow-2xl">
+					<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+						<div className="w-full max-w-md bg-[#181c26] border border-[#252a36] rounded-xl shadow-2xl">
 							<div className="p-5 border-b border-[#252a36] flex justify-between items-center">
 								<h3 className="font-semibold">Select Users</h3>
 								<button
@@ -733,6 +745,111 @@ export default function WorkflowsPage() {
 					</div>
 				)}
 			</main>
+			{showDeleteConfirm && (
+				<div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+					<button
+						type="button"
+						className="absolute inset-0 bg-transparent border-0 p-0 cursor-default"
+						aria-label="Close dialog"
+						onClick={() => setShowDeleteConfirm(false)}
+					/>
+					<div
+						className="relative z-10 w-full max-w-[400px] overflow-hidden flex flex-col rounded-2xl border border-[#252a36] bg-[#181c26] shadow-2xl"
+						role="alertdialog"
+						aria-modal="true"
+						aria-labelledby="delete-company-title"
+					>
+						<div className="px-6 py-5 border-b border-[#252a36] flex items-center justify-between shrink-0">
+							<h3
+								id="delete-company-title"
+								className="text-base font-semibold text-[#eef0f6]"
+							>
+								Confirm Deletion
+							</h3>
+							<button
+								type="button"
+								onClick={() => setShowDeleteConfirm(false)}
+								className="w-8 h-8 bg-[#181c26] border-none rounded-md text-[#8a90a0] flex items-center justify-center hover:bg-[#1e2330] hover:text-[#eef0f6] transition-colors"
+								aria-label="Close"
+							>
+								<svg
+									width="18"
+									height="18"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+									aria-hidden
+								>
+									<title>Close</title>
+									<line x1="18" y1="6" x2="6" y2="18" />
+									<line x1="6" y1="6" x2="18" y2="18" />
+								</svg>
+							</button>
+						</div>
+						<div className="px-6 py-3">
+							<div className="w-14 h-14 mx-auto mb-1 rounded-full bg-[var(--error-muted)] flex items-center justify-center text-[var(--error)]">
+								<svg
+									width="28"
+									height="28"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+									aria-hidden
+								>
+									<title>Warning</title>
+									<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+									<line x1="12" y1="9" x2="12" y2="13" />
+									<line x1="12" y1="17" x2="12.01" y2="17" />
+								</svg>
+							</div>
+							<div className="text-base font-semibold text-center text-[#eef0f6] mb-2">
+								Delete Workflow?
+							</div>
+							<p className="text-[13px] text-[#8a90a0] text-center leading-relaxed">
+								This action cannot be undone. 
+							</p>
+							{selectedWorkflowId && (
+								<div className="mt-4 bg-[#12151c] rounded-lg px-3 py-3 text-center">
+									<div className="font-semibold text-[#eef0f6]">
+										{workflows.find((x:WorkflowListItem) => x.id === selectedWorkflowId)?.name ?? "—"}
+									</div>
+								</div>
+							)}
+						</div>
+						<div className="px-6 py-4 border-t border-[#252a36] flex justify-center gap-2.5 shrink-0">
+							<button
+								type="button"
+								onClick={() => setShowDeleteConfirm(false)}
+								className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium bg-[#12151c] text-[#eef0f6] border border-[#252a36] hover:bg-[#1e2330] hover:text-[#eef0f6] transition-colors"
+							>
+								Cancel
+							</button>
+							<button
+								type="button"
+								onClick={handleDeleteConfirmed}
+								className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-medium bg-[var(--error-muted)] text-[var(--error)] border border-transparent hover:bg-[var(--error)] hover:text-white transition-colors"
+							>
+								<svg
+									width="16"
+									height="16"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+									aria-hidden
+								>
+									<title>Delete</title>
+									<polyline points="3 6 5 6 21 6" />
+									<path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+								</svg>
+								Delete Workflow
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
       <ToastContainer position="bottom-right" theme="dark" hideProgressBar />
 		</div>
 	);

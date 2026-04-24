@@ -173,7 +173,7 @@ exports.createWorkflow = async (req, res) => {
 						mode: lv.mode,
 						nOfM:
 							lv.mode === "MULTIPLE_N_OF_M" && lv.nOfM != null
-								? parseInt(lv.nOfM, 10)
+								? Number.parseInt(lv.nOfM, 10)
 								: null,
 					},
 				});

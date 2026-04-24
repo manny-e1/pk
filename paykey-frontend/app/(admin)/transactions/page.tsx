@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { adminService } from "@/services/adminService";
 import { TransactionDetailModal } from "./TransactionModal";
+import { buildRiskContextTags } from "../utils/riskContext";
 
 type TxRow = {
 	id: string;
@@ -28,6 +29,13 @@ type TxRow = {
 	currency: string;
 	riskLevel: string;
 	riskScore: number;
+	riskFactors?: Array<{
+		label?: string;
+		class?: string;
+		rule?: string;
+		score?: number;
+		desc?: string;
+	}>;
 	status: string;
 	approvers: { id: string; name: string; status: string; level: number }[];
 	approverCount: number;
@@ -545,7 +553,7 @@ export default function TransactionsPage() {
 									<th className="px-4 py-3">From account</th>
 									<th className="px-4 py-3">To account</th>
 									<th className="px-4 py-3 text-right">Amount</th>
-									<th className="px-4 py-3">Risk level</th>
+									<th className="px-4 py-3">Risk context</th>
 									<th className="px-4 py-3">Status</th>
 									<th className="px-4 py-3 w-12 text-right pr-5" />
 								</tr>
@@ -639,10 +647,23 @@ export default function TransactionsPage() {
 													</div>
 												</td>
 												<td className="px-4 py-3 align-top">
-													<RiskLevelBadge
-														level={row.riskLevel}
-														score={row.riskScore}
-													/>
+													<div className="flex flex-wrap gap-1.5 max-w-[280px]">
+														{buildRiskContextTags({
+															amountLabel: `${row.amount.toLocaleString("en-MY", {
+																minimumFractionDigits: 2,
+																maximumFractionDigits: 2,
+															})} ${row.currency}`,
+															riskLevel: row.riskLevel,
+															factors: row.riskFactors,
+														}).map((tag) => (
+															<span
+																key={`${row.id}-${tag.label}`}
+																className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide ${tag.cls}`}
+															>
+																{tag.label}
+															</span>
+														))}
+													</div>
 												</td>
 												<td className="px-4 py-3 align-top">
 													<TransactionStatusPill status={row.status} />

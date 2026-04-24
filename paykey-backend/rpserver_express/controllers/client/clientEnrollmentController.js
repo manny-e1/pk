@@ -636,7 +636,7 @@
  * @file clientEnrollmentController.js
  * @description Stateless Enrollment Controller dengan Native Express OTP Handling & Unified MFA (UserKey)
  */
-const crypto = require("crypto");
+const crypto = require("node:crypto");
 const javaClient = require("../../services/JavaAuthClient");
 const prisma = require("../../config/db");
 const emailService = require('../../services/emailService');
@@ -818,7 +818,7 @@ exports.enrollFidoStart = async (req, res) => {
     const RP_ID = process.env.RP_ID_WEB || "demo.authkey.my"; 
 
     const challengeData = await javaClient.fidoInitiateChallenge("REGISTRATION", user, RP_ID, authenticatorType);
-    if (challengeData && challengeData.challenge) {
+    if (challengeData?.challenge) {
         await saveContext(challengeData.challenge, challengeData.sessionId, { userId: user.id, authenticatorType });
     }
     res.json(challengeData); 

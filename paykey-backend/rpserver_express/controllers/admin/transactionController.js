@@ -40,7 +40,7 @@ exports.initiateTransaction = async (req, res) => {
                 authMethod: 'FIDO2_BIOMETRIC',
                 message: 'Transaction blocked due to suspended account',
                 data: {
-                    amount: parseFloat(amount),
+                    amount: Number.parseFloat(amount),
                     currency: currency || "MYR",
                     merchant: merchantName || "Unknown",
                     tags: [{ label: 'Account Suspended', class: 'error' }]
@@ -81,7 +81,7 @@ exports.initiateTransaction = async (req, res) => {
             userId: user.id,
             userSegment: detectedSegment, 
             channel: detectedChannel,
-            amount: parseFloat(amount),
+            amount: Number.parseFloat(amount),
             currency: currency || "MYR",
             telemetry: telemetry,
             ip: netInfo.ip,
@@ -93,7 +93,7 @@ exports.initiateTransaction = async (req, res) => {
 
         let finalStatus = 'SUCCESS'; 
         let responseMessage = "Transaction Approved";
-        let httpStatus = 200;
+        const httpStatus = 200;
         let authRequirements = [];
 
         if (riskResult.riskScore >= 100) {
@@ -161,7 +161,7 @@ exports.initiateTransaction = async (req, res) => {
             message: responseMessage,
             data: {
                 paymentId: customTransactionId,
-                amount: parseFloat(amount),
+                amount: Number.parseFloat(amount),
                 currency: currency || "MYR",
                 merchant: targetBeneficiary || "Unknown Merchant",
                 riskScore: riskResult.riskScore,
@@ -178,7 +178,7 @@ exports.initiateTransaction = async (req, res) => {
         const createdTransaction = await prisma.transaction.create({
             data: {
                 id: customTransactionId, 
-                amount: parseFloat(amount),
+                amount: Number.parseFloat(amount),
                 currency: currency || "MYR",
                 merchantName: targetBeneficiary,
                 userId: user.id,
@@ -209,6 +209,6 @@ exports.initiateTransaction = async (req, res) => {
 
     } catch (error) {
         console.error("Transaction Error:", error);
-        return res.status(500).json({ error: "Internal Server Error: " + error.message });
+        return res.status(500).json({ error: `Internal Server Error: ${error.message}` });
     }
 };

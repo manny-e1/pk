@@ -32,6 +32,12 @@ function parseChain(approvalChain) {
 	return [];
 }
 
+function extractRiskFactors(log) {
+	const rf = log?.riskTags?.riskFactors;
+	if (Array.isArray(rf)) return rf;
+	return [];
+}
+
 exports.getTransactionMetrics = async (_req, res) => {
 	try {
 		const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -158,9 +164,27 @@ exports.listTransactions = async (req, res) => {
 					})
 				: [];
 		const companyById = Object.fromEntries(companies.map((c) => [c.id, c]));
-
 		const mapped = [];
 		for (const t of raw) {
+			const authLogs = await prisma.authLog.findMany({
+				where: {
+					AND: [
+						{
+							riskTags: {
+								path: "$.transactionId",
+								equals: t.id
+							}
+						},
+						{
+							riskTags: {
+								path: "$.riskFactors",
+								not: Prisma.AnyNull,
+							}
+						}
+					]
+				},
+			});
+			const riskFactors = authLogs.flatMap(extractRiskFactors);
 			const displayStatus = mapDisplayStatus(t);
 			const rb = riskBucket(t.riskLevel);
 			if (status && displayStatus !== String(status).toLowerCase()) continue;
@@ -210,6 +234,7 @@ exports.listTransactions = async (req, res) => {
 					level: n.level
 				})),
 				approverCount: chain.length || (t.isCorporate ? 0 : 1),
+				riskFactors,
 			});
 		}
 
@@ -249,7 +274,8 @@ exports.getTransactionDetail = async (req, res) => {
 			});
 		}
 
-		const authLog = await prisma.authLog.findFirst({
+		const authLog = await prisma.authLog.findMany({
+			include:{user:{select:{fullName:true}}},
 			where: {
 				AND: [
 					{
@@ -267,7 +293,22 @@ exports.getTransactionDetail = async (req, res) => {
 				]
 			},
 		});
-		const riskFactors = authLog?.riskTags?.riskFactors ?? null;
+		const riskFactors = authLog.flatMap(extractRiskFactors);
+		const approverRiskAssessments = authLog
+			.map((log) => {
+				const rf = extractRiskFactors(log);
+				if (rf.length === 0) return null;
+				return {
+					approverId: log.userId || null,
+					approverName: log.user?.fullName || "Unknown",
+					level: Number(log.riskTags?.level) || null,
+					timestamp: log.createdAt,
+					riskScore: Number(log.riskTags?.riskScore ?? 0),
+					riskLevel: (log.riskTags?.riskLevel || "LOW").toLowerCase(),
+					riskFactors: rf,
+				};
+			})
+			.filter(Boolean);
 
 		const chain = parseChain(t.approvalChain);
 		res.json({
@@ -298,7 +339,8 @@ exports.getTransactionDetail = async (req, res) => {
 			user: t.user,
 			company,
 			approvers: chain,
-			riskFactors: riskFactors
+			riskFactors: riskFactors,
+			approverRiskAssessments
 		});
 	} catch (err) {
 		console.error("[getTransactionDetail]", err);
