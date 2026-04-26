@@ -280,7 +280,7 @@ exports.getTransactionDetail = async (req, res) => {
 				AND: [
 					{
 						riskTags: {
-							path: "$.transactionId",
+							path: "$.paymentId",
 							equals: t.id
 						}
 					},

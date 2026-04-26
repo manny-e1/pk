@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { adminService } from "@/services/adminService";
 
 type ApiApprover = {
@@ -471,10 +471,7 @@ export function TransactionDetailModal({
 			})
 		: "";
 
-	const riskLevelKey = (
-		detail?.riskLevel || "low"
-	).toLowerCase() as keyof typeof riskColors;
-	const riskKey =
+	const riskKey = (riskLevelKey:string)=>
 		riskLevelKey in riskColors ? riskLevelKey : ("low" as const);
 
 	const statusKey = (detail?.status || "pending").toLowerCase();
@@ -717,13 +714,22 @@ export function TransactionDetailModal({
 										<span className="text-xs text-[var(--text-tertiary)]">
 											Risk level
 										</span>
+										{Array.from(groupedApproverRiskAssessments.values()).map(
+											(assessment, idx) => {
+											const score = Number(assessment.riskScore ?? 0);
+											const safeLvl = normalizeRiskLevel(assessment.riskLevel);
+										return <div className="flex flex-col gap-1" key={`${assessment.approverId}-${assessment.level}`}>
+										<p className="text-xs text-[var(--text-tertiary)]">{assessment.approverName} (Level {assessment.level} approver)</p>
 										<span
-											className={`flex w-full items-center gap-1 px-2 py-1 rounded text-[11px] font-semibold ${riskColors[riskKey].badge}`}
+											
+											className={`flex w-full items-center gap-1 px-2 py-1 rounded text-[11px] font-semibold ${riskColors[riskKey(safeLvl).toLowerCase() as keyof typeof riskColors].badge}`}
 										>
-											<RiskIcon level={riskKey} />
-											{detail.riskLevel.charAt(0).toUpperCase() + detail.riskLevel.slice(1)} (score: {detail.riskScore}/100)
+											<RiskIcon level={riskKey(safeLvl).toLowerCase() as keyof typeof riskColors} />
+											{safeLvl.charAt(0).toUpperCase() + safeLvl.slice(1)} (score: {score}/100)
 						
 										</span>
+										</div>
+											})}
 									</div>
 									<div className="flex flex-col gap-1 col-span-2">
 										<span className="text-xs text-[var(--text-tertiary)]">

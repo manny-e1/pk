@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { adminService } from '@/services/adminService';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { PanelTop, User } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { buildRiskContextTags } from '../utils/riskContext';
@@ -376,6 +376,8 @@ export default function AuthLogsPage() {
   const [logs, setLogs] = useState<AuthEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const searchParams = useSearchParams()
+  const [paymentId, setPaymentId] = useState(searchParams.get("transactionId")||"")
 
   const [stats, setStats] = useState({
     total: { value: 0, text: '—', trend: 'neutral' as any },
@@ -571,7 +573,7 @@ export default function AuthLogsPage() {
   };
 
   const filteredData = logs.filter(e => {
-    // const matchType = eventType === '' || e.type.toLowerCase().includes(eventType.toLowerCase());
+    const matchType = paymentId === '' || e.paymentId?.toLowerCase().includes(paymentId.toLowerCase());
     const matchResult = resultFilter === '' || e.resultLabel.toLowerCase() === resultFilter.toLowerCase();
     let matchDate = true;
     if (startDate && endDate) {
@@ -585,7 +587,7 @@ export default function AuthLogsPage() {
       e.risk.amountClass !== 'high' &&
       !e.risk.tags?.some(t => t.class === 'high' || t.label.toLowerCase().includes('high'))
     )) matchChips = false;
-    return matchResult && matchDate && matchChips;
+    return matchResult && matchDate && matchChips && matchType;
   });
 
   const itemsPerPage = 10;
@@ -605,7 +607,7 @@ export default function AuthLogsPage() {
             <div className="flex items-center gap-2 text-xs text-[var(--success)] mr-2"><span className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse"></span> Live</div>
             <div className="flex items-center gap-2 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded-[var(--radius-md)] px-3 py-2 min-w-[280px]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--text-tertiary)]"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-              <input type="text" placeholder="Search by user, payment, or ID..." className="bg-transparent border-none outline-none text-[13px] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] flex-1" />
+              <input value={paymentId} onChange={(e)=>setPaymentId(e.target.value)} type="text" placeholder="Search by user, payment, or ID..." className="bg-transparent border-none outline-none text-[13px] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] flex-1" />
               <span className="text-[10px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] px-1.5 py-0.5 rounded border border-[var(--border-secondary)] font-mono">⌘K</span>
             </div>
             <button className="flex items-center gap-1.5 px-3.5 py-2 rounded-[var(--radius-md)] text-[13px] font-medium bg-[var(--bg-tertiary)] text-[var(--text-primary)] border border-[var(--border-primary)] hover:bg-[var(--bg-hover)] transition-all">

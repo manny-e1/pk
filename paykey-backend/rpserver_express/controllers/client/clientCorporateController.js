@@ -309,9 +309,18 @@ exports.initiateCorporateTransaction = async (req, res) => {
 		const segment =
 			user.companyName || user.role === "ADMIN" ? "CORPORATE" : "CONSUMER";
 		const netInfo = getNetworkInfo(ipAddress);
-		const countryCode = netInfo.country || "UN";
 		const deviceIdentifier =
 			telemetry?.device_model || req.body.deviceId || "unknown";
+
+			const telemetryLocation = telemetry?.device_address && telemetry?.device_address !== "Unknown" 
+			? telemetry.device_address 
+			: null;
+	const ipLocationString = (netInfo.city !== 'Unknown City' && netInfo.city !== 'Local Network') 
+			? `${netInfo.city}, ${netInfo.country}` 
+			: null;
+	const finalLocationString = telemetryLocation || ipLocationString || "Unknown, UN";
+
+	const countryCode = finalLocationString.split(',')[1]?.trim() || netInfo.country || "UN";
 
 		const riskContext = {
 			userId: user.id,
@@ -326,6 +335,7 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			beneficiaryAccount: beneficiaryAccount || toAccount || null,
 			merchantName: merchantName || null,
 			fromAccount: deriveFromAccount(req.body),
+			location: finalLocationString,
 			telemetry: telemetry || {},
 		};
 
@@ -452,9 +462,16 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			merchant: merchantName || beneficiaryAccount || "Unknown",
 			tags: combinedTags,
 			factors: riskResult.breakdown,
+			riskFactors,
 			riskScore: riskResult.score,
 			riskLevel: riskResult.level,
-			level: 1
+			level: 1,
+			location: finalLocationString,
+			isCorporate: true,
+			timeline: [
+        'Payment approval request initiated',
+        `Risk assessment completed (Score: ${riskResult.score})`
+      ]
 		};
 		const finalEventType = getEventDescription(policyDecision.status);
 		if (policyDecision.status === "BLOCKED") {
@@ -565,67 +582,52 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			},
 		});
 
-		await createRichAuthLog(req, user, {
-			eventType: getEventDescription("INITIATED"),
-			status: workflowComplete ? "SUCCESS" : "PENDING",
-			message: responseMessage,
-			data: {
-				...corporateTxLogBase(created),
-				workflowId: workflow.id,
-				workflowComplete,
-				riskScore: riskResult.score,
-				riskLevel: riskResult.level,
-				riskFactors,
-				level: 1,
-				tags: [
-					{
-						label: `${Number(amount)} ${currency} → ${merchantName || toAccount}`,
-						class: "info",
-					},
-					{
-						label: workflowComplete
-							? "No further approvers required"
-							: "Awaiting approval chain",
-						class: workflowComplete ? "success" : "warning",
-					},
-				],
-			},
-		});
-
 		if (policyDecision.status === "CHALLENGED") {
 			const challengeRes = await javaClient.getUnifiedChallenge();
 			await createRichAuthLog(req, user, {
 				eventType: finalEventType,
 				status: "CHALLENGED",
-				authMethod: "CORPORATE_TRANSFER",
+				authMethod: policyDecision.allowedMethods.join(", "),
 				data: {
-					transactionId: created.id,
-					riskScore: riskResult.score,
-					riskFactors,
-					riskLevel: riskResult.level,
-					level: 1,
-					tags: [{ label: "Awaiting strong authentication", class: "warning" }],
+					...baseLogData,
+					authMethod:policyDecision.allowedMethods,
+          requestedMethods: policyDecision.allowedMethods,
+					stepUpRequired: true
 				},
 			});
+			const triggeredRules = (riskResult.factors || []).map(factor => {
+				return (typeof factor === "object" && factor.label) ? factor.label : String(factor);
+		});
+
+		const now = Date.now();
+		const totalTimeoutMs = (policyDecision.metadata?.totalTimeout || 300) * 1000;
 			return res.json({
 				success: true,
 				status: "challenge_required",
 				transactionId: created.id,
 				workflowComplete: false,
+				triggeredRules: triggeredRules,
 				challenge: challengeRes.challenge || challengeRes,
 				requirements: policyDecision.requirements,
 				amountMandatedMethods: policyDecision.allowedMethods || [],
+				allowedMethods: policyDecision.allowedMethods,
 				riskScore: riskResult.score,
 				riskLevel: riskResult.level,
 				policySettings: {
-					userVerification:
-						policyDecision.metadata?.userVerification || "preferred",
+					userVerification: policyDecision.metadata?.userVerification || 'preferred',
 					txnSigning: policyDecision.metadata?.txnSigning || false,
 					knownDeviceRequired: policyDecision.metadata?.knownDevice || false,
-					maxAttempts: policyDecision.metadata?.maxAttempts || 3,
-					lockoutDuration: policyDecision.metadata?.lockoutDuration || 60,
-					totalTimeout: policyDecision.metadata?.totalTimeout || 120,
-				},
+					maxAttempts: policyDecision.metadata?.maxAttempts !== undefined ? policyDecision.metadata.maxAttempts : 5,
+					lockoutDuration: policyDecision.metadata?.lockoutDuration || 100,
+					lockoutAction: policyDecision.metadata?.lockoutAction || 'soft_lock',
+					baseDelay: policyDecision.metadata?.baseDelay !== undefined ? policyDecision.metadata.baseDelay : 3,
+					progDelay: policyDecision.metadata?.progDelay !== false,
+					fido2Timeout: policyDecision.metadata?.fido2Timeout || 60,
+					stepUpTimeout: policyDecision.metadata?.stepUpTimeout || 120,
+					totalTimeout: policyDecision.metadata?.totalTimeout || 300,
+					sessionExpireAt: now + totalTimeoutMs,
+			},
+			message: "Multi-Step Authentication Required",
 				chain: created.approvalChain,
 				amount: Number(amount),
 				beneficiary: merchantName || toAccount,
@@ -667,28 +669,13 @@ exports.initiateCorporateTransaction = async (req, res) => {
 			});
 			await createRichAuthLog(req, user, {
 				eventType: finalEventType,
-				status: workflowComplete ? "SUCCESS" : "APPROVED",
-				authMethod: "CORPORATE_APPROVAL",
+				status: "APPROVED",
 				data: {
-					...corporateTxLogBase(finalDoc),
+					...baseLogData,
 					approvalAction: "auto_initiator",
 					level: chainWorking[auto.idx]?.level+1, 
 					workflowComplete,
-					riskScore: riskResult.score,
-					riskLevel: riskResult.level,
-					riskFactors,
-					tags: [
-						{
-							label: `${Number(amount)} ${currency}`,
-							class: "info",
-						},
-						{
-							label: workflowComplete
-								? "All approvers completed"
-								: "Initiator step completed — pending next approver",
-							class: workflowComplete ? "success" : "warning",
-						},
-					],
+					stepUpRequired: false
 				},
 			});
 		}
@@ -848,9 +835,13 @@ exports.rejectCorporateTransaction = async (req, res) => {
 exports.approveCorporateTransaction = async (req, res) => {
 	try {
 		const userId = pickUserId(req);
-		const { txId, methods } = req.body;
+		const { txId, methods, status } = req.body;
 		if (!userId || !txId) {
 			return res.status(400).json({ error: "userId and txId are required" });
+		}
+		const user = await prisma.user.findUnique({ where: { id: userId } });
+		if (!user || !user.companyId) {
+			return res.status(400).json({ error: "User is not linked to a company" });
 		}
 		const tx = await prisma.transaction.findUnique({ where: { id: txId } });
 		if (!tx || !tx.isCorporate) {
@@ -864,38 +855,6 @@ exports.approveCorporateTransaction = async (req, res) => {
 			return res.status(403).json({ error: "Not your turn to approve" });
 		}
 
-		const actor = await prisma.user.findUnique({ where: { id: userId } });
-		let nextRiskScore = tx.riskScore ?? 0;
-		let nextRiskLevel = normalizeRiskLevel(tx.riskLevel || "LOW");
-		if (actor?.email) {
-			const actorAuthLog = await prisma.authLog.findFirst({
-				where: {
-					email: actor.email,
-					AND: [
-						{
-							riskTags: {
-								path: "$.transactionId",
-								equals: txId,
-							},
-						},
-						{
-							riskTags: {
-								path: "$.riskScore",
-								not: Prisma.AnyNull,
-							},
-						},
-					],
-				},
-				orderBy: { createdAt: "desc" },
-			});
-			const logScore = Number(actorAuthLog?.riskTags?.riskScore ?? 0);
-			const logLevel = normalizeRiskLevel(
-				actorAuthLog?.riskTags?.riskLevel || "LOW",
-			);
-			nextRiskScore = Math.max(nextRiskScore, logScore);
-			nextRiskLevel = maxRiskLevel(nextRiskLevel, logLevel);
-		}
-
 		const { finalApproved, hasCurrent } = mut;
 		const updated = await prisma.transaction.update({
 			where: { id: txId },
@@ -904,8 +863,6 @@ exports.approveCorporateTransaction = async (req, res) => {
 				authResult: finalApproved ? "APPROVED" : "PENDING",
 				corporateStatus: finalApproved ? "APPROVED" : "PENDING_APPROVAL",
 				approvalChain: chain,
-				riskScore: nextRiskScore,
-				riskLevel: nextRiskLevel,
 				currentLevel: hasCurrent
 					? Math.min(
 							...chain
@@ -918,34 +875,83 @@ exports.approveCorporateTransaction = async (req, res) => {
 					: null,
 			},
 		});
+		const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+		const recentLogs = await prisma.authLog.findMany({
+      where: {
+        userId: userId,
+        status: "CHALLENGED",
+        createdAt: { gte: fiveMinutesAgo },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 1,
+    });
+		const validStatuses = ['SUCCESS', 'FAILED', 'TIMEOUT', 'CANCELLED', 'REJECTED'];
+    const dbStatus = validStatuses.includes(status?.toUpperCase()) ? status.toUpperCase() : 'SUCCESS';
+		if (recentLogs.length > 0) {
+      const targetLog = recentLogs[0];
+      let jsonColumn = "data";
+      if (targetLog.riskTags !== undefined) jsonColumn = "riskTags";
+      else if (targetLog.metadata !== undefined) jsonColumn = "metadata";
 
-		if (actor) {
-			await createRichAuthLog(req, actor, {
-				eventType: "Payment Approved",
-				status: "SUCCESS",
-				authMethod: "CORPORATE_APPROVAL",
-				data: {
-					...corporateTxLogBase(updated),
+      const existingJson = typeof targetLog[jsonColumn] === "object" ? targetLog[jsonColumn] : {};
+      const oldTags = existingJson.tags || [];
+
+      const eventTypeStr = dbStatus === 'SUCCESS' ? "Payment Approved" : (dbStatus === 'TIMEOUT' || dbStatus === 'CANCELLED' ? "Payment Cancelled" : "Payment Denied");
+      
+      const newTags = [
+        ...oldTags.map((t) => t.class === "warning" ? { ...t, class: "info" } : t),
+      ];
+
+      await prisma.authLog.update({
+        where: { id: targetLog.id },
+        data: {
+          status: dbStatus,
+          eventType: eventTypeStr,
+          [jsonColumn]: {
+            ...existingJson,
+            tags: newTags,
+            message: `Transaction ${dbStatus.toLowerCase()}`,
+            timeline: [
+              ...(Array.isArray(existingJson.timeline) ? existingJson.timeline : []),
+              dbStatus === 'SUCCESS' ? 'Payment approval successful' : 'Payment approval failed'
+            ]
+          },
+        },
+      });
+    } else {
+      const tagColor = tx.riskScore >= 70 ? "critical" : tx.riskScore >= 30 ? "warning" : "success";
+      
+      const eventTypeStr = dbStatus === 'SUCCESS' ? "Payment Approved" : "Payment Denied";
+
+      await createRichAuthLog(req, user, {
+        eventType: eventTypeStr,
+        status: dbStatus,
+        message: `Transaction ${dbStatus.toLowerCase()}`,
+        data: {
+          paymentId: txId,
+          transactionNo: txId,
+          merchant: tx.merchantName,
+          amount: Number(tx.amount),
+          currency: tx.currency,
 					approvalAction: "approve",
 					level: chain[mut.idx]?.level+1,
 					levelMode: chain[mut.idx]?.levelMode,
 					workflowComplete: finalApproved,
 					nextApproverId: updated.nextApproverId,
-					tags: [
-						{
-							label: `${Number(tx.amount)} ${tx.currency || "MYR"}`,
-							class: "info",
-						},
-						{
-							label: finalApproved
-								? "All approvers completed"
-								: `Level ${chain[mut.idx]?.level ?? "?"} approved — pending next`,
-							class: finalApproved ? "success" : "warning",
-						},
-					],
-				},
-			});
-		}
+          riskScore: tx.riskScore || 0,
+					riskLevel: tx.riskLevel || "LOW",
+          tags: [
+            { label: `${tx.amount} ${tx.currency.toUpperCase()}`, class: dbStatus === "SUCCESS" ? "success" : "error" },
+            { label: `Score: ${tx.riskScore || 0}`, class: tagColor },
+          ],
+          timeline: [
+            'Payment approval request initiated',
+            `Risk assessment completed (Score: ${tx.riskScore || 0})`,
+            dbStatus === 'SUCCESS' ? 'Payment approval successful' : 'Payment approval failed'
+          ]
+        },
+      });
+    }
 
 		return res.json({
 			success: true,
@@ -999,9 +1005,17 @@ exports.initiateApproval = async (req,res) => {
 		const segment =
 			user.companyName || user.role === "ADMIN" ? "CORPORATE" : "CONSUMER";
 		const netInfo = getNetworkInfo(ipAddress);
-		const countryCode = netInfo.country || "UN";
 		const deviceIdentifier =
 			telemetry?.device_model || req.body.deviceId || "unknown";
+			const telemetryLocation = telemetry?.device_address && telemetry?.device_address !== "Unknown" 
+			? telemetry.device_address 
+			: null;
+	const ipLocationString = (netInfo.city !== 'Unknown City' && netInfo.city !== 'Local Network') 
+			? `${netInfo.city}, ${netInfo.country}` 
+			: null;
+	const finalLocationString = telemetryLocation || ipLocationString || "Unknown, UN";
+
+	const countryCode = finalLocationString.split(',')[1]?.trim() || netInfo.country || "UN";
 
 		const riskContext = {
 			userId: user.id,
@@ -1020,7 +1034,6 @@ exports.initiateApproval = async (req,res) => {
 		};
 
 		const riskResult = await RiskEngine.calculateRisk(riskContext);
-		console.log(riskResult);
 		const riskFactors = riskResult.factors.map((f,i) => {
 			const breakdown = riskResult.breakdown[i]
 			return {
@@ -1039,68 +1052,97 @@ exports.initiateApproval = async (req,res) => {
 		});
 
 		const policyDecision = policyResult.decision;
-
-		const lockoutTime = new Date(
-			Date.now() - policyDecision.metadata.lockoutDuration * 1000,
-		);
-		const failedAttempts = await prisma.authLog.count({
-			where: {
-				email: user.email,
-				status: "FAILED",
-				createdAt: { gte: lockoutTime },
-			},
-		});
-		if (failedAttempts >= policyDecision.metadata.maxAttempts) {
-			policyDecision.status = "BLOCKED";
-		}
-
-		const isNewDevice = riskResult.factors.some(
-			(f) =>
-				(typeof f === "object" && f.label === "New Device") ||
-				f === "New Device",
-		);
-		if (
-			policyDecision.status !== "BLOCKED" &&
-			policyDecision.metadata.knownDeviceRequired &&
-			isNewDevice
-		) {
-			policyDecision.status = "BLOCKED";
-		}
-
+		let responseMessage = policyDecision.rejectMessage || "Transaction Auto-Approved";
 		if (policyDecision.status !== "BLOCKED") {
-			if (
-				riskResult.score >= 100 ||
-				riskResult.isBlockedByAmount ||
-				policyDecision.status === "REJECTED"
-			) {
-				policyDecision.status = "BLOCKED";
-			} else {
-				const policyMethods = policyDecision.allowedMethods || [];
-				const amountMethods = riskResult.amountMandatedMethods || [];
-				const chainedMethods = [];
-				if (amountMethods.length > 0) chainedMethods.push(...amountMethods);
-				if (policyMethods.length > 0) chainedMethods.push(...policyMethods);
-				if (chainedMethods.length > 0) {
-					policyDecision.status = "CHALLENGED";
-					policyDecision.allowedMethods = chainedMethods;
-				}
-			}
-		}
+      if (
+        riskResult.score >= 100 ||
+        riskResult.isBlockedByAmount ||
+        policyDecision.status === "REJECTED"
+      ) {
+        policyDecision.status = "BLOCKED";
+        responseMessage = "Transaction Blocked: Critical Risk or Exceeds Limit";
+      } else {
+        const policyMethods = policyDecision.allowedMethods || [];
+        const amountMethods = riskResult.amountMandatedMethods || [];
+        const chainedMethods = [];
+
+        if (amountMethods.length > 0) chainedMethods.push(...amountMethods);
+        if (policyMethods.length > 0) chainedMethods.push(...policyMethods);
+
+        if (chainedMethods.length > 0) {
+          policyDecision.status = "CHALLENGED";
+          responseMessage = "Multi-Step Authentication Required";
+          policyDecision.allowedMethods = chainedMethods;
+        }
+      }
+    }
+
+		const factorTags = (riskResult.factors || []).map((f) => {
+      if (typeof f === "object" && f.label)
+        return { label: String(f.label), class: f.class || "warning" };
+      return { label: String(f), class: "warning" };
+    });
+
+    const policyTags = (policyDecision.tags || []).map((t) => {
+      if (typeof t === "object" && t.label)
+        return { label: String(t.label), class: t.class || "info" };
+      return { label: String(t), class: "info" };
+    });
+
+    const levelColor =
+      riskResult.level === "CRITICAL" || riskResult.level === "HIGH"
+        ? "critical"
+        : riskResult.level === "MEDIUM"
+          ? "warning"
+          : "success";
+
+    const scoreColor =
+      riskResult.score >= 70
+        ? "critical"
+        : riskResult.score >= 30
+          ? "warning"
+          : "success";
+
+    const methodsString = (policyDecision.allowedMethods && policyDecision.allowedMethods.length > 0)
+      ? policyDecision.allowedMethods.join(", ")
+      : "";
+
+    const combinedTags = [
+      // { label: `${amount} ${currency.toUpperCase()}`, class: "info" },
+      { label: `Level: ${riskResult.level}`, class: levelColor },
+      { label: `Score: ${riskResult.score}`, class: scoreColor },
+      ...factorTags,
+      ...policyTags,
+      // {label:`Risk assessment completed (Score: ${riskResult.score})`, forTimeline: true}
+    ];
+		const finalEventType = getEventDescription(policyDecision.status);
+		const baseLogData = {
+			paymentId: txId,
+			telemetry: telemetry || {},
+			amount: Number(amount),
+			currency: currency.toUpperCase(),
+			merchant: tx.merchantName,
+			tags: combinedTags,
+			factors: riskResult.breakdown,
+			riskFactors,
+			riskScore: riskResult.score,
+			riskLevel: riskResult.level,
+			level: myNode?.level+1,
+			location: finalLocationString,
+			isCorporate: true,
+			timeline: [
+        'Payment approval request initiated',
+        `Risk assessment completed (Score: ${riskResult.score})`
+      ]
+		};
 
 		if (policyDecision.status === "BLOCKED") {
 			await createRichAuthLog(req, user, {
-				eventType: getEventDescription(policyDecision.status),
+				eventType: finalEventType,
 				status: "BLOCKED",
-				authMethod: policyDecision.allowedMethods.join(","),
-				data: {
-					...corporateTxLogBase(tx),
-					amount,
-					currency,
-					riskScore: riskResult.score,
-					riskLevel: riskResult.level,
-					riskFactors,
-					tags: [{ label: "Blocked by risk or policy", class: "error" }],
-				},
+				authMethod: methodsString,
+				message: responseMessage,
+				data: baseLogData,
 			});
 			return res.status(403).json({
 				error: "Transaction blocked by risk or policy",
@@ -1116,18 +1158,14 @@ exports.initiateApproval = async (req,res) => {
 		const assigneeAuthHint = myNode?.method || "FIDO2";
 
 		await createRichAuthLog(req, user, {
-			eventType: getEventDescription(policyDecision.status),
+			eventType: finalEventType,
 			status: "CHALLENGED",
-			authMethod: policyDecision.allowedMethods.join(","),
+			authMethod: methodsString,
 			data: {
-				...corporateTxLogBase(tx),
-				approvalAction: "initiate",
-				level: myNode?.level+1,
-				riskScore: riskResult.score,
-				riskLevel: riskResult.level,
-				riskFactors,
-				amountMandatedMethods,
-				tags: [{ label: "Awaiting strong authentication", class: "warning" }],
+				...baseLogData,
+				authMethod:policyDecision.allowedMethods,
+				requestedMethods: policyDecision.allowedMethods,
+				stepUpRequired: true
 			},
 		});
 

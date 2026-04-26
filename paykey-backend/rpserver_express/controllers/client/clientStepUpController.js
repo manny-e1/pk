@@ -1,7 +1,7 @@
 const javaClient = require("../../services/JavaAuthClient");
 const prisma = require("../../config/db");
 const { sendTokenCookie } = require("../../utils/jwt");
-const { createRichAuthLog } = require("../../utils/richLogger");
+const { createRichAuthLog, appendToLatestChallengeTimeline } = require("../../utils/richLogger");
 const fidoService = require("../../services/fidoService");
 const { createClient } = require("redis");
 const fcmService = require("../../services/fcmService");
@@ -60,9 +60,9 @@ exports.verifyStepUp = async (req, res) => {
 
 	if (!finalUserId)
 		return res.status(400).json({ error: "User ID is required" });
-
+	let user = null;
 	try {
-		const user = await prisma.user.findUnique({ where: { id: finalUserId } });
+		user = await prisma.user.findUnique({ where: { id: finalUserId } });
 		if (!user) return res.status(404).json({ error: "User not found" });
 
 		if (method === "FIDO2" || method === "BIOMETRIC") {
@@ -130,8 +130,11 @@ exports.verifyStepUp = async (req, res) => {
 			}
 
 			if (!req.user) sendTokenCookie(res, user);
+			await appendToLatestChallengeTimeline(user, method, true, payload?.txId);
+
 			return res.json({ success: true, message: `${method} Verified` });
-		} else if (method === "HARDWARE_TOTP" || method === "TOTP_SOFT") {
+		} 
+		 if (method === "HARDWARE_TOTP" || method === "TOTP_SOFT") {
 			if (!payload || !payload.code) {
 				return res.status(400).json({ error: "OTP code is required" });
 			}
@@ -146,9 +149,11 @@ exports.verifyStepUp = async (req, res) => {
 			});
 
 			if (!req.user) sendTokenCookie(res, user);
+			await appendToLatestChallengeTimeline(user, method, true, payload?.txId);
 
 			return res.json({ success: true, message: "TOTP Verified successfully" });
-		} else if (method === "EMAIL_OTP") {
+		} 
+		 if (method === "EMAIL_OTP") {
 			if (!payload.code)
 				return res.status(400).json({ error: "Email code is required" });
 
@@ -166,14 +171,15 @@ exports.verifyStepUp = async (req, res) => {
 			}
 
 			await prisma.authTotpToken.delete({ where: { id: tokenRecord.id } });
-
 			if (!req.user) sendTokenCookie(res, user);
-
+			
+			await appendToLatestChallengeTimeline(user, method, true, payload?.txId);
 			return res.json({ success: true, message: "Email OTP Verified" });
 		}
 
 		return res.status(400).json({ error: "Unsupported authentication method" });
 	} catch (err) {
+		await appendToLatestChallengeTimeline(user, method, false, payload?.txId);
 		console.error(
 			`[Step-Up] Verification Error for method ${method}:`,
 			err.message || err,

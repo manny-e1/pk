@@ -10,6 +10,144 @@ const isIPv6 = (ip) =>
 const generateEventID = () =>
 	`evt__${customAlphabet("0123456789ABCDEF", 10)()}`;
 
+const AUTH_METHOD_ALIASES = {
+	FIDO2: 'FIDO2_PASSKEY',
+	HARDWARE_KEY: 'FIDO2_SECURITY_KEY',
+	EMAIL_OTP: 'EMAIL_OTP',
+	TOTP_SOFT: 'TOTP_AUTHENTICATOR',
+	HARDWARE_TOTP: 'HARDWARE_OTP',
+	PIN: 'PIN',
+	PUSH_APPROVAL: 'PUSH',
+	BIOMETRIC: 'BIOMETRICS',
+	BIO_LEGACY: 'BIOMETRICS'
+};
+
+const normalizeLoggedMethod = (method) => {
+	const normalized = String(method || '').trim().toUpperCase();
+	return AUTH_METHOD_ALIASES[normalized] || null;
+};
+
+const METHOD_LOG_MAP = {
+	FIDO2: {
+			label: 'Fido2 Passkey',
+			authMethod: 'FIDO2_PASSKEY',
+			flow: ['Display Passkey Prompt'],
+			success: ['Passkey verification successful'],
+			failed: ['Passkey verification failed']
+	},
+	HARDWARE_KEY: {
+			label: 'Fido2 Security Key',
+			authMethod: 'FIDO2_SECURITY_KEY',
+			flow: ['Display Passkey Prompt'],
+			success: ['Passkey verification successful'],
+			failed: ['Passkey verification failed']
+	},
+	EMAIL_OTP: {
+			label: 'Email OTP',
+			authMethod: 'EMAIL_OTP',
+			flow: ['Display OTP Prompt'],
+			success: ['Email OTP Verification Successful'],
+			failed: ['Email OTP Verification Failed']
+	},
+	TOTP_SOFT: {
+			label: 'TOTP Authenticator',
+			authMethod: 'TOTP_AUTHENTICATOR',
+			flow: ['Display OTP Prompt'],
+			success: ['OTP Verification Successful'],
+			failed: ['OTP Verification Failed']
+	},
+	HARDWARE_TOTP: {
+			label: 'Hardware OTP',
+			authMethod: 'HARDWARE_OTP',
+			flow: ['Display OTP Prompt'],
+			success: ['OTP Verification Successful'],
+			failed: ['OTP Verification Failed']
+	},
+	PIN: {
+			label: 'PIN',
+			authMethod: 'PIN',
+			flow: ['Display PIN Prompt'],
+			success: ['PIN Verification Successful'],
+			failed: ['PIN Verification Failed']
+	},
+	PUSH_APPROVAL: {
+			label: 'Push',
+			authMethod: 'PUSH',
+			flow: ['Send Push Approval'],
+			success: ['Biometrics Verification Successful', 'Approved By User'],
+			failed: ['Rejected By User']
+	},
+	BIOMETRIC: {
+			label: 'Biometrics',
+			authMethod: 'BIOMETRICS',
+			flow: ['Display Biometric Prompt'],
+			success: ['Biometrics Verification Successful'],
+			failed: ['Biometrics Verification Failed']
+	},
+	BIO_LEGACY: {
+			label: 'Biometrics',
+			authMethod: 'BIOMETRICS',
+			flow: ['Display Biometric Prompt'],
+			success: ['Biometrics Verification Successful'],
+			failed: ['Biometrics Verification Failed']
+	}
+};
+
+function buildTimeline(method, success) {
+	const cfg = METHOD_LOG_MAP[method] || {
+			label: method || 'Authentication',
+			authMethod: normalizeLoggedMethod(method),
+			flow: ['Display Authentication Prompt'],
+			success: ['Verification Successful'],
+			failed: ['Verification Failed']
+	};
+	return {
+			label: cfg.label,
+			authMethod: cfg.authMethod,
+			timeline: [...cfg.flow, ...(success ? cfg.success : cfg.failed)]
+	};
+}
+
+async function appendToLatestChallengeTimeline(user, method, success, txId) {
+	if (!user?.email) return;
+	const flow = buildTimeline(method, success);
+	const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+	const challengedLog = await prisma.authLog.findFirst({
+			where: {
+					userId: user.id,
+					status: 'CHALLENGED',
+					createdAt: { gte: fiveMinutesAgo },
+					riskTags: {
+						path: "$.paymentId",
+						equals: txId
+					}
+			},
+			orderBy: { createdAt: 'desc' }
+	});
+	if (!challengedLog) return;
+
+	let jsonColumn = 'metadata';
+	if (challengedLog.riskTags !== undefined) jsonColumn = 'riskTags';
+	else if (challengedLog.metadata !== undefined) jsonColumn = 'metadata';
+
+	const existingJson = (challengedLog[jsonColumn] && typeof challengedLog[jsonColumn] === 'object')
+			? challengedLog[jsonColumn]
+			: {};
+	const existingTimeline = Array.isArray(existingJson.timeline) ? existingJson.timeline : [];
+
+	await prisma.authLog.update({
+			where: { id: challengedLog.id },
+			data: {
+					[jsonColumn]: {
+							...existingJson,
+							selectedMethod: normalizeLoggedMethod(method) || existingJson.selectedMethod || null,
+							txId: txId || existingJson.txId || null,
+							timeline: [...existingTimeline, ...flow.timeline]
+					}
+			}
+	});
+}
+
 async function createRichAuthLog(req, user, context) {
 	try {
 		const rawIpHeader =
@@ -124,4 +262,4 @@ async function createRichAuthLog(req, user, context) {
 	}
 }
 
-module.exports = { createRichAuthLog };
+module.exports = { createRichAuthLog, appendToLatestChallengeTimeline  };
