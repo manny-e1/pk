@@ -110,6 +110,7 @@ function buildTimeline(method, success) {
 
 async function appendToLatestChallengeTimeline(user, method, success, txId) {
 	if (!user?.email) return;
+	if (!txId) return
 	const flow = buildTimeline(method, success);
 	const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 	const challengedLog = await prisma.authLog.findFirst({
