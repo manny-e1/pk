@@ -69,6 +69,7 @@ exports.verifyStepUp = async (req, res) => {
 			await javaClient.fidoVerifyResponse("AUTHENTICATION", payload);
 
 			if (!req.user) sendTokenCookie(res, user);
+			await appendToLatestChallengeTimeline(user, method, true, payload?.txId);
 			return res.json({ success: true, message: "FIDO2 Verified" });
 		}
 
